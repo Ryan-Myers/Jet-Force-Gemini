@@ -12,6 +12,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objFreeObjdef.s")
 
+typedef signed int             s32;
 extern s32 osTvType;
 #define TV_TYPE_PAL 0
 

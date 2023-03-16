@@ -61,7 +61,7 @@ XGCC     = mips64-elf-gcc
 GREP     = grep -rl
 
 #Options
-CC       = $(TOOLS_DIR)/ido-static-recomp/ido/5.3/usr/bin/cc
+CC       = $(TOOLS_DIR)/ido-static-recomp/build/5.3/out/cc
 SPLAT    = $(TOOLS_DIR)/splat/split.py
 CRC      = @tools/n64crc build/$(BASENAME).$(VERSION).z64
 
@@ -201,10 +201,6 @@ $(BUILD_DIR)/%.c.o: %.c
 
 $(BUILD_DIR)/$(LIBULTRA): $(LIBULTRA)
 	@mkdir -p $$(dirname $@)
-#	@cp $< $@
-#	@$(PYTHON) $(TOOLS_DIR)/set_o32abi_bit.py $@
-
-
 
 $(BUILD_DIR)/%.s.o: %.s
 	@$(AS) $(ASFLAGS) -o $@ $<
