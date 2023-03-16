@@ -52,8 +52,8 @@ expected/
 */.splat_cache
 .splat_cache
 .splat_cache*
-diff_settings.py
 symbol_addrs.us.txt
 ctx.c
+ctx_includes.c
 tools/n64crc
 !tools/build

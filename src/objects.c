@@ -1,4 +1,5 @@
 #include "common.h"
+#include "math.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/resetVars.s")
 
@@ -30,7 +31,15 @@ s32 objTvTimes(s32 timer) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objDeleteRomDef.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/objGetObject.s")
+/**
+ * Returns the object at the current offset by ID.
+*/
+Object *objGetObject(s32 index) {
+    if (index < 0 || index >= ObjListCount) {
+        return 0;
+    }
+    return ObjList[index];
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objGetObjList.s")
 
@@ -135,9 +144,30 @@ void objObjectsPauseTick(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objGetPlayerNo.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/setObjectViewNormal.s")
+void setObjectViewNormal(f32 x, f32 y, f32 z) {
+    f32 vecLength = sqrtf((x * x) + (y * y) + (z * z));
+    f32 normalizedLength;
+    if (vecLength != 0.0f) {
+        normalizedLength = -8192.0f / vecLength;
+        x *= normalizedLength;
+        y *= normalizedLength;
+        z *= normalizedLength;
+    }
+    gEnvmapPos.x = x;
+    gEnvmapPos.y = y;
+    gEnvmapPos.z = z;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/objGetTable.s")
+/**
+ * Returns a pointer to the asset in the misc. section. If index is out of range, then this
+ * function just returns the pointer to Ftables.
+ */
+s32 *objGetTable(s32 index) {
+    if (index < 0 || index >= Fmax) {
+        return Ftables;
+    }
+    return (s32 *)&Ftables[Findex[index]];
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objSetAnimGroup.s")
 

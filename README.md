@@ -12,6 +12,13 @@ Grab tools
 git submodule update --init --recursive
 ```
 
+Install Dependencies
+```sh
+sudo apt install build-essential pkg-config git python3 wget libcapstone-dev python3-pip binutils-mips-linux-gnu
+python3 -m pip install --user colorama watchdog levenshtein cxxfilt
+python3 -m pip install --upgrade pycparser
+```
+
 Drop in `kiosk` as `baserom.kiosk.z64` (sha1sum: `f00f7c7fb085d0df57dcb649793aced5be4e8562`)
 
 ```sh
