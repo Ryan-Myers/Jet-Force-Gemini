@@ -208,7 +208,7 @@ segments:
       - [0x9DFB0, asm]
       - [0x9E250, asm]
       - [0x9ED10, asm]
-      - [0x9EEA0, asm]
+      - [0x9EEA0, bin]
       - [0x9EFF0, bin]
       - [0xA1AF0, data]
       - { start: 0xB22B0, type: bss, vram: 0x800B16B0 }
