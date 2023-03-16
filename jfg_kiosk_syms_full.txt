@@ -1,0 +1,2674 @@
+
+---------------------- functions (main)
+80000450  ->  amSetMuteMode
+80000450  ->  amSetMuteMode
+80000510  ->  amTunePlay
+80000598  ->  amTuneVoiceLimit
+800005D4  ->  amTuneSetFade
+80000700  ->  amTuneResetFade
+8000070C  ->  amAmbientSetFade
+80000838  ->  amAmbientResetFade
+80000844  ->  amAudioTick
+80000C4C  ->  amWaitForMidiSync
+80000C90  ->  amResetMidiSync
+80000C9C  ->  amTuneSetChlMask
+80000D3C  ->  amTuneMuteChl
+80000D44  ->  amTuneUnmuteChl
+80000D4C  ->  amTuneSetChlVolume
+80000D8C  ->  amTuneResetChls
+80000DF0  ->  amTuneScaleTempo
+80000E68  ->  amTuneSetTempoBPM
+80000EEC  ->  amTuneGetTempoBPM
+80000EFC  ->  amAmbientPlay
+80000F4C  ->  amAmbientSetTempoBPM
+80000FBC  ->  amTuneStop
+80001000  ->  amAmbientStop
+80001038  ->  amTuneGetSeqNo
+80001080  ->  amAmbientGetSeqNo
+80001090  ->  amTuneSetVolume
+800010FC  ->  amTuneSetGlobalVolume
+80001158  ->  amTuneGetVolume
+80001168  ->  amAmbientSetVolume
+800011B4  ->  amAmbientSetPan
+8000121C  ->  amDittyPlay
+80001264  ->  amDittyPlaying
+800012B8  ->  amSndStop
+800012D8  ->  amSndPlay
+800013DC  ->  amSndPlayDirect
+8000148C  ->  amSndSetVol
+80001568  ->  amSndSetPan
+80001590  ->  amSndSetPitchDirect
+800015BC  ->  amGetSfxCount
+800015E4  ->  amGetSfxSettings
+80001628  ->  amSoundIsLooped
+80001C54  ->  amTuneSetReverbOnOff
+80001C5C  ->  forcelink
+80001C8C  ->  scalevol
+80001CD0  ->  amCreateAudioMgr
+80002160  ->  amGo
+80002184  ->  amStop
+800021A8  ->  amAudioMgrGetNextFrameCount
+80002A78  ->  amAudioMgrSetScheduleMode
+80002A9C  ->  amAudioMgrHaveRunALargeFrame
+80002AAC  ->  amAudioMgrHaveFreedLargeBuffers
+80002AD0  ->  amInitAudioMap
+80002BB0  ->  amAmbientPause
+80002BD8  ->  amAmbientRestart
+80002BE4  ->  amResetAudioMap
+80002D58  ->  amPlayAudioMap
+80003554  ->  amCalcSfxStereo
+800036B0  ->  amSndPlayXYZ
+80003764  ->  amSndSetVolXYZ
+8000377C  ->  amSndSetPitchXYZ
+80003794  ->  amSndPlayDirectXYZ
+80003888  ->  amSndSetXYZ
+800038B4  ->  amSndStopXYZ
+80003910  ->  amSndUnlinkHandleXYZ
+80003994  ->  amCreateAudioPoint
+80003AAC  ->  amSndSetEcho
+80003F38  ->  amSndGetXYZVolume
+80004050  ->  amVibratoInit
+800040E0  ->  amInitOsc
+80004404  ->  amUpdateOsc
+800049EC  ->  amStopOsc
+80004A08  ->  _depth2Cents
+80004A60  ->  resetVars
+80004AD8  ->  objFreeAll
+80004B94  ->  objGetClosestControlType
+80004D34  ->  objGetClosestClass
+80004EA4  ->  objGetObjdef
+80005110  ->  objFreeObjdef
+80005270  ->  objTvTimes
+80005604  ->  objLoadObjList
+80005828  ->  objSetupPlayers
+80005EBC  ->  objDeleteRomDef
+80006064  ->  objGetObject
+800060A4  ->  objGetObjList
+800060CC  ->  objGetControlNo
+80006120  ->  objSetupObject
+80007BF0  ->  objFreeObject
+80007C8C  ->  objDoFrees
+80008FD8  ->  objObjectsPauseTick
+80008FE0  ->  objObjectsTick
+8000957C  ->  objObjectsCutCameraTick
+8000970C  ->  objAnimTextures
+80009900  ->  objResetAnimModels
+800099CC  ->  objMoveXYZnocheck
+800099DC  ->  objMoveXYZ
+80009E30  ->  objPrintShardCluster
+80009F8C  ->  objPrintSeveredLimb
+8000A128  ->  objDrawSimpleObject
+8000A2D4  ->  objDrawTracer
+8000AA08  ->  objPrintCustomObject
+8000B270  ->  objDrawDoor
+8000BB98  ->  objMakeGunMtx
+8000C650  ->  objDrawPlayerEffects
+8000C924  ->  objSetFlashPartColour
+8000C958  ->  objClearFlashes
+8000CBD4  ->  objPrintModelObject
+8000DB04  ->  objPrintObject
+8000DB98  ->  objDoPlayerTumble
+8000DC84  ->  objUndoPlayerTumble
+8000DE70  ->  objScrollTexture
+8000E078  ->  objPartInv
+8000E1E8  ->  objZsortGroup
+8000E3D4  ->  objGetPlayerlist
+8000E3F0  ->  objAddAnimPlayer
+8000E424  ->  objGetAnimPlayerlist
+8000E440  ->  objGetPlayerNo
+8000E490  ->  setObjectViewNormal
+8000E594  ->  objGetTable
+8000E5E4  ->  objSetAnimGroup
+8000EF98  ->  objSetup
+800114A8  ->  objAnimDframe
+800115B8  ->  objAnimSetMove
+800117D8  ->  objAnimSetFrame
+80011824  ->  objCreateBonusItem
+80011A10  ->  GetRomlistInfo
+80011A38  ->  objRegisterDependancy
+80011A90  ->  objRemoveDependancy
+80011CE8  ->  objCutCameraActive
+80011D40  ->  GetRange
+80011D9C  ->  GetRangeSquared
+80011DD8  ->  objAddMine
+80011E88  ->  objDeleteMine
+80011F10  ->  trackUpdateFX
+80011F80  ->  trackDraw
+800128C4  ->  initSky
+80012960  ->  trackSkySet
+800135D0  ->  trackGetSky
+800136E4  ->  trackAddTextureScroll
+80013730  ->  trackUpdateTextureScroll
+80013934  ->  trackLightAllocate
+80013AFC  ->  trackLightFreeMem
+80013BCC  ->  trackLightAdd
+80013CC8  ->  trackLightDelete
+80013D08  ->  trackLightColour
+80013DA0  ->  trackLightMove
+80013F3C  ->  trackUpdateLighting
+8001538C  ->  trackGetBlock
+800154B8  ->  trackGetBlockList
+80015590  ->  trackGetCubeBlockList
+800156F8  ->  trackBlockDim
+80016084  ->  trackGetIntersect
+80016208  ->  trackGetPlayerIntersect
+80017E30  ->  trackCylinderIntersect
+800181E0  ->  trackSphereIntersect
+80018614  ->  trackNearestIntersection
+80018FE4  ->  trackClip3D
+800193F4  ->  trackPolyHeight
+80019694  ->  trackGetLedgeCrossed
+80019C18  ->  trackGetAdjacentLedge
+8001A024  ->  trackCylinderHeights
+8001AAEC  ->  trackGetNearestPoly
+8001AE84  ->  trackGetHeights
+8001B45C  ->  trackGetTrack
+8001B46C  ->  trackFreeAll
+8001B660  ->  trackMakeAbsolute
+8001B928  ->  trackSetFog
+8001BA24  ->  trackGetFog
+8001BB88  ->  trackSetFogOff
+8001BED0  ->  trackChangeFog
+8001C1C8  ->  trackFadeFog
+8001CC00  ->  trackMakePolylist
+8001D134  ->  getXZCompareMask
+8001D254  ->  getYCompareMask
+8001D2F0  ->  trackLightAsm
+8001D5F0  ->  shadowInitBuffers
+8001D728  ->  shadowFreeBuffers
+8001D7A4  ->  shadowChangeBuffer
+8001D7C0  ->  shadowGetBuffers
+8001D80C  ->  shadowGenerate
+800208A0  ->  shadowBoxPolyOverlap
+80020964  ->  shadowBoundingBox
+800209F4  ->  shadowYHeight
+80020B08  ->  shadowMakeYs
+80020BD0  ->  freeLights
+80020C60  ->  setupLights
+80020E4C  ->  addRomdefLight
+800210B4  ->  addObjectLight
+800212E0  ->  turnLightOff
+800212F4  ->  turnLightOn
+80021308  ->  toggleLight
+8002131C  ->  changeLightColour
+80021348  ->  changeLightColourCycle
+80021368  ->  changeLightIntensity
+800213B8  ->  lightUpdateLights
+800217AC  ->  killLight
+800218B8  ->  lightGetLights
+800218D4  ->  lightGetStrongestEffect
+80021A40  ->  lightUpdateObjects
+80022038  ->  lightDistanceCalc
+8002216C  ->  lightDirectionCalc
+80022200  ->  lightObject
+800224E0  ->  lightDefaultObjectLight
+80022530  ->  lightSetObjectLight
+80022634  ->  lightSetupLightSources
+800226C8  ->  lightSetupFlareSources
+80022754  ->  lightInitObjectLighting
+800228CC  ->  lightAdjustGlowingLight
+800229C8  ->  lightKillGlowingLight
+800229F0  ->  lightSingleLight
+80022BD4  ->  lightTwoLights
+80022EA8  ->  lightMultiLight
+80023180  ->  lightCreateLightTable
+800231D8  ->  lightMakeJointPositions
+8002334C  ->  lightEnviroMap
+800234E0  ->  starfieldFastMove
+80023610  ->  cpuLine
+800237E8  ->  rainFastDraw
+800239E0  ->  camlightInit
+80023A10  ->  camlightFlush
+80023A58  ->  camlightAdd
+80023CC4  ->  camlightDelete
+80023D58  ->  camlightUpdateAll
+80023DBC  ->  camlightUpdate
+80024054  ->  camlightVisibilityCheck
+80024644  ->  camlightDraw
+80024E80  ->  spranimInit
+80024F04  ->  spranimControl
+80024F50  ->  sprasjiInit
+80024FA4  ->  spranimOnceControl
+8002501C  ->  effectboxControl
+800252FC  ->  animInit
+80025400  ->  animControl
+8002562C  ->  exitControl
+80025A18  ->  doorControl
+80026588  ->  doorUnlock
+80026780  ->  doorRegisterOpener
+800269AC  ->  doorSwitchControl
+80026C08  ->  skyControl
+80026C70  ->  texscrollControl
+80026CE4  ->  rangetriggerControl
+80026D7C  ->  objEnsureNotTargetted
+80026E94  ->  GetAutoAimTarget
+80026F30  ->  animobjControl
+80026F3C  ->  animplayerInit
+80027024  ->  animplayerControl
+80027030  ->  animdroidInit
+80027048  ->  animdroidControl
+8002707C  ->  animGirlEventHandler
+800270FC  ->  animBoyEventHandler
+8002717C  ->  animDogEventHandler
+80027210  ->  animtriggerControl
+80027458  ->  hitanimInit
+800274C0  ->  hitanim2Init
+80027528  ->  hitanimsndInit
+80027590  ->  hitanim2sndInit
+800275F8  ->  hitanimsndControl
+8002769C  ->  muzzleFlashInit
+800276B8  ->  severedLimbInit
+80027914  ->  severedLimbControl
+80027C7C  ->  severedLimbDestroy
+80027D14  ->  dropletInit
+80027D90  ->  dropletControl
+80027F04  ->  splashInit
+80027FA8  ->  splashControl
+80028128  ->  waterbubbleInit
+800281E8  ->  waterbubbleControl
+80028388  ->  invisibilityInit
+800283C0  ->  invisibilityControl
+80028520  ->  explosionStart
+800285AC  ->  objExplosionSetupTriggers
+80028664  ->  explosionInit
+800288C4  ->  explosionControl
+80028DEC  ->  shockwaveStart
+80028F00  ->  shockwaveInit
+800291F8  ->  shockwaveControl
+800296BC  ->  objDrawShockWave
+80029974  ->  expspriteInit
+80029A58  ->  expspriteControl
+80029BB0  ->  explosionFlushBlasts
+80029BDC  ->  explosionAddBlast
+80029D34  ->  explosionHitTick
+8002A708  ->  explosionBlastHit
+8002AE00  ->  charSpeak
+8002AFC4  ->  charPlaySoundEffect
+8002B134  ->  charAnimSoundTick
+8002B350  ->  cameraGetBlend
+8002EB78  ->  cameraTopDown
+8002F020  ->  cameraAddOverrideObject
+8002F058  ->  cameraDeleteOverrideObject
+8002F5FC  ->  sidekickInit
+8002F734  ->  sidekickControl
+80031F08  ->  controlClearAimlocks
+80031FAC  ->  controlPlayerReInit
+800320EC  ->  controlDecapitatePlayer
+800320F4  ->  controlPlayerInit
+80032A0C  ->  controlPlayer
+80033944  ->  controlFrozen
+800339FC  ->  controlRestartPlayer
+80033BCC  ->  controlFadePlayer
+80033D88  ->  controlWalkingBack
+80033F60  ->  controlThrowWeapon
+80033FB8  ->  dAngle
+8003402C  ->  controlMakeGravity
+800340B8  ->  controlMakeV
+80034178  ->  controlFSUvels
+800341C8  ->  controlUpdateJetFlames
+800346C8  ->  controlHalfTurn
+800349B0  ->  controlUpdateBreathing
+80034BB4  ->  controlGroundHits
+80035514  ->  controlSetTransition
+80035894  ->  controlPlatform
+80035AEC  ->  controlAttitude
+80035E14  ->  controlHangOK
+800364D0  ->  controlGrabOK
+80036A2C  ->  controlSquashCheckPrior
+80036DB8  ->  controlSquashCheckPost
+8003719C  ->  controlCeiling
+8003724C  ->  controlDisableJoypad
+80037258  ->  controlReadJoypad
+80037344  ->  controlGetMaxCharge
+800374B0  ->  controlUpdateWeapon
+800380FC  ->  controlSelectNextWeapon
+80038208  ->  controlSelectWeapon
+80038300  ->  controlSelectPreviousWeapon
+80038408  ->  controlFireDummyShot
+80038CDC  ->  controlFreePlayersStuff
+80039DA4  ->  controlUpdatePlayerAim
+8003A894  ->  controlGetManualAim
+8003AEDC  ->  controlPlayerGunWeight
+8003AF34  ->  controlPlayerStopAim
+8003B058  ->  controlPlayerStopAimAndLook
+8003B1E0  ->  controlGetGunBarrelPos
+8003B2A0  ->  controlPlayerTiltList
+8003B2AC  ->  controlSidekickTiltList
+8003B2B8  ->  controlGravity
+8003B2C8  ->  controlGetWeaponDef
+8003B358  ->  controlAlterMood
+8003B3E8  ->  controlSetPlayerSetup
+8003B428  ->  controlGetPlayerSetup
+8003B484  ->  controlClearPlayerSetup
+8003B490  ->  controlPlayerOpenChest
+8003B508  ->  controlPlayerOpeningChest
+8003B5E8  ->  controlEmptyPlayersHand
+8003B67C  ->  modInitModels
+8003B7B8  ->  modLoadModel
+8003C568  ->  modFreeModel
+8003CEF4  ->  modFreeAnim
+8003CFC0  ->  modGenAnimMatrices
+8003DB60  ->  modelSetModelFlags
+8003DB6C  ->  modelGetModelFlags
+8003DB7C  ->  makeModelGfx
+8003E3DC  ->  modMakeLimbModel
+8003ED04  ->  modLoadAnimEvents
+8003EE88  ->  modFreeAnimEvents
+8003EF54  ->  modGetMakeBuffer
+8003EF6C  ->  modSetTextureFrame
+8003F030  ->  boot
+8003F120  ->  bootCheckStack
+8003F170  ->  camInit
+8003F328  ->  camUseShake
+8003F338  ->  camIgnoreShake
+8003F344  ->  camGetFOV
+8003F354  ->  camOverrideProjScales
+8003F374  ->  camSetFOV
+8003F5EC  ->  camDistance
+8003F74C  ->  camGetMode
+8003F75C  ->  camSetMode
+8003F79C  ->  camGetNo
+8003F7AC  ->  camSetNo
+8003F7CC  ->  camGetWaterLine
+8003F7E0  ->  camSetWaterLine
+8003F800  ->  camUserViewTick
+8003F9BC  ->  camEnableUserView
+8003FA38  ->  camDisableUserView
+8003FAB4  ->  camIsUserView
+8003FAE4  ->  camSetUserView
+8003FC58  ->  camSetUserViewSpecial
+8003FD58  ->  camGetVisibleUserView
+8003FDDC  ->  camGetUserView
+8003FE30  ->  camGetWindowLimits
+8003FFEC  ->  camSetView
+80040440  ->  camSetScissor
+800405F0  ->  camGetPlayerProjMtx
+80040624  ->  camSetProjMtx
+800408D8  ->  camOrthoYAspect
+800408E4  ->  camStandardOrtho
+800409E4  ->  camStandardPersp
+80040AAC  ->  camSetViewport
+80040B64  ->  camResetView
+80040CE8  ->  camOffsetZero
+80040CF4  ->  camDoSprite
+80040FD0  ->  camDoSpriteDirect
+8004124C  ->  camDo2DSprite
+8004152C  ->  camPushFloatModelMtx
+80041610  ->  camPushMuzzleMtx
+80041760  ->  camScaleModelMtx
+80041820  ->  camPushModelMtx
+80041920  ->  camRestoreModelMtx
+80041940  ->  camPopModelMtx
+80041960  ->  camGetPtr
+8004198C  ->  camGetListPtr
+80041998  ->  camGetInvProjMtx
+800419A4  ->  camGetProjOrgMtx
+800419C0  ->  camGetProjectionMtx
+800419CC  ->  camGetRotationMtx
+800419D8  ->  camProjectPoint
+80041B5C  ->  camReversePoint
+80041C6C  ->  camGetProjZ
+80041CB0  ->  camCopyOrthoMatrix
+80041D6C  ->  camStartShake
+80041E40  ->  camStopShakes
+80041E8C  ->  camScreenShake
+80041FB4  ->  camSetZoom
+80041FEC  ->  camConvertMatrixList
+8004201C  ->  camTick
+80042250  ->  staticcamFree
+8004225C  ->  staticcamAdd
+80042268  ->  staticcamDelete
+8004228C  ->  lobbycamInuse
+8004229C  ->  staticcamInuse
+800422AC  ->  lobbycamGetFocalPoint
+800425F4  ->  lobbycamPosition
+80042AC8  ->  staticcamPosition
+80042B60  ->  joyMessageQ
+80042B6C  ->  joyInit
+80042CB0  ->  joyRead
+80042F60  ->  joyResetMap
+80042F84  ->  joyDisable
+80042F98  ->  joyEnable
+80042FB0  ->  joyCreateMap
+80043050  ->  joyGetController
+80043064  ->  joyGetButtons
+80043090  ->  joyGetPressed
+800430B4  ->  joyGetReleased
+800430D8  ->  joyGetStickX
+8004311C  ->  joyGetAbsX
+80043148  ->  joyGetStickY
+8004318C  ->  joyGetAbsY
+80043234  ->  joySetSecurity
+80043240  ->  joyCharVal
+80043250  ->  levelGetCounts
+80043650  ->  levelNGetType
+80043690  ->  levelGetWorld
+800436D0  ->  levelGetRegionNo
+80043710  ->  levelGetScreenMode
+80043758  ->  levelGetBlurEffect
+800437A0  ->  levelGetGfxIndex
+80043808  ->  levelGetWorldRegions
+800438D4  ->  levelInit
+80043FA8  ->  levelTunePlay
+80044054  ->  levelUpdateColourCycling
+800440F4  ->  levelGetColourCycling
+80044100  ->  levelGetNumber
+80044110  ->  levelGetType
+80044128  ->  levelGetCamera
+80044150  ->  levelGetLevel
+80044160  ->  levelGetName
+800441F8  ->  levelFreeAll
+800442D4  ->  levelGetNextOfWorld
+80044354  ->  levelGetPrevOfWorld
+800443E4  ->  levelInitRegionFlags
+80044438  ->  levelGetRegionFlags
+80044488  ->  levelGetObjectID
+800444D0  ->  levelSetObjectFlag
+80044504  ->  levelObjectFlagSet
+80044570  ->  mainThread
+800446C0  ->  RevealReturnAddresses
+80045110  ->  mainAddZBCheck
+80045208  ->  mainUpdateZBCheck
+80045308  ->  mainGetZBCheck
+80045338  ->  mainCPUeffects
+8004548C  ->  mainSetGameWindow
+800456B4  ->  mainGameWindowChanging
+800456C4  ->  mainGameWindowSize
+80045BCC  ->  mainRestartAfterDeath
+80045E50  ->  mainChangeLevel
+80046028  ->  mainSetAnimGroup
+80046034  ->  mainGetAnimGroup
+80046044  ->  mainChangeCameras
+80046050  ->  mainGetNextCharacter
+80046060  ->  mainGetNextLevel
+80046B00  ->  mainSetAutoSave
+80046B0C  ->  mainSyncNextLevel
+80046B1C  ->  mainSetMode
+80046B28  ->  mainTitlePageInit
+80046BA4  ->  mainFrontInit
+80046C10  ->  mainStartGame
+80046C8C  ->  mainSetDefaultGame
+80046E04  ->  mainIncreaseWeaponKills
+80046E40  ->  mainIncreaseWeaponShots
+80046E7C  ->  mainIncreaseWeaponHits
+80046EB8  ->  mainInitMultiPlayer
+80046F18  ->  mainInitMultiPlayerPoints
+80046FBC  ->  mainRefreshMultiPlayer
+8004707C  ->  mainSetDefaultCharacter
+800471A8  ->  mainGetGame
+800471B8  ->  mainGetGameCharacter
+80047238  ->  mainPlayerCollected
+800472A8  ->  mainPlayerDropped
+8004731C  ->  mainPlayerHas
+80047374  ->  mainAnyoneHas
+800473E0  ->  mainPlayerHasWeapon
+80047428  ->  mainGetGameFlagGamePtr
+8004746C  ->  mainGetGameFlag
+80047498  ->  mainSetGameFlag
+800476CC  ->  mainSetTribalStatus
+800477C8  ->  mainGetTribalStatus
+8004783C  ->  mainSetLevelWorld
+80047894  ->  mainGetPauseMode
+800478A4  ->  mainSetPauseMode
+80047900  ->  mainResetPressed
+80047954  ->  mainGetCurrentLevel
+80047964  ->  mainGameChanged
+80047C80  ->  mainLoadGame
+80047CB0  ->  mainLoadAllGames
+80047CD4  ->  mainGetGameArrayPtr
+80047CE4  ->  mainSaveGame
+80047D18  ->  mainSaveGame2
+80047D5C  ->  mainDeleteGame
+80047D78  ->  mainResetSaveGames
+80047D88  ->  mainEraseFlashRom
+80047D98  ->  mainLoadGlobalFlags
+80047DB4  ->  mainSaveGlobalFlags
+80047DD0  ->  mainPauseDisable
+80047DDC  ->  mainDemoOnly
+80047E00  ->  mainGetNumberOfCameras
+80047E10  ->  mainGetNumberOfPlayers
+80047E80  ->  mainGetPlayerCharacter
+800489A8  ->  mainResetRegion
+80048B30  ->  mainToggleDebug
+80048E00  ->  disableInterrupts
+80048E2C  ->  enableInterrupts
+80048E54  ->  setIntDisFlag
+80048E60  ->  mathMtxXFMF
+80048F00  ->  mathMtxFastXFMF
+80048F7C  ->  mathMtxCatF
+80049084  ->  mathMtxF2L
+80049120  ->  mathSeed
+8004912C  ->  mathRnd
+80049198  ->  fastShortReflection
+80049220  ->  mathSquashY
+8004924C  ->  mathTransY
+80049290  ->  mathRpyXyzMtx
+8004954C  ->  mathRSMtx
+800495DC  ->  mathOneFloatRPY
+80049694  ->  mathOneFloatYPR
+8004974C  ->  mathOneFloatPY
+800497AC  ->  mathXZInTri
+8004989C  ->  mathTranslateMtx
+800498D8  ->  mathScaleMtx
+80049908  ->  mathCosInterp
+8004990C  ->  mathSinInterp
+80049968  ->  mathCos
+8004996C  ->  mathSin
+800499AC  ->  mathBreakPoint
+800499B0  ->  pointListRPY
+80049A98  ->  splinePos
+80049B74  ->  matrixScale
+80049BE8  ->  matrixTranslate
+80049C78  ->  matrixRoll
+80049D30  ->  matrixPitch
+80049DE8  ->  matrixYaw
+80049EA0  ->  matrixID
+80049EEC  ->  Powerf
+80049F30  ->  Cosf
+80049F34  ->  Sinf
+80049F84  ->  Arctanf
+8004A080  ->  mathDiffAngle
+8004A0C0  ->  matrix_SCL_RPY_XYZ
+8004A208  ->  matrix_RPY_XYZ
+8004A314  ->  matrix_XYZ_YPR_SCL
+8004A4A0  ->  matrix_XYZ_YPR
+8004A5FC  ->  matrixTransposeVectorMultiply
+8004A6D0  ->  mmInit
+8004A748  ->  mmExtended
+8004A758  ->  mmAllocRegion
+8004A89C  ->  mmAlloc
+8004A92C  ->  mmAlloc2
+8004AB0C  ->  mmAllocR
+8004AB74  ->  mmAllocAtAddr
+8004AD8C  ->  mmSetDelay
+8004AE1C  ->  mmFree
+8004AE7C  ->  mmFreeTick
+8004B260  ->  mmGetSlotPtr
+8004B278  ->  mmGetDelay
+8004B390  ->  mmAlign16
+8004B3AC  ->  mmAlign4
+8004B3C8  ->  mmSlotPrint
+8004B440  ->  nosMotorStop
+8004B568  ->  nosMotorStart
+8004B7EC  ->  nosMotorInit
+8004B960  ->  rumbleProcessing
+8004B99C  ->  rumbleStart
+8004BA94  ->  rumbleStop
+8004BB0C  ->  rumbleAlter
+8004BC34  ->  rumbleMax
+8004BD64  ->  rumbleKill
+8004BD98  ->  rumbleUpdate
+8004BDA8  ->  rumbleTick
+8004C260  ->  rumbleGetRumble
+8004C2D8  ->  packLoadCharacter
+8004C428  ->  packSaveCharacter
+8004C658  ->  packLoadGameEprom
+8004C77C  ->  packSaveGameEprom
+8004C828  ->  packClearGameEprom
+8004C8EC  ->  packEraseEprom
+8004C9E0  ->  packLoadGlobalFlagsEprom
+8004CA58  ->  packSaveGlobalFlagsEprom
+8004CAA0  ->  flashROMInit
+8004CBF4  ->  packOpen
+8004CE04  ->  packClose
+8004CE30  ->  packInit
+8004D00C  ->  packIsPresent
+8004D064  ->  packRepair
+8004D0F0  ->  packFormat
+8004D18C  ->  packDirectory
+8004D484  ->  packDirectoryFree
+8004D4B4  ->  packFreeSpace
+8004D5CC  ->  packDeleteFile
+8004D684  ->  packCopyFile
+8004D7B8  ->  packOpenFile
+8004D8E0  ->  packReadFile
+8004D9A4  ->  packWriteFile
+8004DBF4  ->  packFileSize
+8004DE40  ->  piInit
+8004DEEC  ->  piRomLoad
+8004DF94  ->  piRomLoadCompressed
+8004E0A0  ->  piRomLoadSection
+8004E120  ->  piRomGetSectionPtr
+8004E168  ->  piRomGetFileSize
+8004E1B0  ->  romCopy
+8004E280  ->  prnBorder
+8004E550  ->  rcpFast3d
+8004E7F0  ->  rcpWaitDP
+8004E8C4  ->  rcpSetScreenColour
+8004E8EC  ->  rcpSetBorderColour
+8004E92C  ->  rcpClearZBuffer
+8004EB04  ->  rcpClearScreen
+8004EE78  ->  rcpInitDp
+8004EF28  ->  rcpInitDpNoSize
+8004EF4C  ->  rcpInitSp
+8004EF70  ->  rcpInit
+8004F028  ->  rcpMosaicClear
+8004F64C  ->  rcpCheckClear
+8004F8FC  ->  rcpTileWrite
+8004FB6C  ->  rcpTileWriteX
+80050240  ->  osCreateScheduler
+8005039C  ->  osScAddClient
+80050400  ->  osScRemoveClient
+80050490  ->  osScGetCmdQ
+80050498  ->  osScGetInterruptQ
+800504A0  ->  osScGetAudioSPStats
+8005152C  ->  __scTaskReady
+80051A10  ->  segSetBase
+80051A50  ->  squadsIsTribal
+80051AC4  ->  squadsGetSquadronList
+80051AE0  ->  BaddyTypeToIndex
+80051DAC  ->  CreateStaticInstance
+80051F50  ->  squadsRememberRomdef
+80051F84  ->  AddToDisactivatedSquaddies
+80051FD4  ->  GetFirstDisactivatedSquaddie
+80052054  ->  squadsInitialiseBeforeObjects
+800520B8  ->  GetSquadronFromIdentifier
+8005213C  ->  GetSquaddieFromIdentifiers
+80052204  ->  squadsCheckEnemyPointers
+80052294  ->  squadsCheckGrenades
+80052320  ->  GetFormationInfo
+800524B4  ->  ProcessNodeChange
+80052AD8  ->  squadsInitialiseAfterObjects
+800532AC  ->  squadsInit
+800532D0  ->  squadsPreInit
+80053368  ->  squadsAddInterestingEvent
+800533CC  ->  CopyStaticsToKernel
+80053430  ->  GetSymbolName
+8005393C  ->  runlinkDownloadCode
+80053E08  ->  runlinkEnsureJumpIsValid
+80053FAC  ->  runlinkIsModuleLoaded
+80054068  ->  runlinkFreeCode
+80054570  ->  runlinkFlushModules
+8005461C  ->  runlinkInitialise
+80054880  ->  runlinkSuspendCode
+8005495C  ->  runlinkResumeCode
+80054D68  ->  runlinkResumeAll
+80054DCC  ->  runlinkSetDestructTimer
+80054E20  ->  runlinkTick
+80054EE0  ->  runlinkLowMemoryPanic
+80054F84  ->  runlinkGetAddressInfo
+80055150  ->  TrapDanglingJump
+80055330  ->  viInit
+80055458  ->  viChangeMode
+80055748  ->  viAllocateZBuffer
+800557A0  ->  viFreeZBuffer
+800557EC  ->  viSetTiming
+80055984  ->  viGetCurrentSize
+800559D4  ->  viConvertXY
+80055A58  ->  viGetScaleXY
+80055A74  ->  viFrameRateReset
+80055AA0  ->  viFrameSync
+80055C64  ->  viGetVideoMode
+80055C7C  ->  viGetWideAdjust
+80055C8C  ->  viSetWideAdjust
+80055CCC  ->  viSetTrippleBuffer
+80055CDC  ->  viGetTrippleBuffer
+80055CEC  ->  viChangeBuffers
+80055D0C  ->  viNoClear
+80055D18  ->  viDisplayingScreen0
+80055F80  ->  texInitTextures
+8005611C  ->  texDisableModes
+80056138  ->  texEnableModes
+80056154  ->  texModelTextureLoad
+80056164  ->  texLoadTexture
+800564B4  ->  texFreeTexture
+8005656C  ->  texGetTextureNum
+800565C0  ->  texLoadTextureAddr
+800565E8  ->  setTexMemColour
+800565F4  ->  texFrame
+80056634  ->  texDPInit
+800566B4  ->  texDPTextureX
+80056AB4  ->  sprSetTextureFilter
+80056AC0  ->  sprSetIA2ColOverride
+80056B18  ->  sprClearIA2ColOverride
+80056B24  ->  sprDPset
+8005724C  ->  texLoadSprite
+800576C8  ->  texFreeSprite
+8005825C  ->  texAnimateSprite
+800584C4  ->  texAnimateTexSprite
+80058508  ->  texAnimateTexture
+800587A0  ->  initColourCycle
+800587D0  ->  resetColourCycle
+8005880C  ->  updateColourCycle
+800589F4  ->  resetMixCycle
+80058A40  ->  updateMixCycle
+80058B80  ->  screenLoad
+80058CC4  ->  screenDraw
+80058F20  ->  setLanguage
+80059050  ->  initFront
+800591A0  ->  frontFreeMode
+8005931C  ->  frontInitMode
+800594A0  ->  frontSetMode
+8005950C  ->  frontGetMode
+8005951C  ->  frontUpdate
+80059704  ->  frontDemoMessage
+8005980C  ->  frontInstruments
+80059928  ->  frontUpdateTimer
+800599A0  ->  frontPrintNum
+8005A0A4  ->  frontDrawRectangles
+8005A2C4  ->  frontDrawRectangle
+8005A314  ->  frontFlashScreen
+8005A3E8  ->  frontPlayerScreenLimits
+8005A77C  ->  freeFrontEndList
+8005A7DC  ->  freeFrontEndItem
+8005A8CC  ->  loadFrontEndList
+8005A92C  ->  loadFrontEndItem
+8005AA98  ->  setupFrontEndList
+8005AAF8  ->  setupFrontEndObject
+8005AB80  ->  frontDrawObj
+8005AFCC  ->  frontSetupMultiPickup
+8005B244  ->  frontGameSelected
+8005B24C  ->  frontGetWorldLevel
+8005B254  ->  frontGetWorldName
+8005B280  ->  frontGetLanguage
+8005B290  ->  frontSetLanguage
+8005B2B4  ->  frontGetScreenMode
+8005B2E4  ->  frontSetScreenMode
+8005B374  ->  frontStoreScreenMode
+8005B388  ->  frontRecallScreenMode
+8005B398  ->  frontGetLevelScreenMode
+8005B400  ->  frontGetWideAdjust
+8005B410  ->  frontSetWideAdjust
+8005B43C  ->  frontGetStereoMode
+8005B44C  ->  frontSetStereoMode
+8005B494  ->  frontGetSfxVolume
+8005B4A4  ->  frontSetSfxVolume
+8005B4E0  ->  frontGetBgmVolume
+8005B4F0  ->  frontSetBgmVolume
+8005B52C  ->  frontGet2PlayerSplit
+8005B544  ->  frontSet2PlayerSplit
+8005B568  ->  frontGetTargetControl
+8005B580  ->  frontSetTargetControl
+8005B5A0  ->  initWeather
+8005B6A4  ->  setWeatherLimits
+8005B6F8  ->  freeWeather
+8005B830  ->  setupWeather
+8005BC60  ->  changeWeather
+8005BE6C  ->  doWeather
+8005C998  ->  rainSetFog
+8005CA64  ->  rainDensity
+8005D900  ->  partFreeLib
+8005F738  ->  partInitTrigger
+8005F7F4  ->  partInitTriggerSPPos
+8005F844  ->  partInitTriggerPos
+8005FF94  ->  partObjFreeTriggers
+80060040  ->  partAdjustScaling
+8006004C  ->  partUpdateTriggers
+80060D60  ->  partModelObjEmitModelPart
+80063DDC  ->  partUpdateParticles
+800641B4  ->  partDraw
+800642B0  ->  memset
+800642E4  ->  _itoa
+800643AC  ->  sprintfSetSpacingCodes
+800643B8  ->  sprintf
+800643E4  ->  vsprintf
+8006576C  ->  diPrintfInit
+800657C0  ->  diPrintf
+8006585C  ->  diPrintfAll
+80065ACC  ->  diPrintfSetCol
+80065B74  ->  diPrintfSetBG
+80065C1C  ->  diPrintfSetXY
+800666B0  ->  diRcpTraceInit
+800666F4  ->  diRcpTraceReset
+80066720  ->  diRcpTrace
+800667F8  ->  diRcpTraceGetInfo
+80066950  ->  diRcpPrintDL
+80067550  ->  diCpuTraceInit
+80067920  ->  diCpuReportWatchpoint
+800679C4  ->  diCpuLogMessage
+80067BD4  ->  diCpuTraceMallocFault
+80067C60  ->  diCpuTraceGetFault
+80067C68  ->  diCpuTraceTick
+80068610  ->  cpuXYPrintf
+800686F4  ->  __rmonSendFault
+80068760  ->  diCpuTraceCurrentStack
+80068770  ->  fxInitLevelEffects
+800687B4  ->  fxAddLevelEffect
+80068B94  ->  fxClearLevelEffects
+80068BF8  ->  fxLevelFreeLevelEffects
+80068C58  ->  fxLevelAllocateLevelEffects
+80068D84  ->  fxUpdateLevelEffects
+80068E74  ->  fxDrawLevelEffects
+80069118  ->  fxFreeCone
+80069178  ->  fxAllocateCone
+800697EC  ->  fxMakeConeTextureCoords
+80069CBC  ->  fxMakeConeLength
+80069F08  ->  fxDrawCone
+8006A3E0  ->  wakeAllocate
+8006A9F4  ->  wakeSetupRipple
+8006ABD8  ->  wakeFree
+8006AC18  ->  wakeFreeRipple
+8006AC68  ->  wakeUpdate
+8006B3D4  ->  wakeUpdateRipple
+8006B710  ->  wakeDraw
+8006B9E0  ->  wakeDrawRipple
+8006BC08  ->  fxInit
+8006BCA0  ->  disableClearScreen
+8006BCB0  ->  enableClearScreen
+8006BCBC  ->  fxFadeOn
+8006BD08  ->  setupClearScreen
+8006BF64  ->  updateClearScreen
+8006C084  ->  drawClearScreen
+8006D408  ->  fxInitLines
+8006D440  ->  fxDrawLine
+8006D950  ->  fxDrawLineInWindow
+8006D9C4  ->  fxSetClipWindow
+8006D9D0  ->  fxTinyPrint
+8006DAD0  ->  fxInttostr
+8006DBB4  ->  ClipPoint
+8006DC50  ->  fxDrawLine3D
+8006E088  ->  PlotAddRGB
+8006E154  ->  PlotAddRG
+8006E730  ->  fxDrawDigitalNumber
+8006E7F4  ->  fxOutputLines
+8006F574  ->  fxInitNightVision
+8006F5AC  ->  fxFreeNightVision
+8006F5D4  ->  fxNightVision
+8006F5E4  ->  fxDrawNightVision
+8006F7FC  ->  fxNightVisionSkip
+8006F808  ->  fxSPDPRipple
+8006FBA8  ->  fxQueueScreenEffect
+8006FC24  ->  fxUnQueueScreenEffect
+8006FCD4  ->  fxScreenEffect
+80070068  ->  fxGenerateTextures
+8007011C  ->  fxCpuTextureRequired
+8007029C  ->  fxCpuTextureFlush
+80070370  ->  fontSetWindow0
+80070394  ->  fontSetButtonMode
+800703A0  ->  fontSetWindowNoise
+800703D4  ->  fontUseFont
+800703E8  ->  fontColour
+8007040C  ->  fontBackground
+80070428  ->  fontPrintXY
+8007046C  ->  fontPrintWindowXY
+80070E54  ->  fontStringWidth
+80070F0C  ->  fontWindowSize
+80070FAC  ->  fontWindowUseFont
+80070FC8  ->  fontWindowColour
+80071008  ->  fontWindowFontColour
+80071050  ->  fontWindowFontBackground
+80071090  ->  fontWindowAddStringXY
+80071378  ->  fontWindowFlushStrings
+800713CC  ->  fontWindowEnable
+800713F8  ->  fontWindowDisable
+80071424  ->  fontStringAddNumber
+800714E8  ->  fontWindowsDraw
+8007162C  ->  fontWindowDraw
+80071D68  ->  fontCreateDisplayList
+8007287C  ->  fontConvertString
+800728EC  ->  fontGetLine
+80072A8C  ->  fontYSpacing
+80072AB0  ->  osCreatePiManager
+80072C20  ->  rzipInit
+80072C5C  ->  rzipUncompressSize
+80072C8C  ->  rzipUncompressSizeROM
+80072CC8  ->  rzipUncompress
+80072D24  ->  huft_build
+80073370  ->  inflate_block
+80073474  ->  inflate_dynamic
+8007388C  ->  inflate_fixed
+800739E4  ->  inflate_stored
+80073AF0  ->  inflate_codes
+80073DF0  ->  subtitlesInit
+80073ED8  ->  subtitlesFree
+80073F2C  ->  subtitlesEnable
+8007435C  ->  subtitlesTick
+80074494  ->  subtitleStart
+800745F0  ->  __osLeoInterrupt
+80074600  ->  gen_anim_data
+800755D0  ->  conv_mult_matrix
+800757A0  ->  __osExceptionPreamble
+800757B0  ->  __osException
+80075D30  ->  send_mesg
+80075DE4  ->  handle_CpU
+80075E18  ->  __osEnqueueAndYield
+80075F30  ->  __osEnqueueThread
+80075F78  ->  __osPopThread
+80075F88  ->  __osDispatchThread
+80076144  ->  __osCleanupThread
+80076150  ->  osCreateThread
+80076240  ->  guPerspectiveF
+800763C0  ->  refractOutputAssembler
+80076AFC  ->  animseqInitPath
+80076E28  ->  animseqResetPath
+80076F6C  ->  animseqStartPath
+8007700C  ->  animseqStopPath
+800770A8  ->  animseqHoldPath
+8007715C  ->  animseqLockPath
+8007719C  ->  animseqUnLockPath
+800771DC  ->  animseqSndPlay
+8007725C  ->  animseqSndStop
+800774EC  ->  animseqLinkNodes
+80077620  ->  animseqInit
+800777E0  ->  animseqFreeLevelData
+80077824  ->  animseqLoadLevelData
+800778D8  ->  animseqFreeGroup
+80077A44  ->  animseqSetupGroup
+80077B2C  ->  animseqInitGroup
+80077B6C  ->  animseqResetGroup
+80077D94  ->  animseqUpdate
+8007823C  ->  animseqProcessCommandList
+80079EB8  ->  animseqCamera
+80079F58  ->  animseqGetPathNumbers
+8007A0CC  ->  animseqWhichPathHasObject
+8007A194  ->  animseqGetFirstFreeIndex
+8007A1D0  ->  animseqPlay
+8007A1E0  ->  animseqPause
+8007A1F0  ->  hitInit
+8007A240  ->  hitReset
+8007A2E4  ->  hitFree
+8007A33C  ->  hitInitObjectHit
+8007AB54  ->  hitUpdate
+8007BEA4  ->  hitsCheckLineOfSight
+8007C008  ->  hitVectorHitCheck
+8007C1D8  ->  hitPlayerAimCheck
+8007C7F0  ->  hitVectorCheck
+8007E5A8  ->  hitPlayer
+8007E780  ->  hitPlayerKilledPlayer
+8007E8DC  ->  hitGetHitModels
+8007E8F8  ->  hitModelInit
+8007E95C  ->  hitModelsTick
+8007EE38  ->  hitTransformBox
+8007EFC4  ->  hitMakePolylist
+8007F6D8  ->  hitPolyPlaneTest
+80080064  ->  hitPolyEdgeTest
+80080A4C  ->  hitPolyEdgeBuffer
+80080E4C  ->  hitNearestIntersection
+80081A10  ->  hitGetLedgeCrossed
+80082070  ->  hitGetAdjacentLedge
+800824D0  ->  hitCrateCheck
+80082690  ->  hitSquashCheck
+80083138  ->  hitGetHeights
+80083998  ->  hitGetModCompareMask
+80083CCC  ->  hitGetInelasticVelocity
+80083E40  ->  fmvInit
+80083EA0  ->  osFlashReInit
+80083EF0  ->  osFlashInit
+80083FE0  ->  osFlashReadStatus
+80084070  ->  osFlashReadId
+80084144  ->  osFlashClearStatus
+80084190  ->  osFlashAllErase
+80084260  ->  osFlashSectorErase
+80084338  ->  osFlashWriteBuffer
+800843BC  ->  osFlashWriteArray
+80084490  ->  osFlashReadArray
+80084550  ->  osBootRamTest1_6105
+80084594  ->  osBootRamTest2_6105
+800845E0  ->  gsSndpNew
+80085DEC  ->  getSoundStateCounts
+80086264  ->  gsSndpSetPriority
+8008628C  ->  gsSndpGetState
+800862BC  ->  ad_sndp_play
+800865A4  ->  gsSndpStop
+800866E0  ->  gsSndpStopAll
+80086708  ->  gsSndpStopAllRetrigger
+80086730  ->  gsSndpStopAllLooped
+80086758  ->  gsSndpSetParam
+800867D4  ->  gsSndpGetMasterVolume
+80086800  ->  gsSndpSetMasterVolume
+800868E0  ->  gsSndpSetGlobalVolume
+80086908  ->  gsSndpGetGlobalVolume
+80086924  ->  gsSndpLimitVoices
+80086970  ->  n_alCSPSetVol
+800869C0  ->  n_alCSPGetTempo
+80086A10  ->  n_alCSPNew
+80089B50  ->  __n_CSPPostNextSeqEvent
+80089BE4  ->  n_alCSPVoiceLimit
+80089C00  ->  __n_unmapVoice
+80089CC0  ->  __n_seqpReleaseVoice
+80089E34  ->  __n_voiceNeedsNoteKill
+80089F54  ->  __n_mapVoice
+8008A018  ->  __n_lookupVoice
+8008A0A8  ->  __n_lookupSoundQuick
+8008A220  ->  __n_vsVol
+8008A348  ->  __n_vsMix
+8008A450  ->  __n_vsDelta
+8008A494  ->  __n_vsPan
+8008A520  ->  __n_initFromBank
+8008A608  ->  __n_initChanState
+8008A694  ->  __n_resetPerfChanState
+8008A8E4  ->  __n_setInstChanState
+8008AC20  ->  __n_seqpStopOsc
+8008AD60  ->  n_alSynRemovePlayer
+8008AE30  ->  n_alSynAddPlayer
+8008AEA0  ->  n_alSynAddSndPlayer
+8008AF10  ->  n_alSynAddSeqPlayer
+8008AF80  ->  n_alCSPSetChlVol
+8008AFF0  ->  n_alCSPSetTempo
+8008B080  ->  n_alCSPSetChlPan
+8008B0F0  ->  n_alCSeqNew
+8008B270  ->  n_alCSeqNextEvent
+8008B820  ->  n_alCSeqGetTicks
+8008BAC0  ->  n_alCSPSetSeq
+8008BB10  ->  n_alCSPPlay
+8008BB50  ->  n_alCSPStop
+8008BB90  ->  n_alCSPSetMessageQ
+8008BBA4  ->  n_alCSPSetMessage
+8008BC0C  ->  n_alCSPSetChanMessage
+8008BC40  ->  n_alInit
+8008BCAC  ->  n_alClose
+8008BD00  ->  alHeapInit
+8008BD24  ->  alHeapDBAlloc
+8008BDB0  ->  alLink
+8008BDE4  ->  alUnlink
+8008BE30  ->  n_alSynNew
+8008C410  ->  n_alAudioFrame
+8008C634  ->  __n_allocParam
+8008C694  ->  _n_freeParam
+8008C6C0  ->  _n_collectPVoices
+8008C72C  ->  _n_freePVoice
+8008C7D0  ->  _n_timeToSamples
+8008C8B0  ->  alCents2Ratio
+8008C950  ->  alSurround_OutputType
+8008CA24  ->  alSurround_ReverbSetup
+8008CB60  ->  n_alEvtqNew
+8008CBFC  ->  n_alEvtqNextEvent
+8008CCA0  ->  n_alEvtqPostEvent
+8008CE20  ->  n_alEvtqPostExternEvent
+8008D008  ->  n_alEvtqFlushType
+8008D0E0  ->  n_alSynAllocVoice
+8008D3F0  ->  n_alSynSetVol
+8008D4C0  ->  n_alSynStartVoiceParams
+8008D5F0  ->  n_alSynSetPan
+8008D6A0  ->  n_alSynSetPitch
+8008D750  ->  n_alSynSetFXMix
+8008D800  ->  n_alSynStopVoice
+8008D8A0  ->  n_alSynFreeVoice
+8008D980  ->  n_alCSPAllChanOn
+8008DA18  ->  n_alCSPChanOff
+8008DA60  ->  n_alCSPChanOn
+8008DAC8  ->  n_alCSPChanFade
+8008DB18  ->  n_alCSPChanSurround
+8008DB68  ->  n_alCSPChanFadeForce
+8008DBC0  ->  n_alSynSetLpf_freq
+8008DC70  ->  n_alSynSetLpf_gain
+8008DE84  ->  n_alFxInitlpfilter
+8008DFD4  ->  alSemitones2Ratio
+8008E068  ->  n_alFxInitlpfilter_mono
+8008E254  ->  n_alFxNew
+8008E818  ->  alN_PVoiceNew
+8008EA30  ->  n_alSynGetFXRef
+8008EAA8  ->  n_alSynGetOutputLPRef
+8008EB20  ->  n_alSynSetFXParam
+8008EB64  ->  n_alSynSetOutputLPParam
+8008EC20  ->  n_alSynSetDistort
+8008ECD0  ->  __alCSeqNextDelta
+8008EDB0  ->  n_alSynSetPriority
+8008EDD0  ->  n_alSynDelete
+8008EDF0  ->  n_alSynAllocFX
+8008EE80  ->  n_alFxPull
+8008F6C0  ->  n_alFxParamHdl
+8008FBE0  ->  _n_loadOutputBuffer
+8008FEF8  ->  _n_loadBuffer
+800900F0  ->  _n_saveBuffer
+800902CC  ->  _n_filterBuffer
+800903CC  ->  _doModFunc
+80090490  ->  n_alSavePull
+80090530  ->  n_alEnvmixerPull
+80090E54  ->  n_alEnvmixerParam
+80091520  ->  n_alCSPSendMidi
+800915A0  ->  atan2f
+800917A0  ->  n_alAuxBusPull
+80091C90  ->  n_alMainBusPull
+80092000  ->  n_alAdpcmPull
+800926AC  ->  n_alLoadParam
+80092B50  ->  n_alLPFilterPull
+80092E48  ->  n_alLPFilterParam
+80092F70  ->  acosf
+80093050  ->  n_alResamplePull
+80093294  ->  n_alResampleParam
+800932F0  ->  tableval
+800933F0  ->  acoss
+80093468  ->  asins
+80093500  ->  osGetCount
+80093550  ->  osRecvMesg
+80093690  ->  osAiSetFrequency
+800937F0  ->  osCreateMesgQueue
+80093820  ->  osStartThread
+80093970  ->  osStopThread
+80093A30  ->  osAiSetNextBuffer
+80093AE0  ->  osVirtualToPhysical
+80093B60  ->  osSendMesg
+80093CB0  ->  osAiGetLength
+80093CC0  ->  osPiStartDma
+80093D80  ->  sqrtf
+80093D90  ->  __sinf
+80093D90  ->  fsin
+80093D90  ->  sinf
+80093F50  ->  __d_to_ll
+80093F6C  ->  __f_to_ll
+80093F88  ->  __d_to_ull
+80094028  ->  __f_to_ull
+800940C4  ->  __ll_to_d
+800940DC  ->  __ll_to_f
+800940F4  ->  __ull_to_d
+80094128  ->  __ull_to_f
+80094160  ->  osInitialize
+80094440  ->  osSetThreadPri
+80094520  ->  osSetEventMesg
+80094590  ->  osContInit
+80094788  ->  __osContGetInitData
+80094858  ->  __osPackRequestData
+80094950  ->  osContStartReadData
+80094A14  ->  osContGetReadData
+80094BB0  ->  osViBlack
+80094C20  ->  __osSpSetStatus
+80094C30  ->  osDpSetStatus
+80094C40  ->  osWritebackDCache
+80094CC0  ->  osInvalICache
+80094D40  ->  osSetTime
+80094D70  ->  osPfsIsPlug
+80094F10  ->  __osPfsRequestData
+8009500C  ->  __osPfsGetInitData
+800950E0  ->  __osSiCreateAccessQueue
+80095130  ->  __osSiGetAccess
+80095174  ->  __osSiRelAccess
+800951A0  ->  __osSiRawStartDma
+80095250  ->  __osContAddressCrc
+80095300  ->  __osContDataCrc
+800953D0  ->  __osContRamWrite
+80095780  ->  __osContRamRead
+80095B30  ->  _bcmp
+80095B30  ->  bcmp
+80095C50  ->  memcpy
+80095C7C  ->  strlen
+80095CA4  ->  strchr
+80095CF0  ->  osCartRomInit
+80095E50  ->  osInvalDCache
+80095F00  ->  osPfsFreeBlocks
+80096050  ->  osPfsInit
+80096104  ->  __osPfsGetStatus
+80096210  ->  osPfsChecker
+800968D4  ->  corrupted_init
+80096A88  ->  corrupted
+80096C70  ->  osPfsReFormat
+80097070  ->  osPfsNumFiles
+800971C0  ->  _blkclr
+800971C0  ->  _bzero
+800971C0  ->  blkclr
+800971C0  ->  bzero
+80097260  ->  osPfsFileState
+80097550  ->  osPfsDeleteFile
+80097830  ->  __osPfsReleasePages
+80097A68  ->  __osBlockSum
+80097B60  ->  osPfsFindFile
+80097E1C  ->  osPfsReadWriteFile
+80098220  ->  osPfsAllocateFile
+800986A4  ->  __osPfsDeclearPage
+800989D0  ->  osWritebackDCacheAll
+80098A00  ->  osCreateViManager
+80098D10  ->  osViSetMode
+80098D80  ->  osViSetEvent
+80098DF0  ->  osSetIntMask
+80098FAC  ->  osSpTaskLoad
+8009910C  ->  osSpTaskStartGo
+80099150  ->  osSpTaskYielded
+800991D0  ->  osViGetCurrentFramebuffer
+80099210  ->  osViGetNextFramebuffer
+80099250  ->  osDpSetNextBuffer
+80099300  ->  osGetTime
+80099390  ->  osSpTaskYield
+800993B0  ->  osViSetSpecialFeatures
+80099570  ->  osViSwapBuffer
+800995C0  ->  __ull_rshift
+800995EC  ->  __ull_rem
+80099628  ->  __ull_div
+80099664  ->  __ll_lshift
+80099690  ->  __ll_rem
+800996CC  ->  __ll_div
+80099728  ->  __ll_mul
+80099758  ->  __ull_divremi
+800997B8  ->  __ll_mod
+80099854  ->  __ll_rshift
+80099880  ->  __osGetActiveQueue
+80099890  ->  _bcopy
+80099890  ->  bcopy
+80099BA0  ->  __osPiCreateAccessQueue
+80099BF0  ->  __osPiGetAccess
+80099C34  ->  __osPiRelAccess
+80099C60  ->  osGetThreadPri
+80099C80  ->  __osDisableInt
+80099CA0  ->  __osRestoreInt
+80099CC0  ->  __osPiRawStartDma
+80099D90  ->  __osEPiRawStartDma
+80099F70  ->  __osDevMgrMain
+8009A380  ->  __osDequeueThread
+8009A3C0  ->  osDestroyThread
+8009A4C0  ->  osEPiLinkHandle
+8009A510  ->  osEPiWriteIo
+8009A560  ->  osEPiReadIo
+8009A5B0  ->  osEPiStartDma
+8009A664  ->  osSyncPrintf
+8009A6B0  ->  __osViInit
+8009A800  ->  __osAiDeviceBusy
+8009A830  ->  __osProbeTLB
+8009A8F0  ->  osJamMesg
+8009AA40  ->  osPiGetCmdQueue
+8009AA70  ->  __osSetSR
+8009AA80  ->  __osGetSR
+8009AA90  ->  __osSetFpcCsr
+8009AAA0  ->  __osSiRawReadIo
+8009AAF0  ->  __osSiRawWriteIo
+8009AB40  ->  osUnmapTLBAll
+8009AB90  ->  osMapTLBRdb
+8009ABF0  ->  __osGetCause
+8009AC00  ->  osSetTimer
+8009ACE0  ->  __osTimerServicesInit
+8009AD6C  ->  __osTimerInterrupt
+8009AEE4  ->  __osSetTimerIntr
+8009AF58  ->  __osInsertTimer
+8009B0E0  ->  __osSiDeviceBusy
+8009B110  ->  __osSumcalc
+8009B16C  ->  __osIdCheckSum
+8009B1D4  ->  __osRepairPackId
+8009B5EC  ->  __osCheckPackId
+8009B784  ->  __osGetId
+8009B9E0  ->  __osCheckId
+8009BADC  ->  __osPfsRWInode
+8009BDFC  ->  __osPfsSelectBank
+8009BE70  ->  __osViGetCurrentContext
+8009BE80  ->  __osViSwapContext
+8009C1E0  ->  __osSpSetPc
+8009C220  ->  __osSpRawStartDma
+8009C2B0  ->  __osSpDeviceBusy
+8009C2E0  ->  __osSpGetStatus
+8009C2F0  ->  __osDpDeviceBusy
+8009C320  ->  __osResetGlobalIntMask
+8009C380  ->  __osEPiRawWriteIo
+8009C4E0  ->  __osEPiRawReadIo
+8009C640  ->  __osSetGlobalIntMask
+8009C690  ->  osYieldThread
+8009CD50  ->  _Printf
+8009D3A0  ->  __osSetCompare
+8009D3B0  ->  _Litob
+8009DBC0  ->  _Ldtob
+8009E110  ->  lldiv
+8009E210  ->  ldiv
+
+---------------------- functions (overlay id: 1)
+00120  ->  dropletFreeLib
+00188  ->  dropletAdd
+002A0  ->  dropletUpdate
+00600  ->  dropletUpdateAll
+00978  ->  dropletDrawAll
+00C0C  ->  _AutoExit00001
+
+---------------------- functions (overlay id: 2)
+00000  ->  refractInit
+00148  ->  refractFreeAll
+0017C  ->  _AutoExit00002
+0019C  ->  CreateRefractTask
+00788  ->  refractTick
+00824  ->  refractOutput
+03FE8  ->  Skips
+
+---------------------- functions (overlay id: 3)
+00000  ->  RecceNodeMover
+03340  ->  squadsSetupFirstNodes
+03400  ->  squadsPlaceOnAnimObject
+03DB0  ->  GetRange2D
+03DF8  ->  GetRangeSquared2D
+03E20  ->  DoLinesIntersect
+041F0  ->  TryToSetMission
+04328  ->  ClearMissionFields
+043B8  ->  GetAnimData
+04C98  ->  TryToSetAnim
+04E54  ->  TryToSetAnimByIndex
+04F18  ->  TryToUpdateAnim
+050BC  ->  UpdateOrSetAnim
+05354  ->  squadsGetClosestPlayer
+053E0  ->  squadsPrepareToProcessSquaddie
+0562C  ->  GetRegion
+05664  ->  GetRegionIndex
+05684  ->  WhichRegionIsPointIn
+0575C  ->  IsPointInSibling
+05834  ->  SquaddieLightAndAnimate
+06038  ->  squadsGetChildPolyPosition
+066F0  ->  squadsGetLoudestEvent
+06CC4  ->  squadsGetFormationPosition
+07974  ->  GetSmoothAcceleration
+07B48  ->  GetLockObject
+07BB4  ->  GetThrowElevation
+07E24  ->  squadsFireWeapon
+0981C  ->  TidyLinkedList
+09990  ->  RemoveSquaddie
+09F6C  ->  squadsKillSquaddie
+0A08C  ->  AIPointControl
+0BFB4  ->  SquaddieBodyPartHit
+0C218  ->  CheckLineOfSight
+0C994  ->  DoesSquaddieWantToFire
+0CC24  ->  BTSBStandardFire
+0CE98  ->  SetSquaddieOnFire
+0D02C  ->  squadsElectrocuteSquaddie
+0D1B8  ->  GetBaddyData
+0DE7C  ->  SquaddieInitFromRomdef
+0EA2C  ->  SquaddieGetTiltList
+0FFCC  ->  squadsDecapitateSquaddie
+10434  ->  squadsPlayerShootsSquaddie
+104EC  ->  SquaddieControl
+13DCC  ->  SquaddieAnimEventHandler
+147B4  ->  SquaddieInit
+147F0  ->  squadsAddToActiveSquaddies
+14D84  ->  SquadronControl
+15C20  ->  GetAttachObject
+15E6C  ->  BindRegionsToObjects
+15F10  ->  squadsInitAIArrays
+16568  ->  squadsFreePatrolRegions
+16610  ->  _AutoExit00003
+166E4  ->  DoSquaddiesCollide
+16788  ->  squadsTidyEventList
+167D8  ->  ReallyAddInterestingEvent
+16910  ->  squadsMakeTargetList
+169C8  ->  squadsModuleTick
+16C20  ->  squadsSaveTribal
+16CA8  ->  AIJunctionControl
+16D6C  ->  squadsLowMemoryPanic
+16EE0  ->  CopyStaticsToSquads
+16F38  ->  IsPointInRegion
+175DC  ->  DoesLineCrossRegion
+17904  ->  IsPointInRegionIdx
+17940  ->  DoesLineCrossRegionIdx
+179A4  ->  squadsChangeLevel
+179D4  ->  _AutoInit00003
+
+---------------------- functions (overlay id: 4)
+00000  ->  cloneSetupShadow
+001BC  ->  cloneTasksQueueAndWait
+002B8  ->  cloneDelete
+0036C  ->  cloneShadowCreate
+
+---------------------- functions (overlay id: 5)
+00000  ->  starfieldActive
+00010  ->  starfieldFree
+0004C  ->  starfieldInit
+00434  ->  starfieldMove
+0050C  ->  starfieldDrawSP
+00708  ->  rainActive
+00718  ->  rainFree
+0074C  ->  rainInit
+00A58  ->  rainMove
+00BF8  ->  rainSetDraw
+00C04  ->  rainDraw
+
+---------------------- functions (overlay id: 6)
+00000  ->  instDrawHealth
+00C74  ->  instInitHealthMeter
+00EFC  ->  instFreeHealthMeter
+00F30  ->  instGetPos
+0107C  ->  instSpriteToScreenCoord
+010D8  ->  instScreenToSpriteCoord
+01134  ->  instInitMsgQueues
+011C8  ->  instQueueMsg
+0126C  ->  instLockMsg
+01298  ->  instUnlockMsg
+012BC  ->  instMsgQueueTick
+015C8  ->  frontSetInstrumentsHide
+015D4  ->  frontGetTime
+01794  ->  frontGetHourTime
+01980  ->  insthealthmeterpolys
+01A40  ->  insthealthmetervtxs
+01A44  ->  fourplayercoordinates
+01A54  ->  twoplayercoordinates
+01A64  ->  twoplayerwidecoordinates
+01A74  ->  playeroffsets
+01AF0  ->  messageBarY
+01AF8  ->  messageBarWidth
+
+---------------------- functions (overlay id: 7)
+00000  ->  hinttextFree
+00148  ->  hinttextStart
+00D5C  ->  hinttextStop
+00D70  ->  hinttextActive
+00D80  ->  hinttextActiveMagic
+00D90  ->  hinttextStopMagic
+00DD0  ->  hinttextTriedToEnd
+01C0C  ->  hinttextUpdate
+02644  ->  hinttextLoadObject
+02764  ->  hinttextFreeObject
+0278C  ->  hinttextStartLevel
+
+---------------------- functions (overlay id: 8)
+000C4  ->  bloodSpurtFreeLib
+001CC  ->  bloodSpurtAdd
+00308  ->  bloodHitSpriteAdd
+003E0  ->  bloodSpurtUpdateAll
+00A88  ->  bloodSpurtsDraw
+
+---------------------- functions (overlay id: 9)
+00000  ->  frontInitMap
+003A8  ->  frontCleanupMap
+00428  ->  frontMapInitWorldIcons
+00498  ->  frontMapDrawWorldIcon
+0068C  ->  frontMapCleanupWorldIcons
+006B0  ->  frontMap
+
+---------------------- functions (overlay id: 10)
+00000  ->  sparkSetGravity
+0000C  ->  sparkAdd
+00208  ->  sparkFree
+002C0  ->  sparkFreeAll
+00318  ->  sparkUpdate
+00460  ->  sparkDraw
+
+---------------------- functions (overlay id: 11)
+00000  ->  splinecamSetup
+00020  ->  splinecamFree
+0007C  ->  splinecamSplineHead
+000D4  ->  splinecamMakeSpline
+00454  ->  splinecamGetNearestNode
+00E74  ->  splinecamMovementCheck
+01510  ->  splinecamPlayerPos
+015FC  ->  splinecamCameraPos
+
+---------------------- functions (overlay id: 12)
+00000  ->  frontInitMenuFrame
+00094  ->  frontFreeMenuFrame
+000E4  ->  frontSetMenuFrame
+00108  ->  frontClearMenuFrame
+0014C  ->  frontSetMenuFrameFade
+00158  ->  frontMenuFrameSetEnable
+00164  ->  frontMenuFrameTick
+00B48  ->  frontMenuFrameDraw
+01904  ->  frontGetMenuFrameAlpha
+01914  ->  frontGetMenuFullyOpen
+01954  ->  frontMenuFrameTrackDrawingOn
+019D8  ->  menuFrameChangeLevel
+01CD4  ->  pausetunevol
+
+---------------------- functions (overlay id: 13)
+00000  ->  frontInitTarget
+00008  ->  frontPlayerTarget
+004A8  ->  frontDrawTarget
+
+---------------------- functions (overlay id: 14)
+00000  ->  frontInitInstruments
+00B30  ->  frontSingleInstruments
+019E4  ->  instShowBearBar
+02CC0  ->  frontCleanupInstruments
+03790  ->  frontShowRegionStats
+03A58  ->  frontDisplayRegion
+
+---------------------- functions (overlay id: 15)
+00000  ->  girlControl
+017A4  ->  girlCanFire
+
+---------------------- functions (overlay id: 16)
+00000  ->  boyControl
+01678  ->  boyCanFire
+
+---------------------- functions (overlay id: 17)
+00000  ->  dogControl
+01884  ->  dogCanFire
+
+---------------------- functions (overlay id: 18)
+000CC  ->  tribalScreenInit
+00154  ->  tribalScreenCleanup
+00180  ->  tribalScreen
+00A74  ->  weaponScreenSetupDpad
+00E78  ->  weaponScreenFreeDpad
+00FB0  ->  weaponScreenInit
+010C0  ->  weaponScreenCleanup
+0128C  ->  weaponScreen
+01FE4  ->  menuScreenInit
+022F4  ->  menuScreenCleanup
+02368  ->  menuScreen
+0363C  ->  frontGetSelectableCharacter
+03BB0  ->  frontMenuPodiumGetTiltList
+03DE8  ->  healthScreenInit
+03EC0  ->  healthScreenCleanup
+03F1C  ->  healthScreen
+0441C  ->  shipScreenInit
+04620  ->  shipScreen
+05278  ->  shipScreenCleanup
+05630  ->  inventoryScreenInit
+05694  ->  inventoryScreenCleanup
+056B8  ->  inventoryScreen
+
+---------------------- functions (overlay id: 19)
+00000  ->  pauseInit
+001C0  ->  pauseSetScreen
+001D8  ->  pauseGetScreen
+00218  ->  pauseGetPauseCharacter
+00344  ->  pauseSetNewLevel
+00380  ->  pauseUpdate
+00850  ->  targetMode
+00860  ->  multiPlayerPauseInit
+01528  ->  pausePlayer
+
+---------------------- functions (overlay id: 20)
+00000  ->  treeInit
+0012C  ->  treeControl
+00284  ->  fireflyInit
+0036C  ->  fireflyControl
+
+---------------------- functions (overlay id: 22)
+00154  ->  sidekickpadInit
+002A0  ->  sidekickpadControl
+00D18  ->  sidekickpadFree
+01700  ->  robotDisplay
+02250  ->  robotFinished
+02284  ->  robotUpdateObjectives
+027E4  ->  robotPauseInit
+02888  ->  robotPauseUpdate
+02A60  ->  sidekickpadCameraInit
+02B68  ->  sidekickpadCamera
+02D8C  ->  sidekickpadMovePlayer
+02FA4  ->  robotMissionFree
+
+---------------------- functions (overlay id: 23)
+00000  ->  dayInit
+00128  ->  _AutoExit00023
+0015C  ->  dayUpdate
+0065C  ->  dayStopAtNoon
+0066C  ->  dayGetFog
+006B0  ->  dayGetTrackFade
+
+---------------------- functions (overlay id: 24)
+00000  ->  trackInit
+
+---------------------- functions (overlay id: 25)
+00308  ->  amInit
+
+---------------------- functions (overlay id: 26)
+002F8  ->  partInitLib
+00518  ->  partBuildCCTables
+006E8  ->  partSetupLib
+
+---------------------- functions (overlay id: 27)
+0008C  ->  underWaterLightsInit
+001A8  ->  _AutoExit00027
+001DC  ->  underWaterLightsUpdate
+
+---------------------- functions (overlay id: 28)
+00000  ->  shrinkbeamInit
+0031C  ->  shrinkbeamControl
+01624  ->  trackbeamInit
+01798  ->  trackbeamControl
+01888  ->  shrinkbeamSoundUpdate
+01BD0  ->  widthcoeffs
+
+---------------------- functions (overlay id: 29)
+00000  ->  girlUpdateMagic
+0070C  ->  girlMagicCameraInit
+007D4  ->  girlMagicCamera
+00AD0  ->  girlMagicCutCamera
+00BD8  ->  girlMagicFadeFog
+00C34  ->  girlMagicUpdateFog
+00CA8  ->  girlMagicFog
+00E98  ->  girlMagicTrackFade
+00F90  ->  __MODULE00029
+
+---------------------- functions (overlay id: 30)
+00000  ->  modPhitInit
+
+---------------------- functions (overlay id: 31)
+00000  ->  drawGlowingText
+001EC  ->  racecheckRefresh
+00320  ->  racecheckInit
+00568  ->  racecheckFindNearest
+00628  ->  racecheckFindPrevious
+00668  ->  racecheckFindNext
+006AC  ->  racecheckStatus
+00770  ->  racecheckDistance
+007C8  ->  sprintInit
+009F8  ->  sprintUpdate
+01728  ->  sprintAIJoypad
+01B04  ->  sprintPickedUpBoost
+01B48  ->  sprintPickedUpOil
+01B78  ->  sprintPickedUpBomb
+01BA8  ->  sprintPlayerBoost
+01BF0  ->  sprintPlayerFire
+01DA0  ->  sprintCountdown
+01DC8  ->  sprintHitOilSlick
+01DF0  ->  sprintHitBomb
+02008  ->  sprintInitInstruments
+02808  ->  sprintDrawInstruments
+0324C  ->  sprintFreeInstruments
+03318  ->  racingInGameStart
+034B8  ->  racingInGameEnd
+036C4  ->  sprintShipCollision
+
+---------------------- functions (overlay id: 32)
+00000  ->  mrhintsInit
+002D8  ->  mrhintsControl
+01F4C  ->  floatingInit
+01FF4  ->  floatingControl
+02258  ->  mrHintsSpeak
+02300  ->  mrHintsEventHandler
+0237C  ->  mrHintsTalk
+
+---------------------- functions (overlay id: 33)
+00000  ->  objInitExplosions
+
+---------------------- functions (overlay id: 34)
+00000  ->  objInitObjects
+
+---------------------- functions (overlay id: 35)
+00000  ->  fontInit
+
+---------------------- functions (overlay id: 36)
+00000  ->  mainInitRlo
+00214  ->  listReallocate
+
+---------------------- functions (overlay id: 37)
+00000  ->  frontInitOptionsPage
+00140  ->  frontCleanupOptionsPage
+00180  ->  frontOptionsPage
+01860  ->  barcolours
+
+---------------------- functions (overlay id: 38)
+00000  ->  pauseClsInit
+00024  ->  pauseClearScreen
+002EC  ->  pauseClsClearup
+
+---------------------- functions (overlay id: 39)
+00000  ->  mantisLightingInit
+0009C  ->  mantisLightingFree
+000D0  ->  mantisLightingUpdate
+004FC  ->  mantisLightingGetFog
+00540  ->  mantisLightingGetTrackFade
+
+---------------------- functions (overlay id: 40)
+00000  ->  frontInitMultiStats
+001A0  ->  frontMultiStats
+007CC  ->  frontCleanupMultiStats
+0241C  ->  frontMultiStatsBarGetTiltList
+
+---------------------- functions (overlay id: 41)
+00000  ->  frontDrawCharBadge
+008B4  ->  frontCharBadge
+
+---------------------- functions (overlay id: 42)
+00000  ->  frontKeyboardInit
+0014C  ->  frontKeyboardCleanup
+0017C  ->  frontKeyboard
+02C2C  ->  frontKeyboardGetTiltList
+
+---------------------- functions (overlay id: 43)
+00000  ->  collectableInit
+00014  ->  collectableControl
+
+---------------------- functions (overlay id: 44)
+00000  ->  _AutoInit00044
+0003C  ->  amAudioLinesReset
+00170  ->  amPlayAudioLines
+00738  ->  amAudioLineAddVertex
+00AA8  ->  amLineDefinitionComplete
+
+---------------------- functions (overlay id: 45)
+00000  ->  animseqLockOnInit
+0008C  ->  animseqLockOnDelete
+000F8  ->  animseqLockOnUpdate
+00308  ->  animseqLockOnDraw
+0049C  ->  animseqStartNoisyFade
+004E4  ->  animseqUpdateNoisyFade
+00584  ->  animseqDrawNoisyFade
+006EC  ->  animseqUpdateTrackFade
+
+---------------------- functions (overlay id: 46)
+00000  ->  animseqUpdateTextureScrollers
+00130  ->  animseqUpdateLightChangers
+002C4  ->  animseqSampleCurve
+0084C  ->  animseqUpdatePath
+01798  ->  animseqAddChangeLight
+018AC  ->  animseqFireBullet
+01BAC  ->  animseqMuzzleFlash
+01D38  ->  animseqReleaseBits
+0206C  ->  animseqInitCaptions
+020AC  ->  animseqStartCaption
+0226C  ->  animseqUpdateCaptions
+023FC  ->  animseqPrintCaptions
+
+---------------------- functions (overlay id: 47)
+00000  ->  blurInit
+00058  ->  blurFree
+000D4  ->  _AutoExit00047
+000F4  ->  blurUpdate
+006F0  ->  blurTask
+
+---------------------- functions (overlay id: 48)
+00000  ->  cloneBlobSetup
+001C8  ->  cloneBlobDelete
+00204  ->  cloneBlobCreate
+
+---------------------- functions (overlay id: 49)
+00000  ->  boyBossControl
+
+---------------------- functions (overlay id: 50)
+00000  ->  dogBossControl
+
+---------------------- functions (overlay id: 51)
+00000  ->  girlBossControl
+
+---------------------- functions (overlay id: 52)
+00000  ->  hovershipInit
+00038  ->  hovershipControl
+02C40  ->  hovershipCamera
+
+---------------------- functions (overlay id: 53)
+0033C  ->  shipControl
+
+---------------------- functions (overlay id: 54)
+00000  ->  fmvStart
+0022C  ->  fmvStop
+002A0  ->  fmvUpdate
+005B4  ->  fmvDraw
+
+---------------------- functions (overlay id: 56)
+00000  ->  frontInitRarepage
+000C0  ->  frontRarepage
+008DC  ->  frontCleanupRarepage
+
+---------------------- functions (overlay id: 57)
+00000  ->  frontInitCharSelect
+00130  ->  frontCharSelect
+004F8  ->  frontTeleporterTick
+00774  ->  frontCleanupCharSelect
+007E0  ->  frontInitMultiSelect
+00894  ->  frontMultiSelect
+00ED0  ->  frontCleanupMultiSelect
+
+---------------------- functions (overlay id: 58)
+00000  ->  frontCreditsInit
+00140  ->  frontCredits
+
+---------------------- functions (overlay id: 59)
+00000  ->  getDeathMatchObjectTable
+
+---------------------- functions (overlay id: 60)
+00000  ->  frontInitMultiInstruments
+003D0  ->  frontCleanupMultiInstruments
+0043C  ->  frontDeathMatchScores
+00F0C  ->  sortByKills
+01090  ->  sortPlayers
+02E04  ->  frontEndDeathMatch
+
+---------------------- functions (overlay id: 61)
+00000  ->  frontInitMultiModeSelect
+001E0  ->  frontMultiModeSelect
+02830  ->  frontCleanupMultiModeSelect
+
+---------------------- functions (overlay id: 62)
+00000  ->  frontInitStartScreen
+00130  ->  frontStartScreen
+00C04  ->  frontCleanupStartScreen
+
+---------------------- functions (overlay id: 63)
+00614  ->  lightShowInit
+008E0  ->  lightShowControl
+00B10  ->  lightShowDraw
+
+---------------------- functions (overlay id: 64)
+00000  ->  GenerateTorchFireTex
+
+---------------------- functions (overlay id: 65)
+00000  ->  windowfxInit
+00120  ->  windowfxControl
+002AC  ->  windowMakeBeams
+007B0  ->  windowDrawBeams
+
+---------------------- functions (overlay id: 66)
+00000  ->  mantisEditMenu
+00130  ->  mantisJump
+00728  ->  mantisLand
+00D70  ->  mantisInit
+00EF4  ->  mantisControl
+02BD4  ->  mantisSplitGfx
+02E1C  ->  mantismissileInit
+02FC0  ->  mantismissileControl
+037EC  ->  mantismissileDrawThruster
+0386C  ->  mantismissileFree
+038A4  ->  mantisboltInit
+03980  ->  mantisboltControl
+03B60  ->  mantisboltDraw
+03EEC  ->  mantisrockInit
+03FD4  ->  mantisrockControl
+
+---------------------- functions (overlay id: 67)
+00000  ->  mizarSetup
+00014  ->  mizarAISetup
+0002C  ->  mizarTiltList
+0003C  ->  mizarLightUp
+0092C  ->  mizarDrawEffects
+0104C  ->  mizarHitCallBack
+010CC  ->  mizarExplosionCallBack
+013C4  ->  mizarCutCamera
+01588  ->  mizarInit
+02170  ->  mizarFree
+021E4  ->  mizarControl
+0C1A8  ->  mizarFireBallInit
+0C278  ->  mizarFireBallControl
+0C70C  ->  mizarFireBallDraw
+0C870  ->  mizarEyeBeamInit
+0C990  ->  mizarEyeBeamControl
+0CD0C  ->  mizarEyeBeamDraw
+0CF90  ->  mizarElectroInit
+0D15C  ->  mizarElectroControl
+0DA7C  ->  mizarElectroDraw
+0DE54  ->  mizarDeathInit
+0DF9C  ->  mizarDeathControl
+0E644  ->  mizarDeathDraw
+0E860  ->  mizarImpactInit
+0E8A4  ->  mizarImpactControl
+0EC30  ->  mizarImpactDraw
+0EDAC  ->  rockstormInit
+0F0FC  ->  rockstormControl
+10068  ->  rockstormHitCallBack
+101FC  ->  mizarRockStormDraw
+1035C  ->  mizarWingBitInit
+1048C  ->  mizarWingBitControl
+10708  ->  mizarHandBitInit
+108C4  ->  mizarHandBitPushMtx
+1091C  ->  mizarMonolithInit
+10B80  ->  mizarMonolithControl
+121C8  ->  wingbitsfxhandle
+
+---------------------- functions (overlay id: 68)
+00000  ->  duckshootInit
+000A8  ->  duckshootUpdate
+016F4  ->  duckshootDrawTargets
+
+---------------------- functions (overlay id: 69)
+00000  ->  genericplayerInit
+
+---------------------- functions (overlay id: 70)
+00000  ->  osCartDmaTest3_6105
+
+---------------------- functions (overlay id: 71)
+00000  ->  ammoPickupInit
+00064  ->  ammoPickupControl
+003BC  ->  ammoPickupGetFade
+00480  ->  __MODULE00071
+
+---------------------- functions (overlay id: 72)
+00000  ->  animshipInit
+00208  ->  animshipControl
+0037C  ->  animshipFree
+003F4  ->  animshipDrawThrusters
+
+---------------------- functions (overlay id: 73)
+00000  ->  animswitchInit
+00110  ->  animswitchControl
+
+---------------------- functions (overlay id: 74)
+00000  ->  arcadecameraInit
+00114  ->  arcadecameraUpdate
+0038C  ->  arcadeInit
+004FC  ->  arcadeControl
+00900  ->  arcadeDrawScreen
+
+---------------------- functions (overlay id: 75)
+00000  ->  beamInit
+002A8  ->  beamControl
+0096C  ->  beamScroll
+00A34  ->  beamDraw
+00D10  ->  __MODULE00075
+
+---------------------- functions (overlay id: 76)
+00000  ->  blastdoorStatus
+000FC  ->  blastdoorOpen
+00200  ->  blastdoorInit
+00374  ->  blastdoorControl
+00548  ->  blastdoorDraw
+
+---------------------- functions (overlay id: 77)
+00000  ->  bubblerInit
+00054  ->  bubblerControl
+
+---------------------- functions (overlay id: 78)
+00000  ->  buoyInit
+0006C  ->  buoyControl
+
+---------------------- functions (overlay id: 79)
+00000  ->  butterflyInit
+002A0  ->  butterflyControl
+
+---------------------- functions (overlay id: 80)
+00080  ->  chargeEffectCreate
+0034C  ->  chargeEffectFree
+003D8  ->  chargeEffectSetPower
+00464  ->  chargeEffectUpdate
+006F8  ->  chargeEffectDraw
+
+---------------------- functions (overlay id: 81)
+00000  ->  chestcameraInit
+00114  ->  chestcameraUpdate
+00478  ->  chestInit
+005D4  ->  chestControl
+
+---------------------- functions (overlay id: 82)
+00000  ->  mainclusterInit
+001EC  ->  mainclusterControl
+009C8  ->  smallclusterInit
+00A88  ->  smallclusterControl
+01200  ->  __MODULE00082
+
+---------------------- functions (overlay id: 83)
+00000  ->  craterInit
+00030  ->  craterControl
+
+---------------------- functions (overlay id: 84)
+00000  ->  cutcameraInit
+00074  ->  cutcameraActivate
+00150  ->  cutcameraControl
+00238  ->  cutcameraUpdate
+
+---------------------- functions (overlay id: 85)
+00000  ->  CyborgMissileInit
+00188  ->  CyborgMissileControl
+005C0  ->  __MODULE00085
+
+---------------------- functions (overlay id: 86)
+001DC  ->  damagecrateInit
+004DC  ->  damagecrateControl
+0102C  ->  flyingdebrisInit
+010A8  ->  flyingdebrisControl
+0117C  ->  damagecrateChangeHitsmin
+011A8  ->  damagecrateRepair
+011F0  ->  __MODULE00086
+
+---------------------- functions (overlay id: 87)
+00000  ->  dopplerPointInit
+00024  ->  dopplerPointControl
+
+---------------------- functions (overlay id: 88)
+00000  ->  GetVtxPosition
+001D0  ->  electrocutionInit
+00200  ->  electrocutionControl
+00480  ->  __MODULE00088
+
+---------------------- functions (overlay id: 89)
+000A0  ->  fireworkInit
+002B4  ->  fireworkControl
+
+---------------------- functions (overlay id: 90)
+0035C  ->  fishInit
+00604  ->  fishControl
+00F60  ->  __MODULE00090
+
+---------------------- functions (overlay id: 91)
+00000  ->  fishfoodInit
+001DC  ->  fishfoodControl
+00720  ->  __MODULE00091
+
+---------------------- functions (overlay id: 92)
+00000  ->  flagtargetInit
+000BC  ->  flagtargetControl
+
+---------------------- functions (overlay id: 93)
+00000  ->  flagtriggerInit
+00030  ->  flagtriggerControl
+
+---------------------- functions (overlay id: 94)
+00000  ->  flamethrowerInit
+0005C  ->  flamethrowerFire
+0059C  ->  flamethrowerUpdate
+00D10  ->  flamethrowerConstrain
+010E4  ->  flamethrowerHits
+01464  ->  flamethrowerDraw
+0170C  ->  _AutoExit00094
+017B0  ->  __MODULE00094
+
+---------------------- functions (overlay id: 95)
+00000  ->  flareInit
+00088  ->  flareControl
+005D8  ->  flareThrow
+00620  ->  __MODULE00095
+
+---------------------- functions (overlay id: 96)
+00000  ->  hitfragmentInit
+00100  ->  hitfragmentControl
+003C0  ->  __MODULE00096
+
+---------------------- functions (overlay id: 97)
+00000  ->  osCartDmaTest4_6105
+
+---------------------- functions (overlay id: 98)
+00000  ->  frogInit
+0008C  ->  frogControl
+
+---------------------- functions (overlay id: 99)
+00000  ->  refuelInit
+00110  ->  refuelControl
+002F0  ->  __MODULE00099
+
+---------------------- functions (overlay id: 100)
+009C8  ->  glassInit
+00B34  ->  glassControl
+00D70  ->  glassDraw
+010D0  ->  __MODULE00100
+
+---------------------- functions (overlay id: 101)
+00000  ->  grenadeInit
+002B4  ->  grenadeDestroy
+00490  ->  grenadeControl
+00900  ->  __MODULE00101
+
+---------------------- functions (overlay id: 102)
+00000  ->  grubInit
+00110  ->  grubControl
+00240  ->  __MODULE00102
+
+---------------------- functions (overlay id: 103)
+00000  ->  healthPickupInit
+001EC  ->  healthPickupControl
+00680  ->  __MODULE00103
+
+---------------------- functions (overlay id: 104)
+00000  ->  hitBridgeInit
+007E4  ->  hitBridgeControl
+01234  ->  hitBridgeMoveY
+01448  ->  hitBridgeMoveWith
+
+---------------------- functions (overlay id: 105)
+00000  ->  hoovertankInit
+00290  ->  hoovertankControl
+0168C  ->  hoovertankDrawEffects
+01A28  ->  hoovertankFree
+01AF4  ->  hoovergemInit
+01B14  ->  hoovergemControl
+01BFC  ->  hoovergemCreate
+
+---------------------- functions (overlay id: 106)
+00000  ->  invincibilityInit
+00038  ->  invincibilityControl
+0027C  ->  invincibilityShieldInit
+005C0  ->  invincibilityShieldControl
+00D08  ->  invincibilityShieldTransform
+00D24  ->  objDrawInvincibilityShield
+
+---------------------- functions (overlay id: 107)
+00000  ->  keyInit
+000CC  ->  keyControl
+00220  ->  __MODULE00107
+
+---------------------- functions (overlay id: 108)
+00000  ->  laserboltInit
+00298  ->  laserboltControl
+00B44  ->  _AutoExit00108
+00B90  ->  __MODULE00108
+
+---------------------- functions (overlay id: 109)
+00000  ->  markerboxInit
+00320  ->  trackFadeExceptions
+
+---------------------- functions (overlay id: 110)
+00000  ->  osCartTest3_6105
+
+---------------------- functions (overlay id: 111)
+00000  ->  mineRemove
+00058  ->  mineInit
+0021C  ->  mineControl
+01018  ->  mineDraw
+013C8  ->  minePushMtx
+013F0  ->  __MODULE00111
+
+---------------------- functions (overlay id: 112)
+00000  ->  missileInit
+002C8  ->  missileControl
+00CC0  ->  __MODULE00112
+
+---------------------- functions (overlay id: 113)
+00000  ->  multitargetInit
+000E4  ->  multitargetControl
+001D4  ->  multiptargetInit
+00370  ->  multiptargetControl
+
+---------------------- functions (overlay id: 114)
+00000  ->  nightvisionpadInit
+000E4  ->  nightvisionpadControl
+
+---------------------- functions (overlay id: 115)
+00000  ->  racepickupInit
+00038  ->  racepickupControl
+002B0  ->  raceobstacleInit
+002FC  ->  raceobstacleControl
+
+---------------------- functions (overlay id: 116)
+00154  ->  regionidInit
+003F8  ->  regionidControl
+0070C  ->  regionidDraw
+
+---------------------- functions (overlay id: 117)
+0007C  ->  robottargetInit
+00140  ->  robottargetControl
+00358  ->  robotcollectableInit
+00390  ->  robotcollectableControl
+0056C  ->  robotcheckInit
+006C4  ->  robotcheckControl
+
+---------------------- functions (overlay id: 118)
+00000  ->  robotTokenControl
+000F0  ->  __MODULE00118
+
+---------------------- functions (overlay id: 119)
+00000  ->  fireExplosionInit
+00060  ->  fireExplosionControl
+0080C  ->  smokingfireInit
+008CC  ->  smokingfireControl
+009D0  ->  fireringInit
+00A24  ->  fireringControl
+00AD0  ->  __MODULE00119
+
+---------------------- functions (overlay id: 120)
+00000  ->  shardClusterInit
+002D4  ->  shardClusterControl
+00438  ->  shardClusterDestroy
+
+---------------------- functions (overlay id: 121)
+00000  ->  ShirukenInit
+004EC  ->  ShirukenControl
+00F7C  ->  ShirukenPushMtx
+01028  ->  ShirukenBounce
+010F0  ->  __MODULE00121
+
+---------------------- functions (overlay id: 122)
+00000  ->  spinlightInit
+00208  ->  spinlightControl
+
+---------------------- functions (overlay id: 123)
+002B0  ->  spotlightInit
+00678  ->  spotlightControl
+
+---------------------- functions (overlay id: 124)
+00000  ->  targetswitchInit
+00120  ->  targetswitchControl
+
+---------------------- functions (overlay id: 125)
+00000  ->  teleportEffectInit
+003D0  ->  teleportEffectControl
+00E74  ->  teleportEffectDraw
+0125C  ->  tvals
+
+---------------------- functions (overlay id: 126)
+0003C  ->  terminalInit
+00104  ->  terminalControl
+00B14  ->  terminalCameraInit
+00D44  ->  terminalCameraUpdate
+
+---------------------- functions (overlay id: 127)
+00000  ->  totemPoleInit
+00188  ->  totemPoleControl
+
+---------------------- functions (overlay id: 128)
+002F4  ->  transformerInit
+003F4  ->  transformerControl
+00A2C  ->  transformerCamera
+00CF8  ->  transformerMovePlayer
+
+---------------------- functions (overlay id: 129)
+00000  ->  TwinkleInit
+001AC  ->  TwinkleControl
+005E0  ->  __MODULE00129
+
+---------------------- functions (overlay id: 130)
+00000  ->  twisterInit
+001A4  ->  twisterControl
+005BC  ->  twisterDraw
+007C0  ->  __MODULE00130
+
+---------------------- functions (overlay id: 131)
+00000  ->  weaponPickupInit
+000E4  ->  weaponPickupControl
+00310  ->  __MODULE00131
+
+---------------------- functions (overlay id: 132)
+00000  ->  osCartTest4_6105
+
+---------------------- functions (overlay id: 133)
+00000  ->  weatherInit
+00020  ->  weatherControl
+
+---------------------- functions (overlay id: 134)
+00000  ->  menuCamFocusInit
+00010  ->  menuCamFocusControl
+00298  ->  menuCamInit
+002BC  ->  menuCamControl
+01754  ->  menuCamSetFocus
+019CC  ->  menuCamCleanup
+01A04  ->  menuCamFacingTVControl
+02024  ->  menuCamFacingTVCleanup
+0205C  ->  menuCamGetObjPtr
+02188  ->  multiCharArmInit
+021F8  ->  multiCharArmControl
+0270C  ->  multiCharArmSetStatus
+02958  ->  multiCharArmGetTiltList
+02998  ->  multiCharArmCleanup
+
+---------------------- functions (overlay id: 135)
+00000  ->  exitInit
+00158  ->  staticcamInit
+00194  ->  setupInit
+001FC  ->  doorInit
+009FC  ->  doorSwitchInit
+00B1C  ->  fogInit
+00B5C  ->  skyInit
+00B74  ->  audioPointInit
+00D08  ->  audioLineInit
+00E30  ->  texscrollInit
+00ED4  ->  rgbalightInit
+00F04  ->  lensflareInit
+00FF0  ->  flareswitchInit
+01020  ->  waveswellInit
+01030  ->  splinecamnodeInit
+01224  ->  hitstaticInit
+014C0  ->  overrideCInit
+016D0  ->  AIPointInit
+01850  ->  SquadronInit
+01CA4  ->  AIJunctionInit
+01DB0  ->  __MODULE00135
+
+---------------------- functions (overlay id: 136)
+00000  ->  realReflectSurfaces
+0016C  ->  realReflectCreateList
+0025C  ->  realReflectPrint
+
+---------------------- functions (overlay id: 137)
+00000  ->  AntShipMover
+002F0  ->  __MODULE00137
+
+---------------------- functions (overlay id: 138)
+00000  ->  _AutoInit00138
+00030  ->  squadsMakeFoodList
+00184  ->  squadsGetClosestFood
+002F8  ->  squadsIsFoodAvailable
+0038C  ->  squadsIsObjectEdible
+003E0  ->  __MODULE00138
+
+---------------------- functions (overlay id: 139)
+00000  ->  BTSBBlackAnt
+003B0  ->  __MODULE00139
+
+---------------------- functions (overlay id: 140)
+00000  ->  BTSBDragonfly
+00084  ->  DragonflyMover
+00280  ->  DragonflyTilt
+
+---------------------- functions (overlay id: 141)
+00E40  ->  CreateBSPFromRegion
+01440  ->  __MODULE00141
+
+---------------------- functions (overlay id: 142)
+00280  ->  FatBobDrawShockWave
+00548  ->  FatBobShockWaveInit
+008C0  ->  FatBobShockWaveControl
+00C2C  ->  BTSBFatBob
+01940  ->  FatBobPhaseChange
+02394  ->  GalaxianBatsMover
+02494  ->  GalaxianBatsSoundsHandler
+02564  ->  GenerateFireTexture
+02BCC  ->  _AutoExit00142
+
+---------------------- functions (overlay id: 143)
+00000  ->  osRamTest3_6105
+
+---------------------- functions (overlay id: 144)
+00000  ->  BTSBFloater
+000D0  ->  FloaterMover
+
+---------------------- functions (overlay id: 145)
+00000  ->  NewFlopsyFunction
+00350  ->  FlopsyDogMover
+00B34  ->  FlopsyDogFacer
+00C34  ->  FlopsyDogSpotPlayer
+00C68  ->  FlopsyDogFoodGone
+00CD8  ->  FlopsyDogCheckPriority
+
+---------------------- functions (overlay id: 146)
+00000  ->  BTSBGalaxianCorkScrew
+000B8  ->  CorkScrewAttackMover
+0056C  ->  CorkScrewAttackFacer
+
+---------------------- functions (overlay id: 147)
+00000  ->  BTSBGunTurret
+00060  ->  TurretFireMover
+
+---------------------- functions (overlay id: 148)
+00000  ->  BTSBSlugBoss
+0098C  ->  SlugBossPhaseChange
+01204  ->  FlowerBoltInit
+01438  ->  FlowerBoltControl
+01850  ->  MaggotBombInit
+019B0  ->  MaggotBombControl
+01D08  ->  SlugBossMover
+
+---------------------- functions (overlay id: 149)
+00000  ->  BTSBSpannerHand
+00098  ->  LaserBeamInit
+00210  ->  LaserBeamControl
+
+---------------------- functions (overlay id: 150)
+00000  ->  BTSBSpider
+00154  ->  SpiderMover
+00438  ->  SpiderEatStuffMover
+006E8  ->  SpiderSpitInit
+007F0  ->  SpiderSpitControl
+009BC  ->  GenerateSpitTexture
+00FE0  ->  __MODULE00150
+
+---------------------- functions (overlay id: 151)
+00000  ->  GetWaveAboutPosition
+00228  ->  GetPushPosition
+004AC  ->  BTSBWaterBoss
+00B8C  ->  WaterBossDrawSprites
+00E34  ->  SmoothValue
+
+---------------------- functions (overlay id: 152)
+00000  ->  zombieFlobInit
+0012C  ->  zombieFlobControl
+00420  ->  __MODULE00152
+
+---------------------- functions (overlay id: 153)
+00000  ->  SetBlockedNodes
+00130  ->  GetClosestPatrolNode
+002A8  ->  GetFurthestPatrolNode
+00A10  ->  FallBackToSniperPoint
+00DFC  ->  GetNextNodeNumber
+01110  ->  PerformNodeCommand
+01278  ->  EnsureValidNode
+013A8  ->  PatrolPathsInit
+017E8  ->  CopyStaticsToPatrolNodes
+
+---------------------- functions (overlay id: 154)
+00000  ->  _AutoInit00154
+00070  ->  _AutoExit00154
+02458  ->  FindBestPathInRegion
+02BB0  ->  SquadronControlSmart
+02FD0  ->  SmartMover
+03B94  ->  SmartFacer
+03C4C  ->  smartPlayerSeen
+
+---------------------- functions (overlay id: 155)
+00000  ->  osRamTest4_6105
+
+---------------------- functions (overlay id: 156)
+00000  ->  fxDrawWindow
+
+---------------------- functions (overlay id: ???)
+00000  ->  __osRdbSend
+
+---------------------- data
+80000300  ->  osTvType
+800A0EF0  ->  tuneSeqPlayer
+800A0EF8  ->  ambientSeqPlayer
+800A10C8  ->  NullTextureOffsets
+800A1538  ->  weaponPowerUpObjects
+800A1570  ->  beamScrollFlag
+800A15F0  ->  track
+800A15F4  ->  level
+800A15F8  ->  watereffecttexture
+800A15FC  ->  watereffectframe
+800A1614  ->  numexceptions
+800A1618  ->  exceptionList
+800A161C  ->  numtexturescrolls
+800A1D20  ->  weaponTable
+800A2020  ->  bullettriggers
+800A20E0  ->  bullethitsounds
+800A2140  ->  controlModeKeys
+800A220C  ->  quickWeaponKey
+800A3A54  ->  robotTime
+800A3A58  ->  robotMission
+800A3A5C  ->  robotBorder
+800A3A60  ->  robotButton
+800A3A6C  ->  gameInWindow
+800A3AF4  ->  load_save_flags
+800A3AFC  ->  joyfail
+800A3B04  ->  arcadeScreen
+800A3B20  ->  dayfactor
+800A3B78  ->  securitybuffer
+800A3B94  ->  refractThisObject
+800A3B98  ->  blurOn
+800A4038  ->  cloneTaskActive
+800A405C  ->  refractTaskActive
+800A4080  ->  blurTaskActive
+800A4330  ->  BaddyDataArray
+800A434C  ->  AllowSelfDestructing
+800A5848  ->  blinkMode
+800A5984  ->  racingInGame
+800A5988  ->  racingReturnLevel
+800A598C  ->  racingReturnSetup
+800A5990  ->  racingCharacter
+800A5994  ->  multiPlayerGame
+800A5998  ->  cooperativeGame
+800A599C  ->  numberOfCameras
+800A59A0  ->  numberOfPlayers
+800A59A4  ->  numberOfAI
+800A59A8  ->  multiGameType
+800A59AC  ->  multiGameTime
+800A59B0  ->  multiGameLife
+800A59B4  ->  multiGameTarget
+800A59B8  ->  multiLevelChoice
+800A59BC  ->  multiFinished
+800A59C0  ->  multiObjectList
+800A59C4  ->  deathMatchType
+800A59C8  ->  deathMatchTime
+800A59CC  ->  deathMatchLife
+800A59D0  ->  deathMatchKills
+800A59D4  ->  deathMatchLevel
+800A59D8  ->  deathMatchObjectList
+800A59DC  ->  clayPigeonLevel
+800A59E0  ->  clayPigeonAmmoChoice
+800A59E4  ->  clayPigeonGrenadeChoice
+800A59E8  ->  clayPigeonAmmo
+800A59EC  ->  clayPigeonGrenades
+800A59F0  ->  clayPigeonCursor
+800A59F4  ->  raceGameType
+800A59F8  ->  raceGameTime
+800A59FC  ->  raceGameLaps
+800A5A00  ->  raceGameLevel
+800A5A04  ->  raceGamePickups
+800A5A08  ->  raceGameStartBoost
+800A5A0C  ->  raceGameSingleScreen
+800A5A10  ->  raceGameIDNumber
+800A5A14  ->  raceGameStoredType
+800A5A18  ->  raceGameStoredLaps
+800A5A1C  ->  raceGameStoredPickups
+800A5A20  ->  raceGameStoredStartBoost
+800A5A24  ->  currentGameTime
+800A5A28  ->  okayed
+800A5A2C  ->  disable
+800A5A30  ->  startscreenOption
+800A5A34  ->  radarMode
+800A5A38  ->  allLevelCheat
+800A5A3C  ->  gameType
+800A5A40  ->  invulnerabilityCheat
+800A5A44  ->  infiniteammoCheat
+800A5A48  ->  allweaponsCheat
+800A5B74  ->  frontEndMode
+800A5B78  ->  frR
+800A5B80  ->  frB
+800A5B8C  ->  front_text
+800A5B90  ->  objtrans
+800A6734  ->  partgraphics
+800A6738  ->  partlistsize
+800A673C  ->  maxlines
+800A6740  ->  maxpointstreams
+800A6744  ->  lines
+800A6748  ->  pointstreams
+800A674C  ->  partvertices
+800A6754  ->  noparttypes
+800A6758  ->  PartTypes
+800A675C  ->  PartTab
+800A6760  ->  notrigtypes
+800A6764  ->  PartTrigs
+800A6768  ->  PartTrigTab
+800A676C  ->  trigdatbuffers
+800A6770  ->  maxchildtriggerparticles
+800A6908  ->  pointpolys
+800A6940  ->  pointvtxinit
+800A695C  ->  trivlut
+800A6968  ->  tripartpolys
+800A6AE8  ->  rectvlut
+800A6AF8  ->  rectpartpolys
+800A7E94  ->  playing
+800A7EA0  ->  numanimlockons
+800BA6B0  ->  audioHeap
+800EA040  ->  hp
+800EA050  ->  seqFile
+800EA058  ->  tuneSeqPlayers
+800EA068  ->  seqLen
+800EA06C  ->  seqBankPtr
+800EA070  ->  sfxBankPtr
+800EA074  ->  sfxIndex
+800EA078  ->  seqIndex
+800EA07C  ->  maxSound
+800EA080  ->  maxSequence
+800EA084  ->  sfxIndexSize
+800EA088  ->  seqIndexSize
+800EA0E0  ->  tuneCSeqs
+800EA2D0  ->  tuneCSeqp
+800EA3D8  ->  animCtrlMesgBuf
+800EA3E0  ->  animCtrlQueue
+800F3864  ->  objTempBuf
+800F3868  ->  objTempBufSize
+800F3874  ->  RomTab
+800F3878  ->  MaxTypes
+800F387C  ->  Ftables
+800F3880  ->  Findex
+800F3884  ->  Fmax
+800F3888  ->  obj_olddt
+800F3898  ->  objdeflist
+800F389C  ->  objdefno
+800F38A4  ->  ObjList
+800F38B0  ->  objregion
+800F38B4  ->  NoAddObjList
+800F38F8  ->  objindex
+800F38FC  ->  objindex_max
+800F3904  ->  deletelist
+800F390C  ->  playerlist
+800F3918  ->  animplayerlist
+800F3A5C  ->  nohitsflag
+800F3A60  ->  globflags
+800F3A64  ->  skyframe
+800F3A68  ->  skyflags
+800F3A70  ->  generalBuffer
+800F3C88  ->  TrackMem
+800F3C9C  ->  trackwaveanim
+800F3CA0  ->  trackVisibleBlocks
+800F3E70  ->  trackEdges
+800F3E78  ->  PLlist
+800F3E7C  ->  PLgrps
+800F3E80  ->  PLpolys
+800F3E84  ->  PLno
+800F75C0  ->  explosionTypeData
+800F75C4  ->  explosionTypes
+800F75C8  ->  explosionNoTypes
+800F7860  ->  controlKeys
+800F7864  ->  controlDkeys
+800F786C  ->  controlXjoy
+800F7870  ->  controlYjoy
+800F787C  ->  disablejoy
+800F7880  ->  controlcam
+800F7884  ->  controlchr_gravity
+800FBBC8  ->  connected
+800FBBCC  ->  numberOfJoypads
+800FBEC0  ->  gfxBase
+800FBEC8  ->  gfx
+800FBED0  ->  mtxBase
+800FBED8  ->  mtx
+800FBEE0  ->  vtxBase
+800FBEE8  ->  vtx
+800FBEF0  ->  polBase
+800FBEF8  ->  pol
+800FBF00  ->  sc
+800FE208  ->  Time
+800FE20C  ->  robotCollected
+800FE250  ->  robotDestroyed
+800FE252  ->  robotFlags
+800FE268  ->  tribaltable
+800FE270  ->  frame
+800FE27C  ->  currentalloc
+800FE284  ->  gameplay
+800FE288  ->  oldgamecopy
+800FE290  ->  MAX_gfx
+800FE298  ->  MAX_mtx
+800FE2A0  ->  MAX_pol
+800FE2A8  ->  MAX_vtx
+800FE2B0  ->  resetClient
+800FE2BC  ->  resetMsgBuffer
+800FE2C0  ->  resetMsgQueue
+800FE2D8  ->  resetPressed
+800FE2F0  ->  refractBuffers
+800FE2F8  ->  refractCurrentBuffer
+800FE2FC  ->  refractDelay
+800FE300  ->  refractWhichBuffer
+800FE860  ->  FreeRAM
+800FF5B8  ->  cloneDoneMsgQueue
+800FF5F0  ->  refractDoneMsgQueue
+800FF6B4  ->  DisactivatedSquaddies
+800FF6C0  ->  SquadsModuleFlags
+800FF6CA  ->  squadsBehaviour
+800FF6D0  ->  SquaddieGrowlTimer
+800FF6D4  ->  iDeltaTime
+800FF6D8  ->  PlayersDisguise
+800FF6DC  ->  GlobalStartOfRomdefList
+800FF6E0  ->  GlobalSizeOfRomdefList
+800FF6F8  ->  PathLists
+800FF738  ->  AnimPathNumbers
+800FF778  ->  MaxPatrolNodes
+800FF77C  ->  PatrolNodes
+800FF990  ->  currentScreen
+800FF994  ->  extraScreen
+800FF998  ->  otherScreen
+800FF99C  ->  otherZbuf
+800FF9A0  ->  viFramesPerSecond
+800FF9AC  ->  runInOneFrame
+800FF9B0  ->  viNoZbufferRealloc
+800FFA30  ->  multiPlayer
+800FFCB0  ->  multiCharacterType
+800FFCB8  ->  multiCharacter
+800FFE90  ->  playStatus
+800FFE94  ->  playChoice
+800FFE98  ->  gameoverFade
+800FFEA0  ->  orderedPlayers
+800FFEB0  ->  msgQueues
+800FFFF0  ->  hideinstruments
+800FFFF8  ->  globalflags
+80100078  ->  frontgfx
+8010007C  ->  frontmtx
+80100080  ->  frontvtx
+80100084  ->  frontpol
+80100098  ->  frontJoyHeld
+801000A8  ->  frontJoyPressed
+801000B8  ->  frontJoyDx
+801000BC  ->  frontJoyDy
+801000C0  ->  frontJoyDxRepeat
+801000D8  ->  frontendptrs
+80100460  ->  currentobjects
+801015C0  ->  partlists
+80103230  ->  cpuTraceTrackBufStatus
+80103A38  ->  CpuTexSpaceA
+80103A48  ->  CpuTexSpaceB
+80104870  ->  fontInUse
+80104874  ->  Font
+80104878  ->  String
+80104C78  ->  Window
+80104DB8  ->  dxTable
+80104DC8  ->  cache
+80104DCC  ->  cacheLine
+80104DD0  ->  combineBuffer
+80104DD4  ->  convertBuffer
+80104DD8  ->  printBuffer
+80104DDC  ->  squash
+80104DDD  ->  buttonMode
+80105280  ->  animpath
+80105288  ->  animcamera
+801052D8  ->  animscroll
+80105378  ->  animlockon
+801053B8  ->  fadeR
+801053BA  ->  fadeG
+801053BC  ->  fadeB
+801053BE  ->  fadeA
+801053C0  ->  fadeFromA
+801053C2  ->  fadeToA
+801053C4  ->  fadeCount
+801053C6  ->  fadeTime
+801053C8  ->  animTemp
+801053CC  ->  trackFadeCount
+801053CE  ->  trackFadeTime
+801053D0  ->  trackFadeStart
+801053D2  ->  trackFadeEnd
+801053D4  ->  trackFade
+801053D8  ->  animlight
+80105B20  ->  Table
+80105B28  ->  Player

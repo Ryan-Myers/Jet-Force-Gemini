@@ -1,0 +1,219 @@
+name: J F G Display (North America)
+sha1: f00f7c7fb085d0df57dcb649793aced5be4e8562
+options:
+  basename: jfgdisplay
+  target_path: baserom.kiosk.z64
+  base_path: .
+  compiler: IDO
+  find_file_boundaries: True
+  header_encoding: ASCII
+  platform: n64
+  undefined_funcs_auto_path: undefined_funcs_auto.kiosk.txt
+  undefined_syms_auto_path: undefined_syms_auto.kiosk.txt
+  symbol_addrs_path: symbol_addrs.kiosk.txt
+  asm_path: asm
+  src_path: src
+  build_path: build
+  #extensions_path: tools/splat_ext
+  mips_abi_float_regs: o32
+  section_order: [".text", ".data", ".rodata", ".bss"]
+  auto_all_sections: [".data", ".rodata", ".bss"]
+  #libultra_symbols: True
+  #hardware_regs: True
+segments:
+  - name: header
+    type: header
+    start: 0x0
+
+  - name: boot
+    type: bin
+    start: 0x40
+
+  - name: entry
+    type: code
+    start: 0x1000
+    vram: 0x80000400
+    subsegments:
+      - [0x1000, hasm, entrypoint]
+
+  - name: main
+    type: code
+    start: 0x1050
+    vram: 0x80000450
+    follows_vram: entry
+    bss_size: 0x54DC0
+    subsegments:
+      - [0x1050, c, audio_manager_1050]
+      - [0x36D0, c, audio_manager_36D0]
+      - [0x4C50, c, audio_manager_4050]
+      - [0x5660, c, objects]
+      - [0x1D800, c, track]
+      - [0x214A0, asm]
+      - [0x217D0, asm]
+      - [0x235F0, asm]
+      - [0x245E0, asm]
+      - [0x25A80, asm]
+      - [0x3C240, asm]
+      - [0x3FC30, asm]
+      - [0x3FD70, asm]
+      - [0x42E50, asm]
+      - [0x43E50, asm]
+      - [0x45170, asm]
+      - [0x49A00, asm]
+      - [0x4ACC0, asm]
+      - [0x4C040, asm]
+      - [0x4C560, asm]
+      - [0x4EE80, asm]
+      - [0x4F150, asm]
+      - [0x50E40, asm]
+      - [0x52610, asm]
+      - [0x52650, asm]
+      - [0x54030, asm]
+      - [0x55D50, asm]
+      - [0x56B80, asm]
+      - [0x59780, asm]
+      - [0x59B20, asm]
+      - [0x5C1A0, asm]
+      - [0x5E500, asm]
+      - [0x672B0, asm]
+      - [0x67550, asm]
+      - [0x68150, asm]
+      - [0x69360, asm]
+      - [0x69370, asm]
+      - [0x70F70, asm]
+      - [0x736B0, asm]
+      - [0x73F70, asm]
+      - [0x749F0, asm]
+      - [0x751F0, asm]
+      - [0x75200, asm]
+      - [0x76D50, asm]
+      - [0x76E40, asm]
+      - [0x773A0, asm]
+      - [0x7ADF0, asm]
+      - [0x84A40, asm]
+      - [0x84AA0, asm]
+      - [0x85150, asm]
+      - [0x851E0, asm]
+      - [0x87570, asm]
+      - [0x875C0, asm]
+      - [0x87610, asm]
+      - [0x8A800, asm]
+      - [0x8B960, asm]
+      - [0x8BBF0, asm]
+      - [0x8BC80, asm]
+      - [0x8BCF0, asm]
+      - [0x8C710, asm]
+      - [0x8C900, asm]
+      - [0x8C9B0, asm]
+      - [0x8CA30, asm]
+      - [0x8D4B0, asm]
+      - [0x8D550, asm]
+      - [0x8D760, asm]
+      - [0x8DCE0, asm]
+      - [0x8DFF0, asm]
+      - [0x8E0C0, asm]
+      - [0x8E1F0, asm]
+      - [0x8E580, asm]
+      - [0x8E7C0, asm]
+      - [0x8F630, asm]
+      - [0x8F820, asm]
+      - [0x8F9B0, asm]
+      - [0x8F9D0, asm]
+      - [0x8F9F0, asm]
+      - [0x8FA80, asm]
+      - [0x91130, asm]
+      - [0x92120, asm]
+      - [0x921A0, asm]
+      - [0x923A0, asm]
+      - [0x92890, asm]
+      - [0x92C00, asm]
+      - [0x93750, asm]
+      - [0x93B70, asm]
+      - [0x93C50, asm]
+      - [0x94100, asm]
+      - [0x94150, asm]
+      - [0x94290, asm]
+      - [0x94420, asm]
+      - [0x946E0, asm]
+      - [0x94760, asm]
+      - [0x948B0, asm]
+      - [0x948C0, asm]
+      - [0x94990, asm]
+      - [0x94D60, asm]
+      - [0x95190, asm]
+      - [0x95550, asm]
+      - [0x957B0, asm]
+      - [0x95830, asm]
+      - [0x95840, asm]
+      - [0x958C0, asm]
+      - [0x95940, asm]
+      - [0x95970, asm]
+      - [0x95CE0, asm]
+      - [0x95E50, asm]
+      - [0x96380, asm]
+      - [0x96730, asm]
+      - [0x96850, asm]
+      - [0x968F0, asm]
+      - [0x96A50, asm]
+      - [0x96B00, asm]
+      - [0x96C50, asm]
+      - [0x97DC0, asm]
+      - [0x97E60, asm]
+      - [0x98760, asm]
+      - [0x98920, asm]
+      - [0x98E20, asm]
+      - [0x995D0, asm]
+      - [0x99600, asm]
+      - [0x99910, asm]
+      - [0x99980, asm]
+      - [0x999F0, asm]
+      - [0x99D50, asm]
+      - [0x99F00, asm]
+      - [0x99F90, asm]
+      - [0x9A170, asm]
+      - [0x9A490, asm]
+      - [0x9A7A0, asm]
+      - [0x9A880, asm]
+      - [0x9A8C0, asm]
+      - [0x9A990, asm]
+      - [0x9B0C0, asm]
+      - [0x9B110, asm]
+      - [0x9B160, asm]
+      - [0x9B1B0, asm]
+      - [0x9B250, asm]
+      - [0x9B2B0, asm]
+      - [0x9B400, asm]
+      - [0x9B4F0, asm]
+      - [0x9B670, asm]
+      - [0x9B690, asm]
+      - [0x9B740, asm]
+      - [0x9B790, asm]
+      - [0x9B7F0, asm]
+      - [0x9B800, asm]
+      - [0x9B8E0, asm]
+      - [0x9BD10, asm]
+      - [0x9CA70, asm]
+      - [0x9CA80, asm]
+      - [0x9CDE0, asm]
+      - [0x9CE20, asm]
+      - [0x9CEB0, asm]
+      - [0x9CEE0, asm]
+      - [0x9CEF0, asm]
+      - [0x9CF20, asm]
+      - [0x9CF80, asm]
+      - [0x9D0E0, asm]
+      - [0x9D290, asm]
+      - [0x9D2E0, asm]
+      - [0x9DFA0, asm]
+      - [0x9DFB0, asm]
+      - [0x9E250, asm]
+      - [0x9ED10, asm]
+      - [0x9EEA0, asm]
+      - [0x9EFF0, bin]
+      - [0xA1AF0, data]
+      - { start: 0xB22B0, type: bss, vram: 0x800B16B0 }
+
+  - type: bin
+    start: 0xB22B0
+    follows_vram: main
+  - [0x2000000]
