@@ -12,7 +12,16 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objFreeObjdef.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/objTvTimes.s")
+extern s32 osTvType;
+#define TV_TYPE_PAL 0
+
+s32 objTvTimes(s32 timer) {
+    if (osTvType != TV_TYPE_PAL || timer < 0) {
+        return timer;
+    } else {
+        return (timer * 5) / 6;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/func_800052B4.s")
 

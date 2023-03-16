@@ -4,3 +4,6 @@
 [submodule "tools/asm-processor"]
 	path = tools/asm-processor
 	url = https://github.com/simonlindholm/asm-processor
+[submodule "tools/ido-static-recomp"]
+	path = tools/ido-static-recomp
+	url = https://github.com/decompals/ido-static-recomp
