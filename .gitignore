@@ -55,4 +55,5 @@ expected/
 diff_settings.py
 symbol_addrs.us.txt
 ctx.c
+tools/n64crc
 !tools/build
