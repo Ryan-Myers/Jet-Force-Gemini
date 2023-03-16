@@ -15,13 +15,13 @@ CYAN    := \033[0;36m
 # Directories
 
 BUILD_DIR = build
-ASM_DIRS  = asm/data asm #asm/libultra #For libultra handwritten files
+ASM_DIRS  = asm/data asm asm/libultra #For libultra handwritten files
 BIN_DIRS  = assets
 
 SRC_DIR   = src
 LIBULTRA_SRC_DIRS = $(SRC_DIR)/os $(SRC_DIR)/os/libc $(SRC_DIR)/os/audio $(SRC_DIR)/libultra_nm $(SRC_DIR)/os/gu
 
-DEFINE_SRC_DIRS  = $(SRC_DIR) # $(SRC_DIR)/core $(LIBULTRA_SRC_DIRS)
+DEFINE_SRC_DIRS  = $(SRC_DIR) $(SRC_DIR)/core $(LIBULTRA_SRC_DIRS)
 SRC_DIRS = $(DEFINE_SRC_DIRS)
 
 TOOLS_DIR = tools
@@ -70,7 +70,7 @@ LOOP_UNROLL    =
 
 MIPSISET       = -mips1 -32
 
-INCLUDE_CFLAGS = -I . -I include/libc  -I include/PR -I include -I assets -I src/os 
+INCLUDE_CFLAGS = -I . -I include/libc  -I include/PR -I include/sys -I include -I assets -I src/os 
 
 ASFLAGS        = -EB -mtune=vr4300 -march=vr4300 -mabi=32 -I include
 OBJCOPYFLAGS   = -O binary
@@ -80,7 +80,7 @@ GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) </dev/null 2>/dev/nu
 GLOBAL_ASM_O_FILES := $(foreach file,$(GLOBAL_ASM_C_FILES),$(BUILD_DIR)/$(file).o)
 
 
-DEFINES := -D_LANGUAGE_C -D_FINALROM -DF3DEX_GBI -DWIN32 -DSSSV -DNDEBUG -DTARGET_N64
+DEFINES := -D_LANGUAGE_C -D_FINALROM -DF3DEX_GBI -DWIN32 -DNDEBUG -DTARGET_N64 -D__sgi
 
 
 DEFINES += -DVERSION_$(VERSION)
@@ -109,7 +109,7 @@ GCC_FLAGS += -mdivide-breaks -fno-stack-protector -fno-common -fno-zero-initiali
 GCC_FLAGS += -Wall -Wextra -Wno-missing-braces
 
 TARGET     = $(BUILD_DIR)/$(BASENAME).$(VERSION)
-LD_SCRIPT  = $(BASENAME).ld
+LD_SCRIPT  = $(BASENAME).$(VERSION).ld
 
 LD_FLAGS   = -T $(LD_SCRIPT) -T undefined_funcs_auto.$(VERSION).txt  -T undefined_syms_auto.$(VERSION).txt -T libultra_undefined_syms.$(VERSION).txt
 LD_FLAGS  += -Map $(TARGET).map --no-check-sections
@@ -125,10 +125,10 @@ ASM_PROCESSOR_DIR := $(TOOLS_DIR)/asm-processor
 ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/asm_processor.py
 
 ### Optimisation Overrides
-# $(BUILD_DIR)/src/os/%.c.o: OPT_FLAGS := -O1
-# $(BUILD_DIR)/src/os/audio/%.c.o: OPT_FLAGS := -O2
-# $(BUILD_DIR)/src/os/libc/%.c.o: OPT_FLAGS := -O3
-# $(BUILD_DIR)/src/os/gu/%.c.o: OPT_FLAGS := -O3
+$(BUILD_DIR)/src/os/%.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/src/os/audio/%.c.o: OPT_FLAGS := -O2
+$(BUILD_DIR)/src/os/libc/%.c.o: OPT_FLAGS := -O3
+$(BUILD_DIR)/src/os/gu/%.c.o: OPT_FLAGS := -O3
 
 ### Targets
 
@@ -167,7 +167,7 @@ distclean: clean
 	rm -rf asm
 	rm -rf assets
 	rm -f *auto*.txt
-	rm -f $(BASENAME).ld
+	rm -f $(LD_SCRIPT)
 
 
 ### Recipes
@@ -176,7 +176,7 @@ distclean: clean
 	@echo "$$(cat $(BASENAME).$(VERSION).sha1)  $<" | sha1sum --check
 	@touch $@
 
-$(TARGET).elf: dirs $(BASENAME).ld $(BUILD_DIR)/$(LIBULTRA) $(O_FILES) $(LANG_RNC_O_FILES) $(IMAGE_O_FILES)
+$(TARGET).elf: dirs $(LD_SCRIPT) $(BUILD_DIR)/$(LIBULTRA) $(O_FILES) $(LANG_RNC_O_FILES) $(IMAGE_O_FILES)
 	@$(LD) $(LD_FLAGS) $(LD_FLAGS_EXTRA) -o $@
 	@printf "[$(PINK) Linker $(NO_COL)]  $<\n"
 

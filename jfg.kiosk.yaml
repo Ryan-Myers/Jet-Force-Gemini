@@ -1,7 +1,7 @@
 name: J F G Display (North America)
 sha1: f00f7c7fb085d0df57dcb649793aced5be4e8562
 options:
-  basename: jfg
+  basename: jfg.kiosk
   target_path: baserom.kiosk.z64
   base_path: .
   compiler: IDO

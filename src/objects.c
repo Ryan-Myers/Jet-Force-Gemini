@@ -12,10 +12,6 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objFreeObjdef.s")
 
-typedef signed int             s32;
-extern s32 osTvType;
-#define TV_TYPE_PAL 0
-
 s32 objTvTimes(s32 timer) {
     if (osTvType != TV_TYPE_PAL || timer < 0) {
         return timer;

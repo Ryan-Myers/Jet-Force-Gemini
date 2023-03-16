@@ -1,7 +1,7 @@
 name: Star Twins (Japanese)
 sha1: 15099233760b36e7afad7da36b9464da1512c4b1
 options:
-  basename: jfg
+  basename: jfg.jpn
   target_path: baserom.jpn.z64
   base_path: .
   compiler: IDO
