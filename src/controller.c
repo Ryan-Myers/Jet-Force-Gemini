@@ -5,18 +5,18 @@ u16 joySecurity = 0xFFFF; //Used when anti-cheat/anti-tamper has failed.
 
 //0xFC750 - 0xFC7CC - 0xFC7D0
 //0x800fbb50 - 0x800fbbcc - 0x800FBBD0
-// OSMesgQueue joyMessageQueue;
-// OSMesg joyMessageBuf;
-// OSMesg joyMessage;
-// OSContStatus joyStatus[MAXCONTROLLERS];
-// OSContPad sControllerCurrData[MAXCONTROLLERS];
-// OSContPad sControllerPrevData[MAXCONTROLLERS];
-// u16 gControllerButtonsPressed[MAXCONTROLLERS];
-// u16 gControllerButtonsReleased[MAXCONTROLLERS];
-// u8 sPlayerID[MAXCONTROLLERS];
-// u8 enabled[MAXCONTROLLERS];
-// u8 connected[MAXCONTROLLERS];
-// s32 numberOfJoypads;
+OSMesgQueue joyMessageQueue;
+OSMesg joyMessageBuf;
+OSMesg joyMessage;
+OSContStatus joyStatus[MAXCONTROLLERS];
+OSContPad sControllerCurrData[MAXCONTROLLERS];
+OSContPad sControllerPrevData[MAXCONTROLLERS];
+u16 gControllerButtonsPressed[MAXCONTROLLERS];
+u16 gControllerButtonsReleased[MAXCONTROLLERS];
+u8 sPlayerID[MAXCONTROLLERS];
+u8 enabled[MAXCONTROLLERS];
+u8 connected[MAXCONTROLLERS];
+s32 numberOfJoypads;
 
 /**
  * Return the serial interface message queue.
@@ -25,55 +25,47 @@ OSMesgQueue *joyMessageQ(void) {
     return &joyMessageQueue;
 }
 
-#ifdef NON_MATCHING
-//This will match as soon as I can properly define the data section for this file.
-//Having enabled be an extern breaks it.
 #define CONTROLLER_MISSING -1
 #define CONTROLLER_EXISTS   0
-u8 enabled[MAXCONTROLLERS];
+
+void joyResetMap(void);
 
 s32 joyInit(void) {
-	s32 i;
+    s32 i;
     u8 bitpattern;
 
     osCreateMesgQueue(&joyMessageQueue, &joyMessageBuf, 1);
     osSetEventMesg(OS_EVENT_SI, &joyMessageQueue, joyMessage);
-    osContInit(&joyMessageQueue, &bitpattern, &joyStatus);
+    osContInit(&joyMessageQueue, &bitpattern, joyStatus);
     osContStartReadData(&joyMessageQueue);
     joyResetMap();
 
-	for (i = 0; i < ARRAY_COUNT(connected); i++) {
-		enabled[i] = TRUE;
-		connected[i] = FALSE;
-	}
+    for (i = 0; i < ARRAY_COUNT(connected); i++) {
+        enabled[i] = TRUE;
+        connected[i] = FALSE;
+    }
 
-	numberOfJoypads = 0;
+    numberOfJoypads = 0;
 
-	for (i = 0; i < MAXCONTROLLERS; i++) {
-		if ((bitpattern & (CONT_ABSOLUTE << i)) && (!(joyStatus[i].errno & CONT_NO_RESPONSE_ERROR))) {
-			connected[i] = TRUE;
-			numberOfJoypads++;
-		}
-	}
+    for (i = 0; i < MAXCONTROLLERS; i++) {
+        if ((bitpattern & (CONT_ABSOLUTE << i)) && (!(joyStatus[i].errno & CONT_NO_RESPONSE_ERROR))) {
+            connected[i] = TRUE;
+            numberOfJoypads++;
+        }
+    }
 
-	if (connected[0] != 0) {
-		return CONTROLLER_EXISTS;
-	}
+    if (connected[0] != 0) {
+        return CONTROLLER_EXISTS;
+    }
 
-	for (i = 0; i < MAXCONTROLLERS; i++) {
-		enabled[i] = FALSE;
-	}
+    // Must be on one line to match
+    for (i = 0; i < MAXCONTROLLERS; i++) { enabled[i] = FALSE; }
 
     return CONTROLLER_MISSING;
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyInit.s")
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/controller/joyRead.s")
 
-#ifdef NON_MATCHING
-//REQUIRES sPlayerID to be declared in this file.
 /**
  * Set the first 4 player ID's to the controller numbers, so players can input in the menus after boot.
  */
@@ -83,9 +75,6 @@ void joyResetMap(void) {
         sPlayerID[i] = i;
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyResetMap.s")
-#endif
 
 void joyDisable(s32 player) {
     enabled[player & 3] = FALSE;
@@ -168,7 +157,7 @@ s8 joyClamp(s8 stickMag) {
  * Used when anti-cheat/anti-tamper has failed
  */
 void joySetSecurity(void) {
-	joySecurity = 0;
+    joySecurity = 0;
 }
 
 s32 joyCharVal(void) {
