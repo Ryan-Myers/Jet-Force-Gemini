@@ -1465,6 +1465,7 @@ joyMessageQueue = 0x800FBB50;
 joyMessageBuf = 0x800FBB68;
 joyMessage = 0x800FBB6C;
 joyStatus = 0x800FBB70;
+sControllerCurrData = 0x800FBB80;
 connected = 0x800FBBC8;
 numberOfJoypads = 0x800FBBCC;
 gfxBase = 0x800FBEC0;

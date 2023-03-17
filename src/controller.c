@@ -86,19 +86,19 @@ void joyResetMap(void) {
 s8 joyClamp(s8 stickMag);
 
 s8 joyGetStickX(s32 player) {
-    return joyClamp(*(D_800FBB82 + ((&D_800FBBC0)[player] * 6)));
+    return joyClamp(sControllerCurrData[D_800FBBC0[player]].stick_x);
 }
 
 s8 joyGetAbsX(s32 player) {
-    return *(D_800FBB82 + ((&D_800FBBC0)[player] * 6));
+    return sControllerCurrData[D_800FBBC0[player]].stick_x;
 }
 
 s8 joyGetStickY(s32 player) {
-    return joyClamp(*(D_800FBB83 + ((&D_800FBBC0)[player] * 6)));
+    return joyClamp(sControllerCurrData[D_800FBBC0[player]].stick_y);
 }
 
 s8 joyGetAbsY(s32 player) {
-    return *(D_800FBB83 + ((&D_800FBBC0)[player] * 6));
+    return sControllerCurrData[D_800FBBC0[player]].stick_y;
 }
 
 #define JOYSTICK_DEADZONE 5 //was 8 in DKR

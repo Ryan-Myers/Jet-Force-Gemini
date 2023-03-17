@@ -17,11 +17,10 @@ extern OSMesg joyMessageBuf;
 extern OSMesg joyMessage;
 extern OSContStatus joyStatus[MAXCONTROLLERS];
 extern s32 numberOfJoypads;
+extern u8 D_800FBBC0[MAXCONTROLLERS];
 extern u8 D_800FBBC4[MAXCONTROLLERS];
 extern u8 connected[MAXCONTROLLERS];
 extern u16 joySecurity;
-extern u8 D_800FBBC0;
-extern u8 D_800FBB83[16];
-extern u8 D_800FBB82[16];
+extern OSContPad sControllerCurrData[MAXCONTROLLERS];
 
 #endif
