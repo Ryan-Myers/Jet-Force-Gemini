@@ -69,36 +69,61 @@ void joyResetMap(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/controller/joyResetMap.s")
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyDisable.s")
+void joyDisable(s32 player) {
+    D_800FBBC4[player & 3] = FALSE;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyEnable.s")
+void joyEnable(s32 player) {
+    D_800FBBC4[player & 3] = TRUE;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyCreateMap.s")
+void joyCreateMap(s8 *activePlayers) {
+    s32 i;
+    s32 temp = 0;
+    for (i = 0; i < MAXCONTROLLERS; i++) {
+        if (activePlayers[i]) {
+            sPlayerID[temp++] = i;
+        }
+    }
+    for (i = 0; i < MAXCONTROLLERS; i++) {
+        if (!activePlayers[i]) {
+            sPlayerID[temp++] = i;
+        }
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyGetController.s")
+u8 joyGetController(s32 player) {
+    return sPlayerID[player];
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyGetButtons.s")
+u16 joyGetButtons(s32 player) {
+    return sControllerCurrData[sPlayerID[player]].button;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyGetPressed.s")
+u16 joyGetPressed(s32 player) {
+    return gControllerButtonsPressed[sPlayerID[player]];
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyGetReleased.s")
+u16 joyGetReleased(s32 player) {
+    return gControllerButtonsReleased[sPlayerID[player]];
+}
 
 s8 joyClamp(s8 stickMag);
 
 s8 joyGetStickX(s32 player) {
-    return joyClamp(sControllerCurrData[D_800FBBC0[player]].stick_x);
+    return joyClamp(sControllerCurrData[sPlayerID[player]].stick_x);
 }
 
 s8 joyGetAbsX(s32 player) {
-    return sControllerCurrData[D_800FBBC0[player]].stick_x;
+    return sControllerCurrData[sPlayerID[player]].stick_x;
 }
 
 s8 joyGetStickY(s32 player) {
-    return joyClamp(sControllerCurrData[D_800FBBC0[player]].stick_y);
+    return joyClamp(sControllerCurrData[sPlayerID[player]].stick_y);
 }
 
 s8 joyGetAbsY(s32 player) {
-    return sControllerCurrData[D_800FBBC0[player]].stick_y;
+    return sControllerCurrData[sPlayerID[player]].stick_y;
 }
 
 #define JOYSTICK_DEADZONE 5 //was 8 in DKR
