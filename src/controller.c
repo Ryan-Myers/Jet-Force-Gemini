@@ -3,8 +3,6 @@
 UNUSED s32 D_800A39E0 = 0xFFFFFFFF;
 u16 joySecurity = 0xFFFF; //Used when anti-cheat/anti-tamper has failed.
 
-//0xFC750 - 0xFC7CC - 0xFC7D0
-//0x800fbb50 - 0x800fbbcc - 0x800FBBD0
 OSMesgQueue joyMessageQueue;
 OSMesg joyMessageBuf;
 OSMesg joyMessage;
@@ -18,9 +16,6 @@ u8 enabled[MAXCONTROLLERS];
 u8 connected[MAXCONTROLLERS];
 s32 numberOfJoypads;
 
-/**
- * Return the serial interface message queue.
- */
 OSMesgQueue *joyMessageQ(void) {
     return &joyMessageQueue;
 }
@@ -64,7 +59,92 @@ s32 joyInit(void) {
     return CONTROLLER_MISSING;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyRead.s")
+//Size: 0x538
+typedef struct Game {
+    u8 pad[0x538];
+} Game;
+
+Game *mainGetGame(void);
+Game *mainGetGameArrayPtr(void);
+s32 packClearGameEprom(s32 saveFileNum, Game* game);
+void packEraseEprom(void);
+s32 packLoadGameEprom(s32 saveFileNum, Game *game);
+s32 packLoadGlobalFlagsEprom(u64 *flags);
+s32 packSaveGameEprom(s32 saveFileNum, Game *game);
+s32 packSaveGlobalFlagsEprom(u64 *flags);
+void rumbleTick(s32 updateRate);
+extern u64 globalflags;
+#define NUMBER_OF_SAVE_FILES 6
+
+s32 joyRead(s32 saveDataFlags, s32 updateRate) {
+    Game *gamePtr;
+    OSMesg unusedMsg;
+    s32 i;
+
+    if (osRecvMesg(&joyMessageQueue, &unusedMsg, OS_MESG_NOBLOCK) == 0) {
+        //Back up old controller data
+        for (i = 0; i < MAXCONTROLLERS; i++) {
+            sControllerPrevData[i] = sControllerCurrData[i];
+        }
+        osContGetReadData(sControllerCurrData);
+        numberOfJoypads = 0;
+        for (i = 0; i < MAXCONTROLLERS; i++) {
+            if (sControllerCurrData[i].errno == 0) {
+                connected[i] = TRUE;
+                numberOfJoypads++;
+            } else {
+                connected[i] = FALSE;
+            }
+        }
+        if (saveDataFlags != 0) {
+            gamePtr = mainGetGame();
+            if (saveDataFlags & 0x40000000) {
+                packSaveGameEprom((saveDataFlags >> 3) & 7, gamePtr);
+            }
+            if (saveDataFlags & 0x20000000) {
+                packClearGameEprom((saveDataFlags >> 6) & 7, gamePtr);
+            }
+            if (saveDataFlags & 0x10000000) {
+                for (i = 0; i < NUMBER_OF_SAVE_FILES; i++) {
+                    packClearGameEprom(i, gamePtr);
+                }
+            }
+            if (saveDataFlags & 0x01000000) {
+                packEraseEprom();
+            }
+            if (saveDataFlags & 0x80000000) {
+                packLoadGameEprom(saveDataFlags & 7, gamePtr);
+            }
+            if (saveDataFlags & 0x8000000) {
+                gamePtr = mainGetGameArrayPtr();
+                for (i = 0; i < NUMBER_OF_SAVE_FILES; i++) {
+                    packLoadGameEprom(i, &gamePtr[i]);
+                }
+            }
+            if ((saveDataFlags & 0x4000000)) {
+                packLoadGlobalFlagsEprom(&globalflags);
+            }
+            if (saveDataFlags& 0x02000000) {
+                packSaveGlobalFlagsEprom(&globalflags);
+            }
+            //Reset all flags
+            saveDataFlags = 0;
+        }
+        rumbleTick(updateRate);
+        osContStartReadData(&joyMessageQueue);
+    }
+    for (i = 0; i < MAXCONTROLLERS; i++) {
+        if (!enabled[i]) {
+            sControllerCurrData[i].button = 0;
+            sControllerCurrData[i].stick_x = 0;
+            sControllerCurrData[i].stick_y = 0;
+        }
+        //XOR the diff between the last read of the controller data with the current read to see what buttons have been pushed and released.
+        gControllerButtonsPressed[i]  = ((sControllerCurrData[i].button ^ sControllerPrevData[i].button) & sControllerCurrData[i].button) & joySecurity;
+        gControllerButtonsReleased[i] = ((sControllerCurrData[i].button ^ sControllerPrevData[i].button) & sControllerPrevData[i].button) & joySecurity;
+    }
+    return saveDataFlags;
+}
 
 /**
  * Set the first 4 player ID's to the controller numbers, so players can input in the menus after boot.
