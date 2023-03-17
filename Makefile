@@ -139,8 +139,6 @@ all: $(VERIFY)
 dirs:
 	$(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(BIN_DIRS),$(shell mkdir -p $(BUILD_DIR)/$(dir)))
 
-
-
 check: .baserom.$(VERSION).ok
 
 verify: $(TARGET).z64
@@ -148,7 +146,6 @@ verify: $(TARGET).z64
 
 no_verify: $(TARGET).z64
 	@echo "Skipping SHA1SUM check!"
-
 
 splat: $(SPLAT)
 
@@ -159,7 +156,6 @@ dependencies: tools
 	@make -C tools
 	@$(PYTHON) -m pip install -r tools/splat/requirements.txt #Installing the splat dependencies
 
-
 clean:
 	rm -rf build
 
@@ -169,6 +165,14 @@ distclean: clean
 	rm -f *auto*.txt
 	rm -f $(LD_SCRIPT)
 
+#When you just need to wipe old symbol names and re-extract
+cleanextract: distclean extract
+
+#Put the build folder into expected for use with asm-differ. Only run this with a matching build.
+expected: verify
+	mkdir -p expected
+	rm -rf expected/build
+	cp -r build/ expected/
 
 ### Recipes
 

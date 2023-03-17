@@ -1466,6 +1466,7 @@ joyMessageBuf = 0x800FBB68;
 joyMessage = 0x800FBB6C;
 joyStatus = 0x800FBB70;
 sControllerCurrData = 0x800FBB80;
+sControllerPrevData = 0x800FBB98;
 gControllerButtonsPressed = 0x800FBBB0;
 gControllerButtonsReleased = 0x800FBBB8;
 sPlayerID = 0x800FBBC0;

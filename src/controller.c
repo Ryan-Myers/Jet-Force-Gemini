@@ -1,5 +1,23 @@
 #include "common.h"
 
+UNUSED s32 D_800A39E0 = 0xFFFFFFFF;
+u16 joySecurity = 0xFFFF; //Used when anti-cheat/anti-tamper has failed.
+
+//0xFC750 - 0xFC7CC - 0xFC7D0
+//0x800fbb50 - 0x800fbbcc - 0x800FBBD0
+// OSMesgQueue joyMessageQueue;
+// OSMesg joyMessageBuf;
+// OSMesg joyMessage;
+// OSContStatus joyStatus[MAXCONTROLLERS];
+// OSContPad sControllerCurrData[MAXCONTROLLERS];
+// OSContPad sControllerPrevData[MAXCONTROLLERS];
+// u16 gControllerButtonsPressed[MAXCONTROLLERS];
+// u16 gControllerButtonsReleased[MAXCONTROLLERS];
+// u8 sPlayerID[MAXCONTROLLERS];
+// u8 enabled[MAXCONTROLLERS];
+// u8 connected[MAXCONTROLLERS];
+// s32 numberOfJoypads;
+
 /**
  * Return the serial interface message queue.
  */
@@ -9,7 +27,7 @@ OSMesgQueue *joyMessageQ(void) {
 
 #ifdef NON_MATCHING
 //This will match as soon as I can properly define the data section for this file.
-//Having D_800FBBC4 be an extern breaks it.
+//Having enabled be an extern breaks it.
 #define CONTROLLER_MISSING -1
 #define CONTROLLER_EXISTS   0
 u8 enabled[MAXCONTROLLERS];
@@ -55,7 +73,7 @@ s32 joyInit(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/controller/joyRead.s")
 
 #ifdef NON_MATCHING
-//REQUIRES the variables to be declared in this file.
+//REQUIRES sPlayerID to be declared in this file.
 /**
  * Set the first 4 player ID's to the controller numbers, so players can input in the menus after boot.
  */

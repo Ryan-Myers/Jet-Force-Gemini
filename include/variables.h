@@ -22,6 +22,7 @@ extern u8 enabled[MAXCONTROLLERS];
 extern u8 connected[MAXCONTROLLERS];
 extern u16 joySecurity;
 extern OSContPad sControllerCurrData[MAXCONTROLLERS];
+extern OSContPad sControllerPrevData[MAXCONTROLLERS];
 extern u16 gControllerButtonsPressed[MAXCONTROLLERS];
 extern u16 gControllerButtonsReleased[MAXCONTROLLERS];
 
