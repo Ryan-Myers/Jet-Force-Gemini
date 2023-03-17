@@ -83,13 +83,23 @@ void joyResetMap(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/controller/joyGetReleased.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyGetStickX.s")
+s8 joyClamp(s8 stickMag);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyGetAbsX.s")
+s8 joyGetStickX(s32 player) {
+    return joyClamp(*(D_800FBB82 + ((&D_800FBBC0)[player] * 6)));
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyGetStickY.s")
+s8 joyGetAbsX(s32 player) {
+    return *(D_800FBB82 + ((&D_800FBBC0)[player] * 6));
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/controller/joyGetAbsY.s")
+s8 joyGetStickY(s32 player) {
+    return joyClamp(*(D_800FBB83 + ((&D_800FBBC0)[player] * 6)));
+}
+
+s8 joyGetAbsY(s32 player) {
+    return *(D_800FBB83 + ((&D_800FBBC0)[player] * 6));
+}
 
 #define JOYSTICK_DEADZONE 5 //was 8 in DKR
 #define JOYSTICK_MAX_RANGE 65 //was 70 in DKR
