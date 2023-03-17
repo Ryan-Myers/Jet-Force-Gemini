@@ -54,6 +54,7 @@ expected/
 .splat_cache*
 symbol_addrs.us.txt
 ctx.c
+ctx.c.m2c
 ctx_includes.c
 tools/n64crc
 !tools/build

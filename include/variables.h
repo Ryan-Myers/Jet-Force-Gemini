@@ -15,8 +15,10 @@ extern s32 Fmax;
 extern OSMesgQueue joyMessageQueue;
 extern OSMesg joyMessageBuf;
 extern OSMesg joyMessage;
-extern OSContStatus joyStatus;
-extern s32 connected;
+extern OSContStatus joyStatus[MAXCONTROLLERS];
 extern s32 numberOfJoypads;
+extern u8 D_800FBBC4[MAXCONTROLLERS];
+extern u8 connected[MAXCONTROLLERS];
+extern u16 joySecurity;
 
 #endif
