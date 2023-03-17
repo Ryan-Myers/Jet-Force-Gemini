@@ -12,7 +12,7 @@ OSMesgQueue *joyMessageQ(void) {
 //Having D_800FBBC4 be an extern breaks it.
 #define CONTROLLER_MISSING -1
 #define CONTROLLER_EXISTS   0
-u8 D_800FBBC4[MAXCONTROLLERS];
+u8 enabled[MAXCONTROLLERS];
 
 s32 joyInit(void) {
 	s32 i;
@@ -25,7 +25,7 @@ s32 joyInit(void) {
     joyResetMap();
 
 	for (i = 0; i < ARRAY_COUNT(connected); i++) {
-		D_800FBBC4[i] = TRUE;
+		enabled[i] = TRUE;
 		connected[i] = FALSE;
 	}
 
@@ -43,7 +43,7 @@ s32 joyInit(void) {
 	}
 
 	for (i = 0; i < MAXCONTROLLERS; i++) {
-		D_800FBBC4[i] = FALSE;
+		enabled[i] = FALSE;
 	}
 
     return CONTROLLER_MISSING;
@@ -62,7 +62,7 @@ s32 joyInit(void) {
 void joyResetMap(void) {
     s32 i;
     for (i = 0; i < MAXCONTROLLERS; i++) {
-        D_800FBBC4[i] = i;
+        sPlayerID[i] = i;
     }
 }
 #else
@@ -70,11 +70,11 @@ void joyResetMap(void) {
 #endif
 
 void joyDisable(s32 player) {
-    D_800FBBC4[player & 3] = FALSE;
+    enabled[player & 3] = FALSE;
 }
 
 void joyEnable(s32 player) {
-    D_800FBBC4[player & 3] = TRUE;
+    enabled[player & 3] = TRUE;
 }
 
 void joyCreateMap(s8 *activePlayers) {

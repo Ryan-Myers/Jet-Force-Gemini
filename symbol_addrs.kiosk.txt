@@ -1469,6 +1469,7 @@ sControllerCurrData = 0x800FBB80;
 gControllerButtonsPressed = 0x800FBBB0;
 gControllerButtonsReleased = 0x800FBBB8;
 sPlayerID = 0x800FBBC0;
+enabled = 0x800FBBC4;
 connected = 0x800FBBC8;
 numberOfJoypads = 0x800FBBCC;
 gfxBase = 0x800FBEC0;
