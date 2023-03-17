@@ -201,7 +201,16 @@ s32 *objGetTable(s32 index) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objCutCameraActive.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/GetRange.s")
+f32 GetRange(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
+    f32 temp_f0;
+    f32 temp_f16;
+    f32 temp_f2;
+
+    temp_f0 = arg0 - arg3;
+    temp_f2 = arg1 - arg4;
+    temp_f16 = arg2 - arg5;
+    return sqrtf((temp_f0 * temp_f0) + (temp_f2 * temp_f2) + (temp_f16 * temp_f16));
+}
 
 f32 GetRangeSquared(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
     f32 temp_f16;
