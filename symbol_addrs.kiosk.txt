@@ -1191,6 +1191,7 @@ osPfsDeleteFile = 0x80097550;
 __osPfsReleasePages = 0x80097830;
 __osBlockSum = 0x80097A68;
 osPfsFindFile = 0x80097B60;
+__osPfsGetNextPage = 0x80097D20;
 osPfsReadWriteFile = 0x80097E1C;
 osPfsAllocateFile = 0x80098220;
 __osPfsDeclearPage = 0x800986A4;
