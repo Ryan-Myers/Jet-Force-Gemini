@@ -23,5 +23,14 @@ void func_8003F088(void *); //bootThread
 void mainThread(void *);
 void diCpuTraceInit(void);
 
+//diCpu.c
+extern OSThread diCpuOSThread;
+void diCpuThread(void *);
+extern u64 diCpuThreadStack[1];
+extern OSMesgQueue D_801031C0;
+extern void *D_801031D8;
+extern void *D_801031F8;
+extern OSMesgQueue D_80103218;
+
 
 #endif
