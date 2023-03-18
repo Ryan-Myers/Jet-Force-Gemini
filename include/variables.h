@@ -31,6 +31,10 @@ extern OSMesgQueue D_801031C0;
 extern void *D_801031D8;
 extern void *D_801031F8;
 extern OSMesgQueue D_80103218;
-
+extern s32 D_800A6E88;
+extern s32 D_800A6E8C;
+extern char D_800AF4EC[26];// = "Fault in thread %d   (%s)";
+extern char D_800AF508[9];// = "epc NULL";
+extern char D_800AF650[16];// = "free ram 		%08x";
 
 #endif

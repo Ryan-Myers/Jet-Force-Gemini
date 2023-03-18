@@ -134,10 +134,19 @@ void func_800677E4(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuTraceMallocFault.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuTraceGetFault.s")
+s32 diCpuTraceGetFault(void) {
+    return 0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuTraceTick.s")
+void diCpuTraceTick(s32 arg0) {
+    D_800A6E8C += arg0;
+    if (D_800A6E8C > 60) {
+        D_800A6E8C = 0;
+        D_800A6E88++;
+    }
+}
 
+//render_epc_lock_up_display in DKR
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067CA4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800683D0.s")
@@ -148,4 +157,15 @@ void func_800677E4(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_8006869C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/__rmonSendFault.s")
+s32 TrapDanglingJump(s32, s32, s32);
+
+void __rmonSendFault(s32 arg0) {
+    volatile f32 sp2C; //Fakematch?
+    u32 i;
+
+	i = 0;
+    sp2C = 0.0f;
+	do {
+	    i += TrapDanglingJump(i + arg0, 560 - i, 2);
+    } while (i < 560);
+}
