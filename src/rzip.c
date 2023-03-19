@@ -6,7 +6,7 @@ s32 inflate_block(void);
 void _blkclr(void *, size_t);
 
 huft *rzip_huft_alloc = NULL;
-s32 *rzip_AssetAddress = NULL;
+huft *rzip_asset_address = NULL;
 u8 *rzip_inflate_input = NULL;
 u8 *rzip_inflate_output = NULL;
 
@@ -20,7 +20,7 @@ s32 rzip_hufts;
 
 void rzipInit(void) {
     rzip_huft_alloc = mmAlloc(0x2800, COLOUR_TAG_BLACK);
-    rzip_AssetAddress = mmAlloc(0x10, COLOUR_TAG_BLACK);
+    rzip_asset_address = mmAlloc(sizeof(huft) * 2, COLOUR_TAG_BLACK);
 }
 
 /**
@@ -40,8 +40,8 @@ s32 rzipUncompressSize(u8 *arg0) {
  * Returns the uncompressed size of a gzip compressed asset.
  */
 s32 rzipUncompressSizeROM(s32 assetIndex, s32 assetOffset) {
-    piRomLoadSection(assetIndex, (u32) rzip_AssetAddress, assetOffset, 8);
-    return rzipUncompressSize((u8 *)rzip_AssetAddress);
+    piRomLoadSection(assetIndex, (u32) rzip_asset_address, assetOffset, sizeof(huft));
+    return rzipUncompressSize((u8 *)rzip_asset_address);
 }
 
 /**
