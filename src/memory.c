@@ -24,6 +24,7 @@ typedef struct MemoryPool {
 } MemoryPool;
 
 MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *, s32, s32); // new_memory_pool
+s32 func_8004B288(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken, s32 newSlotIsTaken, u32 colourTag);
 void mmSetDelay(s32 arg0);
 s32 *disableInterrupts(void);
 void enableInterrupts(s32*);
@@ -54,7 +55,7 @@ void mmInit(void) {
     } else {
         D_800FE878 = RAM_END;
     }
-    func_8004A7C4(&D_80106470, D_800FE878 - (s32)&D_80106470, MAIN_POOL_SLOT_COUNT);
+    func_8004A7C4((MemoryPoolSlot *)&D_80106470, D_800FE878 - (s32)&D_80106470, MAIN_POOL_SLOT_COUNT);
     mmSetDelay(2);
     D_800FE858 = 0;
 }
@@ -124,9 +125,60 @@ MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *slots, s32 poolSize, s32 numSlots)
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/mmAlloc2.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004A9BC.s")
+//allocate_from_memory_pool
+MemoryPoolSlot *func_8004A9BC(s32 poolIndex, s32 size, u32 colourTag) {
+    s32 slotSize;
+    MemoryPoolSlot *curSlot;
+    UNUSED s32 pad;
+    MemoryPool *pool;
+    MemoryPoolSlot *slots;
+    s32 *flags;
+    s32 nextIndex;
+    s32 currIndex;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/mmAllocR.s")
+    flags = disableInterrupts();
+    pool = &D_800FE310[poolIndex];
+    if ((pool->curNumSlots + 1) == (*pool).maxNumSlots) {
+        enableInterrupts(flags);
+        return 0;
+    }
+    currIndex = -1;
+    if (size & 0xF) {
+        size = (size & ~0xF);
+		size += 0x10;
+    }
+    slots = pool->slots;
+    slotSize = 0x7FFFFFFF;
+    nextIndex = 0;
+    do {
+        curSlot = &slots[nextIndex];
+        if (curSlot->flags == 0) {
+            if ((curSlot->size >= size) && (curSlot->size < slotSize)) {
+                slotSize = curSlot->size;
+                currIndex = nextIndex;
+            }
+        }
+        nextIndex = curSlot->nextIndex;
+    } while (nextIndex != -1);
+    if (currIndex != -1) {
+        func_8004B288(poolIndex, (s32) currIndex, size, 1, 0, colourTag);
+        enableInterrupts(flags);
+        return (MemoryPoolSlot *) (slots + currIndex)->data;
+    }
+    enableInterrupts(flags);
+    return 0;
+}
+
+
+void *mmAllocR(MemoryPoolSlot *slots, s32 size) {
+    s32 i;
+    for (i = D_800FE350; i != 0; i--) {
+        if (slots == D_800FE310[i].slots) {
+            return func_8004A9BC(i, size, 0);
+        }
+    }
+    return (void *)NULL;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/mmAllocAtAddr.s")
 
