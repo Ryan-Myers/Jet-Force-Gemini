@@ -46,7 +46,37 @@ u32 *piRomLoad(u32 assetIndex) {
     return out;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/pi/piRomLoadCompressed.s")
+/**
+ * Loads a gzip compressed asset from the ROM file.
+ * Returns a pointer to the decompressed data.
+ */
+UNUSED u8 *piRomLoadCompressed(u32 assetIndex, s32 extraMemory) {
+    s32 size;
+    s32 start;
+    s32 totalSpace;
+    u8 *gzipHeaderRamPos;
+    u8 *out;
+    if (D_800FED80[0] < assetIndex) {
+        return NULL;
+    }
+    assetIndex++;
+    out = (u8 *) (assetIndex + D_800FED80);
+    start = ((s32 *) out)[0];
+    size = ((s32 *) out)[1] - start;
+    gzipHeaderRamPos = (u8 *) mmAlloc(8, COLOUR_TAG_WHITE);
+    romCopy((u32) (start + D_B23E0), (u32) gzipHeaderRamPos, 8);
+    totalSpace = rzipUncompressSize(gzipHeaderRamPos) + extraMemory;
+    mmFree(gzipHeaderRamPos);
+    out = (u8 *) mmAlloc(totalSpace + extraMemory, COLOUR_TAG_GREY);
+    if (out == NULL){
+        return NULL;
+    }
+    gzipHeaderRamPos = (out + totalSpace) - size;
+    if (1) {} // Fakematch
+    romCopy((u32) (start + D_B23E0), (u32) gzipHeaderRamPos, size);
+    rzipUncompress(gzipHeaderRamPos, out);
+    return out;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/pi/piRomLoadSection.s")
 

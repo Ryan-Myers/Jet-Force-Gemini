@@ -47,5 +47,8 @@ extern u32 *D_800FED80;//gAssetsLookupTable
 extern u8 D_B22B0[], D_B23E0[];
 void *mmAlloc(s32 size, u32 colourTag);
 void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes);
+void free_from_memory_pool(void *data);
+u8 *rzipUncompress(u8 *compressedInput, u8 *decompressedOutput);
+s32 rzipUncompressSize(u8 *arg0);
 
 #endif
