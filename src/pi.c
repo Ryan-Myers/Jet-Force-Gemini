@@ -78,10 +78,76 @@ UNUSED u8 *piRomLoadCompressed(u32 assetIndex, s32 extraMemory) {
     return out;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/pi/piRomLoadSection.s")
+/**
+ * Loads part of an asset section to a specific memory address.
+ * Returns the size argument.
+ */
+s32 piRomLoadSection(u32 assetIndex, u32 address, s32 assetOffset, s32 size) {
+    u32 *index;
+    s32 start;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/pi/piRomGetSectionPtr.s")
+    if (size == 0 || D_800FED80[0] < assetIndex) {
+        return 0;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/pi/piRomGetFileSize.s")
+    assetIndex++;
+    index = assetIndex + D_800FED80;
+    start = *index + assetOffset;
+    romCopy((u32) (start + D_B23E0), address, size);
+    return size;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/pi/romCopy.s")
+/**
+ * Returns a rom offset of an asset given its asset section and a local offset.
+ */
+u8 *piRomGetSectionPtr(u32 assetIndex, u32 assetOffset) {
+    u32 *index;
+    u32 start;
+
+    if (D_800FED80[0] < assetIndex) {
+        return NULL;
+    }
+
+    assetIndex++;
+    index = assetIndex + D_800FED80;
+    start = *index + assetOffset;
+    return start + D_B23E0;
+}
+
+/**
+ * Returns the size of an asset section.
+ */
+s32 piRomGetFileSize(u32 assetIndex) {
+    u32 *index;
+
+    if (D_800FED80[0] < assetIndex) {
+        return 0;
+    }
+
+    assetIndex++;
+    index = assetIndex + D_800FED80;
+    return *(index + 1) - *index;
+}
+
+#define MAX_TRANSFER_SIZE 0x5000
+
+/**
+ * Copies data from the game cartridge to a ram address.
+ */
+void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes) {
+    OSMesg dmaMesg;
+    s32 numBytesToDMA;
+
+    osInvalDCache((u32 *) ramAddress, numBytes);
+    numBytesToDMA = MAX_TRANSFER_SIZE;
+    while (numBytes > 0) {
+        if (numBytes < numBytesToDMA) {
+            numBytesToDMA = numBytes;
+        }
+        osPiStartDma(&D_800FECF0, OS_MESG_PRI_NORMAL, OS_READ, romOffset, (u32 *) ramAddress, numBytesToDMA, &D_800FED10);
+        osRecvMesg(&D_800FED10, &dmaMesg, OS_MESG_BLOCK);
+        numBytes -= numBytesToDMA;
+        romOffset += numBytesToDMA;
+        ramAddress += numBytesToDMA;
+    }
+}

@@ -39,6 +39,7 @@ extern char D_800AF650[16];// = "free ram 		%08x";
 
 
 //pi.c
+extern OSIoMesg D_800FECF0;//gAssetsDmaIoMesg;
 extern OSMesg D_800FED28[16];//gPIMesgBuf[16];
 extern OSMesgQueue D_800FED68;//gPIMesgQueue;
 extern OSMesg D_800FED08;//gDmaMesg;
@@ -47,7 +48,7 @@ extern u32 *D_800FED80;//gAssetsLookupTable
 extern u8 D_B22B0[], D_B23E0[];
 void *mmAlloc(s32 size, u32 colourTag);
 void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes);
-void free_from_memory_pool(void *data);
+void mmFree(void *data);
 u8 *rzipUncompress(u8 *compressedInput, u8 *decompressedOutput);
 s32 rzipUncompressSize(u8 *arg0);
 
