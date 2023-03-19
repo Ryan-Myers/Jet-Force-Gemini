@@ -1516,7 +1516,6 @@ refractBuffers = 0x800FE2F0;
 refractCurrentBuffer = 0x800FE2F8;
 refractDelay = 0x800FE2FC;
 refractWhichBuffer = 0x800FE300;
-mmSlotPtr = 0x800FE318;
 mmDelay = 0x800FE85C;
 FreeRAM = 0x800FE860;
 //gAssetsDmaIoMesg = 0x800FECF0;

@@ -37,6 +37,7 @@ extern u8 D_800A3E50; //mmExtendedRam = FALSE;
 extern MemoryPoolSlot *D_80106470; //gMainMemoryPool
 extern s32 FreeRAM;
 extern s32 D_800FE868[4];
+extern s32 mmDelay;
 
 #define MAIN_POOL_SLOT_COUNT 1600
 #define RAM_END 0x80400000
@@ -169,12 +170,11 @@ MemoryPoolSlot *func_8004A9BC(s32 poolIndex, s32 size, u32 colourTag) {
     return 0;
 }
 
-
 void *mmAllocR(MemoryPoolSlot *slots, s32 size) {
     s32 i;
     for (i = D_800FE350; i != 0; i--) {
         if (slots == D_800FE310[i].slots) {
-            return func_8004A9BC(i, size, 0);
+            return func_8004A9BC(i, size, COLOUR_TAG_NONE);
         }
     }
     return (void *)NULL;
@@ -196,16 +196,38 @@ void *mmAllocR(MemoryPoolSlot *slots, s32 size) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B0F8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/mmGetSlotPtr.s")
+UNUSED MemoryPoolSlot *mmGetSlotPtr(s32 poolIndex) {
+    return D_800FE310[poolIndex].slots;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/mmGetDelay.s")
+s32 mmGetDelay(void) {
+	return mmDelay;
+}
 
 //allocate_memory_pool_slot?
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B288.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/mmAlign16.s")
+/**
+ * Returns the passed in address aligned to the next 16-byte boundary.
+ */
+u8 *mmAlign16(u8 *address) {
+    s32 remainder = (s32)address & 0xF;
+    if (remainder > 0) {
+        address = (u8 *)(((s32)address - remainder) + 16);
+    }
+    return address;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/mmAlign4.s")
+/**
+ * Returns the passed in address aligned to the next 4-byte boundary.
+ */
+u8 *mmAlign4(u8 *address) {
+    s32 remainder = (s32)address & 0x3;
+    if (remainder > 0) {
+        address = (u8 *)(((s32)address - remainder) + 4);
+    }
+    return address;
+}
 
 void mmSlotPrint(void) {
     s32 i;
