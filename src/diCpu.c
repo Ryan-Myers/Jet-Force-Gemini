@@ -72,28 +72,24 @@ void diCpuTraceInit(void) {
 void func_8006768C(void);
 void func_800677E4(void);
 
-#ifdef NON_MATCHING
-//Regalloc diff that's the same in DKR
-void diCpuThread(UNUSED void *unused) {
+void diCpuThread(void *unused) {
     s32 sp2C;
     s32 var_s0 = 0;
     osCreateMesgQueue(&D_801031C0, &D_801031D8, 8);
-    osSetEventMesg(OS_EVENT_FAULT, &D_801031C0, (void *) 8);
-    osSetEventMesg(OS_EVENT_CPU_BREAK, &D_801031C0, (void *) 2);
+    osSetEventMesg(OS_EVENT_FAULT, &D_801031C0, (void *)8);
+    osSetEventMesg(OS_EVENT_CPU_BREAK, &D_801031C0, (void *)2);
     osCreatePiManager(150, &D_80103218, &D_801031F8, 8);
 	while (1) {
-		do {
-			osRecvMesg(&D_801031C0, (OSMesg) &sp2C, OS_MESG_BLOCK);
-			var_s0 |= sp2C;
-		} while ((!(var_s0 & 8) && !(var_s0 & 2)));
+        osRecvMesg(&D_801031C0, (OSMesg) &sp2C, 1);
+        var_s0 |= (s32)sp2C;
+		if ((var_s0 & 8) == 0 && (var_s0 & 2) == 0) {
+			continue;
+		}
 		var_s0 &= ~8;
 		func_8006768C();
 		func_800677E4();
 	}
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuThread.s")
-#endif
 
 void func_8006768C(void) {
     OSThread *node = __osGetActiveQueue();
