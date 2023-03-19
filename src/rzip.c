@@ -3,15 +3,16 @@
 void *mmAlloc(s32 size, u32 colourTag);
 s32 piRomLoadSection(u32 assetIndex, u32 address, s32 assetOffset, s32 size);
 s32 inflate_block(void);
+void _blkclr(void *, size_t);
 
-extern huft *D_800A7960;// = NULL;
-extern s32 *D_800A7964;// = NULL;
-extern u8 *D_800A7968;// = NULL;
-extern u8 *D_800A796C;// = NULL;
+extern huft *D_800A7960;// = NULL; //rzip_huft_alloc
+extern s32 *D_800A7964;// = NULL; //rzip_AssetAddress
+extern u8 *D_800A7968;// = NULL; //rzip_inflate_input
+extern u8 *D_800A796C;// = NULL; //rzip_inflate_output
 
-extern u32 D_80105220;
-extern u32 D_80105224;
-extern s32 D_80105228;
+extern u32 D_80105220; //rzip_bit_buffer
+extern u32 D_80105224; //rzip_num_bits
+extern s32 D_80105228; //rzip_hufts
 
 /* If BMAX needs to be larger than 16, then h and x[] should be ulg. */
 #define BMAX 16         /* maximum bit length of any code (16 for explode) */

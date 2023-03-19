@@ -4,7 +4,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800447CC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainInitGame.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800448B0.s")
 

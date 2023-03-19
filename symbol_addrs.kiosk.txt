@@ -465,6 +465,7 @@ levelSetObjectFlag = 0x800444D0;
 levelObjectFlagSet = 0x80044504;
 mainThread = 0x80044570;
 RevealReturnAddresses = 0x800446C0;
+mainInitGame = 0x800447CC;
 mainAddZBCheck = 0x80045110;
 mainUpdateZBCheck = 0x80045208;
 mainGetZBCheck = 0x80045308;
