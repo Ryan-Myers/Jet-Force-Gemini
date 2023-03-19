@@ -1,9 +1,18 @@
 #include "common.h"
 void *mmAlloc(s32 size, u32 colourTag);
 void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes);
+void mmFree(void *data);
+u8 *rzipUncompress(u8 *compressedInput, u8 *decompressedOutput);
+s32 rzipUncompressSize(u8 *arg0);
 
-// These are both defined in the generated dkr.ld file.
-// extern u8 __ASSETS_LUT_START[], __ASSETS_LUT_END[]; // __ASSETS_LUT_START = 0xECB60, _END = 0xECC30
+OSIoMesg D_800FECF0; //gAssetsDmaIoMesg;
+OSMesg D_800FED08; //gDmaMesg;
+OSMesgQueue D_800FED10; //gDmaMesgQueue;
+OSMesg D_800FED28[16]; //gPIMesgBuf[16];
+OSMesgQueue D_800FED68; //gPIMesgQueue
+u32 *D_800FED80; //gAssetsLookupTable
+
+extern u8 __ASSETS_LUT_START[], __ASSETS_LUT_END[];
 
 /**
  * Set up the peripheral interface message queues and scheduling.
@@ -15,9 +24,9 @@ void piInit(void) {
     osCreateMesgQueue(&D_800FED68, D_800FED28, ARRAY_COUNT(D_800FED28));
     osCreateMesgQueue(&D_800FED10, &D_800FED08, 1);
     osCreatePiManager((OSPri) 150, &D_800FED68, D_800FED28, ARRAY_COUNT(D_800FED28));
-    assetTableSize = D_B23E0 - D_B22B0;
+    assetTableSize = __ASSETS_LUT_END - __ASSETS_LUT_START;
     D_800FED80 = (u32 *) mmAlloc(assetTableSize, COLOUR_TAG_GREY);
-    romCopy((u32) D_B22B0, (u32) D_800FED80, (s32) assetTableSize);
+    romCopy((u32) __ASSETS_LUT_START, (u32) D_800FED80, (s32) assetTableSize);
 }
 
 /**
@@ -42,7 +51,7 @@ u32 *piRomLoad(u32 assetIndex) {
     if (out == 0) {
         return 0;
     }
-    romCopy((u32) (start + D_B23E0), (u32)out, size);
+    romCopy((u32) (start + __ASSETS_LUT_END), (u32)out, size);
     return out;
 }
 
@@ -64,7 +73,7 @@ UNUSED u8 *piRomLoadCompressed(u32 assetIndex, s32 extraMemory) {
     start = ((s32 *) out)[0];
     size = ((s32 *) out)[1] - start;
     gzipHeaderRamPos = (u8 *) mmAlloc(8, COLOUR_TAG_WHITE);
-    romCopy((u32) (start + D_B23E0), (u32) gzipHeaderRamPos, 8);
+    romCopy((u32) (start + __ASSETS_LUT_END), (u32) gzipHeaderRamPos, 8);
     totalSpace = rzipUncompressSize(gzipHeaderRamPos) + extraMemory;
     mmFree(gzipHeaderRamPos);
     out = (u8 *) mmAlloc(totalSpace + extraMemory, COLOUR_TAG_GREY);
@@ -73,7 +82,7 @@ UNUSED u8 *piRomLoadCompressed(u32 assetIndex, s32 extraMemory) {
     }
     gzipHeaderRamPos = (out + totalSpace) - size;
     if (1) {} // Fakematch
-    romCopy((u32) (start + D_B23E0), (u32) gzipHeaderRamPos, size);
+    romCopy((u32) (start + __ASSETS_LUT_END), (u32) gzipHeaderRamPos, size);
     rzipUncompress(gzipHeaderRamPos, out);
     return out;
 }
@@ -93,7 +102,7 @@ s32 piRomLoadSection(u32 assetIndex, u32 address, s32 assetOffset, s32 size) {
     assetIndex++;
     index = assetIndex + D_800FED80;
     start = *index + assetOffset;
-    romCopy((u32) (start + D_B23E0), address, size);
+    romCopy((u32) (start + __ASSETS_LUT_END), address, size);
     return size;
 }
 
@@ -111,7 +120,7 @@ u8 *piRomGetSectionPtr(u32 assetIndex, u32 assetOffset) {
     assetIndex++;
     index = assetIndex + D_800FED80;
     start = *index + assetOffset;
-    return start + D_B23E0;
+    return start + __ASSETS_LUT_END;
 }
 
 /**
