@@ -5,22 +5,22 @@ s32 piRomLoadSection(u32 assetIndex, u32 address, s32 assetOffset, s32 size);
 s32 inflate_block(void);
 void _blkclr(void *, size_t);
 
-extern huft *D_800A7960;// = NULL; //rzip_huft_alloc
-extern s32 *D_800A7964;// = NULL; //rzip_AssetAddress
-extern u8 *D_800A7968;// = NULL; //rzip_inflate_input
-extern u8 *D_800A796C;// = NULL; //rzip_inflate_output
+huft *rzip_huft_alloc = NULL;
+s32 *rzip_AssetAddress = NULL;
+u8 *rzip_inflate_input = NULL;
+u8 *rzip_inflate_output = NULL;
 
-extern u32 D_80105220; //rzip_bit_buffer
-extern u32 D_80105224; //rzip_num_bits
-extern s32 D_80105228; //rzip_hufts
+u32 rzip_bit_buffer;
+u32 rzip_num_bits;
+s32 rzip_hufts;
 
 /* If BMAX needs to be larger than 16, then h and x[] should be ulg. */
 #define BMAX 16         /* maximum bit length of any code (16 for explode) */
 #define N_MAX 288       /* maximum number of codes in any set */
 
 void rzipInit(void) {
-    D_800A7960 = mmAlloc(0x2800, COLOUR_TAG_BLACK);
-    D_800A7964 = mmAlloc(0x10, COLOUR_TAG_BLACK);
+    rzip_huft_alloc = mmAlloc(0x2800, COLOUR_TAG_BLACK);
+    rzip_AssetAddress = mmAlloc(0x10, COLOUR_TAG_BLACK);
 }
 
 /**
@@ -40,8 +40,8 @@ s32 rzipUncompressSize(u8 *arg0) {
  * Returns the uncompressed size of a gzip compressed asset.
  */
 s32 rzipUncompressSizeROM(s32 assetIndex, s32 assetOffset) {
-    piRomLoadSection(assetIndex, (u32) D_800A7964, assetOffset, 8);
-    return rzipUncompressSize((u8 *)D_800A7964);
+    piRomLoadSection(assetIndex, (u32) rzip_AssetAddress, assetOffset, 8);
+    return rzipUncompressSize((u8 *)rzip_AssetAddress);
 }
 
 /**
@@ -49,10 +49,10 @@ s32 rzipUncompressSizeROM(s32 assetIndex, s32 assetOffset) {
  * Returns the pointer to the decompressed data.
  */
 u8 *rzipUncompress(u8 *compressedInput, u8 *decompressedOutput) {
-    D_800A7968 = compressedInput + 5; // The compression header is 5 bytes.
-    D_800A796C = decompressedOutput;
-    D_80105224 = 0;
-    D_80105220 = 0;
+    rzip_inflate_input = compressedInput + 5; // The compression header is 5 bytes.
+    rzip_inflate_output = decompressedOutput;
+    rzip_num_bits = 0;
+    rzip_bit_buffer = 0;
     while (inflate_block() != 0) {} // Keep calling inflate_block() until it returns 0.
     return decompressedOutput;
 }
@@ -177,8 +177,8 @@ void huft_build(u32 *b, u32 n, u32 s, u16 *d, u16 *e, huft **t, s32 *m) {
         }
         z = 1 << j;             /* table entries for j-bit table */
 
-        q = &D_800A7960[D_80105228];
-        D_80105228 += z + 1;
+        q = &rzip_huft_alloc[rzip_hufts];
+        rzip_hufts += z + 1;
           
         *t = q + 1;             /* link to list for huft_free() */
         *(t = &(q->v.t)) = NULL;

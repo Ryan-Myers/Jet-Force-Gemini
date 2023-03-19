@@ -268,13 +268,13 @@ segments:
       - [0xA1AF0, data]
       - [0xA45E0, .data, controller]
       - [0xA45F0, data]
-      # - [0xA8560, .data, rzip]
-      # - [0xA856C, data]
+      - [0xA8560, .data, rzip]
+      - [0xA8570, data]
       # - [0xA8A38, rodata]
       # #bss/rodata? start?
       - [0xB22B0, bin]
       - [0xFC750, .bss, controller]
-      # - [0x105E20, .bss, rzip]
+      - [0x105E20, .bss, rzip]
       # - [0xFC7D0, bin]
       #- { start: 0xB22B0, type: bss, vram: 0x800B16B0 }
 
