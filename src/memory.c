@@ -23,7 +23,7 @@ typedef struct MemoryPool {
 /* 0x0C */ s32 size;
 } MemoryPool;
 
-void *func_8004A7C4(void *, s32, s32); // new_memory_pool
+MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *, s32, s32); // new_memory_pool
 void mmSetDelay(s32 arg0);
 s32 *disableInterrupts(void);
 void enableInterrupts(s32*);
@@ -34,10 +34,18 @@ extern s32 D_800FE350; //gNumberOfMemoryPools
 extern s32 D_800FE878; //mmEndRam
 extern u8 D_800A3E50; //mmExtendedRam = FALSE;
 extern MemoryPoolSlot *D_80106470; //gMainMemoryPool
+extern s32 FreeRAM;
+extern s32 D_800FE868[4];
 
 #define MAIN_POOL_SLOT_COUNT 1600
 #define RAM_END 0x80400000
 #define EXTENDED_RAM_END 0x80600000
+
+#ifndef _ALIGN16
+#define _ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
+//#define _ALIGN16(val) ((val)&0xFFFFFFF0) + 0x10
+#endif
+
 
 void mmInit(void) {
     D_800FE350 = -1;
@@ -72,7 +80,45 @@ MemoryPoolSlot *mmAllocRegion(s32 poolDataSize, s32 numSlots) {
     return newPool;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004A7C4.s")
+/**
+ * Create and initialise a memory pool in RAM that will act as the place where arbitrary allocations can go.
+ * Will return the location of the first free slot in that pool.
+*/
+MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *slots, s32 poolSize, s32 numSlots) {
+    MemoryPoolSlot *firstSlot;
+    s32 poolCount;
+    s32 i;
+	s32 firstSlotSize;
+    
+    poolCount = ++D_800FE350;
+	firstSlotSize = poolSize - (numSlots * sizeof(MemoryPoolSlot));
+    D_800FE310[poolCount].maxNumSlots = numSlots;
+    D_800FE310[poolCount].curNumSlots = 0;
+    D_800FE310[poolCount].slots = slots;
+    D_800FE310[poolCount].size = poolSize;
+    firstSlot = slots;
+    for (i = 0; i < D_800FE310[poolCount].maxNumSlots; i++) {
+        firstSlot->index = i;
+        firstSlot++;
+    }
+    firstSlot = &D_800FE310[poolCount].slots[0];
+    slots += numSlots;
+    if ((s32) slots & 0xF) {
+        firstSlot->data = (u8 *) _ALIGN16(slots);
+    } else {
+        firstSlot->data = (u8 *) slots;
+    }
+    firstSlot->size = firstSlotSize;
+    firstSlot->flags = 0;
+    firstSlot->prevIndex = -1;
+    firstSlot->nextIndex = -1;
+    D_800FE310[poolCount].curNumSlots++;
+	if (poolCount == 0) {
+		FreeRAM = firstSlotSize;
+	}
+	D_800FE868[poolCount] = firstSlotSize;
+    return D_800FE310[poolCount].slots;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/mmAlloc.s")
 
