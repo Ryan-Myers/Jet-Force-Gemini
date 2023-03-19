@@ -23,13 +23,16 @@ typedef struct MemoryPool {
 /* 0x0C */ s32 size;
 } MemoryPool;
 
-void *func_8004A7C4(void *, s32, s32);
+void *func_8004A7C4(void *, s32, s32); // new_memory_pool
 void mmSetDelay(s32 arg0);
+s32 *disableInterrupts(void);
+void enableInterrupts(s32*);
+void *mmAlloc(s32 size, u32 colourTag);
 extern MemoryPool D_800FE310[4]; //gMemoryPools
 extern s32 D_800FE858; //gFreeQueueCount
 extern s32 D_800FE350; //gNumberOfMemoryPools
 extern s32 D_800FE878; //mmEndRam
-extern u8 D_800A3E50; //mmExtendedRam
+extern u8 D_800A3E50; //mmExtendedRam = FALSE;
 extern MemoryPoolSlot *D_80106470; //gMainMemoryPool
 
 #define MAIN_POOL_SLOT_COUNT 1600
@@ -52,7 +55,22 @@ u8 mmExtended(void) {
 	return D_800A3E50;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/mmAllocRegion.s")
+/**
+ * Creates a new memory pool that is sectioned off the main one.
+ */
+MemoryPoolSlot *mmAllocRegion(s32 poolDataSize, s32 numSlots) {
+    s32 size;
+    MemoryPoolSlot *slots;
+    UNUSED s32 unused_2;
+    s32 *flags = disableInterrupts();
+    MemoryPoolSlot *newPool;
+
+    size = poolDataSize + (numSlots * sizeof(MemoryPoolSlot));
+    slots = (MemoryPoolSlot *) mmAlloc(size, COLOUR_TAG_WHITE);
+    newPool = func_8004A7C4(slots, size, numSlots);
+    enableInterrupts(flags);
+    return newPool;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004A7C4.s")
 
