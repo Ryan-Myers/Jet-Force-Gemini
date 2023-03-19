@@ -37,4 +37,15 @@ extern char D_800AF4EC[26];// = "Fault in thread %d   (%s)";
 extern char D_800AF508[9];// = "epc NULL";
 extern char D_800AF650[16];// = "free ram 		%08x";
 
+
+//pi.c
+extern OSMesg D_800FED28[16];//gPIMesgBuf[16];
+extern OSMesgQueue D_800FED68;//gPIMesgQueue;
+extern OSMesg D_800FED08;//gDmaMesg;
+extern OSMesgQueue D_800FED10;//gDmaMesgQueue;
+extern u32 *D_800FED80;//gAssetsLookupTable
+extern u8 D_B22B0[], D_B23E0[];
+void *mmAlloc(s32 size, u32 colourTag);
+void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes);
+
 #endif
