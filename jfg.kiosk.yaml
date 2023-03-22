@@ -88,7 +88,7 @@ segments:
       - [0x69360, c, diCpuTraceCurrentStack]
       - [0x69370, c, fx]
       - [0x70F70, c, font]
-      - [0x736B0, c, pimgr]
+      - [0x736B0, c, libultra/pimgr]
       - [0x73820, c, rzip]
       - [0x73F70, hasm, inflate]
       - [0x749F0, c, subtitles]
@@ -274,12 +274,14 @@ segments:
       # - [0xA8A38, rodata]
       # #bss/rodata? start?
       - [0xB22B0, bin]
-      - [0xFC750, .bss, controller] #0x800FBB50 start - 0x800FBBD0 end
-      - [0xFC7D0, bin]
-      - [0xFF8F0, .bss, pi] #0x800FECF0 start
-      - [0x105E20, .bss, rzip]
-      # - [0xFC7D0, bin]
-      #- { start: 0xB22B0, type: bss, vram: 0x800B16B0 }
+      # - [0x1059E0, .bss, libultra/initialize]
+      # - [0x105AD0, .bss, libultra/pimgr]
+      # - [0xFC750, .bss, controller] #0x800FBB50 start - 0x800FBBD0 end
+      # - [0xFF8F0, .bss, pi] #0x800FECF0 start - 0x800FED80 end
+      # - [0xFF990, .bss, rcpFast3d]
+      # - [0x105E20, .bss, rzip] #0x80105220 start - 0x80105228 end
+      # - [0x105E30, .bss, subtitles]
+      # - { start: 0xB22B0, type: bss, vram: 0x800B16B0 }
 
   - type: bin
     start: 0xB22B0
