@@ -274,7 +274,8 @@ segments:
       # - [0xA8A38, rodata]
       # #bss/rodata? start?
       - [0xB22B0, bin]
-      - [0xFC750, .bss, controller] #0x800fbb50 start
+      - [0xFC750, .bss, controller] #0x800FBB50 start - 0x800FBBD0 end
+      - [0xFC7D0, bin]
       - [0xFF8F0, .bss, pi] #0x800FECF0 start
       - [0x105E20, .bss, rzip]
       # - [0xFC7D0, bin]
