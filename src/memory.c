@@ -204,8 +204,48 @@ s32 mmGetDelay(void) {
 	return mmDelay;
 }
 
-//allocate_memory_pool_slot?
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B288_4BE88.s")
+//allocate_memory_pool_slot
+s32 func_8004B288_4BE88(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken, s32 newSlotIsTaken, u32 colourTag) {
+    MemoryPool *pool;
+    MemoryPoolSlot *poolSlots;
+    s32 index;
+    s32 nextIndex;
+    s32 poolSize;
+
+    if (slotIsTaken == TRUE) {
+        if (poolIndex == 0) {
+            FreeRAM -= size;
+        }
+        D_800FE868_FF468[poolIndex] -= size;
+    }
+
+    pool = &D_800FE310_FEF10[poolIndex];
+    poolSlots = pool->slots;
+    pool = pool; // Fakematch
+    poolSlots[slotIndex].flags = slotIsTaken;
+    poolSize = poolSlots[slotIndex].size;
+    poolSlots[slotIndex].size = size;
+    poolSlots[slotIndex].colourTag = colourTag;
+    index = poolSlots[pool->curNumSlots].index;
+    if (size < poolSize) {
+        index = (pool->curNumSlots + poolSlots)->index;
+        pool->curNumSlots++;
+        poolSlots[index].data = &poolSlots[slotIndex].data[size];
+        poolSlots[index].size = poolSize;
+        poolSlots[index].size -= size;
+        poolSlots[index].flags = newSlotIsTaken;
+        poolSize = poolSlots[slotIndex].nextIndex;
+        nextIndex = poolSize;
+        poolSlots[index].prevIndex = slotIndex;
+        poolSlots[index].nextIndex = nextIndex;
+        poolSlots[slotIndex].nextIndex = index;
+        if (nextIndex != -1) {
+            poolSlots[nextIndex].prevIndex = index;
+        }
+        return index;
+    }
+    return slotIndex;
+}
 
 /**
  * Returns the passed in address aligned to the next 16-byte boundary.
