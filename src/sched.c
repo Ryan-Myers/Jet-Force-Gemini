@@ -12,32 +12,32 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/osScGetAudioSPStats.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800504B8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800504B8_510B8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050670.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050670_51270.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050718.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050718_51318.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800507A4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800507A4_513A4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800507AC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800507AC_513AC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050AA4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050AA4_516A4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050C94.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050C94_51894.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80051374.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80051374_51F74.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800514A0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800514A0_520A0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/__scTaskReady.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80051584.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80051584_52184.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80051684.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80051684_52284.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800516EC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800516EC_522EC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800517B8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800517B8_523B8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_8005180C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_8005180C_5240C.s")

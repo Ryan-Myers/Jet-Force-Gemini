@@ -4,7 +4,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/setupLights.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80020D94.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80020D94_21994.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/addRomdefLight.s")
 
@@ -24,7 +24,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightUpdateLights.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021444.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021444_22044.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/killLight.s")
 
@@ -34,7 +34,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightUpdateObjects.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021B9C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021B9C_2279C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightDistanceCalc.s")
 

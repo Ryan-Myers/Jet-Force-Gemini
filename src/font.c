@@ -16,7 +16,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontPrintWindowXY.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80070518.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80070518_71118.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontStringWidth.s")
 
@@ -42,13 +42,13 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontWindowsDraw.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071564.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071564_72164.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontWindowDraw.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071A0C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071A0C_7260C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071B08.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071B08_72708.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontCreateDisplayList.s")
 

@@ -36,10 +36,10 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viDisplayingScreen0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055D44.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055D44_56944.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055DA8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055DA8_569A8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055E68.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055E68_56A68.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055F4C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055F4C_56B4C.s")

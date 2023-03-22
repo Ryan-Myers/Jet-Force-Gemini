@@ -1,22 +1,22 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_800767A0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_800767A0_773A0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_800767C4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_800767C4_773C4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076840.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076840_77440.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_800768D4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_800768D4_774D4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076918.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076918_77518.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076948.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076948_77548.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076968.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076968_77568.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076A20.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076A20_77620.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076A70.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076A70_77670.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/anim/animseqInitPath.s")
 
@@ -36,13 +36,13 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/anim/animseqSndStop.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_800772C4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_800772C4_77EC4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/anim/animseqLinkNodes.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/anim/animseqInit.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80077784.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80077784_78384.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/anim/animseqFreeLevelData.s")
 
@@ -56,7 +56,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/anim/animseqResetGroup.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80077BE8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80077BE8_787E8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/anim/animseqUpdate.s")
 

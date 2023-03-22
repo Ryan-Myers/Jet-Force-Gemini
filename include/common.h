@@ -4,6 +4,14 @@
 #include "macros.h"
 
 
+void *mmAlloc(s32 size, u32 colourTag);
+void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes);
+void mmFree(void *data);
+u8 *rzipUncompress(u8 *compressedInput, u8 *decompressedOutput);
+s32 rzipUncompressSize(u8 *arg0);
+s32 piRomLoadSection(u32 assetIndex, u32 address, s32 assetOffset, s32 size);
+s32 inflate_block(void);
+void _blkclr(void *, size_t);
 
 // Animation related?
 #define COLOUR_TAG_RED 0xFF0000FF

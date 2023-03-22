@@ -24,19 +24,19 @@ typedef struct MemoryPool {
 } MemoryPool;
 
 MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *, s32, s32); // new_memory_pool
-s32 func_8004B288(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken, s32 newSlotIsTaken, u32 colourTag);
+s32 func_8004B288_4BE88(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken, s32 newSlotIsTaken, u32 colourTag);
 void mmSetDelay(s32 arg0);
 s32 *disableInterrupts(void);
 void enableInterrupts(s32*);
 void *mmAlloc(s32 size, u32 colourTag);
-extern MemoryPool D_800FE310[4]; //gMemoryPools
-extern s32 D_800FE858; //gFreeQueueCount
-extern s32 D_800FE350; //gNumberOfMemoryPools
-extern s32 D_800FE878; //mmEndRam
-extern u8 D_800A3E50; //mmExtendedRam = FALSE;
+extern MemoryPool D_800FE310_FEF10[4]; //gMemoryPools
+extern s32 D_800FE858_FF458; //gFreeQueueCount
+extern s32 D_800FE350_FEF50; //gNumberOfMemoryPools
+extern s32 D_800FE878_FF478; //mmEndRam
+extern u8 D_800A3E50_A4A50; //mmExtendedRam = FALSE;
 extern MemoryPoolSlot *D_80106470; //gMainMemoryPool
 extern s32 FreeRAM;
-extern s32 D_800FE868[4];
+extern s32 D_800FE868_FF468[4];
 extern s32 mmDelay;
 
 #define MAIN_POOL_SLOT_COUNT 1600
@@ -50,19 +50,19 @@ extern s32 mmDelay;
 
 
 void mmInit(void) {
-    D_800FE350 = -1;
-    if (D_800A3E50) {
-        D_800FE878 = EXTENDED_RAM_END;
+    D_800FE350_FEF50 = -1;
+    if (D_800A3E50_A4A50) {
+        D_800FE878_FF478 = EXTENDED_RAM_END;
     } else {
-        D_800FE878 = RAM_END;
+        D_800FE878_FF478 = RAM_END;
     }
-    func_8004A7C4((MemoryPoolSlot *)&D_80106470, D_800FE878 - (s32)&D_80106470, MAIN_POOL_SLOT_COUNT);
+    func_8004A7C4((MemoryPoolSlot *)&D_80106470, D_800FE878_FF478 - (s32)&D_80106470, MAIN_POOL_SLOT_COUNT);
     mmSetDelay(2);
-    D_800FE858 = 0;
+    D_800FE858_FF458 = 0;
 }
 
 u8 mmExtended(void) {
-	return D_800A3E50;
+	return D_800A3E50_A4A50;
 }
 
 /**
@@ -92,18 +92,18 @@ MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *slots, s32 poolSize, s32 numSlots)
     s32 i;
 	s32 firstSlotSize;
     
-    poolCount = ++D_800FE350;
+    poolCount = ++D_800FE350_FEF50;
 	firstSlotSize = poolSize - (numSlots * sizeof(MemoryPoolSlot));
-    D_800FE310[poolCount].maxNumSlots = numSlots;
-    D_800FE310[poolCount].curNumSlots = 0;
-    D_800FE310[poolCount].slots = slots;
-    D_800FE310[poolCount].size = poolSize;
+    D_800FE310_FEF10[poolCount].maxNumSlots = numSlots;
+    D_800FE310_FEF10[poolCount].curNumSlots = 0;
+    D_800FE310_FEF10[poolCount].slots = slots;
+    D_800FE310_FEF10[poolCount].size = poolSize;
     firstSlot = slots;
-    for (i = 0; i < D_800FE310[poolCount].maxNumSlots; i++) {
+    for (i = 0; i < D_800FE310_FEF10[poolCount].maxNumSlots; i++) {
         firstSlot->index = i;
         firstSlot++;
     }
-    firstSlot = &D_800FE310[poolCount].slots[0];
+    firstSlot = &D_800FE310_FEF10[poolCount].slots[0];
     slots += numSlots;
     if ((s32) slots & 0xF) {
         firstSlot->data = (u8 *) _ALIGN16(slots);
@@ -114,12 +114,12 @@ MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *slots, s32 poolSize, s32 numSlots)
     firstSlot->flags = 0;
     firstSlot->prevIndex = -1;
     firstSlot->nextIndex = -1;
-    D_800FE310[poolCount].curNumSlots++;
+    D_800FE310_FEF10[poolCount].curNumSlots++;
 	if (poolCount == 0) {
 		FreeRAM = firstSlotSize;
 	}
-	D_800FE868[poolCount] = firstSlotSize;
-    return D_800FE310[poolCount].slots;
+	D_800FE868_FF468[poolCount] = firstSlotSize;
+    return D_800FE310_FEF10[poolCount].slots;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/mmAlloc.s")
@@ -127,7 +127,7 @@ MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *slots, s32 poolSize, s32 numSlots)
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/mmAlloc2.s")
 
 //allocate_from_memory_pool
-MemoryPoolSlot *func_8004A9BC(s32 poolIndex, s32 size, u32 colourTag) {
+MemoryPoolSlot *func_8004A9BC_4B5BC(s32 poolIndex, s32 size, u32 colourTag) {
     s32 slotSize;
     MemoryPoolSlot *curSlot;
     UNUSED s32 pad;
@@ -138,7 +138,7 @@ MemoryPoolSlot *func_8004A9BC(s32 poolIndex, s32 size, u32 colourTag) {
     s32 currIndex;
 
     flags = disableInterrupts();
-    pool = &D_800FE310[poolIndex];
+    pool = &D_800FE310_FEF10[poolIndex];
     if ((pool->curNumSlots + 1) == (*pool).maxNumSlots) {
         enableInterrupts(flags);
         return 0;
@@ -162,7 +162,7 @@ MemoryPoolSlot *func_8004A9BC(s32 poolIndex, s32 size, u32 colourTag) {
         nextIndex = curSlot->nextIndex;
     } while (nextIndex != -1);
     if (currIndex != -1) {
-        func_8004B288(poolIndex, (s32) currIndex, size, 1, 0, colourTag);
+        func_8004B288_4BE88(poolIndex, (s32) currIndex, size, 1, 0, colourTag);
         enableInterrupts(flags);
         return (MemoryPoolSlot *) (slots + currIndex)->data;
     }
@@ -172,9 +172,9 @@ MemoryPoolSlot *func_8004A9BC(s32 poolIndex, s32 size, u32 colourTag) {
 
 void *mmAllocR(MemoryPoolSlot *slots, s32 size) {
     s32 i;
-    for (i = D_800FE350; i != 0; i--) {
-        if (slots == D_800FE310[i].slots) {
-            return func_8004A9BC(i, size, COLOUR_TAG_NONE);
+    for (i = D_800FE350_FEF50; i != 0; i--) {
+        if (slots == D_800FE310_FEF10[i].slots) {
+            return func_8004A9BC_4B5BC(i, size, COLOUR_TAG_NONE);
         }
     }
     return (void *)NULL;
@@ -188,16 +188,16 @@ void *mmAllocR(MemoryPoolSlot *slots, s32 size) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/mmFreeTick.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004AFC0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004AFC0_4BBC0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B05C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B05C_4BC5C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B098.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B098_4BC98.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B0F8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B0F8_4BCF8.s")
 
 UNUSED MemoryPoolSlot *mmGetSlotPtr(s32 poolIndex) {
-    return D_800FE310[poolIndex].slots;
+    return D_800FE310_FEF10[poolIndex].slots;
 }
 
 s32 mmGetDelay(void) {
@@ -205,7 +205,7 @@ s32 mmGetDelay(void) {
 }
 
 //allocate_memory_pool_slot?
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B288.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B288_4BE88.s")
 
 /**
  * Returns the passed in address aligned to the next 16-byte boundary.
@@ -237,9 +237,9 @@ void mmSlotPrint(void) {
     s32 nextIndex;
     MemoryPoolSlot *slot;
 
-    for (i = 0; (D_800FE350 ^ 0) >= i; i++) {
+    for (i = 0; (D_800FE350_FEF50 ^ 0) >= i; i++) {
         if (i && i) {} // Fakematch
-        slot = &D_800FE310[i].slots[0];
+        slot = &D_800FE310_FEF10[i].slots[0];
         index = 1;
         index2 = -index;
         do {
@@ -254,7 +254,7 @@ void mmSlotPrint(void) {
             if (skip) {
                 continue;
             }
-            slot = &D_800FE310[i].slots[slot->nextIndex];
+            slot = &D_800FE310_FEF10[i].slots[slot->nextIndex];
         } while (nextIndex != (-1));
     }
 }

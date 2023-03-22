@@ -28,7 +28,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sqauds/ProcessNodeChange.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sqauds/func_80052900.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sqauds/func_80052900_53500.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sqauds/squadsInitialiseAfterObjects.s")
 

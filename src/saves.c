@@ -18,7 +18,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleGetRumble.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004C2A8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004C2A8_4CEA8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadCharacter.s")
 
@@ -32,7 +32,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packEraseEprom.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004C9B8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004C9B8_4D5B8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadGlobalFlagsEprom.s")
 
@@ -40,9 +40,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/flashROMInit.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004CB0C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004CB0C_4D70C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004CB7C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004CB7C_4D77C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packOpen.s")
 
@@ -74,8 +74,8 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packFileSize.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004DC5C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004DC5C_4E85C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004DD08.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004DD08_4E908.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004DDC4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004DDC4_4E9C4.s")

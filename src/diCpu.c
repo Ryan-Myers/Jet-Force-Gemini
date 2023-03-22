@@ -75,12 +75,12 @@ void func_800677E4(void);
 void diCpuThread(void *unused) {
     s32 sp2C;
     s32 var_s0 = 0;
-    osCreateMesgQueue(&D_801031C0, &D_801031D8, 8);
-    osSetEventMesg(OS_EVENT_FAULT, &D_801031C0, (void *)8);
-    osSetEventMesg(OS_EVENT_CPU_BREAK, &D_801031C0, (void *)2);
-    osCreatePiManager(150, &D_80103218, &D_801031F8, 8);
+    osCreateMesgQueue(&D_801031C0_103DC0, &D_801031D8_103DD8, 8);
+    osSetEventMesg(OS_EVENT_FAULT, &D_801031C0_103DC0, (void *)8);
+    osSetEventMesg(OS_EVENT_CPU_BREAK, &D_801031C0_103DC0, (void *)2);
+    osCreatePiManager(150, &D_80103218_103E18, &D_801031F8_103DF8, 8);
 	while (1) {
-        osRecvMesg(&D_801031C0, (OSMesg) &sp2C, 1);
+        osRecvMesg(&D_801031C0_103DC0, (OSMesg) &sp2C, 1);
         var_s0 |= (s32)sp2C;
 		if ((var_s0 & 8) == 0 && (var_s0 & 2) == 0) {
 			continue;
@@ -101,9 +101,9 @@ void func_8006768C(void) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800676F8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800676F8_682F8.s")
 
-void func_80067880(OSThread *);
+void func_80067880_68480(OSThread *);
 void func_800677E4(void) {
     OSThread *node = __osGetActiveQueue();
     while (node->priority != -1) {
@@ -115,18 +115,18 @@ void func_800677E4(void) {
 		}
     }
     if (node->priority != -1) {
-        func_800676F8(node);
+        func_800676F8_682F8(node);
     }
-    func_80067880(node);
+    func_80067880_68480(node);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067880.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067880_68480.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuReportWatchpoint.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuLogMessage.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067AA0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067AA0_686A0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuTraceMallocFault.s")
 
@@ -135,23 +135,23 @@ s32 diCpuTraceGetFault(void) {
 }
 
 void diCpuTraceTick(s32 arg0) {
-    D_800A6E8C += arg0;
-    if (D_800A6E8C > 60) {
-        D_800A6E8C = 0;
-        D_800A6E88++;
+    D_800A6E8C_A7A8C += arg0;
+    if (D_800A6E8C_A7A8C > 60) {
+        D_800A6E8C_A7A8C = 0;
+        D_800A6E88_A7A88++;
     }
 }
 
 //render_epc_lock_up_display in DKR
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067CA4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067CA4_688A4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800683D0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800683D0_68FD0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800684F0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800684F0_690F0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/cpuXYPrintf.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_8006869C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_8006869C_6929C.s")
 
 s32 TrapDanglingJump(s32, s32, s32);
 

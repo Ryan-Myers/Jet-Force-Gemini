@@ -10,11 +10,11 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxLevelAllocateLevelEffects.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_80068CD4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_80068CD4_698D4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_80068CDC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_80068CDC_698DC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_80068D34.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_80068D34_69934.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxUpdateLevelEffects.s")
 
@@ -24,9 +24,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxAllocateCone.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_80069320.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_80069320_69F20.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_80069510.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_80069510_6A110.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxMakeConeTextureCoords.s")
 
@@ -34,7 +34,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxDrawCone.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006A224.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006A224_6AE24.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/wakeAllocate.s")
 
@@ -66,29 +66,29 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/drawClearScreen.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006C1B8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006C1B8_6CDB8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006C1CC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006C1CC_6CDCC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006C280.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006C280_6CE80.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006C454.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006C454_6D054.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006C560.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006C560_6D160.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006CAAC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006CAAC_6D6AC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006CD60.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006CD60_6D960.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006CE58.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006CE58_6DA58.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006CF50.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006CF50_6DB50.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006D048.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006D048_6DC48.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006D1A8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006D1A8_6DDA8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006D2F0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006D2F0_6DEF0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxInitLines.s")
 
@@ -110,11 +110,11 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/PlotAddRG.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006E1D8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006E1D8_6EDD8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006E38C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006E38C_6EF8C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006E5FC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006E5FC_6F1FC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxDrawDigitalNumber.s")
 
@@ -138,7 +138,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxScreenEffect.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006FFF8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006FFF8_70BF8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxGenerateTextures.s")
 

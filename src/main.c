@@ -6,9 +6,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainInitGame.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800448B0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800448B0_454B0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80044938.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80044938_45538.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainAddZBCheck.s")
 
@@ -20,19 +20,19 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetGameWindow.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004552C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004552C_4612C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGameWindowChanging.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGameWindowSize.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800456F8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800456F8_462F8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800457F4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800457F4_463F4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainRestartAfterDeath.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80045D44.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80045D44_46944.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainChangeLevel.s")
 
@@ -46,7 +46,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetNextLevel.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80046070.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80046070_46C70.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetAutoSave.s")
 
@@ -142,15 +142,15 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetPlayerCharacter.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047EE8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047EE8_48AE8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047FC0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047FC0_48BC0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004809C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004809C_48C9C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainResetRegion.s")
 
 void mainToggleDebug(void) {
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80048B38.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80048B38_49738.s")

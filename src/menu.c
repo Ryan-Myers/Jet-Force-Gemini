@@ -30,9 +30,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontPlayerScreenLimits.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/func_8005A4B4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/menu/func_8005A4B4_5B0B4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/func_8005A548.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/menu/func_8005A548_5B148.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/freeFrontEndList.s")
 

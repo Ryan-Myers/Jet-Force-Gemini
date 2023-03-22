@@ -36,11 +36,11 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texFreeSprite.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/func_800577D8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/textures/func_800577D8_583D8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/func_80057B8C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/textures/func_80057B8C_5878C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/func_80057C50.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/textures/func_80057C50_58850.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texAnimateSprite.s")
 

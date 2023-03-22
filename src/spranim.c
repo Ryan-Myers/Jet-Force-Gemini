@@ -114,13 +114,13 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/explosionBlastHit.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002A7DC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002A7DC_2B3DC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002A958.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002A958_2B558.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002AA30.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002AA30_2B630.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002ABA4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002ABA4_2B7A4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/charSpeak.s")
 
@@ -130,58 +130,58 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/cameraGetBlend.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002B378.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002B378_2BF78.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002B8C0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002B8C0_2C4C0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002BC64.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002BC64_2C864.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002BFD0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002BFD0_2CBD0.s")
 
-void func_8002C070(void) {
+void func_8002C070_2CC70(void) {
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002C078.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002C078_2CC78.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002C868.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002C868_2D468.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002C900.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002C900_2D500.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002CBD0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002CBD0_2D7D0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002CF78.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002CF78_2DB78.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/cameraTopDown.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002EDA0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002EDA0_2F9A0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/cameraAddOverrideObject.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/cameraDeleteOverrideObject.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002F0E8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002F0E8_2FCE8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002F2BC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002F2BC_2FEBC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002F45C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002F45C_3005C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002F518.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8002F518_30118.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/sidekickInit.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/sidekickControl.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8003109C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8003109C_31C9C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80031984.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80031984_32584.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80031A44.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80031A44_32644.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80031CC4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80031CC4_328C4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlClearAimlocks.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80031F60.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80031F60_32B60.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlPlayerReInit.s")
 
@@ -199,7 +199,7 @@ void func_8002C070(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlWalkingBack.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80033EE8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80033EE8_34AE8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlThrowWeapon.s")
 
@@ -213,7 +213,7 @@ void func_8002C070(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlUpdateJetFlames.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_800344C8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_800344C8_350C8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlHalfTurn.s")
 
@@ -223,13 +223,13 @@ void func_8002C070(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlSetTransition.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80035628.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80035628_36228.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlPlatform.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlAttitude.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80035B30.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80035B30_36730.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlHangOK.s")
 
@@ -239,7 +239,7 @@ void func_8002C070(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlSquashCheckPost.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_800370D8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_800370D8_37CD8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlCeiling.s")
 
@@ -249,9 +249,9 @@ void func_8002C070(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlGetMaxCharge.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80037380.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80037380_37F80.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80037428.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80037428_38028.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlUpdateWeapon.s")
 
@@ -263,31 +263,31 @@ void func_8002C070(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlFireDummyShot.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80038488.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80038488_39088.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlFreePlayersStuff.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80038D54.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80038D54_39954.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80038E70.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80038E70_39A70.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_800390E0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_800390E0_39CE0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8003931C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8003931C_39F1C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_800394A4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_800394A4_3A0A4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_800395B8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_800395B8_3A1B8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_800396F0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_800396F0_3A2F0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80039810.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80039810_3A410.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80039970.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80039970_3A570.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80039AE0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80039AE0_3A6E0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80039CA4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_80039CA4_3A8A4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlUpdatePlayerAim.s")
 
@@ -309,7 +309,7 @@ void func_8002C070(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlGetWeaponDef.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8003B2E4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/spranim/func_8003B2E4_3BEE4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlAlterMood.s")
 

@@ -80,13 +80,13 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amSoundIsLooped.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000169C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000169C_229C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000170C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000170C_230C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001990.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001990_2590.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001B88.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001B88_2788.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneSetReverbOnOff.s")
 
@@ -96,7 +96,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amCreateAudioMgr.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000203C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000203C_2C3C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amGo.s")
 
@@ -104,15 +104,15 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAudioMgrGetNextFrameCount.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_800021B8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_800021B8_2DB8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80002724.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80002724_3324.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80002764.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80002764_3364.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80002934.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80002934_3534.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000296C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000296C_356C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAudioMgrSetScheduleMode.s")
 
