@@ -25,14 +25,14 @@ parser.add_argument(
     help="run diff.py on the result with the provided arguments"
 )
 parser.add_argument(
-    "-m", "--make", help="run ninja before finding difference(s)", action="store_true"
+    "-m", "--make", help="run make before finding difference(s)", action="store_true"
 )
 args = parser.parse_args()
 
 diff_count = args.count
 
 if args.make:
-    check_call(["ninja", "baserom.kiosk.z64"])
+    check_call(["make", "-j4", "COMPARE=0"])
 
 baseimg = f"baserom.kiosk.z64"
 basemap = f"expected/jfg.kiosk.map"
@@ -93,7 +93,7 @@ def search_rom_address(target_addr):
             rom = ram - ram_offset
             sym = line.split()[-1]
 
-            if "0x" in sym:
+            if sym.startswith("0x"):
                 ram_offset = None
                 continue
             if "/" in sym:
@@ -139,7 +139,7 @@ def parse_map(map_fname):
             rom = ram - ram_offset
             sym = line.split()[-1]
 
-            if "0x" in sym:
+            if sym.startswith("0x"):
                 ram_offset = None
                 continue
             elif "/" in sym:
