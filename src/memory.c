@@ -1,61 +1,5 @@
 #include "common.h"
 
-/* Size: 0x14 bytes */
-typedef struct MemoryPoolSlot {
-/* 0x00 */ u8 *data;
-/* 0x04 */ s32 size;
-/* 0x08 */ s16 flags;
-    // 0x00 = Slot is free
-    // 0x01 = Slot is being used?
-    // 0x02 = ???
-    // 0x04 = ???
-/* 0x0A */ s16 prevIndex;
-/* 0x0C */ s16 nextIndex;
-/* 0x0E */ s16 index;
-/* 0x10 */ u32 colourTag;
-} MemoryPoolSlot;
-
-/* Size: 0x10 bytes */
-typedef struct MemoryPool {
-/* 0x00 */ s32 maxNumSlots;
-/* 0x04 */ s32 curNumSlots;
-/* 0x08 */ MemoryPoolSlot *slots;
-/* 0x0C */ s32 size;
-} MemoryPool;
-
-/* Size: 0x4 bytes */
-typedef struct FreeQueueSlot {
-    void *dataAddress;
-} FreeQueueSlot;
-
-MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *, s32, s32); // new_memory_pool
-s32 func_8004B288_4BE88(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken, s32 newSlotIsTaken, u32 colourTag);
-s32 func_8004B098_4BC98(u8 *address);
-void func_8004B0F8_4BCF8(s32 poolIndex, s32 slotIndex);
-void mmSetDelay(s32 arg0);
-s32 *disableInterrupts(void);
-void enableInterrupts(s32*);
-void *mmAlloc(s32 size, u32 colourTag);
-void func_8004AFC0_4BBC0(u8 *address);
-void func_8004B05C_4BC5C(void *dataAddress);
-void TrapDanglingJump(void);
-s32 runlinkLowMemoryPanic(void);
-s32 runlinkIsModuleLoaded(s32 module);
-s32 runlinkGetAddressInfo(u32 arg0, s32 *arg1, s32 *arg2, u32 **arg3);
-extern MemoryPool D_800FE310_FEF10[4]; //gMemoryPools
-extern s32 D_800FE858_FF458; //gFreeQueueCount
-extern s32 D_800FE350_FEF50; //gNumberOfMemoryPools
-extern s32 D_800FE878_FF478; //mmEndRam
-extern u8 D_800A3E50_A4A50; //mmExtendedRam = FALSE;
-extern MemoryPoolSlot *D_80106470; //gMainMemoryPool
-extern s32 FreeRAM;
-extern s32 D_800FE868_FF468[4];
-extern s32 mmDelay;
-extern FreeQueueSlot D_800FE358_FEF58[75];
-extern u8 D_800FE758_FF358[75];
-extern s32 D_800A3E54_A4A54;
-extern s32 D_800A3E58_A4A58;
-
 #define MAIN_POOL_SLOT_COUNT 1600
 #define RAM_END 0x80400000
 #define EXTENDED_RAM_END 0x80600000
@@ -64,7 +8,6 @@ extern s32 D_800A3E58_A4A58;
 #define _ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
 //#define _ALIGN16(val) ((val)&0xFFFFFFF0) + 0x10
 #endif
-
 
 void mmInit(void) {
     D_800FE350_FEF50 = -1;
@@ -139,9 +82,42 @@ MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *slots, s32 poolSize, s32 numSlots)
     return D_800FE310_FEF10[poolCount].slots;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/mmAlloc.s")
+void *mmAlloc(s32 size, u32 colourTag) {
+    u32 pad;
+    s32 sp28;
+    s32 sp24;
+    u32 newColourTag;
+    volatile s32 sp1C = 0x666;
+    newColourTag = colourTag;
+    if (D_800A3E54_A4A54 != -1) {
+        newColourTag = D_800A3E54_A4A54 | 0xFF000000;
+    } else if (D_800A3E58_A4A58 != -1) {
+        newColourTag = D_800A3E58_A4A58 | 0xFE000000;
+    } else {
+        runlinkGetAddressInfo(sp1C - 8, &sp28, &sp24, NULL);
+        newColourTag = (sp28 << 24) | sp24;
+    }
+    return func_8004A9BC_4B5BC(0, size, newColourTag);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/mmAlloc2.s")
+//Only differs from above by not returning a value.
+void mmAlloc2(s32 size, u32 colourTag) {
+    u32 pad;
+    s32 sp28;
+    s32 sp24;
+    u32 newColourTag;
+    volatile s32 sp1C = 0x666;
+    newColourTag = colourTag;
+    if (D_800A3E54_A4A54 != -1) {
+        newColourTag = D_800A3E54_A4A54 | 0xFF000000;
+    } else if (D_800A3E58_A4A58 != -1) {
+        newColourTag = D_800A3E58_A4A58 | 0xFE000000;
+    } else {
+        runlinkGetAddressInfo(sp1C - 8, &sp28, &sp24, NULL);
+        newColourTag = (sp28 << 24) | sp24;
+    }
+    func_8004A9BC_4B5BC(0, size, newColourTag);
+}
 
 //allocate_from_memory_pool
 MemoryPoolSlot *func_8004A9BC_4B5BC(s32 poolIndex, s32 size, u32 colourTag) {
@@ -271,6 +247,7 @@ void mmFree(void *data) {
     enableInterrupts(flags);
 }
 
+void TrapDanglingJump(void);
 void mmFreeTick(void) {
     s32 i;
     s32 *flags;

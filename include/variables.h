@@ -19,9 +19,6 @@ extern OSThread D_800F9D60_FA960; //mainOSThread
 extern u64 D_800F7B20_F8720[1]; //bootThreadStack
 extern u64 D_800F9B28_FA728[1]; //mainThreadStack
 extern u64 D_800F7B28_F8728[1];
-void func_8003F088(void *); //bootThread
-void mainThread(void *);
-void diCpuTraceInit(void);
 
 //diCpu.c
 extern OSThread diCpuOSThread;
@@ -39,5 +36,20 @@ extern char D_800AF650_B0250[16];// = "free ram 		%08x";
 
 //prnBorders.c
 extern Gfx D_800A3F90_A4B90[11][2]; //unknown number of graphics commands. This is a best guess.
+
+//memory.c
+extern MemoryPool D_800FE310_FEF10[4]; //gMemoryPools
+extern s32 D_800FE858_FF458; //gFreeQueueCount
+extern s32 D_800FE350_FEF50; //gNumberOfMemoryPools
+extern s32 D_800FE878_FF478; //mmEndRam
+extern u8 D_800A3E50_A4A50; //mmExtendedRam = FALSE;
+extern MemoryPoolSlot *D_80106470; //gMainMemoryPool
+extern s32 FreeRAM;
+extern s32 D_800FE868_FF468[4];
+extern s32 mmDelay;
+extern FreeQueueSlot D_800FE358_FEF58[75];
+extern u8 D_800FE758_FF358[75];
+extern s32 D_800A3E54_A4A54;
+extern s32 D_800A3E58_A4A58;
 
 #endif
