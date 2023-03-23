@@ -23,12 +23,22 @@ typedef struct MemoryPool {
 /* 0x0C */ s32 size;
 } MemoryPool;
 
+/* Size: 0x8 bytes */
+typedef struct FreeQueueSlot {
+    void *dataAddress;
+    u8 unk4; //FreeQueueState?
+} FreeQueueSlot;
+
 MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *, s32, s32); // new_memory_pool
 s32 func_8004B288_4BE88(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken, s32 newSlotIsTaken, u32 colourTag);
+s32 func_8004B098_4BC98(u8 *address);
+void func_8004B0F8_4BCF8(s32 poolIndex, s32 slotIndex);
 void mmSetDelay(s32 arg0);
 s32 *disableInterrupts(void);
 void enableInterrupts(s32*);
 void *mmAlloc(s32 size, u32 colourTag);
+void func_8004AFC0_4BBC0(u8 *address);
+void func_8004B05C_4BC5C(void *dataAddress);
 extern MemoryPool D_800FE310_FEF10[4]; //gMemoryPools
 extern s32 D_800FE858_FF458; //gFreeQueueCount
 extern s32 D_800FE350_FEF50; //gNumberOfMemoryPools
@@ -38,6 +48,7 @@ extern MemoryPoolSlot *D_80106470; //gMainMemoryPool
 extern s32 FreeRAM;
 extern s32 D_800FE868_FF468[4];
 extern s32 mmDelay;
+extern FreeQueueSlot D_800FE358_FEF58[256];
 
 #define MAIN_POOL_SLOT_COUNT 1600
 #define RAM_END 0x80400000
@@ -184,17 +195,153 @@ void *mmAllocR(MemoryPoolSlot *slots, s32 size) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/mmSetDelay.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/mmFree.s")
+void mmFree(void *data) {
+    s32 *flags;
+    volatile s32 sp18 = 0x666; //fakematch?
+    flags = disableInterrupts();
+    if (mmDelay == 0) {
+        func_8004AFC0_4BBC0(data);
+    } else {
+        func_8004B05C_4BC5C(data);
+    }
+    enableInterrupts(flags);
+}
 
+#ifdef NON_EQUIVALENT
+void mmFreeTick(void) {
+    s32 i;
+    s32 *flags;
+
+    flags = disableInterrupts();
+    if (FreeRAM < 0x14000) {
+        runlinkLowMemoryPanic();
+        if ((FreeRAM < 0xC000) && (runlinkIsModuleLoaded(3) != 0)) {
+            TrapDanglingJump();
+        }
+    }
+
+    for (i = 0; i < D_800FE858_FF458;) {
+        D_800FE358_FEF58[i].unk4--;
+        if (D_800FE358_FEF58[i].unk4 == 0) {
+            func_8004AFC0_4BBC0(D_800FE358_FEF58[i].dataAddress);
+            D_800FE358_FEF58[i].dataAddress = D_800FE358_FEF58[D_800FE858_FF458 - 1].dataAddress;
+            D_800FE358_FEF58[i].unk4 = D_800FE358_FEF58[D_800FE858_FF458 - 1].unk4;
+            D_800FE858_FF458--;
+        } else {
+            i++;
+        }
+    }
+
+    enableInterrupts(flags);
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/mmFreeTick.s")
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004AFC0_4BBC0.s")
+//free_slot_containing_address
+void func_8004AFC0_4BBC0(u8 *address) {
+    s32 slotIndex;
+    s32 poolIndex;
+    MemoryPool *pool;
+    MemoryPoolSlot *slots;
+    MemoryPoolSlot *slot;
 
+    poolIndex = func_8004B098_4BC98(address);
+    pool = D_800FE310_FEF10;
+    slots = pool[poolIndex].slots;
+    for (slotIndex = 0; slotIndex != -1; slotIndex = slot->nextIndex) {
+        slot = &slots[slotIndex];
+
+        if (address == (u8 *) slot->data) {
+            if (slot->flags == 1 || slot->flags == 4) {
+                func_8004B0F8_4BCF8(poolIndex, slotIndex);
+            }
+            break;
+        }
+        slot = &slots[slotIndex];
+    }
+}
+
+#ifdef NON_EQUIVALENT
+void func_8004B05C_4BC5C(void *dataAddress) {
+    D_800FE358_FEF58[D_800FE858_FF458].dataAddress = dataAddress;
+    D_800FE358_FEF58[D_800FE858_FF458].unk4 = mmDelay;
+    D_800FE858_FF458++;
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B05C_4BC5C.s")
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B098_4BC98.s")
 
+/**
+ * Returns the index of the memory pool containing the memory address.
+ */
+//get_memory_pool_index_containing_address
+s32 func_8004B098_4BC98(u8 *address) {
+    s32 i;
+    MemoryPool *pool;
+
+    for (i = D_800FE350_FEF50; i > 0; i--) {
+        pool = &D_800FE310_FEF10[i];
+        if ((u8 *)pool->slots >= address) {
+            continue;
+        }
+        if (address < pool->size + (u8 *)pool->slots) {
+            break;
+        }
+    }
+    return i;
+}
+
+#ifdef NON_MATCHING
+//single regalloc diff
+//free_memory_pool_slot
+void func_8004B0F8_4BCF8(s32 poolIndex, s32 slotIndex) {
+    s32 nextIndex;
+    s32 prevIndex;
+    s32 tempNextIndex;
+    MemoryPoolSlot *slots;
+    MemoryPoolSlot *nextSlot;
+    MemoryPoolSlot *prevSlot;
+
+    slots = D_800FE310_FEF10[poolIndex].slots;
+    nextIndex = slots[slotIndex].nextIndex;
+    prevIndex = slots[slotIndex].prevIndex;
+    nextSlot = &slots[nextIndex];
+    prevSlot = &slots[prevIndex];
+    slots[slotIndex].flags = 0;
+    if (poolIndex == 0) {
+        FreeRAM += slots[slotIndex].size;
+    }
+    D_800FE868_FF468[poolIndex] += slots[slotIndex].size;
+    if (nextIndex != -1) {
+        if (nextSlot->flags == 0) {
+            slots[slotIndex].size += nextSlot->size;
+            tempNextIndex = nextSlot->nextIndex;
+            slots[slotIndex].nextIndex = tempNextIndex;
+            if (tempNextIndex != -1) {
+                slots[tempNextIndex].prevIndex = slotIndex;
+            }
+            D_800FE310_FEF10[poolIndex].curNumSlots--;
+            slots[D_800FE310_FEF10[poolIndex].curNumSlots].index = nextIndex;
+        }
+    }
+    if (prevIndex != -1) {
+        if (prevSlot->flags == 0) {
+            prevSlot->size += slots[slotIndex].size;
+            tempNextIndex = slots[slotIndex].nextIndex;
+            prevSlot->nextIndex = tempNextIndex;
+            if (tempNextIndex != -1) {
+                slots[tempNextIndex].prevIndex = prevIndex;
+            }
+            D_800FE310_FEF10[poolIndex].curNumSlots--;
+            slots[D_800FE310_FEF10[poolIndex].curNumSlots].index = slotIndex;
+        }
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B0F8_4BCF8.s")
+#endif
 
 UNUSED MemoryPoolSlot *mmGetSlotPtr(s32 poolIndex) {
     return D_800FE310_FEF10[poolIndex].slots;
