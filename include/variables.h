@@ -39,9 +39,11 @@ extern Gfx D_800A3F90_A4B90[11][2]; //unknown number of graphics commands. This 
 
 //font.c
 extern DialogueBoxBackground Window[];
-extern u8 D_80104C95_105895;
 extern u8 fontInUse;
 extern u8 buttonMode;
+extern s16 D_80104C82_105882; //Window->y2
+extern s16 D_80104C84_105884; //Window->width
+extern DialogueBoxBackground D_80104CA0_1058A0; //Window[1]
 //Window noise?
 extern s32 D_800A7868_A8468;
 extern s32 D_800A786C_A846C;

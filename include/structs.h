@@ -223,33 +223,33 @@ typedef struct DialogueTextElement {
 /* Size: 0x28 bytes */
 // Dialogue Box background
 typedef struct DialogueBoxBackground {
-    s16 xpos;
-    s16 ypos;
-    s16 x1;
-    s16 y1;
-    s16 x2;
-    s16 y2;
-    s16 width;
-    s16 height;
-    u8 backgroundColourR; //Ideally should also be an array like the rest, but doesn't currently match.
-    u8 backgroundColourG;
-    u8 backgroundColourB;
-    u8 backgroundColourA;
-    //ColourRGBA textColour;
-    u8 textColourR;
-    u8 textColourG;
-    u8 textColourB;
-    u8 textColourA;
-    u8 textBGColourR;
-    u8 textBGColourG;
-    u8 textBGColourB;
-    u8 textBGColourA;
-    u8 opacity;
-    u8 font;
-    u16 flags;
-    s16 textOffsetX; // Functionally Unused
-    s16 textOffsetY; // Functionally Unused
-    DialogueBox *textBox;
+  /* 0x00 */ s16 xpos;
+  /* 0x02 */ s16 ypos;
+  /* 0x04 */ s16 x1;
+  /* 0x06 */ s16 y1;
+  /* 0x08 */ s16 x2;
+  /* 0x0A */ s16 y2;
+  /* 0x0C */ s16 width;
+  /* 0x0E */ s16 height;
+  /* 0x10 */ u8 backgroundColourR; //Ideally should also be an array like the rest, but doesn't currently match.
+  /* 0x11 */ u8 backgroundColourG;
+  /* 0x12 */ u8 backgroundColourB;
+  /* 0x13 */ u8 backgroundColourA;
+  //ColourRGBA textColour;
+  /* 0x14 */ u8 textColourR;
+  /* 0x15 */ u8 textColourG;
+  /* 0x16 */ u8 textColourB;
+  /* 0x17 */ u8 textColourA;
+  /* 0x18 */ u8 textBGColourR;
+  /* 0x19 */ u8 textBGColourG;
+  /* 0x1A */ u8 textBGColourB;
+  /* 0x1B */ u8 textBGColourA;
+  /* 0x1C */ u8 opacity;
+  /* 0x1D */ u8 font;
+  /* 0x1E */ u16 flags;
+  /* 0x20 */ s16 textOffsetX; // Functionally Unused
+  /* 0x22 */ s16 textOffsetY; // Functionally Unused
+  /* 0x24 */ DialogueBox *textBox;
 } DialogueBoxBackground;
 
 #endif
