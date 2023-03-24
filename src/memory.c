@@ -3,26 +3,37 @@
 #define MAIN_POOL_SLOT_COUNT 1600
 #define RAM_END 0x80400000
 #define EXTENDED_RAM_END 0x80600000
-
-#ifndef _ALIGN16
 #define _ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
-//#define _ALIGN16(val) ((val)&0xFFFFFFF0) + 0x10
-#endif
+
+u8 mmExtendedRam = FALSE;
+s32 mmColourTagUnk1 = 0xFFFFFFFF;
+s32 mmColourTagUnk2 = 0xFFFFFFFF;
+MemoryPool gMemoryPools[4];
+u8 D_800FE318_FEF18[56]; // Padding
+s32 gNumberOfMemoryPools;
+FreeQueueSlot gFreeQueue[100];
+u8 D_800FE758_FF358[100];
+s32 gFreeQueueCount;
+s32 mmDelay;
+s32 FreeRAM;
+s32 D_800FE868_FF468[4]; //Same count of gMemoryPools. Possibly stores the size of each pool.
+s32 mmEndRam;
+extern MemoryPoolSlot *gMainMemoryPool; //Defined somewhere else.
 
 void mmInit(void) {
-    D_800FE350_FEF50 = -1;
-    if (D_800A3E50_A4A50) {
-        D_800FE878_FF478 = EXTENDED_RAM_END;
+    gNumberOfMemoryPools = -1;
+    if (mmExtendedRam) {
+        mmEndRam = EXTENDED_RAM_END;
     } else {
-        D_800FE878_FF478 = RAM_END;
+        mmEndRam = RAM_END;
     }
-    func_8004A7C4((MemoryPoolSlot *)&D_80106470, D_800FE878_FF478 - (s32)&D_80106470, MAIN_POOL_SLOT_COUNT);
+    new_memory_pool((MemoryPoolSlot *)&gMainMemoryPool, mmEndRam - (s32)&gMainMemoryPool, MAIN_POOL_SLOT_COUNT);
     mmSetDelay(2);
-    D_800FE858_FF458 = 0;
+    gFreeQueueCount = 0;
 }
 
 u8 mmExtended(void) {
-	return D_800A3E50_A4A50;
+	return mmExtendedRam;
 }
 
 /**
@@ -37,7 +48,7 @@ MemoryPoolSlot *mmAllocRegion(s32 poolDataSize, s32 numSlots) {
 
     size = poolDataSize + (numSlots * sizeof(MemoryPoolSlot));
     slots = (MemoryPoolSlot *) mmAlloc(size, COLOUR_TAG_WHITE);
-    newPool = func_8004A7C4(slots, size, numSlots);
+    newPool = new_memory_pool(slots, size, numSlots);
     enableInterrupts(flags);
     return newPool;
 }
@@ -46,24 +57,24 @@ MemoryPoolSlot *mmAllocRegion(s32 poolDataSize, s32 numSlots) {
  * Create and initialise a memory pool in RAM that will act as the place where arbitrary allocations can go.
  * Will return the location of the first free slot in that pool.
 */
-MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *slots, s32 poolSize, s32 numSlots) {
+MemoryPoolSlot *new_memory_pool(MemoryPoolSlot *slots, s32 poolSize, s32 numSlots) {
     MemoryPoolSlot *firstSlot;
     s32 poolCount;
     s32 i;
 	s32 firstSlotSize;
     
-    poolCount = ++D_800FE350_FEF50;
+    poolCount = ++gNumberOfMemoryPools;
 	firstSlotSize = poolSize - (numSlots * sizeof(MemoryPoolSlot));
-    D_800FE310_FEF10[poolCount].maxNumSlots = numSlots;
-    D_800FE310_FEF10[poolCount].curNumSlots = 0;
-    D_800FE310_FEF10[poolCount].slots = slots;
-    D_800FE310_FEF10[poolCount].size = poolSize;
+    gMemoryPools[poolCount].maxNumSlots = numSlots;
+    gMemoryPools[poolCount].curNumSlots = 0;
+    gMemoryPools[poolCount].slots = slots;
+    gMemoryPools[poolCount].size = poolSize;
     firstSlot = slots;
-    for (i = 0; i < D_800FE310_FEF10[poolCount].maxNumSlots; i++) {
+    for (i = 0; i < gMemoryPools[poolCount].maxNumSlots; i++) {
         firstSlot->index = i;
         firstSlot++;
     }
-    firstSlot = &D_800FE310_FEF10[poolCount].slots[0];
+    firstSlot = &gMemoryPools[poolCount].slots[0];
     slots += numSlots;
     if ((s32) slots & 0xF) {
         firstSlot->data = (u8 *) _ALIGN16(slots);
@@ -74,53 +85,52 @@ MemoryPoolSlot *func_8004A7C4(MemoryPoolSlot *slots, s32 poolSize, s32 numSlots)
     firstSlot->flags = 0;
     firstSlot->prevIndex = -1;
     firstSlot->nextIndex = -1;
-    D_800FE310_FEF10[poolCount].curNumSlots++;
+    gMemoryPools[poolCount].curNumSlots++;
 	if (poolCount == 0) {
 		FreeRAM = firstSlotSize;
 	}
 	D_800FE868_FF468[poolCount] = firstSlotSize;
-    return D_800FE310_FEF10[poolCount].slots;
+    return gMemoryPools[poolCount].slots;
 }
 
 void *mmAlloc(s32 size, u32 colourTag) {
-    u32 pad;
+    UNUSED s32 pad;
     s32 sp28;
     s32 sp24;
     u32 newColourTag;
     volatile s32 sp1C = 0x666;
     newColourTag = colourTag;
-    if (D_800A3E54_A4A54 != -1) {
-        newColourTag = D_800A3E54_A4A54 | 0xFF000000;
-    } else if (D_800A3E58_A4A58 != -1) {
-        newColourTag = D_800A3E58_A4A58 | 0xFE000000;
+    if (mmColourTagUnk1 != -1) {
+        newColourTag = mmColourTagUnk1 | 0xFF000000;
+    } else if (mmColourTagUnk2 != -1) {
+        newColourTag = mmColourTagUnk2 | 0xFE000000;
     } else {
         runlinkGetAddressInfo(sp1C - 8, &sp28, &sp24, NULL);
         newColourTag = (sp28 << 24) | sp24;
     }
-    return func_8004A9BC_4B5BC(0, size, newColourTag);
+    return allocate_from_memory_pool(0, size, newColourTag);
 }
 
 //Only differs from above by not returning a value.
 void mmAlloc2(s32 size, u32 colourTag) {
-    u32 pad;
+    UNUSED s32 pad;
     s32 sp28;
     s32 sp24;
     u32 newColourTag;
-    volatile s32 sp1C = 0x666;
+    volatile s32 sp1C = 0x666; //fakematch?
     newColourTag = colourTag;
-    if (D_800A3E54_A4A54 != -1) {
-        newColourTag = D_800A3E54_A4A54 | 0xFF000000;
-    } else if (D_800A3E58_A4A58 != -1) {
-        newColourTag = D_800A3E58_A4A58 | 0xFE000000;
+    if (mmColourTagUnk1 != -1) {
+        newColourTag = mmColourTagUnk1 | 0xFF000000;
+    } else if (mmColourTagUnk2 != -1) {
+        newColourTag = mmColourTagUnk2 | 0xFE000000;
     } else {
         runlinkGetAddressInfo(sp1C - 8, &sp28, &sp24, NULL);
         newColourTag = (sp28 << 24) | sp24;
     }
-    func_8004A9BC_4B5BC(0, size, newColourTag);
+    allocate_from_memory_pool(0, size, newColourTag);
 }
 
-//allocate_from_memory_pool
-MemoryPoolSlot *func_8004A9BC_4B5BC(s32 poolIndex, s32 size, u32 colourTag) {
+MemoryPoolSlot *allocate_from_memory_pool(s32 poolIndex, s32 size, u32 colourTag) {
     s32 slotSize;
     MemoryPoolSlot *curSlot;
     UNUSED s32 pad;
@@ -131,7 +141,7 @@ MemoryPoolSlot *func_8004A9BC_4B5BC(s32 poolIndex, s32 size, u32 colourTag) {
     s32 currIndex;
 
     flags = disableInterrupts();
-    pool = &D_800FE310_FEF10[poolIndex];
+    pool = &gMemoryPools[poolIndex];
     if ((pool->curNumSlots + 1) == (*pool).maxNumSlots) {
         enableInterrupts(flags);
         return 0;
@@ -155,7 +165,7 @@ MemoryPoolSlot *func_8004A9BC_4B5BC(s32 poolIndex, s32 size, u32 colourTag) {
         nextIndex = curSlot->nextIndex;
     } while (nextIndex != -1);
     if (currIndex != -1) {
-        func_8004B288_4BE88(poolIndex, (s32) currIndex, size, 1, 0, colourTag);
+        allocate_memory_pool_slot(poolIndex, (s32) currIndex, size, 1, 0, colourTag);
         enableInterrupts(flags);
         return (MemoryPoolSlot *) (slots + currIndex)->data;
     }
@@ -165,9 +175,9 @@ MemoryPoolSlot *func_8004A9BC_4B5BC(s32 poolIndex, s32 size, u32 colourTag) {
 
 void *mmAllocR(MemoryPoolSlot *slots, s32 size) {
     s32 i;
-    for (i = D_800FE350_FEF50; i != 0; i--) {
-        if (slots == D_800FE310_FEF10[i].slots) {
-            return func_8004A9BC_4B5BC(i, size, COLOUR_TAG_NONE);
+    for (i = gNumberOfMemoryPools; i != 0; i--) {
+        if (slots == gMemoryPools[i].slots) {
+            return allocate_from_memory_pool(i, size, COLOUR_TAG_NONE);
         }
     }
     return (void *)NULL;
@@ -180,36 +190,36 @@ void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag) {
     s32 *flags;
     s32 sp4C;
     s32 sp48;
-    u32 pad;
-    volatile u32 sp40 = 0x666; //fakematch?
+    UNUSED s32 pad;
+    volatile s32 sp40 = 0x666; //fakematch?
 
     flags = disableInterrupts();
-    if (D_800A3E54_A4A54 != -1) {
-        colorTag = D_800A3E54_A4A54 | 0xFF000000;
-    } else if (D_800A3E58_A4A58 != -1) {
-        colorTag = D_800A3E58_A4A58 | 0xFE000000;
+    if (mmColourTagUnk1 != -1) {
+        colorTag = mmColourTagUnk1 | 0xFF000000;
+    } else if (mmColourTagUnk2 != -1) {
+        colorTag = mmColourTagUnk2 | 0xFE000000;
     } else {        
         runlinkGetAddressInfo(sp40 - 8, &sp4C, &sp48, NULL);
         colorTag = (sp4C << 24) | sp48;
     }
-    if ((D_800FE310_FEF10[0].curNumSlots + 1) == D_800FE310_FEF10[0].maxNumSlots) {
+    if ((gMemoryPools[0].curNumSlots + 1) == gMemoryPools[0].maxNumSlots) {
         enableInterrupts(flags);
     } else {
         if (size & 0xF) {
             size = _ALIGN16(size);
         }
-        slots = D_800FE310_FEF10[0].slots;
+        slots = gMemoryPools[0].slots;
         for (i = 0; i != -1; i = curSlot->nextIndex) {
             curSlot = &slots[i];
             if (curSlot->flags == 0) {
                 if ((u32) address >= (u32) curSlot->data && (u32)address + size <= (u32) curSlot->data + curSlot->size)  {
                     if (address == (u8 *) curSlot->data) {
-                        func_8004B288_4BE88(0, i, size, 1, 0, colorTag);
+                        allocate_memory_pool_slot(0, i, size, 1, 0, colorTag);
                         enableInterrupts(flags);
                         return curSlot->data;
                     } else {
-                        i = func_8004B288_4BE88(0, i, (u32) address - (u32) curSlot->data, 0, 1, colorTag);
-                        func_8004B288_4BE88(0, i, size, 1, 0, colorTag);
+                        i = allocate_memory_pool_slot(0, i, (u32) address - (u32) curSlot->data, 0, 1, colorTag);
+                        allocate_memory_pool_slot(0, i, size, 1, 0, colorTag);
                         enableInterrupts(flags);
                         return (slots + i)->data;
                     }
@@ -228,8 +238,8 @@ void mmSetDelay(s32 state) {
     flags = disableInterrupts();
     mmDelay = state;
     if (state == 0) {
-        while (D_800FE858_FF458 > 0) {
-            func_8004AFC0_4BBC0(D_800FE358_FEF58[--D_800FE858_FF458].dataAddress);
+        while (gFreeQueueCount > 0) {
+            free_slot_containing_address(gFreeQueue[--gFreeQueueCount].dataAddress);
         }
     }
     enableInterrupts(flags);
@@ -240,13 +250,14 @@ void mmFree(void *data) {
     volatile s32 sp18 = 0x666; //fakematch?
     flags = disableInterrupts();
     if (mmDelay == 0) {
-        func_8004AFC0_4BBC0(data);
+        free_slot_containing_address(data);
     } else {
         func_8004B05C_4BC5C(data);
     }
     enableInterrupts(flags);
 }
 
+//TODO: TrapDanglingJump Seems to have a different definition here vs in __rmonSendFault
 void TrapDanglingJump(void);
 void mmFreeTick(void) {
     s32 i;
@@ -260,13 +271,13 @@ void mmFreeTick(void) {
         }
     }
 
-    for (i = 0; i < D_800FE858_FF458;) {
+    for (i = 0; i < gFreeQueueCount;) {
         D_800FE758_FF358[i]--;
         if (D_800FE758_FF358[i] == 0) {
-            func_8004AFC0_4BBC0(D_800FE358_FEF58[i].dataAddress);
-            D_800FE358_FEF58[i].dataAddress = D_800FE358_FEF58[D_800FE858_FF458 - 1].dataAddress;
-            D_800FE758_FF358[i] = D_800FE758_FF358[D_800FE858_FF458 - 1];
-            D_800FE858_FF458--;
+            free_slot_containing_address(gFreeQueue[i].dataAddress);
+            gFreeQueue[i].dataAddress = gFreeQueue[gFreeQueueCount - 1].dataAddress;
+            D_800FE758_FF358[i] = D_800FE758_FF358[gFreeQueueCount - 1];
+            gFreeQueueCount--;
         } else {
             i++;
         }
@@ -275,23 +286,22 @@ void mmFreeTick(void) {
     enableInterrupts(flags);
 }
 
-//free_slot_containing_address
-void func_8004AFC0_4BBC0(u8 *address) {
+void free_slot_containing_address(u8 *address) {
     s32 slotIndex;
     s32 poolIndex;
     MemoryPool *pool;
     MemoryPoolSlot *slots;
     MemoryPoolSlot *slot;
 
-    poolIndex = func_8004B098_4BC98(address);
-    pool = D_800FE310_FEF10;
+    poolIndex = get_memory_pool_index_containing_address(address);
+    pool = gMemoryPools;
     slots = pool[poolIndex].slots;
     for (slotIndex = 0; slotIndex != -1; slotIndex = slot->nextIndex) {
         slot = &slots[slotIndex];
 
         if (address == (u8 *) slot->data) {
             if (slot->flags == 1 || slot->flags == 4) {
-                func_8004B0F8_4BCF8(poolIndex, slotIndex);
+                free_memory_pool_slot(poolIndex, slotIndex);
             }
             break;
         }
@@ -300,21 +310,20 @@ void func_8004AFC0_4BBC0(u8 *address) {
 }
 
 void func_8004B05C_4BC5C(void *dataAddress) {
-    D_800FE358_FEF58[D_800FE858_FF458].dataAddress = dataAddress;
-    D_800FE758_FF358[D_800FE858_FF458] = mmDelay;
-    D_800FE858_FF458++;
+    gFreeQueue[gFreeQueueCount].dataAddress = dataAddress;
+    D_800FE758_FF358[gFreeQueueCount] = mmDelay;
+    gFreeQueueCount++;
 }
 
 /**
  * Returns the index of the memory pool containing the memory address.
  */
-//get_memory_pool_index_containing_address
-s32 func_8004B098_4BC98(u8 *address) {
+s32 get_memory_pool_index_containing_address(u8 *address) {
     s32 i;
     MemoryPool *pool;
 
-    for (i = D_800FE350_FEF50; i > 0; i--) {
-        pool = &D_800FE310_FEF10[i];
+    for (i = gNumberOfMemoryPools; i > 0; i--) {
+        pool = &gMemoryPools[i];
         if ((u8 *)pool->slots >= address) {
             continue;
         }
@@ -327,8 +336,7 @@ s32 func_8004B098_4BC98(u8 *address) {
 
 #ifdef NON_MATCHING
 //single regalloc diff
-//free_memory_pool_slot
-void func_8004B0F8_4BCF8(s32 poolIndex, s32 slotIndex) {
+void free_memory_pool_slot(s32 poolIndex, s32 slotIndex) {
     s32 nextIndex;
     s32 prevIndex;
     s32 tempNextIndex;
@@ -336,7 +344,7 @@ void func_8004B0F8_4BCF8(s32 poolIndex, s32 slotIndex) {
     MemoryPoolSlot *nextSlot;
     MemoryPoolSlot *prevSlot;
 
-    slots = D_800FE310_FEF10[poolIndex].slots;
+    slots = gMemoryPools[poolIndex].slots;
     nextIndex = slots[slotIndex].nextIndex;
     prevIndex = slots[slotIndex].prevIndex;
     nextSlot = &slots[nextIndex];
@@ -354,8 +362,8 @@ void func_8004B0F8_4BCF8(s32 poolIndex, s32 slotIndex) {
             if (tempNextIndex != -1) {
                 slots[tempNextIndex].prevIndex = slotIndex;
             }
-            D_800FE310_FEF10[poolIndex].curNumSlots--;
-            slots[D_800FE310_FEF10[poolIndex].curNumSlots].index = nextIndex;
+            gMemoryPools[poolIndex].curNumSlots--;
+            slots[gMemoryPools[poolIndex].curNumSlots].index = nextIndex;
         }
     }
     if (prevIndex != -1) {
@@ -366,25 +374,24 @@ void func_8004B0F8_4BCF8(s32 poolIndex, s32 slotIndex) {
             if (tempNextIndex != -1) {
                 slots[tempNextIndex].prevIndex = prevIndex;
             }
-            D_800FE310_FEF10[poolIndex].curNumSlots--;
-            slots[D_800FE310_FEF10[poolIndex].curNumSlots].index = slotIndex;
+            gMemoryPools[poolIndex].curNumSlots--;
+            slots[gMemoryPools[poolIndex].curNumSlots].index = slotIndex;
         }
     }
 }
 #else
-#pragma GLOBAL_ASM("asm/nonmatchings/memory/func_8004B0F8_4BCF8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/memory/free_memory_pool_slot.s")
 #endif
 
 UNUSED MemoryPoolSlot *mmGetSlotPtr(s32 poolIndex) {
-    return D_800FE310_FEF10[poolIndex].slots;
+    return gMemoryPools[poolIndex].slots;
 }
 
 s32 mmGetDelay(void) {
 	return mmDelay;
 }
 
-//allocate_memory_pool_slot
-s32 func_8004B288_4BE88(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken, s32 newSlotIsTaken, u32 colourTag) {
+s32 allocate_memory_pool_slot(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken, s32 newSlotIsTaken, u32 colourTag) {
     MemoryPool *pool;
     MemoryPoolSlot *poolSlots;
     s32 index;
@@ -398,7 +405,7 @@ s32 func_8004B288_4BE88(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken,
         D_800FE868_FF468[poolIndex] -= size;
     }
 
-    pool = &D_800FE310_FEF10[poolIndex];
+    pool = &gMemoryPools[poolIndex];
     poolSlots = pool->slots;
     pool = pool; // Fakematch
     poolSlots[slotIndex].flags = slotIsTaken;
@@ -456,9 +463,9 @@ void mmSlotPrint(void) {
     s32 nextIndex;
     MemoryPoolSlot *slot;
 
-    for (i = 0; (D_800FE350_FEF50 ^ 0) >= i; i++) {
+    for (i = 0; (gNumberOfMemoryPools ^ 0) >= i; i++) {
         if (i && i) {} // Fakematch
-        slot = &D_800FE310_FEF10[i].slots[0];
+        slot = &gMemoryPools[i].slots[0];
         index = 1;
         index2 = -index;
         do {
@@ -473,7 +480,7 @@ void mmSlotPrint(void) {
             if (skip) {
                 continue;
             }
-            slot = &D_800FE310_FEF10[i].slots[slot->nextIndex];
+            slot = &gMemoryPools[i].slots[slot->nextIndex];
         } while (nextIndex != (-1));
     }
 }

@@ -269,6 +269,8 @@ segments:
       - [0xA1AF0, data]
       - [0xA45E0, .data, controller]
       - [0xA45F0, data]
+      - [0xA4A50, .data, memory]
+      - [0xA4A60, data]
       - [0xA8560, .data, rzip]
       - [0xA8570, data]
       # - [0xA8A38, rodata]
