@@ -4,21 +4,21 @@
 #define RAM_END 0x80400000
 #define EXTENDED_RAM_END 0x80600000
 #define _ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
+extern MemoryPoolSlot *gMainMemoryPool; //Defined somewhere else.
 
 u8 mmExtendedRam = FALSE;
 s32 mmColourTagUnk1 = 0xFFFFFFFF;
 s32 mmColourTagUnk2 = 0xFFFFFFFF;
 MemoryPool gMemoryPools[4];
-u8 D_800FE318_FEF18[56]; // Padding
+UNUSED u8 D_800FE318_FEF18[56]; // Padding
 s32 gNumberOfMemoryPools;
 FreeQueueSlot gFreeQueue[100];
-u8 D_800FE758_FF358[100];
+u8 gFreeQueueDelay[100];
 s32 gFreeQueueCount;
 s32 mmDelay;
 s32 FreeRAM;
 s32 D_800FE868_FF468[4]; //Same count of gMemoryPools. Possibly stores the size of each pool.
 s32 mmEndRam;
-extern MemoryPoolSlot *gMainMemoryPool; //Defined somewhere else.
 
 void mmInit(void) {
     gNumberOfMemoryPools = -1;
@@ -272,11 +272,11 @@ void mmFreeTick(void) {
     }
 
     for (i = 0; i < gFreeQueueCount;) {
-        D_800FE758_FF358[i]--;
-        if (D_800FE758_FF358[i] == 0) {
+        gFreeQueueDelay[i]--;
+        if (gFreeQueueDelay[i] == 0) {
             free_slot_containing_address(gFreeQueue[i].dataAddress);
             gFreeQueue[i].dataAddress = gFreeQueue[gFreeQueueCount - 1].dataAddress;
-            D_800FE758_FF358[i] = D_800FE758_FF358[gFreeQueueCount - 1];
+            gFreeQueueDelay[i] = gFreeQueueDelay[gFreeQueueCount - 1];
             gFreeQueueCount--;
         } else {
             i++;
@@ -311,7 +311,7 @@ void free_slot_containing_address(u8 *address) {
 
 void func_8004B05C_4BC5C(void *dataAddress) {
     gFreeQueue[gFreeQueueCount].dataAddress = dataAddress;
-    D_800FE758_FF358[gFreeQueueCount] = mmDelay;
+    gFreeQueueDelay[gFreeQueueCount] = mmDelay;
     gFreeQueueCount++;
 }
 

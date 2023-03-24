@@ -37,4 +37,7 @@ extern char D_800AF650_B0250[16];// = "free ram 		%08x";
 //prnBorders.c
 extern Gfx D_800A3F90_A4B90[11][2]; //unknown number of graphics commands. This is a best guess.
 
+//font.c
+extern DialogueBoxBackground Window;
+
 #endif

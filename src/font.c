@@ -8,9 +8,20 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontUseFont.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/font/fontColour.s")
+void fontColour(s32 red, s32 green, s32 blue, s32 alpha, s32 opacity) {
+    Window.textColourR = red;
+    Window.textColourG = green;
+    Window.textColourB = blue;
+    Window.textColourA = alpha;
+    Window.opacity = opacity;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/font/fontBackground.s")
+void fontBackground(s32 red, s32 green, s32 blue, s32 alpha) {
+    Window.textBGColourR = red;
+    Window.textBGColourG = green;
+    Window.textBGColourB = blue;
+    Window.textBGColourA = alpha;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontPrintXY.s")
 

@@ -107,4 +107,149 @@ typedef struct FreeQueueSlot {
     void *dataAddress;
 } FreeQueueSlot;
 
+/* Size: 0x20 bytes */
+typedef struct TextureHeader {
+  /* 0x00 */ u8 width;
+  /* 0x01 */ u8 height;
+  /* 0x02 */ u8 format; // Lower 4 bits determines image format.
+      // 0 = RGBA32
+      // 1 = RGBA16
+      // 2 = I8
+      // 3 = I4
+      // 4 = IA16
+      // 5 = IA8
+      // 6 = IA4
+      // 7 = CI4 (16 colors)
+      // 8 = CI8 (64 colors)
+  /* 0x03 */ u8 unk3;
+  /* 0x04 */ u8 unk4;
+  /* 0x05 */ u8 numberOfInstances; // Always 1 in the ROM.
+  /* 0x06 */ s16 flags;
+      // 0x04 = Interlaced texture
+      // 0x40 = U clamp flag. 0 = Wrap, 1 = Clamp
+      // 0x80 = V clamp flag. 0 = Wrap, 1 = Clamp
+  /* 0x08 */ s16 ciPaletteOffset;
+  /* 0x0A */ s16 numberOfCommands; // initialized in RAM; Number of commands in the texture display list. (Usually 0x07)
+  /* 0x0C */ s32* cmd; // initialized in RAM; Pointer to texture display list.
+  /* 0x10 */ u8 unk10;
+  /* 0x11 */ u8 unk11;
+  /* 0x12 */ u16 numOfTextures; // For animated textures, static textures are just 0x01. Each texture has it's own header.
+  /* 0x14 */ u16 frameAdvanceDelay; // How many frames to delay before moving to the next texture.
+  /* 0x16 */ s16 textureSize; // Size in number of bytes, including the header
+  /* 0x18 */ u8 unk18;
+  /* 0x19 */ u8 unk19;
+  /* 0x1A */ u8 unk1A;
+  /* 0x1B */ u8 unk1B;
+  /* 0x1C */ u8 unk1C;
+  /* 0x1D */ u8 isCompressed;
+  /* 0x1E */ u8 unk1E;
+  /* 0x1F */ u8 unk1F;
+} TextureHeader;
+
+/* Size: 8 bytes */
+typedef struct FontCharData {
+    u8 textureID; // Texture Pointer Index?
+    u8 ulx; // Upper Left Corner? Maybe only used when FontData->unk20 is 0 for some reason.
+    u8 width; // Font Char Width?
+    u8 height; // Font Char Height?
+    u8 s; // Upper left coordinate for the texture derived from X?
+    u8 t; // Upper left coordinate for the texture derived from Y?
+    u8 lrx; // Related to the lower right X Coordinate.
+    u8 lry; // Related to the lower right Y Coordinate.
+} FontCharData;
+
+/* Size: 0x400 bytes */
+typedef struct FontData {
+/* 0x000 */ s32 unk0; // Unused
+/* 0x004 */ char name[28];
+/* 0x020 */ u16 x;
+/* 0x022 */ u16 y;
+/* 0x024 */ u16 charWidth;
+/* 0x026 */ u16 charHeight;
+/* 0x028 */ u8 loadedFonts[24];
+/* 0x040 */ s16 textureID[32];
+/* 0x080 */ TextureHeader *texturePointers[32];
+/* 0x100 */ FontCharData letter[96];
+} FontData;
+
+/* Size: 0x20 bytes */
+//Dialogue Box text linked list (Including background struct)
+typedef struct DialogueBox {
+/* 0x00 */ u8 unk00; // Unused
+/* 0x01 */ u8 textNum; // A number that is drawn with the text, like a balloon door telling you how many more you need.
+/* 0x02 */ char *text; // Pointer to the text array
+/* 0x06 */ s16 x1; // Left position of the text
+/* 0x08 */ s16 y1; // Top portion of the text
+/* 0x0A */ s16 x2; // Right portion of the text
+/* 0x0C */ s16 y2; // Bottom portion of the text
+/* 0x0E */ u8 textColourR;
+/* 0x0F */ u8 textColourG;
+/* 0x10 */ u8 textColourB;
+/* 0x11 */ u8 textColourA;
+/* 0x12 */ u8 textBGColourR;
+/* 0x13 */ u8 textBGColourG;
+/* 0x14 */ u8 textBGColourB;
+/* 0x15 */ u8 textBGColourA;
+/* 0x16 */ u8 opacity;
+/* 0x17 */ u8 font;
+/* 0x18 */ struct DialogueBox *nextBox;
+} DialogueBox;
+
+/* Size: 0x20 bytes */
+typedef struct DialogueTextElement {
+/* 0x00 */ u8 unk0;
+/* 0x01 */ u8 number;
+/* 0x02 */ u8 unk2;
+/* 0x03 */ u8 unk3;
+/* 0x04 */ char *text; // Pointer to the text array
+/* 0x08 */ s16 posX;
+/* 0x0A */ s16 posY;
+/* 0x0C */ s16 offsetX;
+/* 0x0E */ s16 offsetY;
+/* 0x10 */ u8 textColourR;
+/* 0x11 */ u8 textColourG;
+/* 0x12 */ u8 textColourB;
+/* 0x13 */ u8 textColourA;
+/* 0x14 */ u8 textBGColourR;
+/* 0x15 */ u8 textBGColourG;
+/* 0x16 */ u8 textBGColourB;
+/* 0x17 */ u8 textBGColourA;
+/* 0x18 */ u8 opacity;
+/* 0x19 */ u8 font;
+/* 0x1A */ u16 flags;
+/* 0x1C */ DialogueBox *nextBox;
+} DialogueTextElement;
+
+/* Size: 0x28 bytes */
+// Dialogue Box background
+typedef struct DialogueBoxBackground {
+    s16 xpos;
+    s16 ypos;
+    s16 x1;
+    s16 y1;
+    s16 x2;
+    s16 y2;
+    s16 width;
+    s16 height;
+    u8 backgroundColourR; //Ideally should also be an array like the rest, but doesn't currently match.
+    u8 backgroundColourG;
+    u8 backgroundColourB;
+    u8 backgroundColourA;
+    //ColourRGBA textColour;
+    u8 textColourR;
+    u8 textColourG;
+    u8 textColourB;
+    u8 textColourA;
+    u8 textBGColourR;
+    u8 textBGColourG;
+    u8 textBGColourB;
+    u8 textBGColourA;
+    u8 opacity;
+    u8 font;
+    u16 flags;
+    s16 textOffsetX; // Functionally Unused
+    s16 textOffsetY; // Functionally Unused
+    DialogueBox *textBox;
+} DialogueBoxBackground;
+
 #endif
