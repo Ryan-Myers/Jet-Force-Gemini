@@ -38,6 +38,19 @@ extern char D_800AF650_B0250[16];// = "free ram 		%08x";
 extern Gfx D_800A3F90_A4B90[11][2]; //unknown number of graphics commands. This is a best guess.
 
 //font.c
-extern DialogueBoxBackground Window;
+extern DialogueBoxBackground Window[];
+extern u8 D_80104C95_105895;
+extern u8 fontInUse;
+extern u8 buttonMode;
+//Window noise?
+extern s32 D_800A7868_A8468;
+extern s32 D_800A786C_A846C;
+extern s32 D_800A7870_A8470;
+// Descending powers of 10
+extern s32 D_800A7874_A8474[9];
+// s32 D_800A7874_A8474[9] = {
+//     1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10,
+// };
+
 
 #endif
