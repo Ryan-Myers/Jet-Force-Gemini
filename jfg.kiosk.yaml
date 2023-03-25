@@ -45,6 +45,7 @@ segments:
     bss_size: 0x54DC0
     subsegments:
       - [0x1050, c, audio_manager_1050]
+      - [0x28D0, c, audiomgr]
       - [0x36D0, c, audio_manager_36D0]
       - [0x4C50, c, audio_manager_4C50]
       - [0x5660, c, objects]

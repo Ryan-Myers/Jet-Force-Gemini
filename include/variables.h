@@ -45,6 +45,8 @@ typedef enum TextFonts {
     FONT_UNK_FF = 255
 } TextFonts;
 extern char *combineBuffer;
+extern char *printBuffer;
+extern char *convertBuffer;
 extern DialogueBoxBackground Window[];
 extern u8 fontInUse;
 extern u8 buttonMode;
@@ -65,10 +67,10 @@ extern Gfx D_800A77F0_A83F0[7];
 extern u32 D_A7858; //Font asset location?
 extern u32 *cache;
 extern u8 *dxTable;
-extern u8 *printBuffer;
 extern u8 squash;
 extern DialogueTextElement String[]; //Sizeof(32)?
 //dDialogueBoxBegin?
+extern u8 D_800A78C4_A84C4[100];
 
 /* Size: 10 bytes */
 typedef struct FontCharDataAlt {

@@ -93,29 +93,3 @@
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/forcelink.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/scalevol.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amCreateAudioMgr.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000203C_2C3C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amGo.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amStop.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAudioMgrGetNextFrameCount.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_800021B8_2DB8.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80002724_3324.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80002764_3364.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80002934_3534.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000296C_356C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAudioMgrSetScheduleMode.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAudioMgrHaveRunALargeFrame.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAudioMgrHaveFreedLargeBuffers.s")

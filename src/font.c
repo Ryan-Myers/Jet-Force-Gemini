@@ -35,6 +35,7 @@ enum WindowFlags {
 
 #define WINDOW_COUNT 8
 #define POS_CENTRED -0x8000
+#define DIALOGUE_NUM_NULL 0xFF
 
 void fontSetWindow0(s32 width, s32 height) {
     Window->x2 = width - 1;
@@ -249,7 +250,38 @@ void func_80070518_71118(Gfx **dList, DialogueBoxBackground *box, char *text, Al
 #pragma GLOBAL_ASM("asm/nonmatchings/font/func_80070518_71118.s")
 #endif
 
+#ifdef NON_EQUIVALENT
+s32 fontStringWidth(char *text, s32 font, s32 convertString) {
+    FontCharDataAlt *fontData;
+    s32 index;
+    u8 *dxData;
+    char ch;
+    u8 width;
+    s32 stringWidth;
+
+    dxData = (&dxTable)[font];
+    fontData = &Font[font];
+    if (convertString) {
+        fontConvertString(text, convertBuffer);
+        text = convertBuffer;
+    }
+    stringWidth = 0;
+    for (index = 0; text[index] != '\0'; index++) {
+        ch = text[index];
+        width = fontData->width;
+        if (ch & 0x80) {
+            //index++;
+            if ((ch!= 0) && (ch != 0xF)) {
+                width = dxData[ch];
+            }
+        }
+        stringWidth = width;
+    }
+    return stringWidth;
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontStringWidth.s")
+#endif
 
 /**
  * Sets the position and size of the current Window.
@@ -397,7 +429,21 @@ void *fontWindowAddStringXY(s32 windowId, s32 posX, s32 posY, char *text, s32 nu
     return ret;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/font/fontWindowFlushStrings.s")
+void fontWindowFlushStrings(s32 windowId) {
+    DialogueBoxBackground *dialogueBox;
+    DialogueBox *dialogueTextBox, *dialogueTextBoxTemp;
+
+    dialogueBox = &Window[windowId];
+    dialogueTextBox = dialogueBox->textBox;
+    if (dialogueTextBox != NULL) {
+        dialogueTextBoxTemp = dialogueTextBox; // This seems redundant.
+        while (dialogueTextBoxTemp != NULL) {
+            dialogueTextBoxTemp->textNum = DIALOGUE_NUM_NULL;
+            dialogueTextBoxTemp = dialogueTextBoxTemp->nextBox;
+        }
+        dialogueBox->textBox = NULL;
+    }
+}
 
 void fontWindowEnable(s32 windowId) {
     Window[windowId].flags |= WINDOW_OPEN;
