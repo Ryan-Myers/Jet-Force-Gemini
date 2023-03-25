@@ -1,5 +1,7 @@
 #include "common.h"
 
+// This file appears to be audiosfx.c in DKR.
+
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpNew.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/func_80084848_85448.s")

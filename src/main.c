@@ -1,13 +1,51 @@
 #include "common.h"
+#include "sched.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainThread.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainInitGame.s")
+// ? RevealReturnAddresses();                          /* extern */
+// ? TrapDanglingJump();                               /* extern */
+// ? mmInit();                                         /* extern */
+// ? piInit();                                         /* extern */
+// ? rcpInit(OSSched *);                               /* extern */
+// ? runlinkFreeCode(?);                               /* extern */
+// ? runlinkInitialise();                              /* extern */
+void rzipInit(void);
+//? viInit(OSSched *);                                /* extern */
+extern s8 D_800FE26C_FEE6C;
+extern OSSched sc;
+extern u64 Time[1024];
+extern void *securitybuffer;
+void mainInitGame(void) {
+    s32 viMode;
+
+    RevealReturnAddresses();
+    mmInit();
+    securitybuffer = mmAlloc(16, COLOUR_TAG_GREY);
+    rzipInit();
+    D_800FE26C_FEE6C = 0;
+
+    if (osTvType == TV_TYPE_PAL) {
+        viMode = OS_VI_PAL_LPN1;
+    } else if (osTvType == TV_TYPE_NTSC) {
+        viMode = OS_VI_NTSC_LPN1;
+    } else if (osTvType == TV_TYPE_MPAL) {
+        viMode = OS_VI_MPAL_LPN1;
+    }
+    osCreateScheduler(&sc, &Time, 13, viMode, 1);
+    viInit(&sc);
+    piInit();
+    rcpInit(&sc);
+    runlinkInitialise();
+    TrapDanglingJump();
+    runlinkFreeCode(0x24);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800448B0_454B0.s")
 
+//main_game_loop in DKR
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80044938_45538.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainAddZBCheck.s")
@@ -106,7 +144,15 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetPauseMode.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainResetPressed.s")
+extern OSMesgQueue resetMsgQueue;
+extern s32 resetPressed;
+
+s32 mainResetPressed(void) {
+    if (resetPressed == 0) {
+        resetPressed = (s32) ((osRecvMesg(&resetMsgQueue, NULL, OS_MESG_NOBLOCK) + 1) != 0);
+    }
+    return resetPressed;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetCurrentLevel.s")
 
