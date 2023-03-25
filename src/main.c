@@ -5,19 +5,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
 
-// ? RevealReturnAddresses();                          /* extern */
-// ? TrapDanglingJump();                               /* extern */
-// ? mmInit();                                         /* extern */
-// ? piInit();                                         /* extern */
-// ? rcpInit(OSSched *);                               /* extern */
-// ? runlinkFreeCode(?);                               /* extern */
-// ? runlinkInitialise();                              /* extern */
-void rzipInit(void);
-//? viInit(OSSched *);                                /* extern */
-extern s8 D_800FE26C_FEE6C;
-extern OSSched sc;
-extern u64 Time[1024];
-extern void *securitybuffer;
+void TrapDanglingJump(void);
 void mainInitGame(void) {
     s32 viMode;
 

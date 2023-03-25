@@ -3,6 +3,7 @@
 
 #include "structs.h"
 #include "libultra_internal.h"
+#include "sched.h"
 
 
 void *mmAlloc(s32 size, u32 colourTag);
@@ -72,5 +73,14 @@ s32 fontStringWidth(char *text, s32 font, s32 arg2);
 void func_80071A0C_7260C(char *input, char *output, s32 number); //parse_string_with_number
 void *func_80071B08_72708(u8); //returns cacheline?
 void texDPInit(Gfx **);
+
+void RevealReturnAddresses(void);
+void mmInit(void);
+void piInit(void);
+void rcpInit(OSSched *sc);
+void runlinkFreeCode(s32 arg0);
+void runlinkInitialise(void);
+void rzipInit(void);
+void viInit(OSSched *sc);
 
 #endif

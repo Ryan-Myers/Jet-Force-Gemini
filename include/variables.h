@@ -3,6 +3,7 @@
 
 #include "structs.h"
 #include "libultra_internal.h"
+#include "sched.h"
 
 //objects.c
 extern s32 ObjListCount;
@@ -85,5 +86,11 @@ typedef struct FontCharDataAlt {
     u8 pad[8];
 } FontCharDataAlt;
 extern FontCharDataAlt *Font;
+
+//main.c
+extern s8 D_800FE26C_FEE6C;
+extern OSSched sc;
+extern u64 Time[1024];
+extern void *securitybuffer;
 
 #endif
