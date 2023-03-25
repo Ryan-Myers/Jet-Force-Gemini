@@ -80,7 +80,7 @@ GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) </dev/null 2>/dev/nu
 GLOBAL_ASM_O_FILES := $(foreach file,$(GLOBAL_ASM_C_FILES),$(BUILD_DIR)/$(file).o)
 
 
-DEFINES := -D_LANGUAGE_C -D_FINALROM -DF3DEX_GBI -DWIN32 -DNDEBUG -DTARGET_N64 -D__sgi
+DEFINES := -D_LANGUAGE_C -D_FINALROM -DWIN32 -DNDEBUG -DTARGET_N64 -D__sgi
 
 
 DEFINES += -DVERSION_$(VERSION)
@@ -94,7 +94,7 @@ VERIFY = verify
 #PROGRESS_NONMATCHING = --non-matching
 #endif
 
-CFLAGS := -Wab,-r4300_mul -non_shared -G 0 -Xcpluscomm -fullwarn  -nostdinc -g0
+CFLAGS := -Wab,-r4300_mul -non_shared -G 0 -Xcpluscomm -fullwarn -nostdinc -G 0
 CFLAGS += $(DEFINES)
 # ignore compiler warnings about anonymous structs
 CFLAGS += -woff 649,838

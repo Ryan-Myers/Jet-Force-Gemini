@@ -3,6 +3,7 @@
 #include "variables.h"
 #include "macros.h"
 #include "functions.h"
+#include "f3ddkr.h"
 
 // Animation related?
 #define COLOUR_TAG_RED 0xFF0000FF

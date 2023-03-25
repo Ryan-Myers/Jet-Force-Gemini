@@ -38,6 +38,13 @@ extern char D_800AF650_B0250[16];// = "free ram 		%08x";
 extern Gfx D_800A3F90_A4B90[11][2]; //unknown number of graphics commands. This is a best guess.
 
 //font.c
+typedef enum TextFonts {
+    FONT_COLOURFUL,
+    FONT_SMALL,
+    FONT_LARGE,
+    FONT_UNK_FF = 255
+} TextFonts;
+extern char *combineBuffer;
 extern DialogueBoxBackground Window[];
 extern u8 fontInUse;
 extern u8 buttonMode;
@@ -54,5 +61,27 @@ extern s32 D_800A7874_A8474[9];
 //     1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10,
 // };
 
+extern Gfx D_800A77F0_A83F0[7];
+extern u32 D_A7858; //Font asset location?
+extern u32 *cache;
+extern u8 *dxTable;
+extern u8 *printBuffer;
+extern u8 squash;
+extern DialogueTextElement String[]; //Sizeof(32)?
+//dDialogueBoxBegin?
+
+/* Size: 10 bytes */
+typedef struct FontCharDataAlt {
+    u8 textureID; // Texture Pointer Index?
+    u8 ulx; // Upper Left Corner? Maybe only used when FontData->unk20 is 0 for some reason.
+    u8 width; // Font Char Width?
+    u8 height; // Font Char Height?
+    u8 s; // Upper left coordinate for the texture derived from X?
+    u8 t; // Upper left coordinate for the texture derived from Y?
+    u8 lrx; // Related to the lower right X Coordinate.
+    u8 lry; // Related to the lower right Y Coordinate.
+    u8 pad[8];
+} FontCharDataAlt;
+extern FontCharDataAlt *Font;
 
 #endif
