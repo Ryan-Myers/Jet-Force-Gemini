@@ -1,6 +1,22 @@
 #include "common.h"
 
+#if 0
+//extern u8 __SYMBOLS_LUT_START[], __SYMBOLS_LUT_EMD[];
+extern u32 D_1B94430[], D_1B96910[];
+
+char *GetSymbolName(s32 arg0) {
+    u32 *ramAddress;
+    u8 *secondRomOffset;
+    u32 *romOffset;
+    romOffset = D_1B94430[arg0] & ~7;
+    romCopy((u32) (romOffset), (u32) ramAddress, 8);
+    secondRomOffset = *(&ramAddress + ((s32) romOffset & 7)) + *D_1B96910;
+    romCopy((u32) (*secondRomOffset & ~7), (u32) ramAddress, 96);
+    return &ramAddress + ((u32)secondRomOffset & 7);
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/GetSymbolName.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_800534B4_540B4.s")
 

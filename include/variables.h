@@ -93,4 +93,25 @@ extern OSSched sc;
 extern u64 Time[1024];
 extern void *securitybuffer;
 
+//diprint.c
+typedef struct TexFontCoords {
+    u8 u, v;
+} TexFontCoords;
+extern s32 D_80101F6C_102B6C; //gDebugFontTexture
+extern TexFontCoords D_800A6D48_A7948[3][32]; //gDebugFontCoords
+extern s32 D_80101F58_102B58; //D_80127CB8 in DKR
+extern u16 D_80101F4C_102B4C; //D_80127CAC in DKR
+extern u16 D_80101F4E_102B4E; //D_80127CAE in DKR
+extern TextureHeader *D_80101F40_102B40; //gTexture0
+extern TextureHeader *D_80101F44_102B44; //gTexture1
+extern TextureHeader *D_80101F48_102B48; //gTexture2
+extern s32 D_80101F5C_102B5C;
+extern s32 D_80101F60_102B60;
+extern s32 D_80101F64_102B64;
+extern s32 D_80101F68_102B68;
+extern u16 D_80101F70_102B70;
+extern u16 D_80101F72_102B72;
+extern char *D_800A6D44_A7944; //gDebugPrintBufferEnd
+extern char D_80101640_102240[]; //gDebugPrintBufferStart
+
 #endif

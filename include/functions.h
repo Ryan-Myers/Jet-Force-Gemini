@@ -73,6 +73,7 @@ s32 fontStringWidth(char *text, s32 font, s32 arg2);
 void func_80071A0C_7260C(char *input, char *output, s32 number); //parse_string_with_number
 void *func_80071B08_72708(u8); //returns cacheline?
 void texDPInit(Gfx **);
+void func_800660D4_66CD4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry);
 
 void RevealReturnAddresses(void);
 void mmInit(void);
@@ -82,5 +83,13 @@ void runlinkFreeCode(s32 arg0);
 void runlinkInitialise(void);
 void rzipInit(void);
 void viInit(OSSched *sc);
+
+s32 vsprintf(char *s, const char *format, ...);
+void sprintf(char *s, const char *format, ...);
+s32 func_80066174_66D74(Gfx **dList, s32 asciiVal);
+void func_800665C8_671C8(void);
+void func_80066658_67258(void);
+void func_8006667C_6727C(void);
+void sprintfSetSpacingCodes(s32 arg0);
 
 #endif
