@@ -91,5 +91,6 @@ void func_800665C8_671C8(void);
 void func_80066658_67258(void);
 void func_8006667C_6727C(void);
 void sprintfSetSpacingCodes(s32 arg0);
+TextureHeader *load_texture(s32 arg0);
 
 #endif

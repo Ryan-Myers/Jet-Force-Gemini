@@ -113,5 +113,25 @@ extern u16 D_80101F70_102B70;
 extern u16 D_80101F72_102B72;
 extern char *D_800A6D44_A7944; //gDebugPrintBufferEnd
 extern char D_80101640_102240[]; //gDebugPrintBufferStart
+extern s32 D_800A6D40_A7940; // spacing codes
+
+//sched.c
+extern char D_800AD510_AE110[];// = "(Audio task)";
+extern char D_800AD520_AE120[];// = "(Game task)";
+extern char D_800AD52C_AE12C[];// = "(DI task)";
+extern char D_800AD538_AE138[];// = "(DI benchmark test)";
+extern char D_800AD550_AE150[];// = "(Clone task)";
+extern char D_800AD560_AE160[];// = "(Refract task)";
+extern char D_800AD570_AE170[];// = "(Blur task)";
+extern char D_800AD580_AE180[];// = "(Unknown task type %d)";
+extern char D_800AD598_AE198[];// = "RCP TASK INFO-------------"; //AND MUCH MORE STRING CONTENT
+extern char D_800AD7D4_AE3D4[];// = "SP CRASHED, gfx=%x";
+extern char D_800AD7E8_AE3E8[];// = "DP CRASHED, gfx=%x";
+extern char D_800AD7FC_AE3FC[];// = "** GFX overflow **";
+extern char D_800AD810_AE410[];// = "** MTX overflow **";
+extern char D_800AD824_AE424[];// = "** VTX overflow **";
+extern char D_800AD838_AE438[];// = "** POL overflow **";
+extern char D_800AD84C_AE44C[];// = "Version %s";
+extern char D_800AD7D0_AE3D0[];// = "7.2";
 
 #endif

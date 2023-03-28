@@ -1,11 +1,47 @@
 #include "common.h"
 #include "stdarg.h"
 
+#define RENDER_PRINTF_CMD_ARG_BYTE(val) *D_800A6D44_A7944 = val; D_800A6D44_A7944++;
+#define RENDER_PRINTF_CMD_ARG_SHORT(val) RENDER_PRINTF_CMD_ARG_BYTE(val) RENDER_PRINTF_CMD_ARG_BYTE(val >> 8)
+
+#define RENDER_PRINTF_CMD_END RENDER_PRINTF_CMD_ARG_BYTE(0)
+
+#define RENDER_PRINTF_CMD_SET_COLOR(red, green, blue, alpha) \
+    RENDER_PRINTF_CMD_ARG_BYTE(0x81)                         \
+    RENDER_PRINTF_CMD_ARG_BYTE(red)                          \
+    RENDER_PRINTF_CMD_ARG_BYTE(green)                        \
+    RENDER_PRINTF_CMD_ARG_BYTE(blue)                         \
+    RENDER_PRINTF_CMD_ARG_BYTE(alpha)                        \
+    RENDER_PRINTF_CMD_END
+
+// This is a bit hacky, but it matches.
+#define RENDER_PRINTF_CMD_SET_POSITION(x, y) \
+    u16 tempX, tempY;                        \
+    RENDER_PRINTF_CMD_ARG_BYTE(0x82)         \
+    RENDER_PRINTF_CMD_ARG_BYTE(x & 0xFF)     \
+    tempX = x >> 8;                          \
+    RENDER_PRINTF_CMD_ARG_BYTE(tempX)        \
+    RENDER_PRINTF_CMD_ARG_BYTE(y & 0xFF)     \
+    tempY = y >> 8;                          \
+    RENDER_PRINTF_CMD_ARG_BYTE(tempY)        \
+    RENDER_PRINTF_CMD_END
+    
+#define RENDER_PRINTF_CMD_SET_BACKGROUND_COLOR(red, green, blue, alpha) \
+    RENDER_PRINTF_CMD_ARG_BYTE(0x85)                                    \
+    RENDER_PRINTF_CMD_ARG_BYTE(red)                                     \
+    RENDER_PRINTF_CMD_ARG_BYTE(green)                                   \
+    RENDER_PRINTF_CMD_ARG_BYTE(blue)                                    \
+    RENDER_PRINTF_CMD_ARG_BYTE(alpha)                                   \
+    RENDER_PRINTF_CMD_END
+
+
 #pragma GLOBAL_ASM("asm/nonmatchings/diprint/memset.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diprint/_itoa.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diprint/sprintfSetSpacingCodes.s")
+void sprintfSetSpacingCodes(s32 arg0) {
+    D_800A6D40_A7940 = arg0;
+}
 
 void sprintf(char *s, const char *format, ...) {
     va_list args;
@@ -16,7 +52,12 @@ void sprintf(char *s, const char *format, ...) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diprint/vsprintf.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diprint/diPrintfInit.s")
+void diPrintfInit(void) {
+    D_80101F40_102B40 = texLoadTexture(0);
+    D_80101F44_102B44 = texLoadTexture(1);
+    D_80101F48_102B48 = texLoadTexture(2);
+    D_800A6D44_A7944 = D_80101640_102240;
+}
 
 s32 diPrintf(const char *format, ...) {
     va_list args;
@@ -36,11 +77,26 @@ s32 diPrintf(const char *format, ...) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diprint/diPrintfAll.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diprint/diPrintfSetCol.s")
+/**
+ * Set the colour of the current debug text.
+ */
+UNUSED void diPrintfSetCol(u8 red, u8 green, u8 blue, u8 alpha) {
+    RENDER_PRINTF_CMD_SET_COLOR(red, green, blue, alpha)
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diprint/diPrintfSetBG.s")
+/**
+ * Set the background colour of the current debug text.
+ */
+void diPrintfSetBG(u8 red, u8 green, u8 blue, u8 alpha) {
+    RENDER_PRINTF_CMD_SET_BACKGROUND_COLOR(red, green, blue, alpha)
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diprint/diPrintfSetXY.s")
+/**
+ * Sets the character position of further prints to the given coordinates.
+*/
+void diPrintfSetXY(u16 x, u16 y) {
+    RENDER_PRINTF_CMD_SET_POSITION(x, y)
+}
 
 //Same as func_800B653C in DKR
 #pragma GLOBAL_ASM("asm/nonmatchings/diprint/func_80065CB4_668B4.s")
@@ -116,10 +172,10 @@ void func_800665C8_671C8(void) {
     if (D_80101F72_102B72 <= 240) {
         D_80101F64_102B64 = 16;
         D_80101F68_102B68 = D_80101F72_102B72 - 16;
-        return;
+    } else {
+        D_80101F64_102B64 = 32;
+        D_80101F68_102B68 = D_80101F72_102B72 - 32;
     }
-    D_80101F64_102B64 = 32;
-    D_80101F68_102B68 = D_80101F72_102B72 - 32;
 }
 
 void func_80066658_67258(void) {

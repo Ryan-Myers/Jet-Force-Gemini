@@ -16,7 +16,31 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050670_51270.s")
 
+#ifdef NON_MATCHING
+//Needs RODATA migrated for the jump table to match
+char *func_80050718_51318(s32 arg0) {
+    switch (arg0) {
+    case 1:
+        return &D_800AD510_AE110;
+    case 2:
+        return &D_800AD520_AE120;
+    case 3:
+        return &D_800AD52C_AE12C;
+    case 4:
+        return &D_800AD538_AE138;
+    case 5:
+        return &D_800AD550_AE150;
+    case 6:
+        return &D_800AD560_AE160;
+    case 7:
+        return &D_800AD570_AE170;
+    default:
+        return &D_800AD580_AE180;
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050718_51318.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800507A4_513A4.s")
 
