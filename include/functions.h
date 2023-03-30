@@ -93,4 +93,9 @@ void func_8006667C_6727C(void);
 void sprintfSetSpacingCodes(s32 arg0);
 TextureHeader *load_texture(s32 arg0);
 
+void viGetCurrentSize(s32 *arg0, s32 *arg1);
+void rcpInitDp(Gfx **dList);
+TextureHeader *texLoadTexture(s32 arg0);
+s32 func_80065CB4_668B4(Gfx **dlist, char *buffer);
+
 #endif

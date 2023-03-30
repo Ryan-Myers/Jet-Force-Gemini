@@ -75,7 +75,43 @@ s32 diPrintf(const char *format, ...) {
     return 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diprint/diPrintfAll.s")
+/**
+ * At the end of a frame, iterate through the debug text buffer and print it on screen.
+ * Soft-clear the buffer afterwards by setting the endpoint to the start point.
+ */
+void diPrintfAll(Gfx **dList) {
+    s32 height;
+    s32 width;
+    char *buffer;
+
+    rcpInitDp(dList);
+    viGetCurrentSize(&height, &width);
+    D_80101F70_102B70 = height;
+    D_80101F72_102B72 = width;
+    gDPSetScissor((*dList)++, 0, 0, 0, D_80101F70_102B70, D_80101F72_102B72);
+    func_800665C8_671C8();
+    gSPDisplayList((*dList)++, D_800A6E08_A7A08);
+    buffer = (char *) D_80101640_102240;
+    func_80066658_67258();
+    D_80101F6C_102B6C = -1;
+    D_80101F54_102B54 = 0;
+    D_80101F50_102B50 = D_80101F4C_102B4C;
+    D_80101F50_102B52 = D_80101F4E_102B4E;
+    while ((s32)buffer != (s32)D_800A6D44_A7944) {
+        D_80101F58_102B58 = FALSE;
+        buffer += func_80065CB4_668B4(dList, buffer);
+    }
+    func_800660D4_66CD4(dList, D_80101F50_102B50, D_80101F50_102B52, D_80101F4C_102B4C, D_80101F4E_102B4E + 10);
+    buffer = (char *) D_80101640_102240;
+    func_80066658_67258();
+    D_80101F6C_102B6C = -1;
+    D_80101F54_102B54 = 0;
+    while ((s32)buffer != (s32)D_800A6D44_A7944) {
+        D_80101F58_102B58 = TRUE;
+        buffer += func_80065CB4_668B4(dList, buffer);
+    }
+    D_800A6D44_A7944 = D_80101640_102240;
+}
 
 /**
  * Set the colour of the current debug text.

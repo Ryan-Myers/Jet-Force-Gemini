@@ -114,6 +114,10 @@ extern u16 D_80101F72_102B72;
 extern char *D_800A6D44_A7944; //gDebugPrintBufferEnd
 extern char D_80101640_102240[]; //gDebugPrintBufferStart
 extern s32 D_800A6D40_A7940; // spacing codes
+extern Gfx D_800A6E08_A7A08[]; //dDebugFontSettings
+extern s32 D_80101F54_102B54; //D_80127CB4 in DKR
+extern u16 D_80101F50_102B50; //D_80127CB0 in DKR
+extern u16 D_80101F50_102B52; //D_80127CB2 in DKR
 
 //sched.c
 extern char D_800AD510_AE110[];// = "(Audio task)";
