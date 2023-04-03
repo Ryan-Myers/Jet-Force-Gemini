@@ -38,11 +38,17 @@ enum TriangleBatchFlags {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texInitTextures.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/texDisableModes.s")
+void texDisableModes(s32 flags) {
+    D_800A5838_A6438 |= flags;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/texEnableModes.s")
+void texEnableModes(s32 flags) {
+    D_800A5838_A6438 &= ~flags;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/texModelTextureLoad.s")
+void texModelTextureLoad(u8 arg0) {
+    D_800A583C_A643C = arg0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texLoadTexture.s")
 
@@ -52,11 +58,43 @@ enum TriangleBatchFlags {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texLoadTextureAddr.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/setTexMemColour.s")
+void setTexMemColour(s32 tagId) {
+    D_800A5830_A6430 = tagId;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/texFrame.s")
+typedef struct Struct_Unk_8007B46C {
+    u8 pad0[0x12];
+    u16 unk12;
+    u8 pad14[2];
+    s16 unk16;
+    u8 pad17[8];
+} Struct_Unk_8007B46C;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/texDPInit.s")
+Struct_Unk_8007B46C *texFrame(Struct_Unk_8007B46C *arg0, s32 arg1) {
+    Struct_Unk_8007B46C *ret = arg0 + 1;
+    if ((arg1 > 0) && (arg1 < arg0->unk12 << 8)) {
+        ret = (Struct_Unk_8007B46C *) (((u8*)arg0) + ((arg1 >> 16) * arg0->unk16)) + 1;
+    }
+    return ret;
+}
+
+/**
+ * Resets all render settings to the default state.
+ * The next draw call will be forced to apply all settings instead of skipping unecessary steps.
+*/
+void texDPInit(Gfx **dlist) {
+    D_800A5838_A6438 = 0;
+    D_800FFA14_100614 = 0;
+    D_800FFA18_100618 = 0;
+    D_800FFA10_100610 = 0;
+    D_800FFA1C_10061C = 0;
+    D_800FFA20_100620 = 1;
+    D_800FFA24_100624 = 1;
+    if (dlist != NULL) {
+        gDPPipeSync((*dlist)++);
+        gSPSetGeometryMode((*dlist)++, G_FOG | G_SHADING_SMOOTH | G_SHADE | G_ZBUFFER);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texDPTextureX.s")
 
@@ -74,8 +112,26 @@ enum TriangleBatchFlags {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/func_800577D8_583D8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/func_80057B8C_5878C.s")
+//build_tex_display_list in DKR
+void func_80057B8C_5878C(TextureHeader *tex, u8 *addr) {
+    u8 *sp24;
 
+    sp24 = addr;
+    if (tex) { }
+    tex->cmd = (s32 *)addr;
+    func_80057C50_58850((Gfx **) &sp24, tex, 0, 0);
+    //tex->flags & 0x40 - U clamp flag. Wrap
+    if ((tex->unk1B < 2) && (tex->flags & 0x40)) {
+        if (!(tex->format & 0xF)) {
+            func_80057C50_58850((Gfx **) &sp24, tex, 1, (s32) (0x1000 - tex->textureSize) >> 3);
+        } else {
+            func_80057C50_58850((Gfx **) &sp24, tex, 1, 0x100);
+        }
+    }
+    tex->numberOfCommands = ((s32) (sp24 - (s32)tex->cmd) >> 3);
+}
+
+//Shrunk build_tex_display_list
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/func_80057C50_58850.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texAnimateSprite.s")

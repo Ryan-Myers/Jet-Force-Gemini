@@ -144,5 +144,16 @@ extern unk800DC950 **D_800A1898_A2498;
 
 //textures.c
 extern u8 blinkMode;
+extern u32 D_800A5830_A6430; //gTexColourTag = COLOUR_TAG_MAGENTA;
+extern s32 D_800A5838_A6438; //D_80126378
+extern u8 D_800A583C_A643C;
+extern s32 D_800FF9F4_1005F4; //D_80126354 in DKR
+extern s32 *D_800FF9C0_1005C0[2]; //D_80126320 in DKR
+extern s32 D_800FFA10_100610;
+extern s32 D_800FFA14_100614;
+extern s32 D_800FFA18_100618;
+extern s32 D_800FFA1C_10061C;
+extern s32 D_800FFA20_100620;
+extern s32 D_800FFA24_100624;
 
 #endif
