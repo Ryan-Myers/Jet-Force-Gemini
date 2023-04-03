@@ -252,4 +252,84 @@ typedef struct DialogueBoxBackground {
   /* 0x24 */ DialogueBox *textBox;
 } DialogueBoxBackground;
 
+
+/* Size: 0x88 bytes */
+typedef struct unk800DC950 {
+    u8 unk0;
+    u8 unk1;
+    u8 unk2;
+    u8 unk3;
+    u8 unk4;
+    u8 unk5;
+    s16 unk6;
+    s16 unk8;
+    s16 unkA;
+    s32 unkC;
+    f32 unk10;
+    f32 unk14;
+    f32 unk18;
+    s32 unk1C;
+    s32 unk20;
+    s32 unk24;
+    s32 unk28;
+    s32 unk2C;
+    s32 unk30;
+    s32 unk34;
+    s32 unk38;
+    s16 unk3C;
+    s16 unk3E;
+    s16 unk40;
+    s16 unk42;
+    s32 unk44;
+    s16 unk48;
+    s16 unk4A;
+    s16 unk4C;
+    s16 unk4E;
+    s16 unk50;
+    s16 unk52;
+    s16 unk54;
+    s16 unk56;
+    s16 unk58;
+    s16 unk5A;
+    f32 unk5C;
+    f32 unk60;
+    f32 unk64;
+    f32 unk68;
+    f32 unk6C;
+    s16 unk70;
+    s16 unk72;
+    s16 unk74;
+    s16 unk76;
+    s16 unk78;
+    s16 unk7A;
+    f32 unk7C;
+    f32 unk80;
+    f32 unk84;
+} unk800DC950;
+
+
+// Used to update the pulsating lights in Spaceport Alpha
+typedef struct PulsatingLightDataFrame {
+    u16 value;
+    u16 time;
+} PulsatingLightDataFrame;
+typedef struct PulsatingLightData {
+    u16 numberFrames;
+    u16 currentFrame;
+    u16 time;
+    u16 totalTime;
+    s32 outColorValue;
+    PulsatingLightDataFrame frames[1]; // Length varies based on numberFrames.
+} PulsatingLightData;
+
+typedef struct unkResetColourCycle {
+    s32 unk0;
+    s32 unk4;
+    u8 unk8;
+    u8 unk9;
+    u8 unkA;
+    u8 unkB;
+    struct unkResetColourCycle *unkC;
+} unkResetColourCycle;
+
 #endif

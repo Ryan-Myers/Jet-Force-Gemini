@@ -138,4 +138,11 @@ extern char D_800AD838_AE438[];// = "** POL overflow **";
 extern char D_800AD84C_AE44C[];// = "Version %s";
 extern char D_800AD7D0_AE3D0[];// = "7.2";
 
+//lights.c
+extern s32 D_800A1894_A2494;
+extern unk800DC950 **D_800A1898_A2498;
+
+//textures.c
+extern u8 blinkMode;
+
 #endif

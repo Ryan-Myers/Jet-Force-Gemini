@@ -98,4 +98,15 @@ void rcpInitDp(Gfx **dList);
 TextureHeader *texLoadTexture(s32 arg0);
 s32 func_80065CB4_668B4(Gfx **dlist, char *buffer);
 
+
+void func_80021444_22044(unk800DC950 *arg0, s32 arg1);
+s32 *objGetTable(s32 index);
+void resetMixCycle(PulsatingLightData *data);
+void updateMixCycle(PulsatingLightData *data, s32 timeDelta);
+void resetColourCycle(unkResetColourCycle *arg0);
+void initColourCycle(unkResetColourCycle *arg0, s32 arg1);
+void changeLightColourCycle(s32 arg0, s32 arg1); //TODO: arg0 typing is incorrect
+s32 mathRnd(s32, s32);
+void texAnimateTexture(TextureHeader *texture, u32 *triangleBatchInfoFlags, s32 *arg2, s32 updateRate);
+
 #endif

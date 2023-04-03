@@ -18,11 +18,18 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/changeLightColour.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/changeLightColourCycle.s")
+void changeLightColourCycle(s32 arg0, s32 arg1) {
+    initColourCycle(arg0 + 0x48, arg1);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/changeLightIntensity.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/lightUpdateLights.s")
+void lightUpdateLights(s32 arg0) {
+    s32 i;
+    for (i = 0; i < D_800A1894_A2494; i++) {
+        func_80021444_22044(D_800A1898_A2498[i], arg0);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021444_22044.s")
 
