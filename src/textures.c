@@ -133,27 +133,25 @@ void texAnimateTexture(TextureHeader *texture, u32 *triangleBatchInfoFlags, s32 
             arg2Temp -= (*frameAdvanceDelay) * updateRate;
         }
         do {
-            breakVar = 0;
+            breakVar = FALSE;
             if (arg2Temp < 0) {
                 arg2Temp = -arg2Temp;
                 flags &= ~BATCH_FLAGS_BIT19;
-                breakVar = 1;
+                breakVar = TRUE;
             }
             if (arg2Temp >= texture->numOfTextures) {
                 arg2Temp = ((texture->numOfTextures * 2) - arg2Temp) - 1;
                 flags |= BATCH_FLAGS_BIT19;
-                breakVar = 1;
+                breakVar = TRUE;
             }
-        } while (breakVar != 0);
+        } while (breakVar);
     } else if (!(flags & BATCH_FLAGS_BIT19)) {
-        arg2Temp += (texture->frameAdvanceDelay * updateRate);
-        if (arg2Temp >= texture->numOfTextures) {
-            do {
-                arg2Temp -= texture->numOfTextures;
-            } while (arg2Temp >= texture->numOfTextures);
+        arg2Temp += texture->frameAdvanceDelay * updateRate;
+        while (arg2Temp >= texture->numOfTextures) {
+            arg2Temp -= texture->numOfTextures;
         }
     } else {
-        arg2Temp = arg2Temp - (texture->frameAdvanceDelay * updateRate);
+        arg2Temp -= texture->frameAdvanceDelay * updateRate;
         while (arg2Temp < 0) {
             arg2Temp += texture->numOfTextures;
         }
