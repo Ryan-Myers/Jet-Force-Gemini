@@ -82,86 +82,85 @@ enum TriangleBatchFlags {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texAnimateTexSprite.s")
 
-#if 0
 void texAnimateTexture(TextureHeader *texture, u32 *triangleBatchInfoFlags, s32 *arg2, s32 updateRate) {
-    s32 bit17Set;
-    s32 bit19Set;
-    s32 bit18Set;
-    s32 phi_a0;
+    s32 breakVar;
+    u16 *frameAdvanceDelay;
+    u8 blink;
+    s32 arg2Temp = *arg2;
+    s32 flags = *triangleBatchInfoFlags;
 
-    bit17Set = *triangleBatchInfoFlags & BATCH_FLAGS_BIT17;
-    bit18Set = *triangleBatchInfoFlags & BATCH_FLAGS_BIT18;
-    bit19Set = *triangleBatchInfoFlags & BATCH_FLAGS_BIT19;
-    if (bit17Set) {
-        if (!bit18Set) {
-            if (blinkMode == 0) {
+    if (flags & BATCH_FLAGS_BIT17) {
+        blink = blinkMode;
+        if (!(flags & BATCH_FLAGS_BIT18)) {
+            if (blink == 0) {
                 if (mathRnd(0, 1000) > 985) {
-                    *triangleBatchInfoFlags &= ~BATCH_FLAGS_BIT19;
-                    *triangleBatchInfoFlags |= BATCH_FLAGS_BIT18;
+                    flags &= ~BATCH_FLAGS_BIT19;
+                    flags |= BATCH_FLAGS_BIT18;
                 }
-            } else if (blinkMode != 2) {
-                *triangleBatchInfoFlags &= ~BATCH_FLAGS_BIT19;
-                *triangleBatchInfoFlags |= BATCH_FLAGS_BIT18;
+            } else if (blink != 2) {
+                flags &= ~BATCH_FLAGS_BIT19;
+                flags |= BATCH_FLAGS_BIT18;
             }
-        } else if (!bit19Set) {
-            *arg2 += texture->frameAdvanceDelay * updateRate;
-            if (*arg2 >= texture->numOfTextures) {
-                if (blinkMode == 3) {
-                    *arg2 = texture->numOfTextures - 1;
+        } else if (!(flags & BATCH_FLAGS_BIT19)) {
+            arg2Temp += texture->frameAdvanceDelay * updateRate;
+            if (arg2Temp >= texture->numOfTextures) {
+                if (blink == 3) {
+                    arg2Temp = texture->numOfTextures - 1;
                 } else {
-                    *arg2 = ((texture->numOfTextures * 2) - *arg2) - 1;
-                    if (*arg2 < 0) {
-                        *arg2 = 0;
-                        *triangleBatchInfoFlags &= ~(BATCH_FLAGS_BIT19 | BATCH_FLAGS_BIT18);
+                    arg2Temp = ((texture->numOfTextures * 2) - arg2Temp) - 1;
+                    if (arg2Temp < 0) {
+                        arg2Temp = 0;
+                        flags &= ~(BATCH_FLAGS_BIT19 | BATCH_FLAGS_BIT18);
                     } else {
-                        *triangleBatchInfoFlags |= BATCH_FLAGS_BIT19;
+                        flags |= BATCH_FLAGS_BIT19;
                     }
                 }
             }
         } else {
-            *arg2 -= texture->frameAdvanceDelay * updateRate;
-            if (*arg2 < 0) {
-                *arg2 = 0;
-                *triangleBatchInfoFlags &= ~(BATCH_FLAGS_BIT19 | BATCH_FLAGS_BIT18);
+            arg2Temp -= texture->frameAdvanceDelay * updateRate;
+            if (arg2Temp < 0) {
+                arg2Temp = 0;
+                flags &= ~(BATCH_FLAGS_BIT19 | BATCH_FLAGS_BIT18);
             }
         }
         blinkMode = 0;
-    } else if (bit18Set) {
-        if (!bit19Set) {
-            *arg2 += texture->frameAdvanceDelay * updateRate;
+    } else if (flags & BATCH_FLAGS_BIT18) {
+        if (!(flags & BATCH_FLAGS_BIT19)) {
+            arg2Temp += texture->frameAdvanceDelay * updateRate;
         } else {
-            *arg2 -= texture->frameAdvanceDelay * updateRate;
+            //Probably a fake match var, but it works.
+            frameAdvanceDelay = &texture->frameAdvanceDelay;
+            arg2Temp -= (*frameAdvanceDelay) * updateRate;
         }
         do {
-            phi_a0 = 0;
-            if (*arg2 < 0) {
-                *arg2 = -*arg2;
-                *triangleBatchInfoFlags &= ~BATCH_FLAGS_BIT19;
-                phi_a0 = 1;
+            breakVar = 0;
+            if (arg2Temp < 0) {
+                arg2Temp = -arg2Temp;
+                flags &= ~BATCH_FLAGS_BIT19;
+                breakVar = 1;
             }
-            if (*arg2 >= texture->numOfTextures) {
-                *arg2 = ((texture->numOfTextures * 2) - *arg2) - 1;
-                *triangleBatchInfoFlags |= BATCH_FLAGS_BIT19;
-                phi_a0 = 1;
+            if (arg2Temp >= texture->numOfTextures) {
+                arg2Temp = ((texture->numOfTextures * 2) - arg2Temp) - 1;
+                flags |= BATCH_FLAGS_BIT19;
+                breakVar = 1;
             }
-        } while (phi_a0 != 0);
-    } else if (!bit19Set) {
-        *arg2 = *arg2 + (texture->frameAdvanceDelay * updateRate);
-        if (*arg2 >= texture->numOfTextures) {
+        } while (breakVar != 0);
+    } else if (!(flags & BATCH_FLAGS_BIT19)) {
+        arg2Temp += (texture->frameAdvanceDelay * updateRate);
+        if (arg2Temp >= texture->numOfTextures) {
             do {
-                *arg2 -= texture->numOfTextures;
-            } while (*arg2 >= texture->numOfTextures);
+                arg2Temp -= texture->numOfTextures;
+            } while (arg2Temp >= texture->numOfTextures);
         }
     } else {
-        *arg2 = *arg2 - (texture->frameAdvanceDelay * updateRate);
-        while (*arg2 < 0) {
-            *arg2 += texture->numOfTextures;
+        arg2Temp = arg2Temp - (texture->frameAdvanceDelay * updateRate);
+        while (arg2Temp < 0) {
+            arg2Temp += texture->numOfTextures;
         }
     }
+    *arg2 = arg2Temp;
+    *triangleBatchInfoFlags = flags;
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/texAnimateTexture.s")
-#endif
 
 void initColourCycle(unkResetColourCycle *arg0, s32 arg1) {
     arg0->unkC = (unkResetColourCycle *) objGetTable(arg1);
