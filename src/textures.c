@@ -114,25 +114,184 @@ void texDPInit(Gfx **dlist) {
 
 //build_tex_display_list in DKR
 void func_80057B8C_5878C(TextureHeader *tex, u8 *addr) {
-    u8 *sp24;
+    u8 *dlist;
 
-    sp24 = addr;
+    dlist = addr;
     if (tex) { }
     tex->cmd = (s32 *)addr;
-    func_80057C50_58850((Gfx **) &sp24, tex, 0, 0);
+    func_80057C50_58850((Gfx **) &dlist, tex, 0, 0);
     //tex->flags & 0x40 - U clamp flag. Wrap
     if ((tex->unk1B < 2) && (tex->flags & 0x40)) {
         if (!(tex->format & 0xF)) {
-            func_80057C50_58850((Gfx **) &sp24, tex, 1, (s32) (0x1000 - tex->textureSize) >> 3);
+            func_80057C50_58850((Gfx **) &dlist, tex, 1, (0x1000 - tex->textureSize) >> 3);
         } else {
-            func_80057C50_58850((Gfx **) &sp24, tex, 1, 0x100);
+            func_80057C50_58850((Gfx **) &dlist, tex, 1, 0x100);
         }
     }
-    tex->numberOfCommands = ((s32) (sp24 - (s32)tex->cmd) >> 3);
+    tex->numberOfCommands = ((s32) (dlist - (s32)tex->cmd) >> 3);
 }
 
 //Shrunk build_tex_display_list
+#ifdef NON_EQUIVALENT
+void func_80057C50_58850(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem) {
+    s32 tileImgSiz;
+    s32 imgSiz;
+    s32 imgSizIncr;
+    s32 imgSizShift;
+    s32 imgFmt;
+    s32 tileLine;
+    s32 texFlags;
+    s32 line;
+    s32 imgSizTileBytes;
+    s32 i;
+    s32 var_v1;
+    u32 texFormat;
+    u8 texHeight;
+    u8 texWidth;
+
+    texFormat = tex->format & 0xF;
+    texFlags = (tex->format >> 4) & 0xF;
+    texHeight = tex->height;
+    texWidth = tex->width;
+    switch (texFormat) {
+        case 0:
+            tileImgSiz = G_IM_SIZ_32b;
+            imgSiz = 3;
+            imgSizIncr = G_IM_SIZ_32b_INCR;
+            imgSizShift = G_IM_SIZ_32b_SHIFT;
+            imgSizTileBytes = G_IM_SIZ_32b_TILE_BYTES;
+            break;
+        case 1:
+        case 4:
+            tileImgSiz = G_IM_SIZ_16b;
+            imgSiz = 2;
+            imgSizIncr = G_IM_SIZ_16b_INCR;
+            imgSizShift = G_IM_SIZ_16b_SHIFT;
+            imgSizTileBytes = G_IM_SIZ_16b_TILE_BYTES;
+            break;
+        case 2:
+        case 5:
+            tileImgSiz = G_IM_SIZ_8b;
+            imgSiz = 2;
+            imgSizIncr = G_IM_SIZ_8b_INCR;
+            imgSizShift = G_IM_SIZ_8b_SHIFT;
+            imgSizTileBytes = G_IM_SIZ_8b_TILE_BYTES;
+            break;
+        default:          
+            tileImgSiz = G_IM_SIZ_4b;
+            imgSiz = 2;
+            imgSizIncr = G_IM_SIZ_4b_INCR;
+            imgSizShift = G_IM_SIZ_4b_SHIFT;
+            imgSizTileBytes = G_IM_SIZ_4b_TILE_BYTES;
+            break;
+    }
+    switch (texFormat) {
+        case 0:
+        case 1:
+            imgFmt = G_IM_FMT_RGBA;
+            if ((texFlags == 0) || (texFlags == 2)) {
+                tex->flags |= 4;
+            }
+            break;
+        case 4:
+        case 5:
+        case 6:
+            imgFmt = G_IM_FMT_IA;
+            tex->flags |= 4;
+            break;
+        default:          
+            imgFmt = G_IM_FMT_I;
+            break;
+    }
+    if (tileImgSiz == 0) {
+        line = texWidth * 2;
+    } else {
+        line = texWidth * imgSizTileBytes;
+    }
+    if (tex->unk1B >= 2) {
+        var_v1 = 0;
+        for (i = 0; i < tex->unk1B; i++) {
+            var_v1 += (texWidth >> i) * (texHeight >> i);
+        }
+        gDPSetTextureImage((*dlist)++, imgFmt, imgSiz, 1, OS_PHYSICAL_TO_K0(tex + 1));
+        //gDPSetTile - Maybe not? arg3 is just using the first 13 bits, 0-12
+        gDPSetTile((*dlist)++, imgFmt, imgSiz, 0, tmem & 0x1FF, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
+        gDPLoadSync((*dlist)++);
+        gDPLoadBlock((*dlist)++, G_TX_LOADTILE, 0, 0, (((s32) (var_v1 + imgSizIncr) >> imgSizShift) - 1), 0);
+        gDPPipeSync((*dlist)++);
+        i = 0;
+        while (i < tex->unk1B) {
+            tileLine = ((line) + 7) >> 3;
+            gDPSetTile((*dlist)++, imgFmt, tileImgSiz, tileLine, tmem & 0x1FF, rtile, 0, tex->unk1E, (tex->unk1F - i), i, tex->unk1C, (tex->isCompressed - i), i);
+            gDPSetTileSize((*dlist)++, rtile, 0, 0, ((texWidth)-1) << G_TEXTURE_IMAGE_FRAC, ((texHeight)-1) << G_TEXTURE_IMAGE_FRAC);
+            i++;
+            tmem += tileLine * texHeight;
+            rtile++;
+            texWidth = (u8) ((s32) texWidth >> 1);
+            texHeight = (u8) ((s32) texHeight >> 1);
+            line >>= 1;
+        }
+        gSPTexture((*dlist)++, 0, 0, (tex->unk1B - 1), 0, 1);
+        gSPEndDisplayList((*dlist)++);
+    } else {
+        gDkrDPLoadMultiBlockS(
+            (*dlist)++,//pkt
+            OS_PHYSICAL_TO_K0(tex + 1),//timg
+            tmem,//tmem
+            rtile,//rtile
+            imgFmt,//fmt
+            imgSiz,//sizblk
+            tileImgSiz, //siztile
+            imgSizIncr,//sizincr
+            0,//sizbytes
+            imgSizShift, //sizshift
+            line, //line
+            texWidth,//width
+            texHeight,//height
+            0,//pal
+            tex->unk1C,//cms
+            tex->unk1E,//cmt
+            tex->isCompressed,//masks
+            tex->unk1F,//maskt
+            0,//shifts
+            0//shiftt
+        );
+        // //gDPLoadTextureBlock
+        // {
+        //     gDPSetTextureImage((*dlist)++, imgFmt, imgSiz, 1, OS_PHYSICAL_TO_K0(tex + 1));
+        //     gDPSetTile((*dlist)++, imgFmt, imgSiz, 0, arg3 & 0x1FF, G_TX_LOADTILE, 0, tex->unk1E, tex->unk1F, 0, tex->unk1C, tex->isCompressed, 0);
+        //     gDPLoadSync((*dlist)++);
+        //     gDPLoadBlock((*dlist)++, G_TX_LOADTILE, 0, 0, (((s32) ((texWidth * texHeight) + imgSizIncr) >> imgSizShift) - 1), 0);
+        //     gDPPipeSync((*dlist)++);
+        //     gDPSetTile(
+        //         (*dlist)++,//pkt
+        //         imgFmt,//fmt
+        //         tileImgSiz,//siz
+        //         (((s32) (line + 7) >> 3) & 0x1FF),//line
+        //         (arg3 & 0x1FF),//tmem
+        //         arg2,//tile
+        //         0,//palette
+        //         tex->unk1E,//cmt
+        //         tex->unk1F,//maskt
+        //         0,//shiftt
+        //         tex->unk1C,//cms
+        //         tex->isCompressed,//masks
+        //         0//shifts
+        //     );
+        //     gDPSetTileSize(
+        //         (*dlist)++,//pkt
+        //         arg2,//tile
+        //         0,//uls
+        //         0,//ult
+        //         ((texWidth)-1) << G_TEXTURE_IMAGE_FRAC,//lrs
+        //         ((texHeight)-1) << G_TEXTURE_IMAGE_FRAC//lrt
+        //     );
+        // }
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/func_80057C50_58850.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texAnimateSprite.s")
 

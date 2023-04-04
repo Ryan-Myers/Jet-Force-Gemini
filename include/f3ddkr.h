@@ -124,4 +124,25 @@
     _g->words.w1 = rgba;                          \
 }
 
+#define gDkrDPLoadMultiBlockS(pkt, timg, tmem, rtile, fmt, \
+           sizblk, siztile, sizincr, sizbytes, sizshift, \
+           line, width, height, \
+           pal, cms, cmt, masks, maskt, shifts, shiftt)	\
+{									\
+	gDPSetTextureImage(pkt, fmt, sizblk, 1, timg);	\
+	gDPSetTile(pkt, fmt, siztile, 0, tmem, G_TX_LOADTILE, 	\
+		0 , cmt, maskt,	shiftt, cms, masks, shifts);		\
+	gDPLoadSync(pkt);						\
+	gDPLoadBlock(pkt, G_TX_LOADTILE, 0, 0, 				\
+		(((width)*(height) + sizincr) >> sizshift)-1,0);	\
+	gDPPipeSync(pkt);						\
+	gDPSetTile(pkt, fmt, sizblk,					\
+		((line)+7)>>3, tmem,		\
+		rtile, pal, cmt, maskt, shiftt, cms, masks,		\
+		shifts);						\
+	gDPSetTileSize(pkt, rtile, 0, 0,				\
+		((width)-1) << G_TEXTURE_IMAGE_FRAC,			\
+		((height)-1) << G_TEXTURE_IMAGE_FRAC)			\
+}
+
 #endif
