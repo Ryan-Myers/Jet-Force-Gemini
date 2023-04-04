@@ -149,9 +149,6 @@ void func_800660D4_66CD4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry) {
 }
 
 //Same as func_800B69FC in DKR
-#ifdef NON_EQUIVALENT
-//CALC_DXT needs to return zero in gDPLoadTextureBlock.
-//Needs WIDTH adjustment in load texture block
 //Loads a font texture and returns the width of the character given.
 s32 func_80066174_66D74(Gfx **dList, s32 asciiVal) {
     s32 fontCharWidth;
@@ -161,7 +158,7 @@ s32 func_80066174_66D74(Gfx **dList, s32 asciiVal) {
         //Character is a symbol or number and not a letter
         if (D_80101F6C_102B6C != 0) {
             if (D_80101F58_102B58) {
-                gDPLoadTextureBlock((*dList)++, OS_PHYSICAL_TO_K0(D_80101F40_102B40 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
+                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F40_102B40 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
             }
             D_80101F6C_102B6C = 0;
         }
@@ -170,7 +167,7 @@ s32 func_80066174_66D74(Gfx **dList, s32 asciiVal) {
         //Character is a upper case letter
         if (D_80101F6C_102B6C != 1) {
             if (D_80101F58_102B58) {
-                gDPLoadTextureBlock((*dList)++, OS_PHYSICAL_TO_K0(D_80101F44_102B44 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11, 0, 2, 2, 0, 0, 0, 0);
+                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F44_102B44 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11, 0, 2, 2, 0, 0, 0, 0);
             }
             D_80101F6C_102B6C = 1;
         }
@@ -179,7 +176,7 @@ s32 func_80066174_66D74(Gfx **dList, s32 asciiVal) {
         //Character is a lower case letter
         if (D_80101F6C_102B6C != 2) {
             if (D_80101F58_102B58) {
-                gDPLoadTextureBlock((*dList)++, OS_PHYSICAL_TO_K0(D_80101F48_102B48 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
+                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F48_102B48 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
             }
             D_80101F6C_102B6C = 2;
         }
@@ -188,14 +185,11 @@ s32 func_80066174_66D74(Gfx **dList, s32 asciiVal) {
     fontCharU = D_800A6D48_A7948[D_80101F6C_102B6C][asciiVal].u;
     fontCharWidth = (D_800A6D48_A7948[D_80101F6C_102B6C][asciiVal].v - fontCharU) + 1;
     if (D_80101F58_102B58) {
-        gDPSetCombineMode((*dList)++, DKR_CC_UNK12, DKR_CC_UNK12);
+        gDPSetCombineMode((*dList)++, DKR_CC_UNK13, DKR_CC_UNK13);
         gSPTextureRectangle((*dList)++, (D_80101F4C_102B4C << 2), (D_80101F4E_102B4E << 2), ((D_80101F4C_102B4C + fontCharWidth) << 2), ((D_80101F4E_102B4E + 10) << 2), 0, (fontCharU << 5), 0, 1024, 1024);
     }
     return fontCharWidth;
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/diprint/func_80066174_66D74.s")
-#endif
 
 void func_800665C8_671C8(void) {
     if (D_80101F70_102B70 <= 320) {
