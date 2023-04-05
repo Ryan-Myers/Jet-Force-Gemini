@@ -56,7 +56,11 @@ void texModelTextureLoad(u8 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texGetTextureNum.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/texLoadTextureAddr.s")
+void texLoadTextureAddr(s32 arg0, s32 arg1) {
+    D_800A584C_A644C = arg1;
+    texLoadTexture(arg0);
+    D_800A584C_A644C = 0;
+}
 
 void setTexMemColour(s32 tagId) {
     D_800A5830_A6430 = tagId;
@@ -98,11 +102,24 @@ void texDPInit(Gfx **dlist) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texDPTextureX.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/sprSetTextureFilter.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/sprSetIA2ColOverride.s")
+void sprSetTextureFilter(s32 arg0) {
+    D_800A5834_A6434 = arg0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/sprClearIA2ColOverride.s")
+void sprSetIA2ColOverride(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5) {
+    D_800FFA28_100628 = arg0;
+    D_800FFA29_100629 = arg1;
+    D_800FFA2A_10062A = arg2;
+    D_800FFA2B_10062B = arg3;
+    D_800FFA2C_10062C = arg4;
+    D_800FFA2D_10062D = arg5;
+    D_800A5844_A6444 = 1;
+}
+
+void sprClearIA2ColOverride(void) {
+    D_800A5844_A6444 = 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/sprDPset.s")
 

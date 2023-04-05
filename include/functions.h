@@ -109,7 +109,10 @@ void changeLightColourCycle(s32 arg0, s32 arg1); //TODO: arg0 typing is incorrec
 s32 mathRnd(s32, s32);
 void texAnimateTexture(TextureHeader *texture, u32 *triangleBatchInfoFlags, s32 *arg2, s32 updateRate);
 void setTexMemColour(s32 tagId);
-void func_80057B8C_5878C(TextureHeader *tex, u8 *addr); //build_tex_display_list in DKR
+//void func_80057B8C_5878C(TextureHeader *tex, u8 *addr); //build_tex_display_list in DKR
 void func_80057C50_58850(Gfx **dlist, TextureHeader *tex, s32 arg2, s32 arg3);
+void sprSetIA2ColOverride(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5);
+void sprClearIA2ColOverride(void);
+void sprSetTextureFilter(s32 arg0);
 
 #endif

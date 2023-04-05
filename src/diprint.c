@@ -34,8 +34,21 @@
     RENDER_PRINTF_CMD_ARG_BYTE(alpha)                                   \
     RENDER_PRINTF_CMD_END
 
+/**
+ * memset(void *s, int c, size_t n)
+ *
+ * s: start of area to clear
+ * c: char to fill with
+ * n: size of area to clear
+ */
+void *memset(void *s, int c, size_t n) {
+    u8 *var_v0 = s;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diprint/memset.s")
+    while (n-- > 0) {
+        *var_v0++ = c;
+    }
+    return s;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diprint/_itoa.s")
 

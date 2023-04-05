@@ -155,5 +155,14 @@ extern s32 D_800FFA18_100618;
 extern s32 D_800FFA1C_10061C;
 extern s32 D_800FFA20_100620;
 extern s32 D_800FFA24_100624;
+extern s32 D_800A584C_A644C; //A store of the texture currently loading?
+extern s32 D_800A5844_A6444; //IA2ColOverride?
+extern u8 D_800FFA28_100628;
+extern u8 D_800FFA29_100629;
+extern u8 D_800FFA2A_10062A;
+extern u8 D_800FFA2B_10062B;
+extern u8 D_800FFA2C_10062C;
+extern u8 D_800FFA2D_10062D;
+extern s32 D_800A5834_A6434; //textureFilter
 
 #endif
