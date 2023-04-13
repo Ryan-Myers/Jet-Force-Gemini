@@ -93,14 +93,14 @@ extern OSSched sc;
 extern u64 Time[1024];
 extern void *securitybuffer;
 extern u8 debugMenuEnable;
-extern s32 D_800FE274_FEE74; //mainMode
-extern u8 D_800A3B1C_A471C; //mainAutoSave
+extern s32 mainGameMode;
+extern u8 mainGameAutoSave;
 
 //Window Size Vars
-extern s16 D_800A3A70_A4670; //mainWindowSizeX1
-extern s16 D_800A3A74_A4674; //mainWindowSizeY1
-extern s16 D_800A3A78_A4678; //mainWindowSizeX2
-extern s16 D_800A3A7C_A467C; //mainWindowSizeY2
+extern s16 mainGameWindowSizeX1;
+extern s16 mainGameWindowSizeY1;
+extern s16 mainGameWindowSizeX2;
+extern s16 mainGameWindowSizeY2;
 
 extern char D_800AD170_ADD70[]; // = "%5d  %5d  %5d";
 extern char D_800AD180_ADD80[]; // = "FREE %d";

@@ -50,11 +50,11 @@ void mainInitGame(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGameWindowChanging.s")
 
-void mainGameWindowSize(s32 *arg0, s32 *arg1, s32 *arg2, s32 *arg3) {
-    *arg0 = D_800A3A70_A4670;
-    *arg1 = D_800A3A74_A4674;
-    *arg2 = D_800A3A78_A4678;
-    *arg3 = D_800A3A7C_A467C;
+void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
+    *x1 = mainGameWindowSizeX1;
+    *y1 = mainGameWindowSizeY1;
+    *x2 = mainGameWindowSizeX2;
+    *y2 = mainGameWindowSizeY2;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800456F8_462F8.s")
@@ -80,13 +80,13 @@ void mainGameWindowSize(s32 *arg0, s32 *arg1, s32 *arg2, s32 *arg3) {
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80046070_46C70.s")
 
 void mainSetAutoSave(s32 autoSave) {
-    D_800A3B1C_A471C = autoSave;
+    mainGameAutoSave = autoSave;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSyncNextLevel.s")
 
 void mainSetMode(s32 modeToSet) {
-    D_800FE274_FEE74 = modeToSet;
+    mainGameMode = modeToSet;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainTitlePageInit.s")
