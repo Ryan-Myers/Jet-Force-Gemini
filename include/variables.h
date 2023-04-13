@@ -174,5 +174,8 @@ extern u8 sBackgroundPrimColourB;
 extern OSPfs pfs[MAXCONTROLLERS];
 extern OSMesgQueue *sControllerMesgQueue;
 extern s32 D_800FEAC4_FF6C4; //UNUSED
+extern u8 gN64FontCodes[];
+extern s8 *sPackDirectory;
+extern u8 sRumblePaksPresent;
 
 #endif
