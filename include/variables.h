@@ -92,6 +92,19 @@ extern s8 D_800FE26C_FEE6C;
 extern OSSched sc;
 extern u64 Time[1024];
 extern void *securitybuffer;
+extern u8 debugMenuEnable;
+extern s32 D_800FE274_FEE74; //mainMode
+extern u8 D_800A3B1C_A471C; //mainAutoSave
+
+//Window Size Vars
+extern s16 D_800A3A70_A4670; //mainWindowSizeX1
+extern s16 D_800A3A74_A4674; //mainWindowSizeY1
+extern s16 D_800A3A78_A4678; //mainWindowSizeX2
+extern s16 D_800A3A7C_A467C; //mainWindowSizeY2
+
+extern char D_800AD170_ADD70[]; // = "%5d  %5d  %5d";
+extern char D_800AD180_ADD80[]; // = "FREE %d";
+extern char D_800AD188_ADD88[]; // = "%d K";
 //main.c?
 extern u64 globalflags;
 
@@ -139,6 +152,25 @@ extern char D_800AD824_AE424[];// = "** VTX overflow **";
 extern char D_800AD838_AE438[];// = "** POL overflow **";
 extern char D_800AD84C_AE44C[];// = "Version %s";
 extern char D_800AD7D0_AE3D0[];// = "7.2";
+
+//dicpu.c
+//These two string are the file name and extensions 
+//for what looks like debug data that gets written to a controller pak
+extern char D_800AF400_B0000[];// = "CORE";
+extern char D_800AF408_B0008[];// = "";
+extern char D_800AF40C_B000C[];// = 
+// "%08x:%08x
+// MEMORY REGION %d
+// MOD OFFSET
+// SIZE
+// ADDRESS
+// Texture %d
+// Module %d   %d
+// %08x %d
+// Module %d at %08x
+// %1x %d lines logged
+// Page %d/%d"
+extern char D_800AF4AC_B00AC[];// = "Watchpoint exception at %x";
 
 //lights.c
 extern s32 D_800A1894_A2494;
@@ -196,5 +228,8 @@ typedef struct unkD_800FEC68_FF868 {
     s16 unk8;
 } unkD_800FEC68_FF868;
 extern unkD_800FEC68_FF868 D_800FEC68_FF868;
+
+//camera.c
+extern ScreenViewport D_800A3728_A4328[4]; //gScreenViewports
 
 #endif

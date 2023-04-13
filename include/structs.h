@@ -337,6 +337,23 @@ typedef struct unkResetColourCycle {
     struct unkResetColourCycle *unkC;
 } unkResetColourCycle;
 
+/* Size: 0x34 bytes. */
+typedef struct ScreenViewport {
+    /* 0x00 */ s32 x1;
+    /* 0x04 */ s32 y1;
+    /* 0x08 */ s32 x2;
+    /* 0x0C */ s32 y2;
+    /* 0x10 */ s32 posX;
+    /* 0x14 */ s32 posY;
+    /* 0x18 */ s32 width;
+    /* 0x1C */ s32 height;
+    /* 0x20 */ s32 scissorX1;
+    /* 0x24 */ s32 scissorY1;
+    /* 0x28 */ s32 scissorX2;
+    /* 0x2C */ s32 scissorY2;
+    /* 0x30 */ s32 flags;
+} ScreenViewport;
+
 typedef enum {
     CONTROLLER_PAK_GOOD,
     NO_CONTROLLER_PAK,

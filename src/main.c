@@ -50,7 +50,12 @@ void mainInitGame(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGameWindowChanging.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGameWindowSize.s")
+void mainGameWindowSize(s32 *arg0, s32 *arg1, s32 *arg2, s32 *arg3) {
+    *arg0 = D_800A3A70_A4670;
+    *arg1 = D_800A3A74_A4674;
+    *arg2 = D_800A3A78_A4678;
+    *arg3 = D_800A3A7C_A467C;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800456F8_462F8.s")
 
@@ -74,11 +79,15 @@ void mainInitGame(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80046070_46C70.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetAutoSave.s")
+void mainSetAutoSave(s32 autoSave) {
+    D_800A3B1C_A471C = autoSave;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSyncNextLevel.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetMode.s")
+void mainSetMode(s32 modeToSet) {
+    D_800FE274_FEE74 = modeToSet;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainTitlePageInit.s")
 
@@ -180,11 +189,14 @@ s32 mainResetPressed(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047FC0_48BC0.s")
 
+//Main debug menu
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004809C_48C9C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainResetRegion.s")
 
 void mainToggleDebug(void) {
+    //debugMenuEnable ^= 1;
 }
 
+//Draw debug menu Lower Right section
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80048B38_49738.s")

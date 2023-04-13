@@ -17,7 +17,7 @@ u8 gFreeQueueDelay[100];
 s32 gFreeQueueCount;
 s32 mmDelay;
 s32 FreeRAM;
-s32 D_800FE868_FF468[4]; //Same count of gMemoryPools. Possibly stores the size of each pool.
+s32 D_800FE868_FF468[4]; //Same count of gMemoryPools. Possibly stores the size of each pool. Used in Debug meny to show free memory
 s32 mmEndRam;
 
 void mmInit(void) {

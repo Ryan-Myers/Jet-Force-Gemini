@@ -1340,6 +1340,7 @@ load_save_flags = 0x800A3AF4;
 joyfail = 0x800A3AFC;
 arcadeScreen = 0x800A3B04;
 dayfactor = 0x800A3B20;
+debugMenuEnable = 0x800A3B24;
 securitybuffer = 0x800A3B78;
 refractThisObject = 0x800A3B94;
 blurOn = 0x800A3B98;
