@@ -131,6 +131,7 @@ void packDirectoryFree(void);
 SIDeviceStatus packFormat(s32 controllerIndex);
 SIDeviceStatus packRepair(s32 controllerIndex);
 SIDeviceStatus packIsPresent(s32 controllerIndex);
-s32 osMotorInit(OSMesgQueue *mq, OSPfs *pfs, int channel);
+s32 nosMotorInit(OSMesgQueue *mq, OSPfs *pfs, int channel);
+SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char **fileNames, char **fileExtensions, u32 *fileSizes, u8 *fileTypes);
 
 #endif

@@ -177,7 +177,90 @@ SIDeviceStatus packFormat(s32 controllerIndex) {
     return ret;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packDirectory.s")
+SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char **fileNames, char **fileExtensions, u32 *fileSizes, u8 *fileTypes) {
+    OSPfsState state;
+    s32 ret;
+    s32 maxNumOfFilesOnCpak;
+    s32 files_used;
+    s8 *temp_D_800DE440;
+    s32 i;
+    u32 gameCode;
+
+    ret = packOpen(controllerIndex);
+    if (ret != CONTROLLER_PAK_GOOD) {
+        packClose(controllerIndex);
+        return ret;
+    }
+
+    if (osPfsNumFiles(&pfs[controllerIndex], &maxNumOfFilesOnCpak, &files_used) != 0) {
+        packClose(controllerIndex);
+        return CONTROLLER_PAK_UNK6;
+    }
+
+    if (frontGetLanguage() == LANGUAGE_JAPANESE) {
+        gameCode = JPN_GAME_CODE;
+    } else if (osTvType == TV_TYPE_PAL) {
+        gameCode = PAL_GAME_CODE;
+    } else {
+        gameCode = NTSC_GAME_CODE;
+    }
+    
+    if (maxNumOfFilesToGet < maxNumOfFilesOnCpak) {
+        maxNumOfFilesOnCpak = maxNumOfFilesToGet;
+    }
+    
+    if (sPackDirectory != NULL) {
+        mmFree(sPackDirectory);
+    }
+    
+    files_used = maxNumOfFilesOnCpak * 24;
+    sPackDirectory = mmAlloc(files_used, COLOUR_TAG_BLACK);
+    _blkclr(sPackDirectory, files_used);
+    temp_D_800DE440 = sPackDirectory;
+    
+    //TODO: There's probably an unidentified struct here
+    for (i = 0; i < maxNumOfFilesOnCpak; i++) {
+        fileNames[i] = (char *) temp_D_800DE440;
+        temp_D_800DE440 += 0x12;
+        fileExtensions[i] = (char *) temp_D_800DE440;
+        fileSizes[i] = 0;
+        fileTypes[i] = -1;
+        temp_D_800DE440 += 6;
+    }
+    
+    while (i < maxNumOfFilesToGet) {
+        fileExtensions[i] = 0;
+        fileNames[i] = 0;
+        fileSizes[i] = 0;
+        fileTypes[i] = -1;
+        i++;
+    }
+    
+    for (i = 0; i < maxNumOfFilesOnCpak; i++) {
+        ret = osPfsFileState(&pfs[controllerIndex], i, &state);
+        if (ret == PFS_ERR_INVALID) {
+            fileNames[i] = 0;
+            continue;
+        }
+        
+        if (ret != 0) {
+            packClose(controllerIndex);
+            return CONTROLLER_PAK_UNK6;
+        }
+        
+        font_codes_to_string((char *)&state.game_name, (char *)fileNames[i], PFS_FILE_NAME_LEN);
+        font_codes_to_string((char *)&state.ext_name, (char *)fileExtensions[i], PFS_FILE_EXT_LEN);
+        fileSizes[i] = state.file_size;
+        fileTypes[i] = 1; // Unknown file type? Possibly from another game?
+        
+        if ((state.game_code == gameCode) && (state.company_code == COMPANY_CODE)) {
+            fileTypes[i] = func_8004DDC4_4E9C4(controllerIndex, i);
+        }
+    }
+    
+    packClose(controllerIndex);
+    return CONTROLLER_PAK_GOOD;
+}
 
 void packDirectoryFree(void) {
     if (sPackDirectory != 0) {
