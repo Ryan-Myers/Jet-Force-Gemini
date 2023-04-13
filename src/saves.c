@@ -23,7 +23,14 @@ typedef enum Language {
     LANGUAGE_JAPANESE
 } Language;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleProcessing.s")
+void rumbleProcessing(s32 arg0) {
+    if ((arg0 != 0) && (D_800A3ECC_A4ACC == 0)) {
+        D_800A3EC4_A4AC4 = 1;
+        D_800A3ECC_A4ACC = 1;
+    } else {
+        D_800A3ECC_A4ACC = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleStart.s")
 
@@ -35,11 +42,20 @@ typedef enum Language {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleKill.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleUpdate.s")
+void rumbleUpdate(void) {
+    D_800A3EC4_A4AC4 = 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleTick.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleGetRumble.s")
+void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
+    *arg1 = 0;
+    *arg2 = 0;
+    if ((arg0 >= 0) && (arg0 < 3)) {
+        *arg1 = D_800A3EAC_A4AAC[arg0].unk0;
+        *arg2 = D_800A3EAC_A4AAC[arg0].unk4;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004C2A8_4CEA8.s")
 

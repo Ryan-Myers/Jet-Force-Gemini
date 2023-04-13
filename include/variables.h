@@ -225,6 +225,8 @@ extern OSMesg flashEventBuf[1];
 extern OSMesg cartEventBuf[1];
 extern OSMesgQueue cartEventQueue;
 extern OSIoMesg flashMesgReqBlock;
+extern u8 D_800A3EC4_A4AC4;
+extern u8 D_800A3ECC_A4ACC;
 
 //Size: 0xA
 typedef struct unkD_800FEC68_FF868 {
@@ -236,6 +238,13 @@ typedef struct unkD_800FEC68_FF868 {
     s16 unk8;
 } unkD_800FEC68_FF868;
 extern unkD_800FEC68_FF868 D_800FEC68_FF868;
+
+
+typedef struct unkD_800A3EAC_A4AAC {
+    s32 unk0;
+    f32 unk4;
+} unkD_800A3EAC_A4AAC;
+extern unkD_800A3EAC_A4AAC D_800A3EAC_A4AAC[3];
 
 //camera.c
 extern ScreenViewport D_800A3728_A4328[4]; //gScreenViewports
