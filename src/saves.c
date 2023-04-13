@@ -72,7 +72,16 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packWriteFile.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packFileSize.s")
+SIDeviceStatus packFileSize(s32 controllerIndex, s32 fileNum, s32 *fileSize) {
+    OSPfsState state;
+
+    *fileSize = 0;
+    if (osPfsFileState(&pfs[controllerIndex], fileNum, &state) == 0) {
+        *fileSize = state.file_size;
+        return CONTROLLER_PAK_GOOD;
+    }
+    return CONTROLLER_PAK_UNK6;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004DC5C_4E85C.s")
 

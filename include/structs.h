@@ -332,4 +332,17 @@ typedef struct unkResetColourCycle {
     struct unkResetColourCycle *unkC;
 } unkResetColourCycle;
 
+typedef enum {
+    CONTROLLER_PAK_GOOD,
+    NO_CONTROLLER_PAK,
+    CONTROLLER_PAK_INCONSISTENT,
+    CONTROLLER_PAK_WITH_BAD_ID,
+    CONTROLLER_PAK_FULL,
+    CONTROLLER_PAK_CHANGED,
+    CONTROLLER_PAK_UNK6, //DKR used CONTROLLER_PAK_BAD_DATA in packFileSize, but this game uses this?
+    RUMBLE_PAK,
+    CONTROLLER_PAK_UNK8, // func_80074B34 Sets this, possibly set in func_800860A8
+    CONTROLLER_PAK_BAD_DATA
+} SIDeviceStatus;
+
 #endif

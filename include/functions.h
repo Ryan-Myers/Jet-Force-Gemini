@@ -115,4 +115,6 @@ void sprSetIA2ColOverride(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5);
 void sprClearIA2ColOverride(void);
 void sprSetTextureFilter(s32 arg0);
 
+SIDeviceStatus packFileSize(s32 controllerIndex, s32 fileNum, s32 *fileSize);
+
 #endif

@@ -58,3 +58,4 @@ ctx.c.m2c
 ctx_includes.c
 tools/n64crc
 !tools/build
+m2cfiles/

@@ -4,7 +4,14 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/rcpFast3d/rcpWaitDP.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/rcpFast3d/rcpSetScreenColour.s")
+/**
+ * Sets the primitive colour for the cyclemode fillrect background.
+ */
+void rcpSetScreenColour(u8 red, u8 green, u8 blue) {
+    sBackgroundPrimColourR = red;
+    sBackgroundPrimColourG = green;
+    sBackgroundPrimColourB = blue;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/rcpFast3d/rcpSetBorderColour.s")
 

@@ -165,4 +165,12 @@ extern u8 D_800FFA2C_10062C;
 extern u8 D_800FFA2D_10062D;
 extern s32 D_800A5834_A6434; //textureFilter
 
+//rcpFast3d.c
+extern u8 sBackgroundPrimColourR;
+extern u8 sBackgroundPrimColourG;
+extern u8 sBackgroundPrimColourB;
+
+//saves.c
+extern OSPfs pfs[MAXCONTROLLERS];
+
 #endif

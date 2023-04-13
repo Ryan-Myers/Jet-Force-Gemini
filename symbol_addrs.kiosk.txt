@@ -1343,6 +1343,9 @@ rngSeed = 0x800A3E44;
 mmExtendedRam = 0x800A3E50;
 mmColourTagUnk1 = 0x800A3E54;
 mmColourTagUnk2 = 0x800A3E58;
+sBackgroundPrimColourR = 0x800A4000;
+sBackgroundPrimColourG = 0x800A4004;
+sBackgroundPrimColourB = 0x800A4008;
 cloneTaskActive = 0x800A4038;
 refractTaskActive = 0x800A405C;
 blurTaskActive = 0x800A4080;
@@ -1543,6 +1546,9 @@ mmDelay = 0x800FE85C;
 FreeRAM = 0x800FE860;
 D_800FE868_FF468 = 0x800FE868;
 mmEndRam = 0x800FE878;
+
+
+pfs = 0x800FEAC8;
 
 gAssetsDmaIoMesg = 0x800FECF0;
 gDmaMesg = 0x800FED08;
