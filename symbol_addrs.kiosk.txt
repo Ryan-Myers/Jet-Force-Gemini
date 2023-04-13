@@ -637,6 +637,7 @@ packOpenFile = 0x8004D7B8;
 packReadFile = 0x8004D8E0;
 packWriteFile = 0x8004D9A4;
 packFileSize = 0x8004DBF4;
+string_to_font_codes = 0x8004DD08;
 piInit = 0x8004DE40;
 piRomLoad = 0x8004DEEC;
 piRomLoadCompressed = 0x8004DF94;
@@ -1548,6 +1549,8 @@ D_800FE868_FF468 = 0x800FE868;
 mmEndRam = 0x800FE878;
 
 
+sControllerMesgQueue = 0x800FEAC0;
+D_800FEAC4_FF6C4 = 0x800FEAC4;
 pfs = 0x800FEAC8;
 
 gAssetsDmaIoMesg = 0x800FECF0;

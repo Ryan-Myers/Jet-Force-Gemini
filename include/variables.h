@@ -172,5 +172,7 @@ extern u8 sBackgroundPrimColourB;
 
 //saves.c
 extern OSPfs pfs[MAXCONTROLLERS];
+extern OSMesgQueue *sControllerMesgQueue;
+extern s32 D_800FEAC4_FF6C4; //UNUSED
 
 #endif

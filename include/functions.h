@@ -116,5 +116,10 @@ void sprClearIA2ColOverride(void);
 void sprSetTextureFilter(s32 arg0);
 
 SIDeviceStatus packFileSize(s32 controllerIndex, s32 fileNum, s32 *fileSize);
+char *string_to_font_codes(char *inString, char *outString, s32 stringLength);
+SIDeviceStatus packOpen(s32 controllerIndex);
+s32 packClose(UNUSED s32 controllerIndex);
+SIDeviceStatus packOpenFile(s32 controllerIndex, char *fileName, char *fileExt, s32 *fileNumber);
+s32 frontGetLanguage(void);
 
 #endif
