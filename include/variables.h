@@ -95,6 +95,7 @@ extern void *securitybuffer;
 extern u8 debugMenuEnable;
 extern s32 mainGameMode;
 extern u8 mainGameAutoSave;
+extern s16 D_800A3A80_A4680; //mainGameWindowIsChanging
 
 //Window Size Vars
 extern s16 mainGameWindowSizeX1;
@@ -105,6 +106,13 @@ extern s16 mainGameWindowSizeY2;
 extern char D_800AD170_ADD70[]; // = "%5d  %5d  %5d";
 extern char D_800AD180_ADD80[]; // = "FREE %d";
 extern char D_800AD188_ADD88[]; // = "%d K";
+
+typedef struct UnkD_800FE217_FEE17 {
+    s8 ZBCheck;
+    u8 pad1[0x7];
+} UnkD_800FE217_FEE17;
+extern UnkD_800FE217_FEE17 D_800FE217_FEE17[8];
+
 //main.c?
 extern u64 globalflags;
 

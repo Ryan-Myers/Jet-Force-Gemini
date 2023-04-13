@@ -40,7 +40,12 @@ void mainInitGame(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainUpdateZBCheck.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetZBCheck.s")
+s8 mainGetZBCheck(s32 arg0) {
+    if ((arg0 < 0) || (arg0 >= 8)) {
+        return 1;
+    }
+    return D_800FE217_FEE17[arg0].ZBCheck;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainCPUeffects.s")
 
@@ -48,7 +53,9 @@ void mainInitGame(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004552C_4612C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGameWindowChanging.s")
+s16 mainGameWindowChanging(void) {
+    return D_800A3A80_A4680;
+}
 
 void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
     *x1 = mainGameWindowSizeX1;
