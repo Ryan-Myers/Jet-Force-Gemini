@@ -5,7 +5,8 @@
 #include "libultra_internal.h"
 #include "sched.h"
 
-
+OSPiHandle *osCartRomInit(void);
+OSPiHandle *osFlashInit(void);
 void *mmAlloc(s32 size, u32 colourTag);
 void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes);
 void mmFree(void *data);
@@ -133,5 +134,27 @@ SIDeviceStatus packRepair(s32 controllerIndex);
 SIDeviceStatus packIsPresent(s32 controllerIndex);
 s32 nosMotorInit(OSMesgQueue *mq, OSPfs *pfs, int channel);
 SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char **fileNames, char **fileExtensions, u32 *fileSizes, u8 *fileTypes);
+void flashROMInit(void);
+void packInit(void);
+OSMesgQueue *joyMessageQ(void);
+void flashROMWrite(u32 pageNum, u32 *dramAddr);
+void flashROMRead(u32 pageNum, u32 *dramAddr);
+
+
+
+Game *mainGetGame(void);
+Game *mainGetGameArrayPtr(void);
+s32 packClearGameEprom(s32 saveFileNum, Game *game);
+void packEraseEprom(void);
+s32 packLoadGameEprom(s32 saveFileNum, Game *game);
+s32 packLoadGlobalFlagsEprom(u64 *flags);
+s32 packSaveGameEprom(s32 saveFileNum, Game *game);
+s32 packSaveGlobalFlagsEprom(u64 *flags);
+void rumbleTick(s32 updateRate);
+s32 mainResetPressed(void);
+s32 osFlashSectorErase(u32 page_num);
+s32 osFlashWriteArray(u32 page_num);
+s32 osFlashWriteBuffer(OSIoMesg* mb, s32 priority, void* dramAddr, OSMesgQueue* mq);
+s32 osFlashReadArray(OSIoMesg* mb, s32 priority, u32 page_num, void* dramAddr, u32 n_pages, OSMesgQueue* mq);
 
 #endif

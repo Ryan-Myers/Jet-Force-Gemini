@@ -5,6 +5,11 @@
 
 #include "types.h"
 
+//Size: 0x538
+typedef struct Game {
+    u8 pad[0x538];
+} Game;
+
 /* Size: 0x1B0 bytes */
 typedef struct epcInfo {
 /*  0x00 */ s32 unk0;
@@ -339,10 +344,9 @@ typedef enum {
     CONTROLLER_PAK_WITH_BAD_ID,
     CONTROLLER_PAK_FULL,
     CONTROLLER_PAK_CHANGED,
-    CONTROLLER_PAK_UNK6, //DKR used CONTROLLER_PAK_BAD_DATA in packFileSize, but this game uses this?
-    RUMBLE_PAK,
-    CONTROLLER_PAK_UNK8, // func_80074B34 Sets this, possibly set in func_800860A8
-    CONTROLLER_PAK_BAD_DATA
+    CONTROLLER_PAK_BAD_DATA, //Moved places in JFG from DKR
+    CONTROLLER_PAK_UNK7,
+    RUMBLE_PAK // Moved places since DKR
 } SIDeviceStatus;
 
 #endif

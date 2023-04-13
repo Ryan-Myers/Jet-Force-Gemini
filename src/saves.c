@@ -10,6 +10,11 @@
 #define CHARFILETYPE 0x43484152
 // This is RARE's unique code
 #define COMPANY_CODE 0x3459
+
+//The size of 1 sector is 128 pages (16K bytes), and each page of 0~0x7f, 0x80~0xff, 0x100~0x17f... is considered to be 1 sector.
+//So basically, flash is written in sectors, and changing a single page needs to read a sector, modify the page, and write back the whole sector.
+#define SECTOR_SIZE 128
+
 typedef enum Language {
     LANGUAGE_0,
     LANGUAGE_1,
@@ -56,11 +61,34 @@ typedef enum Language {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packSaveGlobalFlagsEprom.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/flashROMInit.s")
+void flashROMInit(void) {
+    osCreateMesgQueue(&cartEventQueue, (OSMesg*)&cartEventBuf, 1);
+    osSetEventMesg(OS_EVENT_CART, &cartEventQueue, (OSMesg)1);
+    osCreateMesgQueue(&flashEventQueue, (OSMesg*)&flashEventBuf, 1);
+    osCartRomInit();
+    osFlashInit();
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004CB0C_4D70C.s")
+void flashROMWrite(u32 pageNum, u32 *dramAddr) {
+    //Page 0x3fe and 0x3ff are reserved by Nintendo.  Please refrain from using the pages. 
+    if (pageNum < 0x3FE) {
+        osWritebackDCache(dramAddr, SECTOR_SIZE);
+        //Transfer data from RDRAM to the write buffer in 1M Flash 
+        osFlashWriteBuffer(&flashMesgReqBlock, 0, dramAddr, &flashEventQueue);
+        osRecvMesg(&flashEventQueue, NULL, OS_MESG_BLOCK);
+        //Transfer data from write buffer to each page of 1M Flash 
+        osFlashWriteArray(pageNum);
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004CB7C_4D77C.s")
+void flashROMRead(u32 pageNum, u32 *dramAddr) {
+    //Page 0x3fe and 0x3ff are reserved by Nintendo.  Please refrain from using the pages. 
+    if (pageNum < 0x3FE) {
+        osInvalDCache(dramAddr, SECTOR_SIZE);
+        osFlashReadArray(&flashMesgReqBlock, 0, pageNum, dramAddr, 1, &flashEventQueue);
+        osRecvMesg(&flashEventQueue, NULL, OS_MESG_BLOCK);
+    }
+}
 
 SIDeviceStatus packOpen(s32 controllerIndex) {
     OSMesg unusedMsg;
@@ -70,7 +98,7 @@ SIDeviceStatus packOpen(s32 controllerIndex) {
 
     if (sControllerMesgQueue->validCount == 0) {
         if (nosMotorInit(sControllerMesgQueue,  &pfs[controllerIndex], controllerIndex) == 0) {
-            return CONTROLLER_PAK_UNK8;
+            return RUMBLE_PAK;
         }
     }
 
@@ -88,13 +116,13 @@ SIDeviceStatus packOpen(s32 controllerIndex) {
         }
         if (ret == PFS_ERR_ID_FATAL) {
             if (nosMotorInit(sControllerMesgQueue,  &pfs[controllerIndex], controllerIndex) == 0) {
-                return CONTROLLER_PAK_UNK8;
+                return RUMBLE_PAK;
             }
         }
         if (ret == PFS_ERR_NEW_PACK) {
             if ((osPfsInit(sControllerMesgQueue,  &pfs[controllerIndex], controllerIndex) == PFS_ERR_ID_FATAL)
                 && (nosMotorInit(sControllerMesgQueue,  &pfs[controllerIndex], controllerIndex) == 0)) {
-                return CONTROLLER_PAK_UNK8;
+                return RUMBLE_PAK;
             }
             return CONTROLLER_PAK_CHANGED;
         }
@@ -102,7 +130,7 @@ SIDeviceStatus packOpen(s32 controllerIndex) {
             return NO_CONTROLLER_PAK;
         }
         if (ret == PFS_ERR_BAD_DATA) {
-            return CONTROLLER_PAK_UNK6;
+            return CONTROLLER_PAK_BAD_DATA;
         }
         if (ret == PFS_ERR_ID_FATAL) {
             return CONTROLLER_PAK_WITH_BAD_ID;
@@ -131,7 +159,7 @@ SIDeviceStatus packIsPresent(s32 controllerIndex) {
     ret = packOpen(controllerIndex);
     packClose(controllerIndex);
 
-    if (ret == CONTROLLER_PAK_UNK8) {
+    if (ret == RUMBLE_PAK) {
         sRumblePaksPresent |= 1 << controllerIndex;
     }
 
@@ -194,7 +222,7 @@ SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char *
 
     if (osPfsNumFiles(&pfs[controllerIndex], &maxNumOfFilesOnCpak, &files_used) != 0) {
         packClose(controllerIndex);
-        return CONTROLLER_PAK_UNK6;
+        return CONTROLLER_PAK_BAD_DATA;
     }
 
     if (frontGetLanguage() == LANGUAGE_JAPANESE) {
@@ -245,7 +273,7 @@ SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char *
         
         if (ret != 0) {
             packClose(controllerIndex);
-            return CONTROLLER_PAK_UNK6;
+            return CONTROLLER_PAK_BAD_DATA;
         }
         
         font_codes_to_string((char *)&state.game_name, (char *)fileNames[i], PFS_FILE_NAME_LEN);
@@ -281,7 +309,7 @@ SIDeviceStatus packFreeSpace(s32 controllerIndex, u32 *bytesFree, s32 *notesFree
             ret = osPfsFreeBlocks(&pfs[controllerIndex], &bytesNotUsed);
             if (ret != 0) {
                 packClose(controllerIndex);
-                return CONTROLLER_PAK_UNK6;
+                return CONTROLLER_PAK_BAD_DATA;
             }
             *bytesFree = bytesNotUsed;
         }
@@ -289,7 +317,7 @@ SIDeviceStatus packFreeSpace(s32 controllerIndex, u32 *bytesFree, s32 *notesFree
             ret = osPfsNumFiles(&pfs[controllerIndex], &maxNotes, &notesUsed);
             if (ret != 0) {
                 packClose(controllerIndex);
-                return CONTROLLER_PAK_UNK6;
+                return CONTROLLER_PAK_BAD_DATA;
             }
             if (notesUsed >= 16) {
                 *notesFree = 0;
@@ -313,7 +341,7 @@ SIDeviceStatus packDeleteFile(s32 controllerIndex, s32 fileNum) {
         return ret;
     }
 
-    ret = CONTROLLER_PAK_UNK6;
+    ret = CONTROLLER_PAK_BAD_DATA;
 
     if (osPfsFileState(&pfs[controllerIndex], fileNum, &state) == 0) {
         if (osPfsDeleteFile(&pfs[controllerIndex], state.company_code, state.game_code, (u8 *)&state.game_name, (u8 *)&state.ext_name) == 0) {
@@ -343,7 +371,7 @@ SIDeviceStatus packCopyFile(s32 controllerIndex, s32 fileNumber, s32 secondContr
 
     if (osPfsFileState(&pfs[controllerIndex], fileNumber, &state) != 0) {
         packClose(controllerIndex);
-        return CONTROLLER_PAK_UNK6;
+        return CONTROLLER_PAK_BAD_DATA;
     }
 
     alloc = mmAlloc(state.file_size, COLOUR_TAG_BLACK);
@@ -401,7 +429,7 @@ SIDeviceStatus packOpenFile(s32 controllerIndex, char *fileName, char *fileExt, 
         return CONTROLLER_PAK_CHANGED;
     }
     
-    return CONTROLLER_PAK_UNK6;
+    return CONTROLLER_PAK_BAD_DATA;
 }
 
 SIDeviceStatus packReadFile(s32 controllerIndex, s32 fileNum, u8 *data, s32 dataLength) {
@@ -423,7 +451,7 @@ SIDeviceStatus packReadFile(s32 controllerIndex, s32 fileNum, u8 *data, s32 data
         return CONTROLLER_PAK_CHANGED;
     }
 
-    return CONTROLLER_PAK_UNK6;
+    return CONTROLLER_PAK_BAD_DATA;
 }
 
 SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName, char *fileExt, u8 *dataToWrite, s32 fileSize) {
@@ -462,11 +490,11 @@ SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName
     ret = packOpenFile(controllerIndex, fileName, fileExt, &file_number);
     if (ret == CONTROLLER_PAK_GOOD) {
         if (fileNumber != -1 && fileNumber != file_number) {
-            ret = CONTROLLER_PAK_UNK6;
+            ret = CONTROLLER_PAK_BAD_DATA;
         }
     } else if (ret == CONTROLLER_PAK_CHANGED) {
         if (fileNumber != -1) {
-            ret = CONTROLLER_PAK_UNK6;
+            ret = CONTROLLER_PAK_BAD_DATA;
         } else {
             temp = osPfsAllocateFile(&pfs[controllerIndex], COMPANY_CODE, game_code, fileNameAsFontCodes, fileExtAsFontCodes, bytesToSave, &file_number);
             if (temp == 0) {
@@ -474,7 +502,7 @@ SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName
             } else if (temp == PFS_DATA_FULL || temp == PFS_DIR_FULL) {
                 ret = CONTROLLER_PAK_FULL;
             } else {
-                ret = CONTROLLER_PAK_UNK6;
+                ret = CONTROLLER_PAK_BAD_DATA;
             }
         }
     }
@@ -491,7 +519,7 @@ SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName
             ret = CONTROLLER_PAK_WITH_BAD_ID;
         }
         else {
-            ret = CONTROLLER_PAK_UNK6;
+            ret = CONTROLLER_PAK_BAD_DATA;
         }
     }
 
@@ -507,7 +535,7 @@ SIDeviceStatus packFileSize(s32 controllerIndex, s32 fileNum, s32 *fileSize) {
         *fileSize = state.file_size;
         return CONTROLLER_PAK_GOOD;
     }
-    return CONTROLLER_PAK_UNK6;
+    return CONTROLLER_PAK_BAD_DATA;
 }
 
 //Converts N64 Font codes used in controller pak file names, into C ASCII a coded string

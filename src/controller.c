@@ -59,21 +59,6 @@ s32 joyInit(void) {
     return CONTROLLER_MISSING;
 }
 
-//Size: 0x538
-typedef struct Game {
-    u8 pad[0x538];
-} Game;
-
-Game *mainGetGame(void);
-Game *mainGetGameArrayPtr(void);
-s32 packClearGameEprom(s32 saveFileNum, Game* game);
-void packEraseEprom(void);
-s32 packLoadGameEprom(s32 saveFileNum, Game *game);
-s32 packLoadGlobalFlagsEprom(u64 *flags);
-s32 packSaveGameEprom(s32 saveFileNum, Game *game);
-s32 packSaveGlobalFlagsEprom(u64 *flags);
-void rumbleTick(s32 updateRate);
-extern u64 globalflags;
 #define NUMBER_OF_SAVE_FILES 6
 
 s32 joyRead(s32 saveDataFlags, s32 updateRate) {

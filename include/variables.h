@@ -92,6 +92,8 @@ extern s8 D_800FE26C_FEE6C;
 extern OSSched sc;
 extern u64 Time[1024];
 extern void *securitybuffer;
+//main.c?
+extern u64 globalflags;
 
 //diprint.c
 typedef struct TexFontCoords {
@@ -177,5 +179,22 @@ extern s32 D_800FEAC4_FF6C4; //UNUSED
 extern u8 gN64FontCodes[];
 extern s8 *sPackDirectory;
 extern u8 sRumblePaksPresent;
+extern u8 D_800A3EA8_A4AA8; //sControllerPakPresent?
+extern OSMesgQueue flashEventQueue;
+extern OSMesg flashEventBuf[1];
+extern OSMesg cartEventBuf[1];
+extern OSMesgQueue cartEventQueue;
+extern OSIoMesg flashMesgReqBlock;
+
+//Size: 0xA
+typedef struct unkD_800FEC68_FF868 {
+    s8 unk0;
+    s8 unk1;
+    s16 unk2;
+    s16 unk4;
+    s16 unk6;
+    s16 unk8;
+} unkD_800FEC68_FF868;
+extern unkD_800FEC68_FF868 D_800FEC68_FF868;
 
 #endif
