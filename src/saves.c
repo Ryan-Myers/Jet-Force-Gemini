@@ -40,7 +40,12 @@ void rumbleProcessing(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleMax.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleKill.s")
+void rumbleKill(void) {
+    s32 i = MAXCONTROLLERS;
+    while (i--) {
+        rumbleStop(i);
+    }
+}
 
 void rumbleUpdate(void) {
     D_800A3EC4_A4AC4 = 1;

@@ -140,6 +140,8 @@ OSMesgQueue *joyMessageQ(void);
 void flashROMWrite(u32 pageNum, u32 *dramAddr);
 void flashROMRead(u32 pageNum, u32 *dramAddr);
 void rumbleUpdate(void);
+void rumbleStop(s32 arg0);
+void rumbleKill(void);
 
 
 
