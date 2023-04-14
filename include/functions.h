@@ -142,6 +142,17 @@ void flashROMRead(u32 pageNum, u32 *dramAddr);
 void rumbleUpdate(void);
 void rumbleStop(s32 arg0);
 void rumbleKill(void);
+void amStop(void);
+void bootCheckStack(void);
+void func_80044938_45538(void);
+void func_80046070_46C70(s32 arg0);
+u16 joyGetPressed(s32 player);
+s32 joyRead(s32 saveDataFlags, s32 updateRate);
+void mainChangeLevel(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
+void mainInitGame(void);
+void mainSetGameFlag(s32 arg0, s32 arg1);
+s32 osBootRamTest1_6105(void);
+s32 osBootRamTest2_6105(void);
 
 
 

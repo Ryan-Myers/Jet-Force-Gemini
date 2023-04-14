@@ -96,6 +96,11 @@ extern u8 debugMenuEnable;
 extern s32 mainGameMode;
 extern u8 mainGameAutoSave;
 extern s16 D_800A3A80_A4680; //mainGameWindowIsChanging
+extern s16 D_800A3AB0_A46B0;
+extern s32 D_800A3B70_A4770; //RamTest1Result
+extern s32 D_800A3B74_A4774; //RamTest2Result
+extern s32 D_800FE280_FEE80;
+extern s32 load_save_flags;
 
 //Window Size Vars
 extern s16 mainGameWindowSizeX1;

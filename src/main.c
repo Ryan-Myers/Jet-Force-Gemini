@@ -1,7 +1,41 @@
 #include "common.h"
 #include "sched.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainThread.s")
+void mainThread(UNUSED void *arg0) {
+    //Anti Piracy - This will zero out all RAM if this is a PAL console.
+    if (osTvType == TV_TYPE_PAL) {
+        s32 i = 0;
+        while(1) {((s32*)(RAM_END))[--i] = 0;}
+    }
+    D_800A3B70_A4770 = osBootRamTest1_6105();
+    D_800A3B74_A4774 = osBootRamTest2_6105();
+    mainInitGame();
+    load_save_flags = joyRead(load_save_flags, 0);
+    D_800FE280_FEE80 = 0;
+    mainGameMode = 6;
+    mainChangeLevel(0, D_800A3AB0_A46B0, 0, 0, 1, 0);
+    func_80046070_46C70(0x1E);
+    while (1) {
+        if (mainResetPressed() != 0) {
+            rumbleKill();
+            amStop();
+            osViBlack(TRUE);
+            __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_YIELD | SP_CLR_YIELDED | SP_CLR_TASKDONE | SP_CLR_RSPSIGNAL
+                            | SP_CLR_CPUSIGNAL | SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+            osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH | DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR
+                            | DPC_CLR_CMD_CTR | DPC_CLR_CMD_CTR);
+            while (1){ }
+        }
+        func_80044938_45538();
+        if (joyGetPressed(1) & L_TRIG) {
+            mainSetGameFlag(0x58, 1);
+        }
+        if (joyGetPressed(1) & R_TRIG) {
+            mainSetGameFlag(0x58, 0);
+        }
+        bootCheckStack();
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
 
