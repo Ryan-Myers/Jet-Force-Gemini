@@ -5,7 +5,7 @@ void mainThread(UNUSED void *arg0) {
     //Anti Piracy - This will zero out all RAM if this is a PAL console.
     if (osTvType == TV_TYPE_PAL) {
         s32 i = 0;
-        while(1) {((s32*)(RAM_END))[--i] = 0;}
+        while(1) { ((vu32 *)(RAM_END))[--i] = (u32)0; }
     }
     D_800A3B70_A4770 = osBootRamTest1_6105();
     D_800A3B74_A4774 = osBootRamTest2_6105();

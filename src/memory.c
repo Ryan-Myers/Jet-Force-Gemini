@@ -33,7 +33,7 @@ void mmInit(void) {
 }
 
 u8 mmExtended(void) {
-	return mmExtendedRam;
+    return mmExtendedRam;
 }
 
 /**
@@ -61,10 +61,10 @@ MemoryPoolSlot *new_memory_pool(MemoryPoolSlot *slots, s32 poolSize, s32 numSlot
     MemoryPoolSlot *firstSlot;
     s32 poolCount;
     s32 i;
-	s32 firstSlotSize;
+    s32 firstSlotSize;
     
     poolCount = ++gNumberOfMemoryPools;
-	firstSlotSize = poolSize - (numSlots * sizeof(MemoryPoolSlot));
+    firstSlotSize = poolSize - (numSlots * sizeof(MemoryPoolSlot));
     gMemoryPools[poolCount].maxNumSlots = numSlots;
     gMemoryPools[poolCount].curNumSlots = 0;
     gMemoryPools[poolCount].slots = slots;
@@ -86,10 +86,10 @@ MemoryPoolSlot *new_memory_pool(MemoryPoolSlot *slots, s32 poolSize, s32 numSlot
     firstSlot->prevIndex = -1;
     firstSlot->nextIndex = -1;
     gMemoryPools[poolCount].curNumSlots++;
-	if (poolCount == 0) {
-		FreeRAM = firstSlotSize;
-	}
-	D_800FE868_FF468[poolCount] = firstSlotSize;
+    if (poolCount == 0) {
+        FreeRAM = firstSlotSize;
+    }
+    D_800FE868_FF468[poolCount] = firstSlotSize;
     return gMemoryPools[poolCount].slots;
 }
 
@@ -149,7 +149,7 @@ MemoryPoolSlot *allocate_from_memory_pool(s32 poolIndex, s32 size, u32 colourTag
     currIndex = -1;
     if (size & 0xF) {
         size = (size & ~0xF);
-		size += 0x10;
+        size += 0x10;
     }
     slots = pool->slots;
     slotSize = 0x7FFFFFFF;
@@ -388,7 +388,7 @@ UNUSED MemoryPoolSlot *mmGetSlotPtr(s32 poolIndex) {
 }
 
 s32 mmGetDelay(void) {
-	return mmDelay;
+    return mmDelay;
 }
 
 s32 allocate_memory_pool_slot(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken, s32 newSlotIsTaken, u32 colourTag) {

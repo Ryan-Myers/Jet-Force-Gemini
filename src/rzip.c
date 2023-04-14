@@ -168,12 +168,12 @@ void huft_build(u32 *b, u32 n, u32 s, u16 *d, u16 *e, huft **t, s32 *m) {
         {                       /* too few codes for k-w bit table */
           f -= a + 1;           /* deduct codes from patterns left */
           xp = c + k;
-	    while (++j < z)       /* try smaller tables up to z bits */
-	    {
-	      if ((f <<= 1) <= *++xp)
-		break;            /* enough codes to use up j bits */
-	      f -= *xp;           /* else deduct codes from patterns */
-	    }
+          while (++j < z)       /* try smaller tables up to z bits */
+          {
+            if ((f <<= 1) <= *++xp)
+              break;            /* enough codes to use up j bits */
+            f -= *xp;           /* else deduct codes from patterns */
+          }
         }
         z = 1 << j;             /* table entries for j-bit table */
 
@@ -204,7 +204,7 @@ void huft_build(u32 *b, u32 n, u32 s, u16 *d, u16 *e, huft **t, s32 *m) {
       {
         r.e = *p < 256 ? 16 : 15;    /* 256 is end-of-block code */
         r.v.n = *p;             /* simple code is just the value */
-	p++;                           /* one compiler does not like *p++ */
+        p++;                           /* one compiler does not like *p++ */
       }
       else
       {

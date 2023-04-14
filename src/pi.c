@@ -39,9 +39,9 @@ u32 *piRomLoad(u32 assetIndex) {
     index = assetIndex + gAssetsLookupTable;
     start = *index;
     size = *(index + 1) - start;
-	if (size == 0) {
-		return 0;
-	}
+    if (size == 0) {
+        return 0;
+    }
     out = (u32 *) mmAlloc(size, COLOUR_TAG_GREY);
     if (out == 0) {
         return 0;

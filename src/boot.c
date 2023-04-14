@@ -13,7 +13,7 @@ void func_8003F088(void *arg0) {
     D_800F7B28_F8728[0] = 0;
     osStartThread(&D_800F9D60_FA960);
     osSetThreadPri(NULL, OS_PRIORITY_IDLE);
-	while (1) {}
+    while (1) {}
 }
 
 void bootCheckStack(void) {

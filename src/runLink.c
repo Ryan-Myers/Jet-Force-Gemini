@@ -29,8 +29,8 @@ char *GetSymbolName(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkEnsureJumpIsValid.s")
 
 typedef struct runlinkModule {
-	s32 unk0;
-	u8 pad4[25];
+    s32 unk0;
+    u8 pad4[25];
 } runlinkModule;
 extern runlinkModule *D_800FF780_100380;
 s32 runlinkIsModuleLoaded(s32 module) {
