@@ -153,7 +153,18 @@ void mainInitGame(void);
 void mainSetGameFlag(s32 arg0, s32 arg1);
 s32 osBootRamTest1_6105(void);
 s32 osBootRamTest2_6105(void);
-
+s32 diPrintf(const char *format, ...);
+void diPrintfAll(Gfx **dList);
+void diPrintfSetBG(u8 red, u8 green, u8 blue, u8 alpha);
+void diPrintfSetXY(u16 x, u16 y);
+s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
+s32 amAudioMgrGetNextFrameCount(void);
+void func_80050670_51270(OSSched *sc);
+char *func_80050718_51318(s32 arg0);
+void func_800507A4_513A4(OSScTask *task);
+void mmSlotPrint(void);
+void segSetBase(Gfx **dlist, s32 segment, s32 base);
+s32 func_80050AA4_516A4(OSSched *arg0, s32 *arg1, s32 *arg2, s32 *arg3, s32 *arg4, s32 *arg5, s32 *arg6);
 
 
 Game *mainGetGame(void);
@@ -170,5 +181,8 @@ s32 osFlashSectorErase(u32 page_num);
 s32 osFlashWriteArray(u32 page_num);
 s32 osFlashWriteBuffer(OSIoMesg* mb, s32 priority, void* dramAddr, OSMesgQueue* mq);
 s32 osFlashReadArray(OSIoMesg* mb, s32 priority, u32 page_num, void* dramAddr, u32 n_pages, OSMesgQueue* mq);
+// void diRcpPrintDL(Gfx *, Gfx *, s32);
+// u32 *func_800507AC_513AC(OSSched *arg0, s32 arg1, Gfx *arg2, OSMesgQueue *arg3, u32 *arg4);
+// void diRcpTraceGetInfo(u32 arg0, s32 *arg1, s32 *arg2, s32 *arg3, s32 *arg4, s32 *arg5, s32 *arg6);
 
 #endif

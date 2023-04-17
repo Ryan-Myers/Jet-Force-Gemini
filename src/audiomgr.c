@@ -8,7 +8,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/amStop.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/amAudioMgrGetNextFrameCount.s")
+s32 amAudioMgrGetNextFrameCount(void) {
+    return nextFrameCount;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/__amHandleFrameMsg.s")
 

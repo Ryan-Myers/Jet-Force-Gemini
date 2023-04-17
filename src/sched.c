@@ -12,7 +12,7 @@
 
 static void __scMain(void *arg);
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
-static void func_80050670_51270(OSSched *sc);
+void func_80050670_51270(OSSched *sc);
 
 extern OSViMode D_800AA460_AB060; //PAL
 extern OSViMode D_800AA4B0_AB0B0; //MPAL
@@ -21,6 +21,7 @@ extern s32 D_800A4310_A4F10; //gCurRSPTaskCounter
 extern s32 D_800A4314_A4F14; //gCurRDPTaskCounter
 extern s32 D_800A4300_A4F00[];
 // s32 D_800A4300_A4F00[] = { OSMESG_SWAP_BUFFER, OSMESG_SWAP_BUFFER };
+OSTime D_800FF668_100268; //gYieldTime
 
 void osCreateScheduler(OSSched *sc, void *stack, OSPri priority, u8 mode, u8 numFields) {
     sc->curRSPTask      = 0;
@@ -161,7 +162,7 @@ static void __scMain(void *arg) {
     }
 }
 
-static void func_80050670_51270(OSSched *sc) {
+void func_80050670_51270(OSSched *sc) {
     s32 state;
     OSScTask *sp = 0;
     OSScTask *dp = 0;
@@ -205,15 +206,255 @@ char *func_80050718_51318(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050718_51318.s")
 #endif
 
-void func_800507A4_513A4(s32 arg0) {}
+void func_800507A4_513A4(OSScTask *task) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800507AC_513AC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050AA4_516A4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/__scHandleRetrace.s")
+#ifdef NON_EQUIVALENT
+void __scHandleRetrace(OSSched *sc) {
+    OSScTask *rspTask = NULL;
+    OSScClient *client;
+    s32 state;
+    OSScTask *sp = 0;
+    OSScTask *dp = 0;
+    u8 set_curRSPTask_NULL = FALSE;
+    u8 set_curRDPTask_NULL = FALSE;
+    OSScTask *unkTask;
+    Gfx *spGfx;
+    Gfx *dpGfx;
+    s32 spB4;
+    s32 spA4;
+    s32 spC4;
+    s32 spB0;
+    s32 spA0;
+    s32 spC0;
+    OSMesgQueue sp5C;
+    s32 *sp74;
+    OSScTask *curTask;
+    Gfx *dlist;
+    s32 yPos;
+    s32 var_a1;
+    s32 spAC;
+    s32 sp9C;
+    s32 spBC;
+    s32 spA8;
+    s32 sp98;
+    s32 spB8;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/__scHandleRSP.s")
+    if (sc->curRSPTask) {
+        D_800A4310_A4F10++;
+    }
+
+    if (sc->curRDPTask) {
+        D_800A4314_A4F14++;
+    }
+    spGfx = 0;
+    dpGfx = 0;
+    if ((D_800A4310_A4F10 > 10) && (sc->curRSPTask)) {
+        if (D_800FF660_100260 != 0) {
+            func_80050718_51318(sc->curRSPTask->unk6C);
+            func_800507A4_513A4(sc->curRSPTask);
+            if (sc->curRSPTask->list.t.type == M_GFXTASK) {
+                spGfx = (Gfx *) func_80050AA4_516A4(sc, &spB4, &spA4, &spC4, &spB0, &spA0, &spC0);
+            }
+            D_800FF660_100260 = 0;
+        }
+        D_800A4310_A4F10 = 0;
+        set_curRSPTask_NULL = TRUE;
+        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 |
+            SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 | SP_CLR_SIG4 |
+            SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+    } else if (sc->curRSPTask) {
+        D_800FF660_100260 = TRUE;
+    }
+
+    if ((D_800A4314_A4F14 > 10) && (sc->curRDPTask)) {
+        if (sc->curRDPTask->unk68 == 0) {
+            osSendMesg(sc->curRDPTask->msgQ, &D_800A4308_A4F08, OS_MESG_BLOCK);
+        }
+        if (D_800FF664_100264 != 0) {
+            func_80050718_51318(sc->curRDPTask->unk6C);
+            func_800507A4_513A4(sc->curRDPTask);
+            if (sc->curRDPTask->list.t.type == M_GFXTASK) {
+                dpGfx = (Gfx *) func_80050AA4_516A4(sc, &spAC, &sp9C, &spBC, &spA8, &sp98, &spB8);
+            }
+            D_800FF664_100264 = 0;
+        }
+
+        set_curRDPTask_NULL = TRUE;
+        sc->frameCount = 0;
+        D_800A4314_A4F14 = 0;
+
+        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 |
+            SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 | SP_CLR_SIG4 |
+            SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+
+        osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH |
+            DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR | DPC_CLR_CMD_CTR);
+    } else if (sc->curRDPTask) {
+        D_800FF664_100264 = TRUE;
+    }
+
+    if ((spGfx != 0) || (dpGfx != 0)) {
+        osCreateMesgQueue(&sp5C, &sp74, 8);
+        osSetEventMesg(OS_EVENT_SP, &sp5C, (OSMesg)RSP_DONE_MSG);
+        osSetEventMesg(OS_EVENT_DP, &sp5C, (OSMesg)RDP_DONE_MSG);
+        osViSetEvent(&sp5C, (OSMesg)VIDEO_MSG, 1U);
+        if (sc->curRSPTask != NULL) {
+            curTask = sc->curRSPTask;
+        } else {
+            curTask = sc->curRDPTask;
+        }
+        dlist = (Gfx *) curTask->list.t.data_ptr;
+        segSetBase(&dlist, 0, 0);
+        segSetBase(&dlist, 1, otherScreen);
+        segSetBase(&dlist, 2, otherZbuf);
+        segSetBase(&dlist, 4, currentScreen - 0x500);
+        diPrintfSetBG(0, 0, 0, 128);
+        if ((spGfx != 0) || (dpGfx != 0)) {
+            mmSlotPrint();
+        }
+        if (spGfx != 0) {
+            diPrintfSetXY(30, 30);
+            //"SP CRASHED, gfx=%x"
+            diPrintf(D_800AD7D4_AE3D4, spGfx);
+        }
+        if (dpGfx != 0) {
+            diPrintfSetXY(30, 70);
+            //"DP CRASHED, gfx=%x"
+            diPrintf(D_800AD7E8_AE3E8, dpGfx);
+        }
+        yPos = 110;
+        if (D_800A3B28_A4728 != 0) {
+            diPrintfSetXY(30, yPos);
+            //"** GFX overflow **"
+            diPrintf(D_800AD7FC_AE3FC);
+            yPos = 120;
+        }
+        if (D_800A3B2C_A472C != 0) {
+            diPrintfSetXY(30, yPos);
+            //"** MTX overflow **"
+            diPrintf(D_800AD810_AE410);
+            yPos += 10;
+        }
+        if (D_800A3B30_A4730 != 0) {
+            diPrintfSetXY(30, yPos);
+            //"** VTX overflow **"
+            diPrintf(&D_800AD824_AE424);
+            yPos += 10;
+        }
+        if (D_800A3B34_A4734 != 0) {
+            diPrintfSetXY(30, yPos);
+            //"** POL overflow **"
+            diPrintf(D_800AD838_AE438);
+            yPos += 10;
+        }
+        set_curRDPTask_NULL = 0;
+        set_curRDPTask_NULL = 1;
+        spGfx = 0;
+        dpGfx = 0;
+        diPrintfSetXY(30, yPos + 10);
+        //"Version %s" - "7.2"
+        diPrintf(D_800AD84C_AE44C, D_800AD7D0_AE3D0);
+        diPrintfAll(&dlist);
+        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 |
+            SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 | SP_CLR_SIG4 |
+            SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+        osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH |
+            DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR | DPC_CLR_CMD_CTR);
+        gDPFullSync(dlist++);
+        gSPEndDisplayList(dlist++)
+        osWritebackDCacheAll();
+        osSpTaskLoad(&curTask->list);
+        osSpTaskStartGo(&curTask->list);
+        while (1) {}
+    }
+
+    if (set_curRSPTask_NULL) {
+        sc->curRSPTask = NULL;
+    }
+    if (set_curRDPTask_NULL) {
+        sc->curRDPTask = NULL;
+    }
+
+    while (osRecvMesg(&sc->cmdQ, (OSMesg *)&rspTask, OS_MESG_NOBLOCK) != -1)
+        __scAppendList(sc, rspTask);
+
+    state = ((sc->curRSPTask == NULL) << 1) | (sc->curRDPTask == NULL);
+    if (__scSchedule(sc, &sp, &dp, state) != state)
+        __scExec(sc, sp, dp);
+
+    D_800A4320_A4F20++;
+    sc->frameCount+=1; // If you want to make the game 60FPS, change this to 2.
+
+    if ((sc->unkTask) && (sc->frameCount >= 2)) {
+        unkTask = sc->unkTask;
+        if (unkTask->msgQ) {
+            if ((unkTask->unk68) || (unkTask->msg)) {
+                osSendMesg(unkTask->msgQ, unkTask->msg, OS_MESG_BLOCK);
+            } else {
+                osSendMesg(unkTask->msgQ, &D_800A4300_A4F00, OS_MESG_BLOCK);
+            }
+        }
+        sc->frameCount = 0;
+        sc->unkTask = 0;
+    }
+
+    for (client = sc->clientList; client != 0; client = client->next) {
+        if (client->id == OS_SC_ID_AUDIO) {
+            //Only run this on even calls to this function
+            D_800A4318_A4F18 -= 1;
+            if (D_800A4318_A4F18 <= 0) {
+                osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
+                if (sc->audioListHead) {
+                    func_80050670_51270(sc);
+                }
+                D_800A4318_A4F18 = amAudioMgrGetNextFrameCount();
+            }
+        } else if (client->id == OS_SC_ID_VIDEO) {
+            osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
+        }
+    }
+}
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/__scHandleRetrace.s")
+#endif
+
+void __scHandleRSP(OSSched *sc) {
+    OSScTask *t, *sp = 0, *dp = 0;
+    s32 state;
+
+    t = sc->curRSPTask;
+    sc->curRSPTask = NULL;
+
+    if ((t->state & OS_SC_YIELD)) {
+        if (osSpTaskYielded(&t->list)) {
+            t->state |= OS_SC_YIELDED;
+            if ((t->flags & OS_SC_TYPE_MASK) == OS_SC_XBUS) {
+                /* push the task back on the list */
+                t->next = sc->gfxListHead;
+                sc->gfxListHead = t;
+                if (sc->gfxListTail == 0)
+                    sc->gfxListTail = t;
+            }
+        } else {
+            t->state &= ~OS_SC_NEEDS_RSP;
+    /* BEGIN TODO: This just feels wrong, but it matches */
+            do{} while(0);
+        }
+        if ((t->flags & OS_SC_TYPE_MASK) != OS_SC_XBUS){}
+    /* END TODO */
+    } else {
+        t->state &= ~OS_SC_NEEDS_RSP;
+        __scTaskComplete(sc, t);
+    }
+
+    state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
+    if ( (__scSchedule (sc, &sp, &dp, state)) != state)
+        __scExec(sc, sp, dp);
+}
 
 void __scHandleRDP(OSSched *sc) {
     OSScTask *t, *sp = 0, *dp = 0; 
@@ -326,7 +567,6 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
     }
 }
 
-OSTime D_800FF668_100268; //gYieldTime
 void __scYield(OSSched *sc) {
     if (sc->curRSPTask->list.t.type == M_GFXTASK) {
         sc->curRSPTask->state |= OS_SC_YIELD;
