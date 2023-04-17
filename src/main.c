@@ -16,7 +16,7 @@ void mainThread(UNUSED void *arg0) {
     mainChangeLevel(0, D_800A3AB0_A46B0, 0, 0, 1, 0);
     func_80046070_46C70(0x1E);
     while (1) {
-        if (mainResetPressed() != 0) {
+        if (mainResetPressed()) {
             rumbleKill();
             amStop();
             osViBlack(TRUE);
@@ -24,7 +24,7 @@ void mainThread(UNUSED void *arg0) {
                             | SP_CLR_CPUSIGNAL | SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
             osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH | DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR
                             | DPC_CLR_CMD_CTR | DPC_CLR_CMD_CTR);
-            while (1){ }
+            while (1){ } // Infinite loop
         }
         func_80044938_45538();
         if (joyGetPressed(1) & L_TRIG) {

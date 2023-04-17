@@ -86,16 +86,17 @@ typedef struct {
   /* 0x78 */  OSMesgQueue cmdQ;
   /* 0x90 */  OSMesg      cmdMsgBuf[OS_SC_MAX_MESGS]; //0x8 per OSMesg
   /* 0xB0 */  OSThread    thread;
-  /* 0x260 */ OSScClient  *clientList;
-  /* 0x264 */ OSScTask    *audioListHead;
-  /* 0x268 */ OSScTask    *gfxListHead;
-  /* 0x26C */ OSScTask    *audioListTail;
-  /* 0x270 */ OSScTask    *gfxListTail;
-  /* 0x274 */ OSScTask    *curRSPTask;
-  /* 0x278 */ OSScTask    *curRDPTask;
-  /* 0x27C */ OSScTask    *unkTask; //Rare added?
-  /* 0x280 */ u32         frameCount;
-  /* 0x284 */ s32         doAudio;
+  /* 0x260 */ u8          pad[0x80];
+  /* 0x2E0 */ OSScClient  *clientList;
+  /* 0x2E4 */ OSScTask    *audioListHead;
+  /* 0x2E8 */ OSScTask    *gfxListHead;
+  /* 0x2EC */ OSScTask    *audioListTail;
+  /* 0x2F0 */ OSScTask    *gfxListTail;
+  /* 0x2F4 */ OSScTask    *curRSPTask;
+  /* 0x2F8 */ OSScTask    *curRDPTask;
+  /* 0x2FC */ OSScTask    *unkTask; //Rare added?
+  /* 0x300 */ u32         frameCount;
+  /* 0x304 */ s32         doAudio;
 } OSSched;
 
 typedef struct{
