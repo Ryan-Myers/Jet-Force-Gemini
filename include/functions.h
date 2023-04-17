@@ -160,7 +160,7 @@ void diPrintfSetXY(u16 x, u16 y);
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
 s32 amAudioMgrGetNextFrameCount(void);
 void func_80050670_51270(OSSched *sc);
-char *func_80050718_51318(s32 arg0);
+char *func_80050718_51318(s32 taskId);
 void func_800507A4_513A4(OSScTask *task);
 void mmSlotPrint(void);
 void segSetBase(Gfx **dlist, s32 segment, s32 base);

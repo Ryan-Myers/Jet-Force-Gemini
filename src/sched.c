@@ -182,23 +182,31 @@ void func_80050670_51270(OSSched *sc) {
 
 #ifdef NON_MATCHING
 //Needs RODATA migrated for the jump table to match
-char *func_80050718_51318(s32 arg0) {
-    switch (arg0) {
+char *func_80050718_51318(s32 taskId) {
+    switch (taskId) {
     case 1:
+        //"(Audio task)"
         return &D_800AD510_AE110;
     case 2:
+        //"(Game task)"
         return &D_800AD520_AE120;
     case 3:
+        //"(DI task)"
         return &D_800AD52C_AE12C;
     case 4:
+        //"(DI benchmark test)"
         return &D_800AD538_AE138;
     case 5:
+        //"(Clone task)"
         return &D_800AD550_AE150;
     case 6:
+        //"(Refract task)"
         return &D_800AD560_AE160;
     case 7:
+        //"(Blur task)"
         return &D_800AD570_AE170;
     default:
+        //"(Unknown task type %d)"
         return &D_800AD580_AE180;
     }
 }
@@ -222,26 +230,26 @@ void __scHandleRetrace(OSSched *sc) {
     u8 set_curRSPTask_NULL = FALSE;
     u8 set_curRDPTask_NULL = FALSE;
     OSScTask *unkTask;
-    Gfx *spGfx;
-    Gfx *dpGfx;
-    s32 spB4;
-    s32 spA4;
+    Gfx *spGfx; //spCC
+    Gfx *dpGfx; //spC8
     s32 spC4;
-    s32 spB0;
-    s32 spA0;
     s32 spC0;
-    OSMesgQueue sp5C;
-    s32 *sp74;
-    OSScTask *curTask;
-    Gfx *dlist;
-    s32 yPos;
-    s32 var_a1;
-    s32 spAC;
-    s32 sp9C;
+    s32 spA4;
     s32 spBC;
-    s32 spA8;
-    s32 sp98;
     s32 spB8;
+    s32 spB4;
+    s32 spB0;
+    s32 spAC;
+    s32 spA8;
+    s32 spA0;
+    s32 sp9C;
+    s32 sp98;
+    OSMesg intBuf[8]; //sp74
+    OSMesgQueue interruptQ; //sp5C
+    OSScTask *curTask; //sp58
+    Gfx *dlist; //sp54
+    s32 yPos;
+    s32 pad;
 
     if (sc->curRSPTask) {
         D_800A4310_A4F10++;
@@ -250,8 +258,10 @@ void __scHandleRetrace(OSSched *sc) {
     if (sc->curRDPTask) {
         D_800A4314_A4F14++;
     }
-    spGfx = 0;
-    dpGfx = 0;
+
+    spGfx = NULL;
+    dpGfx = NULL;
+
     if ((D_800A4310_A4F10 > 10) && (sc->curRSPTask)) {
         if (D_800FF660_100260 != 0) {
             func_80050718_51318(sc->curRSPTask->unk6C);
@@ -297,11 +307,11 @@ void __scHandleRetrace(OSSched *sc) {
         D_800FF664_100264 = TRUE;
     }
 
-    if ((spGfx != 0) || (dpGfx != 0)) {
-        osCreateMesgQueue(&sp5C, &sp74, 8);
-        osSetEventMesg(OS_EVENT_SP, &sp5C, (OSMesg)RSP_DONE_MSG);
-        osSetEventMesg(OS_EVENT_DP, &sp5C, (OSMesg)RDP_DONE_MSG);
-        osViSetEvent(&sp5C, (OSMesg)VIDEO_MSG, 1U);
+    if ((spGfx != NULL) || (dpGfx != NULL)) {
+        osCreateMesgQueue(&interruptQ, intBuf, ARRAY_COUNT(intBuf));
+        osSetEventMesg(OS_EVENT_SP, &interruptQ, (OSMesg)RSP_DONE_MSG);
+        osSetEventMesg(OS_EVENT_DP, &interruptQ, (OSMesg)RDP_DONE_MSG);
+        osViSetEvent(&interruptQ, (OSMesg)VIDEO_MSG, 1);
         if (sc->curRSPTask != NULL) {
             curTask = sc->curRSPTask;
         } else {
@@ -313,7 +323,7 @@ void __scHandleRetrace(OSSched *sc) {
         segSetBase(&dlist, 2, otherZbuf);
         segSetBase(&dlist, 4, currentScreen - 0x500);
         diPrintfSetBG(0, 0, 0, 128);
-        if ((spGfx != 0) || (dpGfx != 0)) {
+        if ((spGfx != NULL) || (dpGfx != NULL)) {
             mmSlotPrint();
         }
         if (spGfx != 0) {
@@ -342,7 +352,7 @@ void __scHandleRetrace(OSSched *sc) {
         if (D_800A3B30_A4730 != 0) {
             diPrintfSetXY(30, yPos);
             //"** VTX overflow **"
-            diPrintf(&D_800AD824_AE424);
+            diPrintf(D_800AD824_AE424);
             yPos += 10;
         }
         if (D_800A3B34_A4734 != 0) {
@@ -404,7 +414,6 @@ void __scHandleRetrace(OSSched *sc) {
 
     for (client = sc->clientList; client != 0; client = client->next) {
         if (client->id == OS_SC_ID_AUDIO) {
-            //Only run this on even calls to this function
             D_800A4318_A4F18 -= 1;
             if (D_800A4318_A4F18 <= 0) {
                 osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
