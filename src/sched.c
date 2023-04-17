@@ -217,7 +217,11 @@ void func_800507A4_513A4(OSScTask *task) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050AA4_516A4.s")
 
-#ifdef NON_EQUIVALENT
+#ifdef NON_MATCHING
+//Need to migrate bss in order to match this.
+extern u64 D_800A4324_A4F24;
+u64 gRetraceCounter64;
+
 void __scHandleRetrace(OSSched *sc) {
     OSScTask *rspTask = NULL;
     OSScClient *client;
@@ -240,13 +244,13 @@ void __scHandleRetrace(OSSched *sc) {
     s32 spA0;
     s32 sp9C;
     s32 sp98;
-    s32 spB8;
+    OSScTask *unkTask2;
     OSMesg intBuf[8]; //sp74
     OSMesgQueue interruptQ; //sp5C
     OSScTask *curTask; //sp58
     Gfx *dlist; //sp54
     s32 yPos;
-    UNUSED s32 pad;
+    s32 pad;
 
     if (sc->curRSPTask) {
         gCurRSPTaskCounter++;
@@ -285,7 +289,7 @@ void __scHandleRetrace(OSSched *sc) {
             osScGetTaskType(sc->curRDPTask->taskID); //Returns a string containing the name of the task
             func_800507A4_513A4(sc->curRDPTask); //Func is empty
             if (sc->curRDPTask->list.t.type == M_GFXTASK) {
-                dpGfx = (Gfx *) func_80050AA4_516A4(sc, &spAC, &sp9C, &spBC, &spA8, &sp98, &spB8);
+                dpGfx = (Gfx *) func_80050AA4_516A4(sc, &spAC, &sp9C, &spBC, &spA8, &sp98, &unkTask);
             }
             gCurRDPTaskIsSet = FALSE;
         }
@@ -357,9 +361,8 @@ void __scHandleRetrace(OSSched *sc) {
             //"** POL overflow **"
             diPrintf(D_800AD838_AE438);
             yPos += 10;
+            set_curRDPTask_NULL = 0;
         }
-        set_curRDPTask_NULL = 0;
-        set_curRDPTask_NULL = 1;
         spGfx = 0;
         dpGfx = 0;
         diPrintfSetXY(30, yPos + 10);
@@ -393,16 +396,18 @@ void __scHandleRetrace(OSSched *sc) {
     if (__scSchedule(sc, &sp, &dp, state) != state)
         __scExec(sc, sp, dp);
 
-    gRetraceCounter64++; //u64 var type in DKR
+    gRetraceCounter64 = D_800A4324_A4F24 + 1;
+    
+    
     sc->frameCount+=1; // If you want to make the game 60FPS, change this to 2.
 
     if ((sc->unkTask) && (sc->frameCount >= 2)) {
-        unkTask = sc->unkTask;
-        if (unkTask->msgQ) {
-            if ((unkTask->unk68) || (unkTask->msg)) {
-                osSendMesg(unkTask->msgQ, unkTask->msg, OS_MESG_BLOCK);
+        unkTask2 = sc->unkTask;
+        if (unkTask2->msgQ) {
+            if ((unkTask2->unk68) || (unkTask2->msg)) {
+                osSendMesg(unkTask2->msgQ, unkTask2->msg, OS_MESG_BLOCK);
             } else {
-                osSendMesg(unkTask->msgQ, &D_800A4300_A4F00, OS_MESG_BLOCK);
+                osSendMesg(unkTask2->msgQ, &D_800A4300_A4F00, OS_MESG_BLOCK);
             }
         }
         sc->frameCount = 0;
