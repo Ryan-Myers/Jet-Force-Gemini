@@ -32,7 +32,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sqauds/squadsInitialiseAfterObjects.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sqauds/squadsInit.s")
+void squadsInit(void) {
+    BaddyDataArray = piRomLoad(0x3E);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sqauds/squadsPreInit.s")
 

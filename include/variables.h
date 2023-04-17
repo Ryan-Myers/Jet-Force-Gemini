@@ -165,18 +165,18 @@ extern char D_800AD824_AE424[];// = "** VTX overflow **";
 extern char D_800AD838_AE438[];// = "** POL overflow **";
 extern char D_800AD84C_AE44C[];// = "Version %s";
 extern char D_800AD7D0_AE3D0[];// = "7.2";
-extern s32 D_800A4300_A4F00[];
+extern s32 D_800A4300_A4F00[]; // = { OSMESG_SWAP_BUFFER, OSMESG_SWAP_BUFFER };
 extern s32 D_800A4308_A4F08[]; //gBootBlackoutMesg[] = { OSMESG_SWAP_BUFFER, MESG_SKIP_BUFFER_SWAP };
-extern u8 D_800A3B28_A4728;
-extern u8 D_800A3B2C_A472C;
-extern u8 D_800A3B30_A4730;
-extern u8 D_800A3B34_A4734;
-extern s32 D_800A4310_A4F10; //gCurRSPTaskCounter
-extern s32 D_800A4314_A4F14; //gCurRDPTaskCounter
-extern s8 D_800A4318_A4F18; //gNextFrameCount
-extern u64 D_800A4320_A4F20; //gRetraceCounter64
-extern s32 D_800FF660_100260; //gCurRSPTaskIsSet
-extern s32 D_800FF664_100264; //gCurRDPTaskIsSet
+extern u8 gGfxOverflowed;
+extern u8 gMtxOverflowed;
+extern u8 gVtxOverflowed;
+extern u8 gPolOverflowed;
+extern s32 gCurRSPTaskCounter;
+extern s32 gCurRDPTaskCounter;
+extern s8 gNextFrameCount;
+extern u64 gRetraceCounter64;
+extern s32 gCurRSPTaskIsSet;
+extern s32 gCurRDPTaskIsSet;
 extern s32 currentScreen;
 extern s32 otherScreen;
 extern s32 otherZbuf;
@@ -271,5 +271,8 @@ extern ScreenViewport D_800A3728_A4328[4]; //gScreenViewports
 
 //audiomgr.c
 extern s32 nextFrameCount; // = 2;
+
+//squads.c
+extern s32 BaddyDataArray;
 
 #endif
