@@ -84,7 +84,9 @@ void objObjectsPauseTick(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objResetAnimModels.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/objMoveXYZnocheck.s")
+void objMoveXYZnocheck(void) {
+    D_800A1208_A1E08 = 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objMoveXYZ.s")
 

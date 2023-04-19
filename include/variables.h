@@ -5,6 +5,16 @@
 #include "libultra_internal.h"
 #include "sched.h"
 
+//spranim.c
+extern s32 disablejoy;
+extern s32 D_800F7868_F8468;
+extern s32 D_800F7874_F8474;
+extern s32 D_800F7878_F8478;
+extern s32 controlDkeys;
+extern s32 controlKeys;
+extern s32 controlXjoy;
+extern s32 controlYjoy;
+
 //objects.c
 extern s32 ObjListCount;
 extern Object **ObjList; // Not sure about the number of elements
@@ -12,6 +22,7 @@ extern VertexPosition gEnvmapPos;
 extern s32 *Ftables;
 extern s32 *Findex;
 extern s32 Fmax;
+extern s8 D_800A1208_A1E08;
 
 //boot.c
 

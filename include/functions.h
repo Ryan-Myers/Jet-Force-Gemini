@@ -137,7 +137,6 @@ s32 nosMotorInit(OSMesgQueue *mq, OSPfs *pfs, int channel);
 SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char **fileNames, char **fileExtensions, u32 *fileSizes, u8 *fileTypes);
 void flashROMInit(void);
 void packInit(void);
-OSMesgQueue *joyMessageQ(void);
 void flashROMWrite(u32 pageNum, u32 *dramAddr);
 void flashROMRead(u32 pageNum, u32 *dramAddr);
 void rumbleUpdate(void);
@@ -147,8 +146,6 @@ void amStop(void);
 void bootCheckStack(void);
 void func_80044938_45538(void);
 void func_80046070_46C70(s32 arg0);
-u16 joyGetPressed(s32 player);
-s32 joyRead(s32 saveDataFlags, s32 updateRate);
 void mainChangeLevel(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 void mainInitGame(void);
 void mainSetGameFlag(s32 arg0, s32 arg1);
@@ -165,7 +162,9 @@ char *osScGetTaskType(s32 taskID);
 void func_800507A4_513A4(OSScTask *task);
 void mmSlotPrint(void);
 void segSetBase(Gfx **dlist, s32 segment, s32 base);
-s32 func_80050AA4_516A4(OSSched *arg0, s32 *arg1, s32 *arg2, s32 *arg3, s32 *arg4, s32 *arg5, s32 *arg6);
+Gfx *func_80050AA4_516A4(OSSched *sc, 
+    char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
+    char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2);
 
 
 Game *mainGetGame(void);
@@ -185,5 +184,26 @@ s32 osFlashReadArray(OSIoMesg* mb, s32 priority, u32 page_num, void* dramAddr, u
 // void diRcpPrintDL(Gfx *, Gfx *, s32);
 // u32 *func_800507AC_513AC(OSSched *arg0, s32 arg1, Gfx *arg2, OSMesgQueue *arg3, u32 *arg4);
 // void diRcpTraceGetInfo(u32 arg0, s32 *arg1, s32 *arg2, s32 *arg3, s32 *arg4, s32 *arg5, s32 *arg6);
+
+
+//controller.c
+OSMesgQueue *joyMessageQ(void);
+s32 joyInit(void);
+s32 joyRead(s32 saveDataFlags, s32 updateRate);
+void joyResetMap(void);
+void joyDisable(s32 player);
+void joyEnable(s32 player);
+void joyCreateMap(s8 *activePlayers);
+u8 joyGetController(s32 player);
+u16 joyGetButtons(s32 player);
+u16 joyGetPressed(s32 player);
+u16 joyGetReleased(s32 player);
+s8 joyGetStickX(s32 player);
+s8 joyGetAbsX(s32 player);
+s8 joyGetStickY(s32 player);
+s8 joyGetAbsY(s32 player);
+s8 joyClamp(s8 stickMag);
+void joySetSecurity(void);
+s32 joyCharVal(void);
 
 #endif

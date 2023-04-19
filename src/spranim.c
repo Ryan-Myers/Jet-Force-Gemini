@@ -243,9 +243,29 @@ void func_8002C070_2CC70(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlCeiling.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlDisableJoypad.s")
+void controlDisableJoypad(s32 arg0) {
+    disablejoy = arg0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlReadJoypad.s")
+void controlReadJoypad(s32 player) {
+    if ((player >= 0) && (player < MAXCONTROLLERS) && (disablejoy == 0)) {
+        controlXjoy = joyGetStickX(player);
+        D_800F7874_F8474 = joyGetAbsX(player);
+        controlYjoy = joyGetStickY(player);
+        D_800F7878_F8478 = joyGetAbsY(player);
+        controlKeys = joyGetButtons(player);
+        controlDkeys = joyGetPressed(player);
+        D_800F7868_F8468 = joyGetReleased(player);
+    } else {
+        controlXjoy = 0;
+        D_800F7874_F8474 = 0;
+        controlYjoy = 0;
+        D_800F7878_F8478 = 0;
+        controlKeys = 0;
+        controlDkeys = 0;
+        D_800F7868_F8468 = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/controlGetMaxCharge.s")
 
