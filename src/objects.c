@@ -124,9 +124,38 @@ void objMoveXYZnocheck(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objPrintObject.s")
 
+#ifdef NON_EQUIVALENT
+void objDoPlayerTumble(Object *this) {
+    UNUSED s32 unused1;
+    Object_Racer *sp_20;
+    f32 sp_1c;
+    f32 tmp_f0;
+    if (this->behaviorId == 1) {
+        sp_20 = this->racer;
+        this->segment.trans.y_rotation += sp_20->y_rotation_offset;
+        this->segment.trans.x_rotation += sp_20->x_rotation_offset;
+        this->segment.trans.z_rotation += sp_20->z_rotation_offset;
+        sp_1c = Cosf(sp_20->z_rotation_offset);
+        tmp_f0 = Cosf(sp_20->x_rotation_offset - sp_20->unk146) * sp_1c;
+        tmp_f0 = ((tmp_f0 < 0.0f) ? 0.0f : tmp_f0 * tmp_f0);
+        tmp_f0 = ((1.0f - tmp_f0)) * 24.0f + sp_20->unk64;
+        this->segment.trans.y_position += tmp_f0;
+        D_800F3A20_F4620 = tmp_f0;
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objDoPlayerTumble.s")
+#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/objUndoPlayerTumble.s")
+void objUndoPlayerTumble(Object *obj) {
+    if (obj->behaviorId == 1) {
+        Object_Racer *racer = obj->racer;
+        obj->segment.trans.y_rotation -= racer->y_rotation_offset;
+        obj->segment.trans.x_rotation -= racer->x_rotation_offset;
+        obj->segment.trans.z_rotation -= racer->z_rotation_offset;
+        obj->segment.trans.y_position -= D_800F3A20_F4620;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000DCE8_E8E8.s")
 

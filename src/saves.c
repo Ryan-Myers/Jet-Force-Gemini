@@ -32,13 +32,80 @@ void rumbleProcessing(s32 arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleStart.s")
+void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
+    RumbleStruct *rumblePak;
+    u8 controllerNum;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleStop.s")
+    if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
+        controllerNum = joyGetController(controllerIndex);
+        rumblePak = &D_800FEC68_FF868[controllerNum];
+        if (rumblePak->state.upper != 2) {
+            rumblePak->state.state = (rumblePak->state.state & 0xFF0F) | 0x10;
+            rumblePak->unk2 = ((arg1 * arg1) * D_800AD4FC_AE0FC);
+            rumblePak->unk4 = rumblePak->unk2;
+            rumblePak->rumbleTime = (arg2 * 60.0f);
+        }
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleAlter.s")
+void rumbleStop(s32 controllerIndex) {
+    RumbleStruct *rumblePak;
+    u8 controllerNum;
+    u32 temp;
+    s32 flag = 3;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleMax.s")
+    if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
+        controllerNum = joyGetController(controllerIndex);
+        rumblePak = &D_800FEC68_FF868[controllerNum];
+        temp = rumblePak->state.upper;
+        if ((temp != 0) && (temp != flag)) {
+            rumblePak->state.flag = flag;
+            rumblePak->state.state = (rumblePak->state.state & 0xFF0F) | 0x30;
+        }
+    }
+}
+
+void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
+    s32 controllerNum;
+    RumbleStruct *rumblePak;
+
+    if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
+        controllerNum = joyGetController(controllerIndex);
+        rumblePak = &D_800FEC6A_FF86A[controllerNum];
+        if (arg1 != 0) {
+            rumblePak->state.half = ((arg1 * arg1) * D_800AD500_AE100);
+        }
+        rumblePak = &D_800FEC68_FF868[controllerNum];
+        if (rumblePak->state.upper != 2 && arg2 != 0.0f) {
+            rumblePak->state.state = (rumblePak->state.state & 0xFF0F) | 0x10;
+            rumblePak->rumbleTime = (arg2 * 60.0f);
+        }
+    }
+}
+
+void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
+    RumbleStruct *rumblePak;
+    s32 temp_f16;
+    s32 controllerNum;
+
+    if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
+        controllerNum = joyGetController(controllerIndex);
+        rumblePak = &D_800FEC68_FF868[controllerNum];
+        if (arg1 != 0) {
+            arg1 = ((arg1 * arg1) * D_800AD504_AE104);
+            if (rumblePak->unk2 < arg1) {
+                rumblePak->unk2 = arg1;
+            }
+        }
+        if (rumblePak->state.upper != 2) {
+            rumblePak->state.state = (rumblePak->state.state & 0xFF0F) | 0x10;
+            temp_f16 = (arg2 * 60.0f);
+            if (rumblePak->rumbleTime < temp_f16) {
+                rumblePak->rumbleTime = temp_f16;
+            }
+        }
+    }
+}
 
 void rumbleKill(void) {
     s32 i = MAXCONTROLLERS;

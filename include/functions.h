@@ -20,6 +20,11 @@ void _blkclr(void *, size_t);
 void func_8003F088(void *); //bootThread
 void mainThread(void *);
 void diCpuTraceInit(void);
+f32 Cosf(s32);
+void camPopModelMtx(Gfx **dlist);
+void camRestoreModelMtx(Gfx **dlist);
+typedef s32 MatrixS[4][4];
+void camPushModelMtx(Gfx **dList, MatrixS **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
 
 MemoryPoolSlot *new_memory_pool(MemoryPoolSlot *, s32, s32); // new_memory_pool
 s32 allocate_memory_pool_slot(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken, s32 newSlotIsTaken, u32 colourTag);
@@ -140,8 +145,12 @@ void packInit(void);
 void flashROMWrite(u32 pageNum, u32 *dramAddr);
 void flashROMRead(u32 pageNum, u32 *dramAddr);
 void rumbleUpdate(void);
-void rumbleStop(s32 arg0);
+void rumbleStop(s32 controllerIndex);
 void rumbleKill(void);
+void rumbleProcessing(s32 arg0);
+void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2);
+void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2);
+void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2);
 void amStop(void);
 void bootCheckStack(void);
 void func_80044938_45538(void);
@@ -165,6 +174,8 @@ void segSetBase(Gfx **dlist, s32 segment, s32 base);
 Gfx *func_80050AA4_516A4(OSSched *sc, 
     char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
     char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2);
+void objUndoPlayerTumble(Object *obj);
+void objDoPlayerTumble(Object *this);
 
 
 Game *mainGetGame(void);

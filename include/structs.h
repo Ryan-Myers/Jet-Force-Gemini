@@ -63,8 +63,54 @@ typedef struct epcInfo {
 /* 0x13C */ u8 pad13C[0x74];
 } epcInfo;
 
+// Stolen from PD
+// This hacky structure allows coords to be accessed using
+// coord->x, coord->y and coord->z, but also as
+// coord->f[0], coord->f[1] and coord->f[2].
+// In some places code only matches when using the float array.
+typedef struct Vec3f {
+  union {
+    struct {
+      f32 x;
+      f32 y;
+      f32 z;
+    };
+    f32 f[3];
+  };
+} Vec3f;
+
+typedef struct Object_Racer {
+  /* 0x000 */ u8 pad00[0x64];
+  /* 0x064 */ f32 unk64;
+  /* 0x068 */ u8 pad68[0xD8];
+  /* 0x140 */ s16 y_rotation_offset;
+  /* 0x144 */ s16 z_rotation_offset;
+  /* 0x142 */ s16 x_rotation_offset;
+  /* 0x146 */ s16 unk146;
+} Object_Racer;
+
+/* Size: 0x018 bytes */
+typedef struct ObjectTransform {
+  /* 0x0000 */ s16 y_rotation;
+  /* 0x0002 */ s16 x_rotation;
+  /* 0x0004 */ s16 z_rotation;
+  /* 0x0006 */ s16 unk6; // Flags?
+  /* 0x0008 */ f32 scale;
+  /* 0x000C */ f32 x_position;
+  /* 0x0010 */ f32 y_position;
+  /* 0x0014 */ f32 z_position;
+} ObjectTransform;
+
+typedef struct ObjectSegment {
+  /* 0x0000 */ ObjectTransform trans;
+} ObjectSegment;
+
 typedef struct Object {
-	s32 unk0;
+  /* 0x0000 */ ObjectSegment segment;
+  /* 0x0018 */ u8 pad18[0x30];
+  /* 0x0048 */ s16 behaviorId;
+  /* 0x0049 */ u8 pad49[0x1E];
+  /* 0x0068 */ Object_Racer *racer; //Object_64 in DKR.
 } Object;
 
 typedef struct VertexPosition {
@@ -365,5 +411,25 @@ typedef enum {
     CONTROLLER_PAK_UNK7,
     RUMBLE_PAK // Moved places since DKR
 } SIDeviceStatus;
+
+typedef struct RumbleStruct {
+    union {
+        s16 half;
+        struct {
+            u16 upper : 4;
+            u16 uppermid : 4;
+            u16 lowermid : 4;
+            u16 lower : 4;
+        };
+        struct {
+            u8 state;
+            u8 flag;
+        };
+    } state;
+    s16 unk2;
+    s16 unk4;
+    s16 rumbleTime;
+    s16 timer;
+} RumbleStruct;
 
 #endif

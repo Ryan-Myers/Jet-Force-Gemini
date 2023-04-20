@@ -215,7 +215,154 @@ void func_800507A4_513A4(OSScTask *task) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800507AC_513AC.s")
 
+#if 0
+void diRcpTraceGetInfo(Gfx*, u32*, char**, u32*, s32*, u32*, char**, u32*, s32*);
+Gfx *func_80050AA4_516A4(OSSched *sc, 
+    char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
+    char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2) {
+
+    OSMesg queueBuffer[8];
+    OSMesg queueMsg;
+    OSMesgQueue queue;
+    s64 tempCmds[2];
+    Gfx *displayListPtr;
+    OSTask *task;
+    s32 dldi_unk0x10_2;
+    s32 dldi_unk0x10;
+    char *dldi_file_2;
+    char *dldi_file;
+    s32 done;
+    s32 numRetraces;
+    s32 gotRdpDone;
+    s32 cmdIndex;
+    u32 dldi_unk0xc_2;
+    u32 dldi_unk0xc;
+    u32 dldi_unk0x4_2;
+    u32 dldi_unk0x4;
+
+    queueMsg = 0;
+    done = FALSE;
+
+    task = &sc->curRSPTask->list;
+    cmdIndex = task->t.data_size / 2;
+    displayListPtr = (Gfx*)&task->t.data_ptr[cmdIndex];
+
+    // Temporarily steal events for SP completion, DP fullsync, and vertical retraces
+    osCreateMesgQueue(&queue, queueBuffer, 8);
+    osSetEventMesg(OS_EVENT_SP, &queue, (OSMesg)RSP_DONE_MSG);
+    osSetEventMesg(OS_EVENT_DP, &queue, (OSMesg)RDP_DONE_MSG);
+    osViSetEvent(&queue, (OSMesg)VIDEO_MSG, /*retraceCount*/1);
+
+    do {
+        // Halt the SP, disable interrupt on break, and clear all signals
+        __osSpSetStatus(
+            SP_SET_HALT | 
+            SP_CLR_INTR_BREAK | 
+            SP_CLR_SIG0 | 
+            SP_CLR_SIG1 | 
+            SP_CLR_SIG2 | 
+            SP_CLR_SIG3 | 
+            SP_CLR_SIG4 | 
+            SP_CLR_SIG5 | 
+            SP_CLR_SIG6 | 
+            SP_CLR_SIG7);
+        
+        gotRdpDone = FALSE;
+        numRetraces = 0;
+        
+        // Reset DP?
+        osDpSetStatus(
+            DPC_SET_XBUS_DMEM_DMA | 
+            DPC_CLR_FREEZE | 
+            DPC_CLR_FLUSH | 
+            DPC_CLR_TMEM_CTR | 
+            DPC_CLR_PIPE_CTR | 
+            DPC_CLR_CMD_CTR);
+
+        // Temporarily patch an early end command into the display list
+        tempCmds[1] = ((s64*)displayListPtr)[0];
+        tempCmds[0] = ((s64*)displayListPtr)[1];
+
+        gDPFullSync(&displayListPtr[0]);
+        gSPEndDisplayList(&displayListPtr[1]);
+
+        // Flush CPU cache
+        osWritebackDCacheAll();
+
+        // Run the task
+        osSpTaskLoad(&sc->curRSPTask->list);
+        osSpTaskStartGo(&sc->curRSPTask->list);
+
+        // Wait until 10 vertical retraces occur or we receive RDP done
+        do {
+            osRecvMesg(&queue, &queueMsg, OS_MESG_BLOCK);
+
+            switch ((int)queueMsg) {
+                case VIDEO_MSG:
+                    numRetraces++;
+                    break;
+                case RDP_DONE_MSG:
+                    gotRdpDone = TRUE;
+                    break;
+                case RSP_DONE_MSG:
+                    break;
+            }
+        } while (numRetraces < 10 && !gotRdpDone);
+
+        // Restore the original display list commands
+        ((s64*)displayListPtr)[0] = tempCmds[1];
+        ((s64*)displayListPtr)[1] = tempCmds[0];
+
+        if (cmdIndex < 2) {
+            done = TRUE;
+        }
+
+        if ((cmdIndex % 2) != 0) {
+            cmdIndex = (cmdIndex / 2) + 1;
+        } else {
+            cmdIndex = cmdIndex / 2;
+        }
+
+        if (gotRdpDone) {
+            displayListPtr += cmdIndex;
+        } else {
+            displayListPtr -= cmdIndex;
+        }
+    } while (!done);
+
+    // Restore SP, DP, and vertical retrace event handling to the scheduler
+    osSetEventMesg(OS_EVENT_SP, &sc->interruptQ, (OSMesg)RSP_DONE_MSG);
+    osSetEventMesg(OS_EVENT_DP, &sc->interruptQ, (OSMesg)RDP_DONE_MSG);
+    osViSetEvent(&sc->interruptQ, (OSMesg)VIDEO_MSG, /*retraceCount*/1);
+    
+
+    if (gotRdpDone) {
+        *retFile_2 = NULL;
+        *retFile = NULL;
+
+        diRcpTraceGetInfo(displayListPtr,
+            &dldi_unk0x4, &dldi_file, &dldi_unk0xc, &dldi_unk0x10,
+            &dldi_unk0x4_2, &dldi_file_2, &dldi_unk0xc_2, &dldi_unk0x10_2);
+        
+        if (dldi_file_2 != NULL || dldi_file != NULL) {
+            if (dldi_file != NULL) {
+                *retFile = dldi_file;
+                *retUnk0xc = dldi_unk0xc;
+                *retUnk0x10 = dldi_unk0x10;
+            }
+            if (dldi_file_2 != NULL) {
+                *retFile_2 = dldi_file_2;
+                *retUnk0xc_2 = dldi_unk0xc_2;
+                *retUnk0x10_2 = dldi_unk0x10_2;
+            }
+        }
+    }
+
+    return displayListPtr;
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050AA4_516A4.s")
+#endif
 
 #ifdef NON_MATCHING
 //Need to migrate bss in order to match this.

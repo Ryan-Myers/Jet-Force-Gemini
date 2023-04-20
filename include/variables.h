@@ -23,6 +23,7 @@ extern s32 *Ftables;
 extern s32 *Findex;
 extern s32 Fmax;
 extern s8 D_800A1208_A1E08;
+extern f32 D_800F3A20_F4620;
 
 //boot.c
 
@@ -258,17 +259,14 @@ extern OSMesgQueue cartEventQueue;
 extern OSIoMesg flashMesgReqBlock;
 extern u8 D_800A3EC4_A4AC4;
 extern u8 D_800A3ECC_A4ACC;
+extern f32 D_800AD4FC_AE0FC;
+extern RumbleStruct D_800FEC68_FF868[];
+extern f32 D_800AD504_AE104;
+extern f32 D_800AD500_AE100;
+extern RumbleStruct D_800FEC6A_FF86A[];
 
 //Size: 0xA
-typedef struct unkD_800FEC68_FF868 {
-    s8 unk0;
-    s8 unk1;
-    s16 unk2;
-    s16 unk4;
-    s16 unk6;
-    s16 unk8;
-} unkD_800FEC68_FF868;
-extern unkD_800FEC68_FF868 D_800FEC68_FF868;
+//extern unkD_800FEC68_FF868 *D_800FEC68_FF868;
 
 
 typedef struct unkD_800A3EAC_A4AAC {

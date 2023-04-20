@@ -80,9 +80,13 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camPushModelMtx.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camRestoreModelMtx.s")
+void camRestoreModelMtx(Gfx **dlist) {
+    gDkrInsertMatrix((*dlist)++, G_MWO_MATRIX_XX_XY_I, G_MTX_DKR_INDEX_0);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camPopModelMtx.s")
+void camPopModelMtx(Gfx **dlist) {
+    gDkrInsertMatrix((*dlist)++, G_MWO_MATRIX_XX_XY_I, G_MTX_DKR_INDEX_0);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camGetPtr.s")
 
