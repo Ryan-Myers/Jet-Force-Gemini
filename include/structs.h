@@ -415,11 +415,11 @@ typedef enum {
 typedef struct RumbleStruct {
     union {
         s16 half;
+        u16 half_unsigned;
         struct {
             u16 upper : 4;
             u16 uppermid : 4;
-            u16 lowermid : 4;
-            u16 lower : 4;
+            s8 lower;
         };
         struct {
             u8 state;

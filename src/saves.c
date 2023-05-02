@@ -23,7 +23,7 @@ typedef enum Language {
     LANGUAGE_JAPANESE
 } Language;
 
-void rumbleProcessing(s32 arg0) {
+UNUSED void rumbleProcessing(s32 arg0) {
     if ((arg0 != 0) && (D_800A3ECC_A4ACC == 0)) {
         D_800A3EC4_A4AC4 = 1;
         D_800A3ECC_A4ACC = 1;
@@ -32,7 +32,7 @@ void rumbleProcessing(s32 arg0) {
     }
 }
 
-void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
+UNUSED void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
     RumbleStruct *rumblePak;
     u8 controllerNum;
 
@@ -40,7 +40,7 @@ void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
         controllerNum = joyGetController(controllerIndex);
         rumblePak = &D_800FEC68_FF868[controllerNum];
         if (rumblePak->state.upper != 2) {
-            rumblePak->state.state = (rumblePak->state.state & 0xFF0F) | 0x10;
+            rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
             rumblePak->unk2 = ((arg1 * arg1) * D_800AD4FC_AE0FC);
             rumblePak->unk4 = rumblePak->unk2;
             rumblePak->rumbleTime = (arg2 * 60.0f);
@@ -60,7 +60,7 @@ void rumbleStop(s32 controllerIndex) {
         temp = rumblePak->state.upper;
         if ((temp != 0) && (temp != flag)) {
             rumblePak->state.flag = flag;
-            rumblePak->state.state = (rumblePak->state.state & 0xFF0F) | 0x30;
+            rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x30;
         }
     }
 }
@@ -77,7 +77,7 @@ void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
         }
         rumblePak = &D_800FEC68_FF868[controllerNum];
         if (rumblePak->state.upper != 2 && arg2 != 0.0f) {
-            rumblePak->state.state = (rumblePak->state.state & 0xFF0F) | 0x10;
+            rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
             rumblePak->rumbleTime = (arg2 * 60.0f);
         }
     }
@@ -98,7 +98,7 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
             }
         }
         if (rumblePak->state.upper != 2) {
-            rumblePak->state.state = (rumblePak->state.state & 0xFF0F) | 0x10;
+            rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
             temp_f16 = (arg2 * 60.0f);
             if (rumblePak->rumbleTime < temp_f16) {
                 rumblePak->rumbleTime = temp_f16;
@@ -118,9 +118,125 @@ void rumbleUpdate(void) {
     D_800A3EC4_A4AC4 = 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleTick.s")
+#ifdef NON_EQUIVALENT
+s32 nosMotorStart(OSPfs *);
+s32 nosMotorStop(OSPfs *);
+extern f32 D_800AD508_AE108;
+extern RumbleStruct D_800FEC68_FF868[];
 
-void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
+void rumbleTick(s32 updateRate) {
+    RumbleStruct *rumble;
+    s32 pfsStatus;
+    s32 i;
+    s32 controllerToCheck;
+    u8 pfsBitPattern;
+
+    if (D_800A3ECC_A4ACC != 0) {
+        if (D_800A3EC4_A4AC4 != 0) {
+            osPfsIsPlug(sControllerMesgQueue, &pfsBitPattern);
+            for (i = 0, controllerToCheck = 1, rumble = D_800FEC68_FF868; i < MAXCONTROLLERS; i++, controllerToCheck <<= 1, rumble++) {
+                if (pfsBitPattern & controllerToCheck) {
+                    if (nosMotorInit(sControllerMesgQueue, &pfs[i], i) != 0) {
+                        rumble->state.state &= ~4;
+                        sRumblePaksPresent &= ~controllerToCheck;
+                    } else {
+                        rumble->state.state |= 4;
+                        sRumblePaksPresent |= controllerToCheck;
+                    }
+                }
+            }
+            D_800A3EC4_A4AC4 = 0;
+        }
+        for (i = 0, controllerToCheck = 1, rumble = D_800FEC68_FF868; i < MAXCONTROLLERS; i++, controllerToCheck <<= 1, rumble++) {
+            if (rumble->state.upper & 0x400) {
+                pfsStatus = 0;
+                switch (rumble->state.upper) {
+                case 1:
+                    rumble->rumbleTime -= updateRate;
+                    rumble->timer += updateRate;
+                    if (rumble->rumbleTime <= 0) {
+                        rumble->state.flag = 3;
+                        rumble->state.state = (rumble->state.state & ~0xF0) | 0x30;
+                    } else if (rumble->timer >= 0xF0) {
+                        rumble->timer = 60;
+                        rumble->state.state = (rumble->state.state & ~0xF0) | 0x20;
+                        rumble->state.flag = 3;
+                    } else {
+                        if (rumble->unk2 > 490.0f) {
+                            if (!(rumble->state.half_unsigned & 0x800)) {
+                                pfsStatus = nosMotorStart(&pfs[i]);
+                                rumble->state.state |= 8;
+                            }
+                        } else if (rumble->unk2 < D_800AD508_AE108) {
+                            if (rumble->state.half_unsigned & 0x800) {
+                                pfsStatus = nosMotorStop(&pfs[i]);
+                                rumble->state.state &= ~8;
+                            }
+                        } else {
+                            if (rumble->unk4 >= 0x100) {
+                                rumble->unk4 -= 0x100;
+                                if (!(rumble->state.half_unsigned & 0x800)) {
+                                    pfsStatus = nosMotorStart(&pfs[i]);
+                                    rumble->state.state |= 8;
+                                    rumble->unk4 -= 0x100;
+                                }
+                            } else {
+                                s32 var_t6;
+                                var_t6 = rumble->unk4 + rumble->unk2;
+                                if (rumble->state.half_unsigned & 0x800) {
+                                    pfsStatus = nosMotorStop(&pfs[i]);
+                                    rumble->state.state &= ~8;
+                                    var_t6 = rumble->unk4 + rumble->unk2;
+                                }
+                                rumble->unk4 = var_t6 + 4;
+                            }
+                        }
+                    }
+                    break;
+                case 2:
+                    if (rumble->state.lower != 0) {
+                        if (nosMotorInit(sControllerMesgQueue, &pfs[i], i) == 0) {
+                            nosMotorStop(&pfs[i]);
+                        }
+                        rumble->rumbleTime = 0;
+                        rumble->state.state &= ~8;
+                        rumble->state.flag = (s8) rumble->state.flag - 1;
+                    }
+                    rumble->timer -= updateRate;
+                    if (rumble->timer <= 0) {
+                        rumble->timer = 0;
+                        rumble->state.state &= ~0xF0;
+                    }
+                    break;
+                case 3: {
+                    u8 temp_t2;
+                    if (nosMotorInit(sControllerMesgQueue, &pfs[i], i) == 0) {
+                        nosMotorStop(&pfs[i]);
+                    }
+                    rumble->state.lower--;
+                    temp_t2 = rumble->state.state & ~8;
+                    rumble->rumbleTime = 0;
+                    rumble->timer = 0;
+                    rumble->state.state = temp_t2;
+                    if (rumble->state.lower == 0) {
+                        rumble->state.state = temp_t2 & 0xF;
+                    }
+                    break;
+                }
+                }
+                if (pfsStatus != 0) {
+                    rumble->state.state &= ~4;
+                    sRumblePaksPresent &= ~controllerToCheck;
+                }
+            }
+        }
+    }
+}
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleTick.s")
+#endif
+
+UNUSED void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
     *arg1 = 0;
     *arg2 = 0;
     if ((arg0 >= 0) && (arg0 < 3)) {
