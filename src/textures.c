@@ -74,10 +74,10 @@ typedef struct Struct_Unk_8007B46C {
     u8 pad17[8];
 } Struct_Unk_8007B46C;
 
-Struct_Unk_8007B46C *texFrame(Struct_Unk_8007B46C *arg0, s32 arg1) {
-    Struct_Unk_8007B46C *ret = arg0 + 1;
-    if ((arg1 > 0) && (arg1 < arg0->unk12 << 8)) {
-        ret = (Struct_Unk_8007B46C *) (((u8*)arg0) + ((arg1 >> 16) * arg0->unk16)) + 1;
+TextureHeader *texFrame(TextureHeader *arg0, s32 arg1) {
+    TextureHeader *ret = arg0 + 1;
+    if ((arg1 > 0) && (arg1 < arg0->numOfTextures << 8)) {
+        ret = (TextureHeader *) (((u8*)arg0) + ((arg1 >> 16) * arg0->textureSize)) + 1;
     }
     return ret;
 }
