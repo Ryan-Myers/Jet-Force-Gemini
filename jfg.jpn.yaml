@@ -11,15 +11,16 @@ options:
   undefined_funcs_auto_path: undefined_funcs_auto.jpn.txt
   undefined_syms_auto_path: undefined_syms_auto.jpn.txt
   symbol_addrs_path: symbol_addrs.jpn.txt
-  asm_path: asm
-  src_path: src
-  build_path: build
+  asm_path: asm_jpn
+  src_path: src_jpn
+  build_path: build_jpn
   #extensions_path: tools/splat_ext
   #mips_abi_float_regs: o32
   section_order: [".text", ".data", ".rodata", ".bss"]
   auto_all_sections: [".data", ".rodata", ".bss"]
-  libultra_symbols: True
-  hardware_regs: True
+  symbol_name_format: $VRAM_$ROM
+  #libultra_symbols: True
+  #hardware_regs: True
 segments:
   - name: header
     type: header
@@ -34,7 +35,7 @@ segments:
     start: 0x1000
     vram: 0x80000400
     subsegments:
-      - [0x1000, hasm]
+      - [0x1000, hasm, entrypoint]
 
   - name: main
     type: code
@@ -43,8 +44,8 @@ segments:
     follows_vram: entry
     bss_size: 0x54E50
     subsegments:
-      - [0x1050, asm]
-      - [0x2610, asm]
+      - [0x1050, c, audio_manager_1050]
+      - [0x2610, c, audiomgr]
       - [0x3430, asm]
       - [0x53C0, asm]
       - [0x12DB0, asm]
@@ -206,7 +207,7 @@ segments:
       - [0x9D5E0, asm]
       - [0x9D880, asm]
       - [0x9E340, asm]
-      - [0x9E4D0, asm]
+      - [0x9E4D0, bin] # - [0x9E4D0, hasm] - This seems to call a func func_840010E0 which breaks things.
       - [0x9E620, data]
       - { start: 0xB1660, type: bss, vram: 0x800B0A60 }
 

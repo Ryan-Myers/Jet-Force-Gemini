@@ -7,8 +7,12 @@ baseroms/*
 #compiled or ripped asm
 asm/*
 asm
+asm_jpn
+asm_jpn/*
 build/*
 build/
+build_jpn/*
+build_jpn/
 
 #binaries ripped from the ROMs
 assets/

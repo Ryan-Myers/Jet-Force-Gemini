@@ -14,11 +14,18 @@ CYAN    := \033[0;36m
 
 # Directories
 
-BUILD_DIR = build
-ASM_DIRS  = asm/data asm asm/libultra #For libultra handwritten files
 BIN_DIRS  = assets
 
+ifeq ($(VERSION),kiosk)
+BUILD_DIR = build
 SRC_DIR   = src
+ASM_DIRS  = asm/data asm asm/libultra #For libultra handwritten files
+else
+BUILD_DIR = build_$(VERSION)
+SRC_DIR   = src_$(VERSION)
+ASM_DIRS  = asm_$(VERSION)/data asm_$(VERSION) asm_$(VERSION)/libultra #For libultra handwritten files
+endif
+
 LIBULTRA_SRC_DIRS = $(SRC_DIR)/libultra
 
 DEFINE_SRC_DIRS  = $(SRC_DIR) $(SRC_DIR)/core $(LIBULTRA_SRC_DIRS)
@@ -63,14 +70,14 @@ GREP     = grep -rl
 #Options
 CC       = $(TOOLS_DIR)/ido-static-recomp/build/5.3/out/cc
 SPLAT    = $(TOOLS_DIR)/splat/split.py
-CRC      = @tools/n64crc build/$(BASENAME).$(VERSION).z64
+CRC      = @tools/n64crc $(BUILD_DIR)/$(BASENAME).$(VERSION).z64
 
 OPT_FLAGS      = -O2
 LOOP_UNROLL    =
 
 MIPSISET       = -mips1 -32
 
-INCLUDE_CFLAGS = -I . -I include/libc  -I include/PR -I include/sys -I include -I assets -I src/os 
+INCLUDE_CFLAGS = -I . -I include/libc  -I include/PR -I include/sys -I include -I assets -I $(SRC_DIR)/os 
 
 ASFLAGS        = -EB -mtune=vr4300 -march=vr4300 -mabi=32 -I include
 OBJCOPYFLAGS   = -O binary
@@ -119,22 +126,26 @@ LD_FLAGS_EXTRA  =
 LD_FLAGS_EXTRA += $(foreach sym,$(UNDEFINED_SYMS),-u $(sym))
 else
 LD_FLAGS_EXTRA  =
+LD_FLAGS_EXTRA += $(foreach sym,$(UNDEFINED_SYMS),-u $(sym))
 endif
 
 ASM_PROCESSOR_DIR := $(TOOLS_DIR)/asm-processor
 ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/asm_processor.py
 
 ### Optimisation Overrides
-# $(BUILD_DIR)/src/os/%.c.o: OPT_FLAGS := -O1
-# $(BUILD_DIR)/src/os/audio/%.c.o: OPT_FLAGS := -O2
-# $(BUILD_DIR)/src/os/libc/%.c.o: OPT_FLAGS := -O3
-# $(BUILD_DIR)/src/os/gu/%.c.o: OPT_FLAGS := -O3
+# $(BUILD_DIR)/$(SRC_DIR)/os/%.c.o: OPT_FLAGS := -O1
+# $(BUILD_DIR)/$(SRC_DIR)/os/audio/%.c.o: OPT_FLAGS := -O2
+# $(BUILD_DIR)/$(SRC_DIR)/os/libc/%.c.o: OPT_FLAGS := -O3
+# $(BUILD_DIR)/$(SRC_DIR)/os/gu/%.c.o: OPT_FLAGS := -O3
 
 ### Targets
 
 default: all
 
 all: $(VERIFY)
+
+ldflags:
+	@printf "[$(PINK) LDFLAGS $(NO_COL)]: $(LD_FLAGS)\n[$(PINK) EXTRA $(NO_COL)]: $(LD_FLAGS_EXTRA)\n"
 
 dirs:
 	$(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(BIN_DIRS),$(shell mkdir -p $(BUILD_DIR)/$(dir)))
@@ -157,10 +168,11 @@ dependencies: tools
 	@$(PYTHON) -m pip install -r tools/splat/requirements.txt #Installing the splat dependencies
 
 clean:
-	rm -rf build
+	rm -rf $(BUILD_DIR)
 
 distclean: clean
 	rm -rf asm
+	rm -rf asm_jpn
 	rm -rf assets
 	rm -f *auto*.txt
 	rm -f $(LD_SCRIPT)
@@ -171,8 +183,8 @@ cleanextract: distclean extract
 #Put the build folder into expected for use with asm-differ. Only run this with a matching build.
 expected: verify
 	mkdir -p expected
-	rm -rf expected/build
-	cp -r build/ expected/
+	rm -rf expected/$(BUILD_DIR)
+	cp -r $(BUILD_DIR)/ expected/
 
 ### Recipes
 
