@@ -19,11 +19,11 @@ BIN_DIRS  = assets
 ifeq ($(VERSION),kiosk)
 BUILD_DIR = build
 SRC_DIR   = src
-ASM_DIRS  = asm/data asm asm/libultra #For libultra handwritten files
+ASM_DIRS  = asm asm/data asm/libultra #For libultra handwritten files
 else
 BUILD_DIR = build_$(VERSION)
 SRC_DIR   = src_$(VERSION)
-ASM_DIRS  = asm_$(VERSION)/data asm_$(VERSION) asm_$(VERSION)/libultra #For libultra handwritten files
+ASM_DIRS  = asm_$(VERSION) asm_$(VERSION)/data asm_$(VERSION)/libultra #For libultra handwritten files
 endif
 
 LIBULTRA_SRC_DIRS = $(SRC_DIR)/libultra
@@ -171,10 +171,9 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 distclean: clean
-	rm -rf asm
-	rm -rf asm_jpn
+	rm -rf $(ASM_DIRS)
 	rm -rf assets
-	rm -f *auto*.txt
+	rm -f *auto.$(VERSION).txt
 	rm -f $(LD_SCRIPT)
 
 #When you just need to wipe old symbol names and re-extract
