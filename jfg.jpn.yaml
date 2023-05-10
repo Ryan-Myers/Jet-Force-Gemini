@@ -47,7 +47,7 @@ segments:
       - [0x1050, c, audio_manager_1050]
       - [0x2610, c, audiomgr]
       - [0x3430, asm]
-      - [0x53C0, asm]
+      - [0x53C0, c, objects]
       - [0x12DB0, asm]
       - [0x1DA70, asm]
       - [0x21820, asm]
