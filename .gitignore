@@ -9,10 +9,14 @@ asm/*
 asm
 asm_jpn
 asm_jpn/*
+asm_us
+asm_us/*
 build/*
 build/
 build_jpn/*
 build_jpn/
+build_us/*
+build_us/
 
 #binaries ripped from the ROMs
 assets/
