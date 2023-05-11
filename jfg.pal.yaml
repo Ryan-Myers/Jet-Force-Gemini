@@ -1,0 +1,218 @@
+name: Jet Force Gemini (European (basic spec.))
+sha1: 50651c4e0c46332f7f0b45870263f0a8b9a49602
+options:
+  basename: jfg.pal
+  target_path: baserom.pal.z64
+  base_path: .
+  compiler: IDO
+  find_file_boundaries: True
+  header_encoding: ASCII
+  platform: n64
+  undefined_funcs_auto_path: undefined_funcs_auto.pal.txt
+  undefined_syms_auto_path: undefined_syms_auto.pal.txt
+  symbol_addrs_path: symbol_addrs.pal.txt
+  asm_path: asm_pal
+  src_path: src_pal
+  build_path: build_pal
+  #extensions_path: tools/splat_ext
+  #mips_abi_float_regs: o32
+  section_order: [".text", ".data", ".rodata", ".bss"]
+  auto_all_sections: [".data", ".rodata", ".bss"]
+  symbol_name_format: $VRAM_$ROM
+  #libultra_symbols: True
+  #hardware_regs: True
+segments:
+  - name: header
+    type: header
+    start: 0x0
+
+  - name: boot
+    type: bin
+    start: 0x40
+
+  - name: entry
+    type: code
+    start: 0x1000
+    vram: 0x80000400
+    subsegments:
+      - [0x1000, hasm, entrypoint]
+
+  - name: main
+    type: code
+    start: 0x1050
+    vram: 0x80000450
+    follows_vram: entry
+    bss_size: 0x545C0
+    subsegments:
+      - [0x1050, asm]
+      - [0x2610, asm]
+      - [0x3410, asm]
+      - [0x53A0, asm]
+      - [0x12D70, asm]
+      - [0x1DA50, asm]
+      - [0x21800, asm]
+      - [0x23620, asm]
+      - [0x24610, asm]
+      - [0x25AB0, asm]
+      - [0x291F0, asm]
+      - [0x2BAE0, asm]
+      - [0x3C570, asm]
+      - [0x40340, asm]
+      - [0x433D0, asm]
+      - [0x44450, asm]
+      - [0x49850, asm]
+      - [0x4AB10, asm]
+      - [0x4E0F0, asm]
+      - [0x4E560, asm]
+      - [0x4E830, asm]
+      - [0x50520, asm]
+      - [0x51CB0, asm]
+      - [0x51CF0, asm]
+      - [0x552C0, asm]
+      - [0x562C0, asm]
+      - [0x59270, asm]
+      - [0x5B910, asm]
+      - [0x5DC70, asm]
+      - [0x646F0, asm]
+      - [0x66AF0, asm]
+      - [0x66D90, asm]
+      - [0x67990, asm]
+      - [0x69250, asm]
+      - [0x69260, asm]
+      - [0x70A40, asm]
+      - [0x73180, asm]
+      - [0x73A40, asm]
+      - [0x744C0, asm]
+      - [0x74CA0, asm]
+      - [0x74CB0, asm]
+      - [0x768F0, asm]
+      - [0x76E50, asm]
+      - [0x7AA00, asm]
+      - [0x84900, asm]
+      - [0x84960, asm]
+      - [0x85010, asm]
+      - [0x85070, asm]
+      - [0x87410, asm]
+      - [0x87460, asm]
+      - [0x874B0, asm]
+      - [0x8A6D0, asm]
+      - [0x8A740, asm]
+      - [0x8A7D0, asm]
+      - [0x8A840, asm]
+      - [0x8A860, asm]
+      - [0x8B280, asm]
+      - [0x8B470, asm]
+      - [0x8B520, asm]
+      - [0x8B5A0, asm]
+      - [0x8C110, asm]
+      - [0x8C320, asm]
+      - [0x8CDE0, asm]
+      - [0x8CEB0, asm]
+      - [0x8CFE0, asm]
+      - [0x8D370, asm]
+      - [0x8D5B0, asm]
+      - [0x8E710, asm]
+      - [0x8F580, asm]
+      - [0x8F770, asm]
+      - [0x8F900, asm]
+      - [0x8F920, asm]
+      - [0x8F9B0, asm]
+      - [0x91060, asm]
+      - [0x92050, asm]
+      - [0x920D0, asm]
+      - [0x920F0, asm]
+      - [0x922F0, asm]
+      - [0x927E0, asm]
+      - [0x92B50, asm]
+      - [0x936A0, asm]
+      - [0x93AC0, asm]
+      - [0x93BA0, asm]
+      - [0x94050, asm]
+      - [0x94760, asm]
+      - [0x94900, asm]
+      - [0x95690, asm]
+      - [0x957C0, asm]
+      - [0x959A0, asm]
+      - [0x95B70, asm]
+      - [0x95FD0, asm]
+      - [0x96450, asm]
+      - [0x964D0, asm]
+      - [0x96700, asm]
+      - [0x972A0, asm]
+      - [0x974E0, asm]
+      - [0x97730, asm]
+      - [0x97780, asm]
+      - [0x978C0, asm]
+      - [0x97A50, asm]
+      - [0x97D10, asm]
+      - [0x97D90, asm]
+      - [0x97EE0, asm]
+      - [0x97EF0, asm]
+      - [0x97FC0, asm]
+      - [0x98390, asm]
+      - [0x987C0, asm]
+      - [0x98B80, asm]
+      - [0x98DE0, asm]
+      - [0x98E10, asm]
+      - [0x98EA0, asm]
+      - [0x98EB0, asm]
+      - [0x98EC0, asm]
+      - [0x98F40, asm]
+      - [0x98FC0, asm]
+      - [0x99120, asm]
+      - [0x991D0, asm]
+      - [0x99270, asm]
+      - [0x99880, asm]
+      - [0x998B0, asm]
+      - [0x99BC0, asm]
+      - [0x99C30, asm]
+      - [0x99D10, asm]
+      - [0x9A070, asm]
+      - [0x9A220, asm]
+      - [0x9A400, asm]
+      - [0x9A7B0, asm]
+      - [0x9A7C0, asm]
+      - [0x9ABB0, asm]
+      - [0x9ABF0, asm]
+      - [0x9ACC0, asm]
+      - [0x9B3F0, asm]
+      - [0x9B440, asm]
+      - [0x9B490, asm]
+      - [0x9B4E0, asm]
+      - [0x9B580, asm]
+      - [0x9B5E0, asm]
+      - [0x9B750, asm]
+      - [0x9B9F0, asm]
+      - [0x9BB40, asm]
+      - [0x9BC30, asm]
+      - [0x9BDB0, asm]
+      - [0x9BDD0, asm]
+      - [0x9BE80, asm]
+      - [0x9BED0, asm]
+      - [0x9BF30, asm]
+      - [0x9BF40, asm]
+      - [0x9C020, asm]
+      - [0x9C430, asm]
+      - [0x9C790, asm]
+      - [0x9C7D0, asm]
+      - [0x9C860, asm]
+      - [0x9C890, asm]
+      - [0x9C8A0, asm]
+      - [0x9C8D0, asm]
+      - [0x9C930, asm]
+      - [0x9CA90, asm]
+      - [0x9CC40, asm]
+      - [0x9CC90, asm]
+      - [0x9D950, asm]
+      - [0x9D980, asm]
+      - [0x9D990, asm]
+      - [0x9DC30, asm]
+      - [0x9E6F0, asm]
+      - [0x9E880, bin] # - [0x9E880, hasm] - This seems to call a func func_840010E0 which breaks things.
+      - [0x9E9D0, data]
+      - { start: 0xB1A30, type: bss, vram: 0x800B0E30 }
+
+  - type: bin
+    start: 0xB1A30
+    follows_vram: main
+  - [0x2000000]

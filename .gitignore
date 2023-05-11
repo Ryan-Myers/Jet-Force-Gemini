@@ -11,12 +11,16 @@ asm_jpn
 asm_jpn/*
 asm_us
 asm_us/*
+asm_pal
+asm_pal/*
 build/*
 build/
 build_jpn/*
 build_jpn/
 build_us/*
 build_us/
+build_pal/*
+build_pal/
 
 #binaries ripped from the ROMs
 assets/
@@ -60,7 +64,6 @@ expected/
 */.splat_cache
 .splat_cache
 .splat_cache*
-symbol_addrs.us.txt
 ctx.c
 ctx.c.m2c
 ctx_includes.c
