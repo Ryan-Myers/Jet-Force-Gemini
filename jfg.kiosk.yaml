@@ -64,6 +64,7 @@ segments:
       - [0x43E50, c, level]
       - [0x45170, c, main]
       - [0x49A00, hasm, math_util] #hasm
+      - [0x4A5B0, hasm, math_util2]
       - [0x4ACC0, hasm, math_matrix]
       - [0x4B2D0, c, memory]
       - [0x4C040, c, osMotor]

@@ -163,14 +163,36 @@ splat: $(SPLAT)
 extract: splat tools
 	$(PYTHON) $(SPLAT) $(BASENAME).$(VERSION).yaml
 
+extractall: splat tools
+	$(PYTHON) $(SPLAT) $(BASENAME).kiosk.yaml
+	$(PYTHON) $(SPLAT) $(BASENAME).us.yaml
+	$(PYTHON) $(SPLAT) $(BASENAME).pal.yaml
+	$(PYTHON) $(SPLAT) $(BASENAME).jpn.yaml
+
 dependencies: tools
 	@make -C tools
 	@$(PYTHON) -m pip install -r tools/splat/requirements.txt #Installing the splat dependencies
 
 clean:
 	rm -rf $(BUILD_DIR)
+	
+cleanall:
+	rm -rf build
+	rm -rf build_us
+	rm -rf build_pal
+	rm -rf build_jpn
+
 
 distclean: clean
+	rm -rf $(ASM_DIRS)
+	rm -rf assets
+	rm -f *auto.kiosk.txt
+	rm -f *auto.us.txt
+	rm -f *auto.pal.txt
+	rm -f *auto.jpn.txt
+	rm -f $(LD_SCRIPT)
+
+distcleanall: clean
 	rm -rf $(ASM_DIRS)
 	rm -rf assets
 	rm -f *auto.$(VERSION).txt
@@ -178,6 +200,9 @@ distclean: clean
 
 #When you just need to wipe old symbol names and re-extract
 cleanextract: distclean extract
+
+#When you just need to wipe old symbol names and re-extract
+cleanextractall: distcleanall extractall
 
 #Put the build folder into expected for use with asm-differ. Only run this with a matching build.
 expected: verify
