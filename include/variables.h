@@ -37,10 +37,10 @@ extern u64 D_800F7B28_F8728[1];
 extern OSThread diCpuOSThread;
 void diCpuThread(void *);
 extern u64 diCpuThreadStack[1];
-extern OSMesgQueue D_801031C0_103DC0;
-extern void *D_801031D8_103DD8;
-extern void *D_801031F8_103DF8;
-extern OSMesgQueue D_80103218_103E18;
+extern OSMesgQueue D_801031C0_B66E0;
+extern void *D_801031D8_B66F8;
+extern void *D_801031F8_B6718;
+extern OSMesgQueue D_80103218_B6738;
 extern s32 D_800A6E88_A7A88;
 extern s32 D_800A6E8C_A7A8C;
 extern char D_800AF4EC_B00EC[26];// = "Fault in thread %d   (%s)";
@@ -100,7 +100,7 @@ typedef struct FontCharDataAlt {
 extern FontCharDataAlt *Font;
 
 //main.c
-extern s8 D_800FE26C_FEE6C;
+extern s8 D_800FE26C_B494C;
 extern OSSched sc;
 extern u64 Time[1024];
 extern void *securitybuffer;
@@ -111,7 +111,7 @@ extern s16 D_800A3A80_A4680; //mainGameWindowIsChanging
 extern s16 D_800A3AB0_A46B0;
 extern s32 D_800A3B70_A4770; //RamTest1Result
 extern s32 D_800A3B74_A4774; //RamTest2Result
-extern s32 D_800FE280_FEE80;
+extern s32 D_800FE280_B4960;
 extern s32 load_save_flags;
 
 //Window Size Vars
@@ -124,11 +124,11 @@ extern char D_800AD170_ADD70[]; // = "%5d  %5d  %5d";
 extern char D_800AD180_ADD80[]; // = "FREE %d";
 extern char D_800AD188_ADD88[]; // = "%d K";
 
-typedef struct UnkD_800FE217_FEE17 {
+typedef struct UnkD_800FE217_B48F7 {
     s8 ZBCheck;
     u8 pad1[0x7];
-} UnkD_800FE217_FEE17;
-extern UnkD_800FE217_FEE17 D_800FE217_FEE17[8];
+} UnkD_800FE217_B48F7;
+extern UnkD_800FE217_B48F7 D_800FE217_B48F7[8];
 
 //main.c?
 extern u64 globalflags;
@@ -137,27 +137,27 @@ extern u64 globalflags;
 typedef struct TexFontCoords {
     u8 u, v;
 } TexFontCoords;
-extern s32 D_80101F6C_102B6C; //gDebugFontTexture
+extern s32 D_80101F6C_B548C; //gDebugFontTexture
 extern TexFontCoords D_800A6D48_A7948[3][32]; //gDebugFontCoords
-extern s32 D_80101F58_102B58; //D_80127CB8 in DKR
-extern u16 D_80101F4C_102B4C; //D_80127CAC in DKR
-extern u16 D_80101F4E_102B4E; //D_80127CAE in DKR
-extern TextureHeader *D_80101F40_102B40; //gTexture0
-extern TextureHeader *D_80101F44_102B44; //gTexture1
-extern TextureHeader *D_80101F48_102B48; //gTexture2
-extern s32 D_80101F5C_102B5C;
-extern s32 D_80101F60_102B60;
-extern s32 D_80101F64_102B64;
-extern s32 D_80101F68_102B68;
-extern u16 D_80101F70_102B70;
-extern u16 D_80101F72_102B72;
+extern s32 D_80101F58_B5478; //D_80127CB8 in DKR
+extern u16 D_80101F4C_B546C; //D_80127CAC in DKR
+extern u16 D_80101F4E_B546E; //D_80127CAE in DKR
+extern TextureHeader *D_80101F40_B5460; //gTexture0
+extern TextureHeader *D_80101F44_B5464; //gTexture1
+extern TextureHeader *D_80101F48_B5468; //gTexture2
+extern s32 D_80101F5C_B547C;
+extern s32 D_80101F60_B5480;
+extern s32 D_80101F64_B5484;
+extern s32 D_80101F68_B5488;
+extern u16 D_80101F70_B5490;
+extern u16 D_80101F72_B5492;
 extern char *D_800A6D44_A7944; //gDebugPrintBufferEnd
-extern char D_80101640_102240[]; //gDebugPrintBufferStart
+extern char D_80101640_B4B60[]; //gDebugPrintBufferStart
 extern s32 D_800A6D40_A7940; // spacing codes
 extern Gfx D_800A6E08_A7A08[]; //dDebugFontSettings
-extern s32 D_80101F54_102B54; //D_80127CB4 in DKR
+extern s32 D_80101F54_B5474; //D_80127CB4 in DKR
 extern u16 D_80101F50_102B50; //D_80127CB0 in DKR
-extern u16 D_80101F50_102B52; //D_80127CB2 in DKR
+extern u16 D_80101F52_102B52; //D_80127CB2 in DKR
 
 //sched.c
 extern char D_800AD510_AE110[];// = "(Audio task)";
@@ -187,8 +187,7 @@ extern s32 gCurRSPTaskCounter;
 extern s32 gCurRDPTaskCounter;
 extern s8 gNextFrameCount;
 extern u64 gRetraceCounter64;
-extern s32 gCurRSPTaskIsSet;
-extern s32 gCurRDPTaskIsSet;
+
 extern s32 currentScreen;
 extern s32 otherScreen;
 extern s32 otherZbuf;
@@ -221,22 +220,23 @@ extern u8 blinkMode;
 extern u32 D_800A5830_A6430; //gTexColourTag = COLOUR_TAG_MAGENTA;
 extern s32 D_800A5838_A6438; //D_80126378
 extern u8 D_800A583C_A643C;
-extern s32 D_800FF9F4_1005F4; //D_80126354 in DKR
-extern s32 *D_800FF9C0_1005C0[2]; //D_80126320 in DKR
-extern s32 D_800FFA10_100610;
-extern s32 D_800FFA14_100614;
-extern s32 D_800FFA18_100618;
-extern s32 D_800FFA1C_10061C;
-extern s32 D_800FFA20_100620;
-extern s32 D_800FFA24_100624;
+extern s32 D_800FF9F4_B2F14; //D_80126354 in DKR
+extern s32 *D_800FF9C0_B2EE0[2]; //D_80126320 in DKR
+extern s32 D_800FFA10_B2F30;
+extern s32 D_800FFA14_B2F34;
+extern s32 D_800FFA18_B2F38;
+extern s32 D_800FFA1C_B2F3C;
+extern s32 D_800FFA20_B2F40;
+extern s32 D_800FFA24_B2F44;
 extern s32 D_800A584C_A644C; //A store of the texture currently loading?
 extern s32 D_800A5844_A6444; //IA2ColOverride?
-extern u8 D_800FFA28_100628;
-extern u8 D_800FFA29_100629;
-extern u8 D_800FFA2A_10062A;
-extern u8 D_800FFA2B_10062B;
-extern u8 D_800FFA2C_10062C;
-extern u8 D_800FFA2D_10062D;
+extern u8 D_800FFA28_B2F48;
+extern u8 D_800FFA29_B2F49;
+extern u8 D_800FFA29_B2F49;
+extern u8 D_800FFA2A_B2F4A;
+extern u8 D_800FFA2B_B2F4B;
+extern u8 D_800FFA2C_B2F4C;
+extern u8 D_800FFA2D_B2F4D;
 extern s32 D_800A5834_A6434; //textureFilter
 
 //rcpFast3d.c
@@ -260,13 +260,10 @@ extern OSIoMesg flashMesgReqBlock;
 extern u8 D_800A3EC4_A4AC4;
 extern u8 D_800A3ECC_A4ACC;
 extern f32 D_800AD4FC_AE0FC;
-extern RumbleStruct D_800FEC68_FF868[];
+extern RumbleStruct D_800FEC68_B2698[];
 extern f32 D_800AD504_AE104;
 extern f32 D_800AD500_AE100;
-extern RumbleStruct D_800FEC6A_FF86A[];
-
-//Size: 0xA
-//extern unkD_800FEC68_FF868 *D_800FEC68_FF868;
+extern RumbleStruct D_800FEC6A_B269A[];
 
 
 typedef struct unkD_800A3EAC_A4AAC {

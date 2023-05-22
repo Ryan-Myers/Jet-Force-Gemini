@@ -18,7 +18,21 @@ extern OSViMode D_800AA460_AB060; //PAL
 extern OSViMode D_800AA4B0_AB0B0; //MPAL
 extern OSViMode D_800AA500_AB100; //NTSC
 
-OSTime D_800FF668_100268; //gYieldTime
+s32 D_800A4300_A4F00[] = { OSMESG_SWAP_BUFFER, OSMESG_SWAP_BUFFER };
+s32 D_800A4308_A4F08[] = { OSMESG_SWAP_BUFFER, MESG_SKIP_BUFFER_SWAP }; //gBootBlackoutMesgextern u8 gGfxOverflowed;
+// u8 gMtxOverflowed = 0;
+// u8 gVtxOverflowed = 0;
+// u8 gPolOverflowed = 0;
+s32 gCurRSPTaskCounter = 0;
+s32 gCurRDPTaskCounter = 0;
+s8 gNextFrameCount = 0;
+u64 gRetraceCounter64 = 0;
+u64 D_800A4324_A4F24 = 0;
+
+
+s32 gCurRSPTaskIsSet;
+s32 gCurRDPTaskIsSet;
+OSTime gYieldTime;
 
 void osCreateScheduler(OSSched *sc, void *stack, OSPri priority, u8 mode, u8 numFields) {
     sc->curRSPTask      = 0;
@@ -177,34 +191,26 @@ void func_80050670_51270(OSSched *sc) {
     }
 }
 
-#ifdef NON_MATCHING
+#if 1
 //Needs RODATA migrated for the jump table to match
 char *osScGetTaskType(s32 taskID) {
     switch (taskID) {
     case 1:
-        //"(Audio task)"
-        return &D_800AD510_AE110;
+        return "(Audio task)";
     case 2:
-        //"(Game task)"
-        return &D_800AD520_AE120;
+        return "(Game task)";
     case 3:
-        //"(DI task)"
-        return &D_800AD52C_AE12C;
+        return "(DI task)";
     case 4:
-        //"(DI benchmark test)"
-        return &D_800AD538_AE138;
+        return "(DI benchmark test)";
     case 5:
-        //"(Clone task)"
-        return &D_800AD550_AE150;
+        return "(Clone task)";
     case 6:
-        //"(Refract task)"
-        return &D_800AD560_AE160;
+        return "(Refract task)";
     case 7:
-        //"(Blur task)"
-        return &D_800AD570_AE170;
+        return "(Blur task)";
     default:
-        //"(Unknown task type %d)"
-        return &D_800AD580_AE180;
+        return "(Unknown task type %d)";
     }
 }
 #else
@@ -366,8 +372,8 @@ Gfx *func_80050AA4_516A4(OSSched *sc,
 
 #ifdef NON_MATCHING
 //Need to migrate bss in order to match this.
-extern u64 D_800A4324_A4F24;
 u64 gRetraceCounter64;
+u64 D_800A4324_A4F24;
 
 void __scHandleRetrace(OSSched *sc) {
     OSScTask *rspTask = NULL;
@@ -728,7 +734,7 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
 void __scYield(OSSched *sc) {
     if (sc->curRSPTask->list.t.type == M_GFXTASK) {
         sc->curRSPTask->state |= OS_SC_YIELD;
-        D_800FF668_100268 = osGetTime();
+        gYieldTime = osGetTime();
         osSpTaskYield();
     } 
 }

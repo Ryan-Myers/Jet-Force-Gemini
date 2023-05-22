@@ -16,12 +16,12 @@ void diCpuTraceInit(void) {
 void diCpuThread(void *unused) {
     s32 sp2C;
     s32 var_s0 = 0;
-    osCreateMesgQueue(&D_801031C0_103DC0, &D_801031D8_103DD8, 8);
-    osSetEventMesg(OS_EVENT_FAULT, &D_801031C0_103DC0, (void *)8);
-    osSetEventMesg(OS_EVENT_CPU_BREAK, &D_801031C0_103DC0, (void *)2);
-    osCreatePiManager(150, &D_80103218_103E18, &D_801031F8_103DF8, 8);
+    osCreateMesgQueue(&D_801031C0_B66E0, &D_801031D8_B66F8, 8);
+    osSetEventMesg(OS_EVENT_FAULT, &D_801031C0_B66E0, (void *)8);
+    osSetEventMesg(OS_EVENT_CPU_BREAK, &D_801031C0_B66E0, (void *)2);
+    osCreatePiManager(150, &D_80103218_B6738, &D_801031F8_B6718, 8);
     while (1) {
-        osRecvMesg(&D_801031C0_103DC0, (OSMesg) &sp2C, 1);
+        osRecvMesg(&D_801031C0_B66E0, (OSMesg) &sp2C, 1);
         var_s0 |= (s32)sp2C;
         if ((var_s0 & 8) == 0 && (var_s0 & 2) == 0) {
             continue;

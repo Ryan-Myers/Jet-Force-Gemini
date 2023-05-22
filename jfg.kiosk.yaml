@@ -14,13 +14,9 @@ options:
   asm_path: asm
   src_path: src
   build_path: build
-  #extensions_path: tools/splat_ext
-  #mips_abi_float_regs: o32
   section_order: [".text", ".data", ".rodata", ".bss"]
   auto_all_sections: [".data", ".rodata", ".bss"]
   symbol_name_format: $VRAM_$ROM
-  #libultra_symbols: True
-  #hardware_regs: True
 segments:
   - name: header
     type: header
@@ -74,7 +70,7 @@ segments:
       - [0x4F150, c, rcpFast3d]
       - [0x50E40, c, sched]
       - [0x52610, c, segSetBase]
-      - [0x52650, c, sqauds]
+      - [0x52650, c, squads]
       - [0x54030, c, runLink]
       - [0x55D50, hasm, trapDanglingJump]
       - [0x55F30, c, gameVi]
@@ -265,27 +261,33 @@ segments:
       - [0x9DFB0, c, libultra/xlitob]
       - [0x9E250, c, libultra/xldtob]
       - [0x9ED10, c, libultra/ldiv]
-      - [0x9EEA0, bin] # - [0x9EEA0, hasm] - This seems to call a func func_840010E0 which breaks things.
-      - [0x9EFF0, bin]
-      #data start 0x800a0ef0
+      - [0x9EEA0, bin, ucodes] #Not sure which are which, or the split points yet
       - [0xA1AF0, data]
       - [0xA45E0, .data, controller]
       - [0xA45F0, data]
       - [0xA4A50, .data, memory]
       - [0xA4A60, data]
+      - [0xA4F00, .data, sched]
+      - [0xA4F30, data]
       - [0xA8560, .data, rzip]
-      - [0xA8570, data]
-      # - [0xA8A38, rodata]
-      # #bss/rodata? start?
-      - [0xB22B0, bin]
-      # - [0x1059E0, .bss, libultra/initialize]
-      # - [0x105AD0, .bss, libultra/pimgr]
-      # - [0xFC750, .bss, controller] #0x800FBB50 start - 0x800FBBD0 end
-      # - [0xFF8F0, .bss, pi] #0x800FECF0 start - 0x800FED80 end
-      # - [0xFF990, .bss, rcpFast3d]
-      # - [0x105E20, .bss, rzip] #0x80105220 start - 0x80105228 end
-      # - [0x105E30, .bss, subtitles]
-      # - { start: 0xB22B0, type: bss, vram: 0x800B16B0 }
+      - [0xA8570, data, subtitles]
+      - [0xA8580, rodata]
+      #- [0xA8A30, rodata]
+      - [0xAE110, .rodata, sched]
+      - [0xAE490, rodata] #start of squads
+      - [0xB1370, bin, data_unk]
+      - [0xB22B0, bin, unkbin]
+      - { start: 0xB22B0, type: bss, vram: 0x800B16B0, name: unkbss1 }
+      - { start: 0xB22B0, type: .bss, vram: 0x800FBB50, name: controller}
+      - { start: 0xB22B0, type: bss, vram: 0x800FBBD0, name: unkbss2 }
+      - { start: 0xB22B0, type: .bss, vram: 0x800FE310, name: memory }
+      - { start: 0xB22B0, type: bss, vram: 0x800FE880, name: unkbss3 }
+      - { start: 0xB22B0, type: .bss, vram: 0x800FECF0, name: pi }
+      - { start: 0xB22B0, type: bss, vram: 0x800FED90, name: unkbss4 }
+      - { start: 0xB22B0, type: .bss, vram: 0x800FF660, name: sched }
+      - { start: 0xB22B0, type: bss, vram: 0x800FF670, name: unkbss5 }
+      - { start: 0xB22B0, type: .bss, vram: 0x80105220, name: rzip }
+      - { start: 0xB22B0, type: bss, vram: 0x80105230, name: unkbss6 }
 
   - type: bin
     start: 0xB22B0

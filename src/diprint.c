@@ -66,17 +66,17 @@ void sprintf(char *s, const char *format, ...) {
 #pragma GLOBAL_ASM("asm/nonmatchings/diprint/vsprintf.s")
 
 void diPrintfInit(void) {
-    D_80101F40_102B40 = texLoadTexture(0);
-    D_80101F44_102B44 = texLoadTexture(1);
-    D_80101F48_102B48 = texLoadTexture(2);
-    D_800A6D44_A7944 = D_80101640_102240;
+    D_80101F40_B5460 = texLoadTexture(0);
+    D_80101F44_B5464 = texLoadTexture(1);
+    D_80101F48_B5468 = texLoadTexture(2);
+    D_800A6D44_A7944 = D_80101640_B4B60;
 }
 
 s32 diPrintf(const char *format, ...) {
     va_list args;
     s32 written;
     va_start(args, format);
-    if ((D_800A6D44_A7944 - D_80101640_102240) > 0x800) {
+    if ((D_800A6D44_A7944 - D_80101640_B4B60) > 0x800) {
         return -1;
     }
     sprintfSetSpacingCodes(1);
@@ -99,31 +99,31 @@ void diPrintfAll(Gfx **dList) {
 
     rcpInitDp(dList);
     viGetCurrentSize(&height, &width);
-    D_80101F70_102B70 = height;
-    D_80101F72_102B72 = width;
-    gDPSetScissor((*dList)++, 0, 0, 0, D_80101F70_102B70, D_80101F72_102B72);
+    D_80101F70_B5490 = height;
+    D_80101F72_B5492 = width;
+    gDPSetScissor((*dList)++, 0, 0, 0, D_80101F70_B5490, D_80101F72_B5492);
     func_800665C8_671C8();
     gSPDisplayList((*dList)++, D_800A6E08_A7A08);
-    buffer = (char *) D_80101640_102240;
+    buffer = (char *) D_80101640_B4B60;
     func_80066658_67258();
-    D_80101F6C_102B6C = -1;
-    D_80101F54_102B54 = 0;
-    D_80101F50_102B50 = D_80101F4C_102B4C;
-    D_80101F50_102B52 = D_80101F4E_102B4E;
+    D_80101F6C_B548C = -1;
+    D_80101F54_B5474 = 0;
+    D_80101F50_102B50 = D_80101F4C_B546C;
+    D_80101F52_102B52 = D_80101F4E_B546E;
     while ((s32)buffer != (s32)D_800A6D44_A7944) {
-        D_80101F58_102B58 = FALSE;
+        D_80101F58_B5478 = FALSE;
         buffer += func_80065CB4_668B4(dList, buffer);
     }
-    func_800660D4_66CD4(dList, D_80101F50_102B50, D_80101F50_102B52, D_80101F4C_102B4C, D_80101F4E_102B4E + 10);
-    buffer = (char *) D_80101640_102240;
+    func_800660D4_66CD4(dList, D_80101F50_102B50, D_80101F52_102B52, D_80101F4C_B546C, D_80101F4E_B546E + 10);
+    buffer = (char *) D_80101640_B4B60;
     func_80066658_67258();
-    D_80101F6C_102B6C = -1;
-    D_80101F54_102B54 = 0;
+    D_80101F6C_B548C = -1;
+    D_80101F54_B5474 = 0;
     while ((s32)buffer != (s32)D_800A6D44_A7944) {
-        D_80101F58_102B58 = TRUE;
+        D_80101F58_B5478 = TRUE;
         buffer += func_80065CB4_668B4(dList, buffer);
     }
-    D_800A6D44_A7944 = D_80101640_102240;
+    D_800A6D44_A7944 = D_80101640_B4B60;
 }
 
 /**
@@ -169,64 +169,64 @@ s32 func_80066174_66D74(Gfx **dList, s32 asciiVal) {
 
     if (asciiVal < 0x40) {
         //Character is a symbol or number and not a letter
-        if (D_80101F6C_102B6C != 0) {
-            if (D_80101F58_102B58) {
-                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F40_102B40 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
+        if (D_80101F6C_B548C != 0) {
+            if (D_80101F58_B5478) {
+                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F40_B5460 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
             }
-            D_80101F6C_102B6C = 0;
+            D_80101F6C_B548C = 0;
         }
         asciiVal -= 0x21;
     } else if (asciiVal < 0x60) {
         //Character is a upper case letter
-        if (D_80101F6C_102B6C != 1) {
-            if (D_80101F58_102B58) {
-                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F44_102B44 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11, 0, 2, 2, 0, 0, 0, 0);
+        if (D_80101F6C_B548C != 1) {
+            if (D_80101F58_B5478) {
+                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F44_B5464 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11, 0, 2, 2, 0, 0, 0, 0);
             }
-            D_80101F6C_102B6C = 1;
+            D_80101F6C_B548C = 1;
         }
         asciiVal -= 0x40;
     } else if (asciiVal < 0x80) {
         //Character is a lower case letter
-        if (D_80101F6C_102B6C != 2) {
-            if (D_80101F58_102B58) {
-                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F48_102B48 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
+        if (D_80101F6C_B548C != 2) {
+            if (D_80101F58_B5478) {
+                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F48_B5468 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
             }
-            D_80101F6C_102B6C = 2;
+            D_80101F6C_B548C = 2;
         }
         asciiVal -= 0x60;
     }
-    fontCharU = D_800A6D48_A7948[D_80101F6C_102B6C][asciiVal].u;
-    fontCharWidth = (D_800A6D48_A7948[D_80101F6C_102B6C][asciiVal].v - fontCharU) + 1;
-    if (D_80101F58_102B58) {
+    fontCharU = D_800A6D48_A7948[D_80101F6C_B548C][asciiVal].u;
+    fontCharWidth = (D_800A6D48_A7948[D_80101F6C_B548C][asciiVal].v - fontCharU) + 1;
+    if (D_80101F58_B5478) {
         gDPSetCombineMode((*dList)++, DKR_CC_UNK13, DKR_CC_UNK13);
-        gSPTextureRectangle((*dList)++, (D_80101F4C_102B4C << 2), (D_80101F4E_102B4E << 2), ((D_80101F4C_102B4C + fontCharWidth) << 2), ((D_80101F4E_102B4E + 10) << 2), 0, (fontCharU << 5), 0, 1024, 1024);
+        gSPTextureRectangle((*dList)++, (D_80101F4C_B546C << 2), (D_80101F4E_B546E << 2), ((D_80101F4C_B546C + fontCharWidth) << 2), ((D_80101F4E_B546E + 10) << 2), 0, (fontCharU << 5), 0, 1024, 1024);
     }
     return fontCharWidth;
 }
 
 void func_800665C8_671C8(void) {
-    if (D_80101F70_102B70 <= 320) {
-        D_80101F5C_102B5C = 16;
-        D_80101F60_102B60 = D_80101F70_102B70 - 16;
+    if (D_80101F70_B5490 <= 320) {
+        D_80101F5C_B547C = 16;
+        D_80101F60_B5480 = D_80101F70_B5490 - 16;
     } else {
-        D_80101F5C_102B5C = 32;
-        D_80101F60_102B60 = D_80101F70_102B70 - 32;
+        D_80101F5C_B547C = 32;
+        D_80101F60_B5480 = D_80101F70_B5490 - 32;
     }
-    if (D_80101F72_102B72 <= 240) {
-        D_80101F64_102B64 = 16;
-        D_80101F68_102B68 = D_80101F72_102B72 - 16;
+    if (D_80101F72_B5492 <= 240) {
+        D_80101F64_B5484 = 16;
+        D_80101F68_B5488 = D_80101F72_B5492 - 16;
     } else {
-        D_80101F64_102B64 = 32;
-        D_80101F68_102B68 = D_80101F72_102B72 - 32;
+        D_80101F64_B5484 = 32;
+        D_80101F68_B5488 = D_80101F72_B5492 - 32;
     }
 }
 
 void func_80066658_67258(void) {
-    D_80101F4C_102B4C = D_80101F5C_102B5C;
-    D_80101F4E_102B4E = D_80101F64_102B64;
+    D_80101F4C_B546C = D_80101F5C_B547C;
+    D_80101F4E_B546E = D_80101F64_B5484;
 }
 
 void func_8006667C_6727C(void) {
-    D_80101F4C_102B4C = D_80101F5C_102B5C;
-    D_80101F4E_102B4E += 11;
+    D_80101F4C_B546C = D_80101F5C_B547C;
+    D_80101F4E_B546E += 11;
 }

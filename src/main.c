@@ -11,7 +11,7 @@ void mainThread(UNUSED void *arg0) {
     D_800A3B74_A4774 = osBootRamTest2_6105();
     mainInitGame();
     load_save_flags = joyRead(load_save_flags, 0);
-    D_800FE280_FEE80 = 0;
+    D_800FE280_B4960 = 0;
     mainGameMode = 6;
     mainChangeLevel(0, D_800A3AB0_A46B0, 0, 0, 1, 0);
     func_80046070_46C70(0x1E);
@@ -47,7 +47,7 @@ void mainInitGame(void) {
     mmInit();
     securitybuffer = mmAlloc(16, COLOUR_TAG_GREY);
     rzipInit();
-    D_800FE26C_FEE6C = 0;
+    D_800FE26C_B494C = 0;
 
     if (osTvType == TV_TYPE_PAL) {
         viMode = OS_VI_PAL_LPN1;
@@ -78,7 +78,7 @@ s8 mainGetZBCheck(s32 arg0) {
     if ((arg0 < 0) || (arg0 >= 8)) {
         return 1;
     }
-    return D_800FE217_FEE17[arg0].ZBCheck;
+    return D_800FE217_B48F7[arg0].ZBCheck;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainCPUeffects.s")

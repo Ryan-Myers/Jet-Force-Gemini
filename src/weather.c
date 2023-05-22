@@ -8,15 +8,15 @@ typedef struct {
     //s16 unk4;
     s32 unk4;
 } unk80127BF8;
-extern unk80127BF8 D_80101568_102168;
+extern unk80127BF8 D_80101568_B4A88;
 
 void setWeatherLimits(s16 arg0, s16 arg1) {
-    if (D_80101568_102168.unk2 < D_80101568_102168.unk0) {
-        D_80101568_102168.unk0 = arg0;
-        D_80101568_102168.unk2 = arg1;
+    if (D_80101568_B4A88.unk2 < D_80101568_B4A88.unk0) {
+        D_80101568_B4A88.unk0 = arg0;
+        D_80101568_B4A88.unk2 = arg1;
     } else {
-        D_80101568_102168.unk0 = arg1;
-        D_80101568_102168.unk2 = arg0;
+        D_80101568_B4A88.unk0 = arg1;
+        D_80101568_B4A88.unk2 = arg0;
     }
 }
 
