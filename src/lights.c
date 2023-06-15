@@ -1,4 +1,5 @@
 #include "common.h"
+#include "math.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/freeLights.s")
 
@@ -35,7 +36,10 @@ void lightUpdateLights(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/killLight.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/lightGetLights.s")
+UNUSED unk800DC950 **lightGetLights(s32 *arg0) {
+    *arg0 = D_800A1894_A2494;
+    return D_800A1898_A2498;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightGetStrongestEffect.s")
 
@@ -43,7 +47,36 @@ void lightUpdateLights(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021B9C_2279C.s")
 
+#ifdef NON_EQUIVALENT
+//Matching, but needs rodata migration for the jump table.
+f32 lightDistanceCalc(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
+    f32 temp;
+
+    temp = arg1 * arg2;
+    switch (arg3) {
+        case 1:
+            temp = 1.0f - temp;
+            break;
+        case 2:
+            temp = 1.0f - sqrtf(temp);
+            break;
+        case 3:
+            temp = Cosf(temp * 16384.0f);
+            break;
+        case 4:
+            temp = Cosf(temp * 16384.0f);
+            temp *= temp;
+            break;
+        case 5:
+            temp = 1.0f - temp;
+            temp *= temp;
+            break;
+    }
+    return arg0 * temp;
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightDistanceCalc.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightDirectionCalc.s")
 

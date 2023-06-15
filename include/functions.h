@@ -220,5 +220,6 @@ s32 joyCharVal(void);
 //lights.c
 s32 addObjectLight(Object *, ObjectHeader48 *);
 void lightSetupLightSources(Object *obj);
+f32 lightDistanceCalc(f32 arg0, f32 arg1, f32 arg2, s32 arg3);
 
 #endif
