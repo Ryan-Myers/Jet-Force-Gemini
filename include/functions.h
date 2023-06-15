@@ -112,7 +112,6 @@ void resetMixCycle(PulsatingLightData *data);
 void updateMixCycle(PulsatingLightData *data, s32 timeDelta);
 void resetColourCycle(unkResetColourCycle *arg0);
 void initColourCycle(unkResetColourCycle *arg0, s32 arg1);
-void changeLightColourCycle(s32 arg0, s32 arg1); //TODO: arg0 typing is incorrect
 s32 mathRnd(s32, s32);
 void texAnimateTexture(TextureHeader *texture, u32 *triangleBatchInfoFlags, s32 *arg2, s32 updateRate);
 void setTexMemColour(s32 tagId);
@@ -221,5 +220,16 @@ s32 joyCharVal(void);
 s32 addObjectLight(Object *, ObjectHeader48 *);
 void lightSetupLightSources(Object *obj);
 f32 lightDistanceCalc(f32 arg0, f32 arg1, f32 arg2, s32 arg3);
+void freeLights();
+void lightCreateLightTable(s32 arg0, s32 arg1, s32 arg2, s32* arg3);
+void turnLightOff(UnkLight *light);
+void turnLightOn(UnkLight *light);
+void toggleLight(UnkLight *light);
+void changeLightColour(UnkLight *light, u8 red, u8 green, u8 blue);
+void changeLightColourCycle(s32 arg0, s32 arg1); //TODO: arg0 typing is incorrect
+void changeLightIntensity(UnkLight *light, u8 intensity);
+void lightUpdateLights(s32 arg0);
+unk800DC950 **lightGetLights(s32 *arg0);
+f32 lightDirectionCalc(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6);
 
 #endif

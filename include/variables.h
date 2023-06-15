@@ -213,6 +213,8 @@ extern char D_800AF40C_B000C[];// =
 extern char D_800AF4AC_B00AC[];// = "Watchpoint exception at %x";
 
 //lights.c
+extern s32 D_800A1890_A2490;
+extern s32 D_800A189C_A249C;
 extern s32 D_800A1894_A2494;
 extern unk800DC950 **D_800A1898_A2498;
 

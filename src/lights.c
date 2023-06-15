@@ -1,7 +1,26 @@
 #include "common.h"
 #include "math.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/freeLights.s")
+extern void *D_800A18A0_A24A0;
+extern void *D_800F65E0_F71E0;
+
+void freeLights(void) {
+    if (D_800A1898_A2498 != NULL) {
+        mmFree(D_800A1898_A2498);
+        D_800A1898_A2498 = NULL;
+        D_800A189C_A249C = 0;
+    }
+    if (D_800F65E0_F71E0 != NULL) {
+        mmFree(D_800F65E0_F71E0);
+        D_800F65E0_F71E0 = NULL;
+    }
+    if (D_800A18A0_A24A0 != NULL) {
+        mmFree(D_800A18A0_A24A0);
+        D_800A18A0_A24A0 = NULL;
+    }
+    D_800A1894_A2494 = 0;
+    D_800A1890_A2490 = 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/setupLights.s")
 
@@ -11,19 +30,37 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/addObjectLight.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/turnLightOff.s")
+void turnLightOff(UnkLight *light) {
+    light->unk3 &= ~1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/turnLightOn.s")
+void turnLightOn(UnkLight *light) {
+    light->unk3 |= 1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/toggleLight.s")
+void toggleLight(UnkLight *light) {
+    light->unk3 ^= 1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/changeLightColour.s")
+void changeLightColour(UnkLight *light, u8 red, u8 green, u8 blue) {
+    light->red = red;
+    light->green = green;
+    light->blue = blue;
+    light->unk2 |= 2;
+    light->unk54 = 0;
+}
 
 void changeLightColourCycle(s32 arg0, s32 arg1) {
     initColourCycle(arg0 + 0x48, arg1);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/changeLightIntensity.s")
+void changeLightIntensity(UnkLight *light, u8 intensity) {
+    light->unk43 = intensity;
+    light->unk44 = intensity;
+    if (light->unk6C != 0) {
+        light->unk2 |= 2;
+    }
+}
 
 void lightUpdateLights(s32 arg0) {
     s32 i;
@@ -78,7 +115,21 @@ f32 lightDistanceCalc(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightDistanceCalc.s")
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/lightDirectionCalc.s")
+f32 lightDirectionCalc(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6) {
+    f32 temp_f0;
+    f32 var_f2;
+
+    if (arg6 > 0.0f) {
+        temp_f0 = 1.0f / arg6;
+        var_f2 = (arg3 * temp_f0 * arg0) + (arg4 * temp_f0 * arg1) + (arg5 * temp_f0 * arg2);
+        if (var_f2 < 0.0f) {
+            var_f2 = 0.0f;
+        }
+    } else {
+        var_f2 = 1.0f;
+    }
+    return var_f2;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightObject.s")
 

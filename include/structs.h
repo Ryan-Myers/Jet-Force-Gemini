@@ -415,6 +415,23 @@ typedef struct PulsatingLightData {
     PulsatingLightDataFrame frames[1]; // Length varies based on numberFrames.
 } PulsatingLightData;
 
+typedef struct UnkLight {
+    /* 0x00 */ u8 unk0;
+    /* 0x01 */ u8 unk1;
+    /* 0x02 */ u8 unk2;
+    /* 0x03 */ u8 unk3;
+    /* 0x04 */ u8 pad4[0x3C];
+    /* 0x40 */ u8 red;
+    /* 0x41 */ u8 green;
+    /* 0x42 */ u8 blue;
+    /* 0x43 */ u8 unk43;
+    /* 0x44 */ f32 unk44;
+    /* 0x48 */ u8 pad48[0xB];
+    /* 0x54 */ s32 unk54;
+    /* 0x58 */ u8 pad58[0x12];
+    /* 0x6C */ s32 unk6C;
+} UnkLight;
+
 typedef struct unkResetColourCycle {
     s32 unk0;
     s32 unk4;
