@@ -275,7 +275,7 @@ segments:
       #- [0xA8A30, rodata]
       - [0xAE110, .rodata, sched]
       - [0xAE490, rodata] #start of squads
-      - [0xB1370, bin, data_unk]
+      - [0xB1370, bin, data_audio]
       - [0xB22B0, bin, unkbin]
       - { start: 0xB22B0, type: bss, vram: 0x800B16B0, name: unkbss1 }
       - { start: 0xB22B0, type: .bss, vram: 0x800FBB50, name: controller}
