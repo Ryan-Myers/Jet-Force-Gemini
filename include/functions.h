@@ -217,4 +217,8 @@ s8 joyClamp(s8 stickMag);
 void joySetSecurity(void);
 s32 joyCharVal(void);
 
+//lights.c
+s32 addObjectLight(Object *, ObjectHeader48 *);
+void lightSetupLightSources(Object *obj);
+
 #endif

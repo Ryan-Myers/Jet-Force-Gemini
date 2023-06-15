@@ -89,6 +89,44 @@ typedef struct Object_Racer {
   /* 0x146 */ s16 unk146;
 } Object_Racer;
 
+typedef struct ObjHeaderParticleEntry {
+  /* 0x00 */ s32 upper;
+  /* 0x04 */ s32 lower;
+} ObjHeaderParticleEntry;
+
+// Size: 0x18 bytes
+typedef struct ObjectHeader48 {
+    u8 unk0;
+    u8 unk1;
+    u8 unk2;
+    u8 unk3;
+    u8 unk4;
+    u8 unk5;
+    u16 unk6; //Misc Asset Id?
+    union {
+        u32 unk8;
+        struct {
+            u8 unk8A;
+            u8 unk9;
+            u8 unkA;
+            u8 unkB;
+        };
+    };
+    s16 unkC;
+    s16 unkE;
+    s16 unk10;
+    u16 unk12;
+    u16 unk14;
+    u16 unk16;
+} ObjectHeader48;
+
+typedef struct ObjectHeader {
+             u8 pad0[0x25];
+  /* 0x25 */ s8 unk25;
+             u8 pad26[0x20];
+  /* 0x48 */ ObjectHeader48 *unk48;
+} ObjectHeader;
+
 /* Size: 0x018 bytes */
 typedef struct ObjectTransform {
   /* 0x0000 */ s16 y_rotation;
@@ -103,14 +141,18 @@ typedef struct ObjectTransform {
 
 typedef struct ObjectSegment {
   /* 0x0000 */ ObjectTransform trans;
+  /* 0x0018 */ u8 pad18[0x28];
+  /* 0x0048 */ ObjectHeader *header;
 } ObjectSegment;
 
 typedef struct Object {
   /* 0x0000 */ ObjectSegment segment;
-  /* 0x0018 */ u8 pad18[0x30];
+  /* 0x0046 */ u8 pad46[0x4];
   /* 0x0048 */ s16 behaviorId;
-  /* 0x0049 */ u8 pad49[0x1E];
+  /* 0x0049 */ u8 pad49[0x1B];
   /* 0x0068 */ Object_Racer *racer; //Object_64 in DKR.
+  /* 0x0070 */ u8 pad70[8];
+  /* 0x0074 */ u32 *unk74;
 } Object;
 
 typedef struct VertexPosition {

@@ -53,7 +53,12 @@ void lightUpdateLights(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightSetObjectLight.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/lightSetupLightSources.s")
+void lightSetupLightSources(Object *obj) { 
+    s32 i;
+    for(i = 0; i < obj->segment.header->unk25; i++) { 
+        obj->unk74[i] = addObjectLight(obj, &obj->segment.header->unk48[i]);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightSetupFlareSources.s")
 
