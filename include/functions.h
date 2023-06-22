@@ -44,6 +44,7 @@ void func_80067880_68480(OSThread *);
 void func_800676F8_682F8(void *arg0);
 void func_8006768C(void);
 void func_800677E4(void);
+void camlightDelete(void *arg0); //TODO: arg0 typing is incorrect
 
 
 typedef enum HorizontalAlignmentFlags {
@@ -231,5 +232,6 @@ void changeLightIntensity(UnkLight *light, u8 intensity);
 void lightUpdateLights(s32 arg0);
 unk800DC950 **lightGetLights(s32 *arg0);
 f32 lightDirectionCalc(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6);
+s32 lightKillGlowingLight(void *arg0); //TODO: arg0 typing is incorrect
 
 #endif

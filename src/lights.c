@@ -150,4 +150,7 @@ void lightSetupLightSources(Object *obj) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightAdjustGlowingLight.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/lightKillGlowingLight.s")
+s32 lightKillGlowingLight(void *arg0) {
+    camlightDelete(arg0);
+    return 1;
+}
