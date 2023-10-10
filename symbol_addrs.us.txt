@@ -506,6 +506,7 @@ musicVolumeMirror = 0x800a0690;
 widescreenVOffsetMirror = 0x800fecaa;
 resolutionSettings = 0x800a392c;
 osVimode_getters = 0x800ad15c;
+D_800AD510_AE110 = 0x800AD510; // type:asciz
 aspectRatioFloat = 0x800fecc4;
 videoSettingByte = 0x800feca8;
 alSeqPlayerPointer = 0x800a0660;

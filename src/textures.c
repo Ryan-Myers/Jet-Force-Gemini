@@ -36,6 +36,34 @@ enum TriangleBatchFlags {
     BATCH_FLAGS_BIT31 = (1 << 31)
 };
 
+void texFreeTexture(TextureHeader *tex); // Non Matching
+
+typedef struct TextureCacheEntry {
+    s32 id;
+    TextureHeader *texture;
+} TextureCacheEntry;
+
+typedef struct Sprite {
+  /* 0x00 */ s16 baseTextureId;
+  /* 0x02 */ s16 numberOfFrames; // 1 means static texture
+  /* 0x04 */ s16 numberOfInstances;
+  /* 0x06 */ s16 unk6;
+  /* 0x08 */ u8 pad8[8];
+  /* 0x10 */ TextureHeader **frames;
+  union {
+    /* 0x0C */ u8 val[1]; // Actual size varies.
+    /* 0x0C */ u8 *ptr[1]; // Display list?
+  } unkC;
+} Sprite;
+
+typedef struct SpriteCacheEntry {
+    s32 id;
+    Sprite *sprite;
+} SpriteCacheEntry;
+
+extern SpriteCacheEntry *D_800FF9EC_1005EC;
+extern s32 D_800FF9F8_1005F8;
+
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texInitTextures.s")
 
 void texDisableModes(s32 flags) {
@@ -52,7 +80,33 @@ void texModelTextureLoad(u8 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texLoadTexture.s")
 
+#ifdef NON_EQUIVALENT
+extern s32 D_800FF9D0_1005D0;
+extern TextureCacheEntry *D_800FF9C8_1005C8;
+void texFreeTexture(TextureHeader *tex) {
+    s32 i;
+    s32 j;
+    s32 texId;
+
+    if (tex != NULL) {
+        tex->numberOfInstances--;
+        if (tex->numberOfInstances <= 0) {
+            for (i = 0; i < D_800FF9D0_1005D0; i++) {
+                j = i << 1;
+                if (tex == D_800FF9C8_1005C8[j].texture) {
+                    texId = -1;
+                    mmFree(tex);
+                    D_800FF9C8_1005C8[j].id = texId;
+                    D_800FF9C8_1005C8[j].texture = (TextureHeader *) texId;
+                    break;
+                }
+            }
+        }
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texFreeTexture.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texGetTextureNum.s")
 
@@ -125,7 +179,37 @@ void sprClearIA2ColOverride(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texLoadSprite.s")
 
+#ifdef NON_MATCHING
+
+void texFreeSprite(Sprite *sprite){
+    s32 i;
+    s32 frame;
+    s32 spriteId;
+
+    if (sprite != 0){
+        sprite->numberOfInstances--;
+        if (sprite->numberOfInstances <= 0) {
+            for (i = 0; i < D_800FF9F8_1005F8; i++) {
+                if (sprite == D_800FF9EC_1005EC[i].sprite){
+                    
+                    if (D_800FF9EC_1005EC[i].sprite == 0) {}
+
+                    for (frame = 0; frame < sprite->numberOfFrames; frame++){
+                        texFreeTexture(sprite->frames[frame]);
+                    }
+                    spriteId = -1;
+                    mmFree(sprite);
+                    D_800FF9EC_1005EC[i].id = spriteId;
+                    D_800FF9EC_1005EC[i].sprite = (Sprite *) spriteId;
+                    break;
+                }
+            }
+        }
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texFreeSprite.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/func_800577D8_583D8.s")
 
