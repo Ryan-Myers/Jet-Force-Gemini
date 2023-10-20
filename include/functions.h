@@ -42,7 +42,7 @@ s32 runlinkIsModuleLoaded(s32 module);
 s32 runlinkGetAddressInfo(u32 arg0, s32 *arg1, s32 *arg2, u32 **arg3);
 void func_80067880_68480(OSThread *);
 void func_800676F8_682F8(void *arg0);
-void func_8006768C(void);
+void stop_all_threads_except_main(void);
 void func_800677E4(void);
 void camlightDelete(void *arg0); //TODO: arg0 typing is incorrect
 

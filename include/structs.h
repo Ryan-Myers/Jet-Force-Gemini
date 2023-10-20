@@ -10,7 +10,7 @@ typedef struct Game {
     u8 pad[0x538];
 } Game;
 
-/* Size: 0x1B0 bytes */
+/* Size: 0x230 bytes */
 typedef struct epcInfo {
 /*  0x00 */ s32 unk0;
 /*  0x04 */ s32 unk4;
@@ -61,6 +61,7 @@ typedef struct epcInfo {
 /* 0x12C */ s32 unk12C;
 /* 0x130 */ f32 unk130[3];
 /* 0x13C */ u8 pad13C[0x74];
+/* 0x1B0 */ u8 pad1B0[0x80];
 } epcInfo;
 
 // Stolen from PD

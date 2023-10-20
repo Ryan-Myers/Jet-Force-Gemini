@@ -896,6 +896,7 @@ diCpuLogMessage = 0x800679C4;
 diCpuTraceMallocFault = 0x80067BD4;
 diCpuTraceGetFault = 0x80067C60;
 diCpuTraceTick = 0x80067C68;
+render_epc_lock_up_display = 0x80067CA4;
 cpuXYPrintf = 0x80068610;
 __rmonSendFault = 0x800686F4;
 diCpuTraceCurrentStack = 0x80068760;

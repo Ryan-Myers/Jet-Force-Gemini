@@ -27,16 +27,19 @@ void diCpuThread(void *unused) {
             continue;
         }
         var_s0 &= ~8;
-        func_8006768C();
+        stop_all_threads_except_main();
         func_800677E4();
     }
 }
 
-void func_8006768C(void) {
+/**
+ * Stop all threads except for the main thread 1
+ */
+void stop_all_threads_except_main(void) {
     OSThread *node = __osGetActiveQueue();
     while (node->priority != -1) {
-        if ((node->priority > 0) && (node->priority < 128)) {
-            osStopThread((OSThread *)&node->next);
+        if (node->priority > OS_PRIORITY_IDLE && node->priority <= OS_PRIORITY_APPMAX) {
+            osStopThread((OSThread *) &node->next);
         }
         node = node->tlnext;
     }
@@ -45,19 +48,19 @@ void func_8006768C(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800676F8_682F8.s")
 
 void func_800677E4(void) {
-    OSThread *node = __osGetActiveQueue();
-    while (node->priority != -1) {
-        if (node->priority <= 0 || (!(node->flags & 2) && !(node->flags & 1))) {
-            node = node->tlnext;
-        }
-        else {
-            break;
+    OSThread *thread;
+
+    for (thread = __osGetActiveQueue(); thread->priority != -1; thread = thread->tlnext) {
+        if (thread->priority > OS_PRIORITY_IDLE) {
+            if (thread->flags & 2 || thread->flags & 1) {
+                break;
+            }
         }
     }
-    if (node->priority != -1) {
-        func_800676F8_682F8(node);
+    if (thread->priority != -1) {
+        func_800676F8_682F8(thread);
     }
-    func_80067880_68480(node);
+    func_80067880_68480(thread);
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067880_68480.s")
@@ -68,7 +71,19 @@ void func_800677E4(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067AA0_686A0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuTraceMallocFault.s")
+void render_epc_lock_up_display(epcInfo *arg0);
+
+void diCpuTraceMallocFault(s32 epc, s32 size, u32 colourTag) {
+    epcInfo epcinfo;
+    _blkclr(&epcinfo, sizeof(epcInfo));
+    epcinfo.epc = epc & 0xFFFFFFFFFFFFFFFF; 
+    epcinfo.a0 = size;
+    epcinfo.a1 = colourTag;
+    epcinfo.cause = -1;
+    render_epc_lock_up_display(&epcinfo);
+    osWritebackDCacheAll();
+    while(1) {}
+}
 
 s32 diCpuTraceGetFault(void) {
     return 0;
@@ -82,8 +97,7 @@ void diCpuTraceTick(s32 arg0) {
     }
 }
 
-//render_epc_lock_up_display in DKR
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067CA4_688A4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/render_epc_lock_up_display.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800683D0_68FD0.s")
 
