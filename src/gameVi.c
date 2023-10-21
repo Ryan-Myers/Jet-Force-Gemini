@@ -20,7 +20,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viFrameSync.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viGetVideoMode.s")
+s32 viGetVideoMode(void) {
+    return D_800FF988_100588 & 3;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viGetWideAdjust.s")
 

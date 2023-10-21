@@ -46,6 +46,7 @@ extern s32 D_800A6E8C_A7A8C;
 extern char D_800AF4EC_B00EC[26];// = "Fault in thread %d   (%s)";
 extern char D_800AF508_B0108[9];// = "epc NULL";
 extern char D_800AF650_B0250[16];// = "free ram 		%08x";
+extern s32 D_800A6EDC_A7ADC;
 
 //prnBorders.c
 extern Gfx D_800A3F90_A4B90[11][2]; //unknown number of graphics commands. This is a best guess.
@@ -190,7 +191,7 @@ extern u64 gRetraceCounter64;
 extern s32 gCurRSPTaskIsSet;
 extern s32 gCurRDPTaskIsSet;
 extern s32 currentScreen;
-extern s32 otherScreen;
+extern s32 *otherScreen;
 extern s32 otherZbuf;
 
 //dicpu.c
@@ -285,5 +286,8 @@ extern s32 nextFrameCount; // = 2;
 
 //squads.c
 extern s32 BaddyDataArray;
+
+//gameVi.c
+extern s8 D_800FF988_100588; //videoMode
 
 #endif

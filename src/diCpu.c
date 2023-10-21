@@ -1,4 +1,5 @@
 #include "common.h"
+#include "stdarg.h"
 
 /**
  * Start the exception program counter thread.
@@ -67,7 +68,51 @@ void func_800677E4(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuReportWatchpoint.s")
 
+#ifdef NON_EQUIVALENT
+extern s32 D_800A6E90_A7A90;
+extern s32 D_800A6E94_A7A94;
+extern s32 D_800A6E98_A7A98;
+
+void diCpuLogMessage(const char *format, ...) {
+    va_list args;
+    char sp20[255];
+    s32 i;
+    char *var_v0;
+    char *var_a1;
+    char var_a0;
+
+    va_start(args, format);
+    vsprintf(&sp20, format, &args);
+    va_end(args);
+
+    var_a1 = (D_800A6E94_A7A94 * 41) + 0x80700000;
+    var_v0 = &sp20;
+    i = 0;
+    if (var_v0[i] != 0) {
+        var_a0 = sp20[i];
+loop_2:
+        *var_a1 = var_a0;
+        var_a0 = var_v0[1];
+        var_a1 += 1;
+        var_v0 += 1;
+        i++;
+        if (var_a0 != 0 && i < 40) {
+            goto loop_2;
+        }
+    }
+    *var_a1 = 0;
+    D_800A6E94_A7A94++;
+    if (D_800A6E94_A7A94 >= 500) {
+        D_800A6E98_A7A98 = 1;
+        D_800A6E94_A7A94 = 0;
+    }
+    if (D_800A6E98_A7A98 != 0) {
+        D_800A6E90_A7A90 = D_800A6E94_A7A94;
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuLogMessage.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067AA0_686A0.s")
 
@@ -103,11 +148,48 @@ void diCpuTraceTick(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800684F0_690F0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/cpuXYPrintf.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_8006869C_6929C.s")
+void cpuXYPrintf(s32 x, s32 y, const char *format, ...) {
+    va_list args;
+    char s[255];
 
+    va_start(args, format);
+    vsprintf(s, format, args);
+    va_end(args);
 
+    if (D_800A6EDC_A7ADC != 0) {
+        if (D_800A6EDC_A7ADC == 1) {
+            y -= 8;
+        } else {
+            y -= 104;
+        }
+        if (y >= 0 && y < 116) {
+            y *= 2;
+            goto block_7;
+        }
+    } else {
+block_7:
+        func_800684F0_690F0(x, y, s);
+    }
+}
+
+void func_8006869C_6929C(void) {
+    UNUSED s32 pad;
+    s32 height;
+    s32 width;
+    s32 screenSize;
+    s16 *var_v1;
+
+    viGetCurrentSize(&height, &width);
+    screenSize = height * width;
+    var_v1 = otherScreen;
+    while (screenSize--) {
+        *var_v1 = 0;
+        var_v1++;
+    }
+}
+
+//File split?
 //TODO: TrapDanglingJump Seems to have a different definition here vs in mmFreeTick
 s32 TrapDanglingJump(s32, s32, s32);
 void __rmonSendFault(s32 arg0) {

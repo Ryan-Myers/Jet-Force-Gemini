@@ -234,4 +234,12 @@ unk800DC950 **lightGetLights(s32 *arg0);
 f32 lightDirectionCalc(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6);
 s32 lightKillGlowingLight(void *arg0); //TODO: arg0 typing is incorrect
 
+//diCpu.c
+void func_800684F0_690F0(s32 x, s32 y, char *s);
+void cpuXYPrintf(s32 x, s32 y, const char *format, ...);
+void func_8006869C_6929C(void);
+
+//gameVi.c
+s32 viGetVideoMode(void);
+
 #endif
