@@ -64,7 +64,33 @@ void func_800677E4(void) {
     func_80067880_68480(thread);
 }
 
+#ifdef NON_)EQUIVALENT
+extern s32 osCicId;
+extern s32 D_800A6E98_A7A98;
+
+void func_80067880_68480(OSThread *thread) {
+    s32 i;
+
+    // Anti Piracy Check
+    if ((D_800A3B74_A4774 == 0) || (osCicId != 6105)) {
+        while(1){}
+    }
+    if (D_800A6E98_A7A98 == 0) {
+        if (thread && thread && thread) {}
+    }
+    if (viGetVideoMode() != 0) {
+        D_800A6EDC_A7ADC = 1;
+    } else {
+        D_800A6EDC_A7ADC = 0;
+    }
+    for (i = 0; i < 100; i++) {
+        func_8006869C_6929C();
+    }
+    while(1){}
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067880_68480.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuReportWatchpoint.s")
 

@@ -16,6 +16,7 @@ u32 *piRomLoad(u32 assetIndex);
 s32 piRomLoadSection(u32 assetIndex, u32 address, s32 assetOffset, s32 size);
 s32 inflate_block(void);
 void _blkclr(void *, size_t);
+void _bcopy(const void *, void *, size_t);
 
 void func_8003F088(void *); //bootThread
 void mainThread(void *);
@@ -40,7 +41,6 @@ MemoryPoolSlot *allocate_from_memory_pool(s32 poolIndex, s32 size, u32 colourTag
 s32 runlinkLowMemoryPanic(void);
 s32 runlinkIsModuleLoaded(s32 module);
 s32 runlinkGetAddressInfo(u32 arg0, s32 *arg1, s32 *arg2, u32 **arg3);
-void func_80067880_68480(OSThread *);
 void func_800676F8_682F8(void *arg0);
 void stop_all_threads_except_main(void);
 void func_800677E4(void);
@@ -238,6 +238,7 @@ s32 lightKillGlowingLight(void *arg0); //TODO: arg0 typing is incorrect
 void func_800684F0_690F0(s32 x, s32 y, char *s);
 void cpuXYPrintf(s32 x, s32 y, const char *format, ...);
 void func_8006869C_6929C(void);
+void func_80067880_68480(OSThread *);
 
 //gameVi.c
 s32 viGetVideoMode(void);
