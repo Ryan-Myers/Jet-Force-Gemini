@@ -32,9 +32,9 @@ typedef struct runlinkModule {
     s32 unk0;
     u8 pad4[25];
 } runlinkModule;
-extern runlinkModule *D_800FF780_100380;
+extern runlinkModule *D_800FF780_B2380;
 s32 runlinkIsModuleLoaded(s32 module) {
-    return D_800FF780_100380[module].unk0;
+    return D_800FF780_B2380[module].unk0;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_80053FC8_54BC8.s")

@@ -142,12 +142,12 @@ TextureHeader *texFrame(TextureHeader *arg0, s32 arg1) {
 */
 void texDPInit(Gfx **dlist) {
     D_800A5838_A6438 = 0;
-    D_800FFA14_100614 = 0;
-    D_800FFA18_100618 = 0;
-    D_800FFA10_100610 = 0;
-    D_800FFA1C_10061C = 0;
-    D_800FFA20_100620 = 1;
-    D_800FFA24_100624 = 1;
+    D_800FFA14_B2614 = 0;
+    D_800FFA18_B2618 = 0;
+    D_800FFA10_B2610 = 0;
+    D_800FFA1C_B261C = 0;
+    D_800FFA20_B2620 = 1;
+    D_800FFA24_B2624 = 1;
     if (dlist != NULL) {
         gDPPipeSync((*dlist)++);
         gSPSetGeometryMode((*dlist)++, G_FOG | G_SHADING_SMOOTH | G_SHADE | G_ZBUFFER);
@@ -162,12 +162,12 @@ void sprSetTextureFilter(s32 arg0) {
 }
 
 void sprSetIA2ColOverride(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5) {
-    D_800FFA28_100628 = arg0;
-    D_800FFA29_100629 = arg1;
-    D_800FFA2A_10062A = arg2;
-    D_800FFA2B_10062B = arg3;
-    D_800FFA2C_10062C = arg4;
-    D_800FFA2D_10062D = arg5;
+    D_800FFA28_B2628 = arg0;
+    D_800FFA29_B2629 = arg1;
+    D_800FFA2A_B262A = arg2;
+    D_800FFA2B_B262B = arg3;
+    D_800FFA2C_B262C = arg4;
+    D_800FFA2D_B262D = arg5;
     D_800A5844_A6444 = 1;
 }
 

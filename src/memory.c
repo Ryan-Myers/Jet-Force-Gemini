@@ -9,10 +9,9 @@ u8 mmExtendedRam = FALSE;
 s32 mmColourTagUnk1 = 0xFFFFFFFF;
 s32 mmColourTagUnk2 = 0xFFFFFFFF;
 MemoryPool gMemoryPools[4];
-UNUSED u8 D_800FE318_FEF18[56]; // Padding
 s32 gNumberOfMemoryPools;
-FreeQueueSlot gFreeQueue[100];
-u8 gFreeQueueDelay[100];
+FreeQueueSlot gFreeQueue[255];
+u8 gFreeQueueDelay[255];
 s32 gFreeQueueCount;
 s32 mmDelay;
 s32 FreeRAM;

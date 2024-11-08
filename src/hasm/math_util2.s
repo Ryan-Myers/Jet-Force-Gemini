@@ -455,8 +455,8 @@ glabel Arctanf
     /* 4AC00 8004A000 460E6283 */  div.s      $f10, $f12, $f14
     /* 4AC04 8004A004 3C014500 */  lui        $at, (0x45000000 >> 16)
     /* 4AC08 8004A008 44810800 */  mtc1       $at, $f1
-    /* 4AC0C 8004A00C 3C08800B */  lui        $t0, %hi(D_800A9758_AA358)
-    /* 4AC10 8004A010 25089758 */  addiu      $t0, $t0, %lo(D_800A9758_AA358)
+    /* 4AC0C 8004A00C 3C08800B */  lui        $t0, %hi(gArcTanTable)
+    /* 4AC10 8004A010 25089758 */  addiu      $t0, $t0, %lo(gArcTanTable)
     /* 4AC14 8004A014 46015282 */  mul.s      $f10, $f10, $f1
     /* 4AC18 8004A018 460052A4 */  cvt.w.s    $f10, $f10
     /* 4AC1C 8004A01C 44095000 */  mfc1       $t1, $f10
@@ -471,8 +471,8 @@ glabel Arctanf
   .L8004A040_4AC40:
     /* 4AC40 8004A040 3C014500 */  lui        $at, (0x45000000 >> 16)
     /* 4AC44 8004A044 44810800 */  mtc1       $at, $f1
-    /* 4AC48 8004A048 3C08800B */  lui        $t0, %hi(D_800A9758_AA358)
-    /* 4AC4C 8004A04C 25089758 */  addiu      $t0, $t0, %lo(D_800A9758_AA358)
+    /* 4AC48 8004A048 3C08800B */  lui        $t0, %hi(gArcTanTable)
+    /* 4AC4C 8004A04C 25089758 */  addiu      $t0, $t0, %lo(gArcTanTable)
     /* 4AC50 8004A050 24424000 */  addiu      $v0, $v0, 0x4000
     /* 4AC54 8004A054 46015282 */  mul.s      $f10, $f10, $f1
     /* 4AC58 8004A058 460052A4 */  cvt.w.s    $f10, $f10

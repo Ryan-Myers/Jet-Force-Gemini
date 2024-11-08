@@ -69,89 +69,69 @@ static void	__scYield(OSSched *s);
 
 /************ .data ************/
 
-extern s32 D_800DE730[2];
-extern s32 gBootBlackoutMesg[2];
-// s32 D_800DE730[] = { OSMESG_SWAP_BUFFER, OSMESG_SWAP_BUFFER };
-// s32 gBootBlackoutMesg[] = { OSMESG_SWAP_BUFFER, MESG_SKIP_BUFFER_SWAP };
+s32 D_800DE730[] = { OSMESG_SWAP_BUFFER, OSMESG_SWAP_BUFFER };
+s32 gBootBlackoutMesg[] = { OSMESG_SWAP_BUFFER, MESG_SKIP_BUFFER_SWAP };
 
-extern f32 gAudTaskTimer0;
-extern f32 gAudTaskTimer1;
-extern f32 gAudTaskTimer2;
-extern f32 gAudTaskTimer3;
-// f32 gAudTaskTimer0 = 0;
-// f32 gAudTaskTimer1 = 0;
-// f32 gAudTaskTimer2 = 0;
-// f32 gAudTaskTimer3 = 0;
+f32 gAudTaskTimer0 = 0;
+f32 gAudTaskTimer1 = 0;
+f32 gAudTaskTimer2 = 0;
+f32 gAudTaskTimer3 = 0;
 
-extern s32 gRetraceCounter32;
-extern s32 gCurRSPTaskCounter;
-extern s32 gCurRDPTaskCounter;
-extern u64 gRetraceCounter64;
-// s32 gRetraceCounter32 = 0;
-// s32 gCurRSPTaskCounter = 0;
-// s32 gCurRDPTaskCounter = 0;
-// UNUSED s32 D_800DE75C = 0;
-// u64 gRetraceCounter64 = 0;
+s32 gRetraceCounter32 = 0;
+s32 gCurRSPTaskCounter = 0;
+s32 gCurRDPTaskCounter = 0;
+UNUSED s32 D_800DE75C = 0;
+u64 gRetraceCounter64 = 0;
 
-// /*******************************/
+/*******************************/
 
-// /************ .rodata ************/
+/************ .rodata ************/
 
-// const char D_800E7800[] = "(Audio task)";
-// const char D_800E7810[] = "(Game task)";
-// const char D_800E781C[] = "(DI task)\n";
-// const char D_800E7828[] = "(DI benchmark test)\n";
-// const char D_800E7840[] = "(Unknown task type %d)\n";
-// const char D_800E7858[] = "\nRCP TASK INFO\n";
-// const char D_800E7868[] = "-------------\n";
-// const char D_800E7878[] = "\ttype\t\t= %u\n";
-// const char D_800E7888[] = "\tflags\t\t= %u\n";
-// const char D_800E7898[] = "\tucode_boot\t\t= %p\n";
-// const char D_800E78AC[] = "\tucode_boot_size\t\t= %u\n";
-// const char D_800E78C4[] = "\tucode\t\t= %p\n";
-// const char D_800E78D4[] = "\tucode_size\t\t= %u\n";
-// const char D_800E78E8[] = "\tucode_data\t\t= %p\n";
-// const char D_800E78FC[] = "\tucode_data_size\t\t= %u\n";
-// const char D_800E7914[] = "\toutput_buff\t\t= %p\n";
-// const char D_800E7928[] = "\toutput_buff_size\t\t= %u\n";
-// const char D_800E7944[] = "\tdata_ptr\t\t= %p\n";
-// const char D_800E7958[] = "\tdata_size\t\t= %u\n";
+const char D_800E7800[] = "(Audio task)";
+const char D_800E7810[] = "(Game task)";
+const char D_800E781C[] = "(DI task)\n";
+const char D_800E7828[] = "(DI benchmark test)\n";
+const char D_800E7840[] = "(Unknown task type %d)\n";
+const char D_800E7858[] = "\nRCP TASK INFO\n";
+const char D_800E7868[] = "-------------\n";
+const char D_800E7878[] = "\ttype\t\t= %u\n";
+const char D_800E7888[] = "\tflags\t\t= %u\n";
+const char D_800E7898[] = "\tucode_boot\t\t= %p\n";
+const char D_800E78AC[] = "\tucode_boot_size\t\t= %u\n";
+const char D_800E78C4[] = "\tucode\t\t= %p\n";
+const char D_800E78D4[] = "\tucode_size\t\t= %u\n";
+const char D_800E78E8[] = "\tucode_data\t\t= %p\n";
+const char D_800E78FC[] = "\tucode_data_size\t\t= %u\n";
+const char D_800E7914[] = "\toutput_buff\t\t= %p\n";
+const char D_800E7928[] = "\toutput_buff_size\t\t= %u\n";
+const char D_800E7944[] = "\tdata_ptr\t\t= %p\n";
+const char D_800E7958[] = "\tdata_size\t\t= %u\n";
 
-// /************ .bss ************/
+/************ .bss ************/
 
-extern s32 gCurRSPTaskIsSet;
-extern s32 gCurRDPTaskIsSet;
-extern OSTime gYieldTime;
-extern u32 gRSPAudTaskFlushTime;
-extern u32 gRSPAudTaskDoneTime;
-// s32 gCurRSPTaskIsSet;
-// s32 gCurRDPTaskIsSet;
-// OSTime gYieldTime;
-// u32 gRSPAudTaskFlushTime;
-// u32 gRSPAudTaskDoneTime;
-// UNUSED s32 D_80126128[18];
-// #endif
-
-//static 
-s32      __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp,
-                              s32 availRCP);
-
-
-// /*
-// #define SC_LOGGING 1
-// */
-
-
-// #ifdef SC_LOGGING
-// #define SC_LOG_LEN      32*1024
-// static OSLog    scLog;
-// static OSLog    *l = &scLog;
-// static u32      logArray[SC_LOG_LEN/sizeof(u32)];
+s32 gCurRSPTaskIsSet;
+s32 gCurRDPTaskIsSet;
+OSTime gYieldTime;
+u32 gRSPAudTaskFlushTime;
+u32 gRSPAudTaskDoneTime;
+UNUSED s32 D_80126128[18];
 #endif
 
-extern OSViMode D_800AA460_AB060; //PAL
-extern OSViMode D_800AA4B0_AB0B0; //MPAL
-extern OSViMode D_800AA500_AB100; //NTSC
+static s32      __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp,
+                             s32 availRCP);
+
+
+/*
+#define SC_LOGGING 1
+*/
+
+
+#ifdef SC_LOGGING
+#define SC_LOG_LEN      32*1024
+static OSLog    scLog;
+static OSLog    *l = &scLog;
+static u32      logArray[SC_LOG_LEN/sizeof(u32)];
+#endif
 
 /***********************************************************************
  * Scheduler API
@@ -185,18 +165,7 @@ void osCreateScheduler(OSSched *sc, void *stack, OSPri priority,
      * Set up video manager, listen for Video, RSP, and RDP interrupts
      */
     osCreateViManager(OS_PRIORITY_VIMGR);    
-    //osViSetMode(&osViModeTable[mode]);
-    switch (mode) {
-        case OS_VI_PAL_LPN1:
-            osViSetMode(&D_800AA460_AB060);
-            break;
-        case OS_VI_MPAL_LPN1:
-            osViSetMode(&D_800AA4B0_AB0B0);
-            break;
-        default:
-            osViSetMode(&D_800AA500_AB100);
-            break;
-    }
+    osViSetMode(&osViModeTable[mode]);
     osViBlack(TRUE);
 #ifdef RAREDIFFS
     osCreateMesgQueue(&sc->interruptQ, sc->intBuf, OS_SC_MAX_MESGS);
@@ -276,9 +245,9 @@ OSMesgQueue *osScGetInterruptQ(OSSched *sc) {
  * Official Name: osScGetAudioSPStats
 */
 UNUSED void scGetAudioTaskTimers(f32 *timer0, f32 *timer1, f32 *timer2) {
-    *timer0 = 0.0f;
-    *timer1 = 0.0f;
-    *timer2 = 0.0f;
+    *timer0 = gAudTaskTimer0;
+    *timer1 = gAudTaskTimer2;
+    *timer2 = gAudTaskTimer3;
 }
 #endif
 

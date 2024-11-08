@@ -264,19 +264,27 @@ segments:
       - [0x9DFB0, c, libultra/xlitob]
       - [0x9E250, c, libultra/xldtob]
       - [0x9ED10, c, libultra/ldiv]
-      - [0x9EEA0, bin] # - [0x9EEA0, hasm] - This seems to call a func func_840010E0 which breaks things.
-      - [0x9EFF0, bin]
-      #data start 0x800a0ef0
+      - [0x9EEA0, textbin, ucode_audio]
+      - [0xA06E0, textbin, ucode_boot]
+      - [0xA0860, textbin, ucode_f3ddkr_dram]
       - [0xA1AF0, data]
       - [0xA45E0, .data, controller]
       - [0xA45F0, data]
       - [0xA4A50, .data, memory]
       - [0xA4A60, data]
+      - [0xA4F00, data, sched]
+      - [0xA4F30, data]
       - [0xA8560, .data, rzip]
       - [0xA8570, data]
-      # - [0xA8A38, rodata]
+      - [0xAB550, rodata] # start of rodata
+      - [0xAE110, rodata, sched]
+      - [0xAE490, rodata]
+      - [0xB05E0, .rodata, hasm/inflate]
+      - [0xB06D0, .rodata, libultra/exceptasm]
+      - [0xB0720, rodata]
+      # B1370 - aspMainDataStart
       # #bss/rodata? start?
-      - [0xB22B0, bin]
+      # - { start: 0xFF990, type: databin, name: data_audio,       linker_section_order: .rodata }
       # - [0x1059E0, .bss, libultra/initialize]
       # - [0x105AD0, .bss, libultra/pimgr]
       # - [0xFC750, .bss, controller] #0x800FBB50 start - 0x800FBBD0 end
@@ -284,9 +292,22 @@ segments:
       # - [0xFF990, .bss, rcpFast3d]
       # - [0x105E20, .bss, rzip] #0x80105220 start - 0x80105228 end
       # - [0x105E30, .bss, subtitles]
-      # - { start: 0xB22B0, type: bss, vram: 0x800B16B0 }
+      # - { start: 0xB22B0, type: bss, vram: 0x800B16B0 }      
+      - { start: auto, type: bss, vram: 0x800B16B0, name: bss_start }
+      - { start: auto, type: .bss, vram: 0x800FBB50, name: controller }
+      - { start: auto, type: bss, vram: 0x800FBBD0, name: next_bss }
+      - { start: auto, type: .bss, vram: 0x800FE310, name: memory }
+      - { start: auto, type: bss, vram: 0x800FE880, name: next_bss2 }
+      - { start: auto, type: .bss, vram: 0x800FECF0, name: pi }
+      - { start: auto, type: bss, vram: 0x800FED90, name: next_bss3 }
+      - { start: auto, type: bss, vram: 0x800FF660, name: sched }
+      - { start: auto, type: bss, vram: 0x800FF6B0, name: next_bss4}
+      - { start: auto, type: .bss, vram: 0x80105220, name: rzip }
+      - { start: auto, type: bss, vram: 0x80105230, name: next_bss5 }
 
-  - type: bin
+
+  - name: assets
+    type: bin
     start: 0xB22B0
     follows_vram: main
   - [0x2000000]

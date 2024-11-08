@@ -11,9 +11,9 @@
 
 /* Handwritten function */
 glabel func_80000400_1000
-    /* 1000 80000400 3C08800B */  lui        $t0, %hi(D_800B16B0_B22B0)
+    /* 1000 80000400 3C08800B */  lui        $t0, %hi(main_BSS_START)
     /* 1004 80000404 3C090005 */  lui        $t1, (0x54DC0 >> 16)
-    /* 1008 80000408 250816B0 */  addiu      $t0, $t0, %lo(D_800B16B0_B22B0)
+    /* 1008 80000408 250816B0 */  addiu      $t0, $t0, %lo(main_BSS_START)
     /* 100C 8000040C 35294DC0 */  ori        $t1, $t1, (0x54DC0 & 0xFFFF)
   .L80000410_1010:
     /* 1010 80000410 2129FFF8 */  addi       $t1, $t1, -0x8 /* handwritten instruction */

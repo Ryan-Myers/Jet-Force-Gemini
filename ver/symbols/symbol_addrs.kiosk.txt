@@ -1429,6 +1429,7 @@ securitybuffer = 0x800A3B78;
 refractThisObject = 0x800A3B94;
 blurOn = 0x800A3B98;
 rngSeed = 0x800A3E44;
+gPrevRNGSeed = 0x800A3E48; // type:s32
 mmExtendedRam = 0x800A3E50;
 mmColourTagUnk1 = 0x800A3E54;
 mmColourTagUnk2 = 0x800A3E58;
@@ -1634,8 +1635,7 @@ refractDelay = 0x800FE2FC;
 refractWhichBuffer = 0x800FE300;
 
 
-gMemoryPools = 0x800FE310;
-D_800FE318_FEF18 = 0x800FE318;
+gMemoryPools = 0x800FE310; // size:0x40
 gNumberOfMemoryPools = 0x800FE350;
 gFreeQueue = 0x800FE358;
 gFreeQueueDelay = 0x800FE758;
@@ -1706,8 +1706,8 @@ frontJoyDxRepeat = 0x801000C0;
 frontendptrs = 0x801000D8;
 currentobjects = 0x80100460;
 partlists = 0x801015C0;
-D_80101F50_102B50 = 0x80101F50;
-D_80101F50_102B52 = 0x80101F52;
+D_80101F50_B5470 = 0x80101F50;
+D_80101F52_B5472 = 0x80101F52;
 diCpuOSThread = 0x80102F90;
 diCpuThreadStack = 0x80102FC0;
 cpuTraceTrackBufStatus = 0x80103230;
@@ -1750,3 +1750,27 @@ animlight = 0x801053D8;
 Table = 0x80105B20;
 Player = 0x80105B28;
 gMainMemoryPool = 0x80106470;
+
+// xprintf.c 
+_spaces = 0x800AA8D0; // type:asciz
+_zeroes = 0x800AA8F4; // type:asciz
+
+ldigs = 0x800AA920; // type:asciz
+udigs = 0x800AA934; // type:asciz
+
+__osHwIntTable = 0x800A7E40;
+__osIntOffTable = 0x800AFAD0;
+__osIntTable = 0x800AFAF0; // size:0x24
+gSineTable = 0x800A7F50; // type:s16
+gArcTanTable = 0x800A9758; // type:s16
+
+gzip_border = 0x800AF9E0; // type:s8
+gzip_cplens = 0x800AF9F4; // type:s16
+gzip_cplext = 0x800AFA32; // type:s8
+gzip_cpdist = 0x800AFA52; // type:s16
+gzip_cpdext = 0x800AFA8E; // type:s16
+gzip_mask_bits = 0x800AFAAC; // type:s16
+
+aspMainTextStart = 0x8009E2A0;
+rspF3DDKRBootStart = 0x8009FAE0;
+rspF3DDKRDramStart = 0x8009FC60;

@@ -38,7 +38,7 @@ UNUSED void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
 
     if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
         controllerNum = joyGetController(controllerIndex);
-        rumblePak = &D_800FEC68_FF868[controllerNum];
+        rumblePak = &D_800FEC68_B2698[controllerNum];
         if (rumblePak->state.upper != 2) {
             rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
             rumblePak->unk2 = ((arg1 * arg1) * D_800AD4FC_AE0FC);
@@ -56,7 +56,7 @@ void rumbleStop(s32 controllerIndex) {
 
     if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
         controllerNum = joyGetController(controllerIndex);
-        rumblePak = &D_800FEC68_FF868[controllerNum];
+        rumblePak = &D_800FEC68_B2698[controllerNum];
         temp = rumblePak->state.upper;
         if ((temp != 0) && (temp != flag)) {
             rumblePak->state.flag = flag;
@@ -71,11 +71,11 @@ void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
 
     if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
         controllerNum = joyGetController(controllerIndex);
-        rumblePak = &D_800FEC6A_FF86A[controllerNum];
+        rumblePak = &D_800FEC6A_B269A[controllerNum];
         if (arg1 != 0) {
             rumblePak->state.half = ((arg1 * arg1) * D_800AD500_AE100);
         }
-        rumblePak = &D_800FEC68_FF868[controllerNum];
+        rumblePak = &D_800FEC68_B2698[controllerNum];
         if (rumblePak->state.upper != 2 && arg2 != 0.0f) {
             rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
             rumblePak->rumbleTime = (arg2 * 60.0f);
@@ -90,7 +90,7 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
 
     if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
         controllerNum = joyGetController(controllerIndex);
-        rumblePak = &D_800FEC68_FF868[controllerNum];
+        rumblePak = &D_800FEC68_B2698[controllerNum];
         if (arg1 != 0) {
             arg1 = ((arg1 * arg1) * D_800AD504_AE104);
             if (rumblePak->unk2 < arg1) {
@@ -122,7 +122,7 @@ void rumbleUpdate(void) {
 s32 nosMotorStart(OSPfs *);
 s32 nosMotorStop(OSPfs *);
 extern f32 D_800AD508_AE108;
-extern RumbleStruct D_800FEC68_FF868[];
+extern RumbleStruct D_800FEC68_B2698[];
 
 void rumbleTick(s32 updateRate) {
     RumbleStruct *rumble;
@@ -134,7 +134,7 @@ void rumbleTick(s32 updateRate) {
     if (D_800A3ECC_A4ACC != 0) {
         if (D_800A3EC4_A4AC4 != 0) {
             osPfsIsPlug(sControllerMesgQueue, &pfsBitPattern);
-            for (i = 0, controllerToCheck = 1, rumble = D_800FEC68_FF868; i < MAXCONTROLLERS; i++, controllerToCheck <<= 1, rumble++) {
+            for (i = 0, controllerToCheck = 1, rumble = D_800FEC68_B2698; i < MAXCONTROLLERS; i++, controllerToCheck <<= 1, rumble++) {
                 if (pfsBitPattern & controllerToCheck) {
                     if (nosMotorInit(sControllerMesgQueue, &pfs[i], i) != 0) {
                         rumble->state.state &= ~4;
@@ -147,7 +147,7 @@ void rumbleTick(s32 updateRate) {
             }
             D_800A3EC4_A4AC4 = 0;
         }
-        for (i = 0, controllerToCheck = 1, rumble = D_800FEC68_FF868; i < MAXCONTROLLERS; i++, controllerToCheck <<= 1, rumble++) {
+        for (i = 0, controllerToCheck = 1, rumble = D_800FEC68_B2698; i < MAXCONTROLLERS; i++, controllerToCheck <<= 1, rumble++) {
             if (rumble->state.upper & 0x400) {
                 pfsStatus = 0;
                 switch (rumble->state.upper) {

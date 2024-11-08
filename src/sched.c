@@ -38,7 +38,7 @@ static void     __scAppendList(OSSched *s, OSScTask *t);
 OSScTask        *__scTaskReady(OSScTask *t);
 static s32      __scTaskComplete(OSSched *s,OSScTask *t);
 static void     __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
-static void	__scYield(OSSched *s);
+void	__scYield(OSSched *s);
 
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
 void func_80050670_51270(OSSched *sc);
@@ -47,7 +47,8 @@ extern OSViMode D_800AA460_AB060; //PAL
 extern OSViMode D_800AA4B0_AB0B0; //MPAL
 extern OSViMode D_800AA500_AB100; //NTSC
 
-OSTime D_800FF668_100268; //gYieldTime
+extern OSTime D_800FF668_B2B88;
+//OSTime D_800FF668_B2B88; //gYieldTime
 
 void osCreateScheduler(OSSched *sc, void *stack, OSPri priority, u8 mode, u8 numFields) {
     sc->curRSPTask      = 0;
@@ -754,13 +755,17 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
     }
 }
 
+#ifdef NON_MATCHING
 void __scYield(OSSched *sc) {
     if (sc->curRSPTask->list.t.type == M_GFXTASK) {
         sc->curRSPTask->state |= OS_SC_YIELD;
-        D_800FF668_100268 = osGetTime();
+        D_800FF668_B2B88 = osGetTime();
         osSpTaskYield();
     } 
 }
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/__scYield.s")
+#endif
 
 #ifdef NON_MATCHING
 //Needs RODATA migrated for the jump table to match
