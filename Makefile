@@ -230,7 +230,7 @@ no_verify: $(TARGET).z64
 extract:
 	$(SPLAT) ver/splat/$(BASENAME).$(VERSION).yaml
 
-extractall: splat tools
+extractall: extract tools
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).kiosk.yaml
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).us.yaml
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).pal.yaml
@@ -251,6 +251,10 @@ cleanall:
 	rm -rf build_us
 	rm -rf build_pal
 	rm -rf build_jpn
+	rm -rf asm
+	rm -rf asm_us
+	rm -rf asm_pal
+	rm -rf asm_jpn
 
 distclean: clean
 	rm -rf $(ASM_DIRS)
@@ -259,8 +263,7 @@ distclean: clean
 	rm -f $(SYMBOLS_DIR)/*auto.$(VERSION).txt
 	rm -f $(LD_SCRIPT)
 
-distcleanall: clean
-	rm -rf $(ASM_DIRS)
+distcleanall: clean cleanall
 	rm -rf assets
 	rm -f $(SYMBOLS_DIR)/*auto.kiosk.txt
 	rm -f $(SYMBOLS_DIR)/*auto.us.txt
