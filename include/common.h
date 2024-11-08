@@ -4,6 +4,7 @@
 #include "macros.h"
 #include "functions.h"
 #include "f3ddkr.h"
+#include "PRinternal/viint.h"
 
 // Animation related?
 #define COLOUR_TAG_RED 0xFF0000FF

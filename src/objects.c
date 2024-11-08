@@ -14,7 +14,7 @@
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objFreeObjdef.s")
 
 s32 objTvTimes(s32 timer) {
-    if (osTvType != TV_TYPE_PAL || timer < 0) {
+    if (osTvType != OS_TV_TYPE_PAL || timer < 0) {
         return timer;
     } else {
         return (timer * 5) / 6;

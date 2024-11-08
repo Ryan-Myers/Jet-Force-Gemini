@@ -4,7 +4,6 @@
 #define RAM_END 0x80400000
 #define EXTENDED_RAM_END 0x80600000
 #define _ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
-extern MemoryPoolSlot *gMainMemoryPool; //Defined somewhere else.
 
 u8 mmExtendedRam = FALSE;
 s32 mmColourTagUnk1 = 0xFFFFFFFF;

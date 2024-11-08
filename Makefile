@@ -2,7 +2,7 @@ BASENAME  = jfg
 VERSION  := kiosk
 NON_MATCHING ?= 0
 
-LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=4 -DBUILD_VERSION_STRING=\"2.0G\" -DRAREDIFFS
+LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=4 -DBUILD_VERSION_STRING=\"2.0G\" -DRAREDIFFS -DJFGDIFFS
 
 # Whether to hide commands or not
 VERBOSE ?= 0
@@ -41,9 +41,10 @@ BIN_DIRS  = assets
 ifeq ($(VERSION),kiosk)
 BUILD_DIR = build
 SRC_DIR   = src
-LIBULTRA_DIR = $(SRC_DIR)/libultra
-ASM_DIRS  = asm asm/data asm/nonmatchings asm/libultra #For libultra handwritten files
-HASM_DIRS = $(SRC_DIR)/hasm $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc
+OLD_LIBULTRA_DIR = $(SRC_DIR)/libultra
+LIBULTRA_DIR = libultra
+ASM_DIRS  = asm asm/data asm/nonmatchings
+HASM_DIRS = $(SRC_DIR)/hasm $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc $(OLD_LIBULTRA_DIR)
 LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src $(LIBULTRA_DIR)/src/audio $(LIBULTRA_DIR)/src/audio/mips1 
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/sc
@@ -51,7 +52,7 @@ else
 BUILD_DIR = build_$(VERSION)
 SRC_DIR   = src_$(VERSION)
 LIBULTRA_DIR = $(SRC_DIR)/libultra
-ASM_DIRS  = asm_$(VERSION) asm_$(VERSION)/data asm_$(VERSION)/libultra #For libultra handwritten files
+ASM_DIRS  = asm_$(VERSION) asm_$(VERSION)/data asm_$(VERSION)/libultra
 HASM_DIRS = $(SRC_DIR)/hasm $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc
 LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src $(LIBULTRA_DIR)/src/audio $(LIBULTRA_DIR)/src/audio/mips1 
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io
@@ -59,13 +60,10 @@ LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_
 endif
 
 # Files requiring pre/post-processing
-GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) </dev/null 2>/dev/null)
+GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) $(LIBULTRA_DIR) </dev/null 2>/dev/null)
 GLOBAL_ASM_O_FILES := $(foreach file,$(GLOBAL_ASM_C_FILES),$(BUILD_DIR)/$(file).o)
 
-LIBULTRA_SRC_DIRS = $(SRC_DIR)/libultra
-
-DEFINE_SRC_DIRS  = $(SRC_DIR) $(SRC_DIR)/core $(LIBULTRA_SRC_DIRS)
-SRC_DIRS = $(DEFINE_SRC_DIRS)
+SRC_DIRS = $(SRC_DIR) $(LIBULTRA_SRC_DIRS) $(OLD_LIBULTRA_DIR)
 SYMBOLS_DIR = ver/symbols
 
 TOOLS_DIR = tools
@@ -124,7 +122,7 @@ OPT_FLAGS      = -O2
 MIPSISET       = -mips1
 
 DEFINES := _FINALROM NDEBUG TARGET_N64 F3DDKR_GBI
-DEFINES += -DVERSION_$(VERSION)
+DEFINES += VERSION_$(VERSION)
 
 VERIFY = verify
 
@@ -139,16 +137,19 @@ endif
 C_DEFINES := $(foreach d,$(DEFINES),-D$(d)) $(LIBULTRA_VERSION_DEFINE) -D_MIPS_SZLONG=32
 ASM_DEFINES = --defsym _MIPS_SIM=1 --defsym mips=1
 
-INCLUDE_CFLAGS = -I . -I include/libc  -I include/PR -I include/sys -I include -I assets -I $(SRC_DIR)/os
-
-CFLAGS := -Wab,-r4300_mul -non_shared -G 0 -Xcpluscomm -fullwarn -nostdinc -G 0
-CFLAGS += $(DEFINES)
-# ignore compiler warnings about anonymous structs
-CFLAGS += -woff 649,838
-CFLAGS += $(INCLUDE_CFLAGS)
+INCLUDE_CFLAGS  = -I . -I include -I include/libc  -I include/PR -I include/sys -I $(BIN_DIRS) -I $(SRC_DIR) -I $(LIBULTRA_DIR)
+INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/gu -I $(LIBULTRA_DIR)/src/libc -I $(LIBULTRA_DIR)/src/io  -I $(LIBULTRA_DIR)/src/sc 
+INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/audio -I $(LIBULTRA_DIR)/src/os
 
 ASFLAGS        = -march=vr4300 -32 -G0 $(ASM_DEFINES) $(INCLUDE_CFLAGS)
 OBJCOPYFLAGS   = -O binary
+
+#IDO Warnings to Ignore. These are coding style warnings we don't follow
+CC_WARNINGS := -fullwarn -Xfullwarn -woff 838,649,624
+
+CFLAGS := -G 0 -non_shared -verbose -Xcpluscomm -nostdinc -Wab,-r4300_mul
+CFLAGS += $(C_DEFINES)
+CFLAGS += $(INCLUDE_CFLAGS)
 
 
 CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unknown-pragmas -Wunused-function -Wno-unused-parameter -Werror-implicit-function-declaration
@@ -333,9 +334,6 @@ $(TARGET).bin: $(TARGET).elf
 $(TARGET).z64: $(TARGET).bin
 	$(call print,CopyRom:,$<,$@)
 	$(V)$(TOOLS_DIR)/CopyRom.py $< $@
-
-baserom.$(VERSION).z64:
-	$(error Place the Jet Force Gemini $(VERSION) ROM, named '$@', in the root of this repo and try again.)
 
 ### Settings
 .SECONDARY:

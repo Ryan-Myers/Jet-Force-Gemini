@@ -56,7 +56,7 @@ void sprintfSetSpacingCodes(s32 arg0) {
     D_800A6D40_A7940 = arg0;
 }
 
-void sprintf(char *s, const char *format, ...) {
+UNUSED int sprintf(char *s, const char *format, ...) {
     va_list args;
     va_start(args, format);
     vsprintf(s, format, args);
@@ -198,7 +198,7 @@ s32 func_80066174_66D74(Gfx **dList, s32 asciiVal) {
     fontCharU = D_800A6D48_A7948[D_80101F6C_102B6C][asciiVal].u;
     fontCharWidth = (D_800A6D48_A7948[D_80101F6C_102B6C][asciiVal].v - fontCharU) + 1;
     if (D_80101F58_102B58) {
-        gDPSetCombineMode((*dList)++, DKR_CC_UNK13, DKR_CC_UNK13);
+        gDPSetCombineMode((*dList)++, DKR_CC_UNK14, DKR_CC_UNK14);
         gSPTextureRectangle((*dList)++, (D_80101F4C_102B4C << 2), (D_80101F4E_102B4E << 2), ((D_80101F4C_102B4C + fontCharWidth) << 2), ((D_80101F4E_102B4E + 10) << 2), 0, (fontCharU << 5), 0, 1024, 1024);
     }
     return fontCharWidth;

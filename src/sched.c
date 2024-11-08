@@ -1,5 +1,5 @@
 #include "common.h"
-#include "viint.h"
+#include "PRinternal/viint.h"
 
 /*
  * private typedefs and defines
@@ -10,7 +10,36 @@
 #define RDP_DONE_MSG    668
 #define PRE_NMI_MSG     669
 
-static void __scMain(void *arg);
+/*
+ * OSScTask state
+ */
+#define OS_SC_DP                0x0001  /* set if still needs dp        */
+#define OS_SC_SP                0x0002  /* set if still needs sp        */
+#define OS_SC_YIELD             0x0010  /* set if yield requested       */
+#define OS_SC_YIELDED           0x0020  /* set if yield completed       */
+
+/*
+ * OSScTask->flags type identifier
+ */
+#define OS_SC_XBUS      (OS_SC_SP | OS_SC_DP)
+#define OS_SC_DRAM      (OS_SC_SP | OS_SC_DP | OS_SC_DRAM_DLIST)
+#define OS_SC_DP_XBUS   (OS_SC_SP)
+#define OS_SC_DP_DRAM   (OS_SC_SP | OS_SC_DRAM_DLIST)
+#define OS_SC_SP_XBUS   (OS_SC_DP)
+#define OS_SC_SP_DRAM   (OS_SC_DP | OS_SC_DRAM_DLIST)
+
+
+static void     __scMain(void *arg);
+void     __scHandleRetrace(OSSched *s);
+static void     __scHandleRSP(OSSched *s);
+static void     __scHandleRDP(OSSched *s);
+
+static void     __scAppendList(OSSched *s, OSScTask *t);
+OSScTask        *__scTaskReady(OSScTask *t);
+static s32      __scTaskComplete(OSSched *s,OSScTask *t);
+static void     __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
+static void	__scYield(OSSched *s);
+
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
 void func_80050670_51270(OSSched *sc);
 

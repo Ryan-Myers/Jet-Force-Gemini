@@ -24,7 +24,6 @@ void diCpuTraceInit(void);
 f32 Cosf(s32);
 void camPopModelMtx(Gfx **dlist);
 void camRestoreModelMtx(Gfx **dlist);
-typedef s32 MatrixS[4][4];
 void camPushModelMtx(Gfx **dList, MatrixS **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
 
 MemoryPoolSlot *new_memory_pool(MemoryPoolSlot *, s32, s32); // new_memory_pool
@@ -93,7 +92,6 @@ void rzipInit(void);
 void viInit(OSSched *sc);
 
 s32 vsprintf(char *s, const char *format, ...);
-void sprintf(char *s, const char *format, ...);
 s32 func_80066174_66D74(Gfx **dList, s32 asciiVal);
 void func_800665C8_671C8(void);
 void func_80066658_67258(void);
@@ -164,7 +162,6 @@ s32 diPrintf(const char *format, ...);
 void diPrintfAll(Gfx **dList);
 void diPrintfSetBG(u8 red, u8 green, u8 blue, u8 alpha);
 void diPrintfSetXY(u16 x, u16 y);
-s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
 s32 amAudioMgrGetNextFrameCount(void);
 void func_80050670_51270(OSSched *sc);
 char *osScGetTaskType(s32 taskID);

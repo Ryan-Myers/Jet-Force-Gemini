@@ -431,7 +431,7 @@ SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char *
 
     if (frontGetLanguage() == LANGUAGE_JAPANESE) {
         gameCode = JPN_GAME_CODE;
-    } else if (osTvType == TV_TYPE_PAL) {
+    } else if (osTvType == OS_TV_TYPE_PAL) {
         gameCode = PAL_GAME_CODE;
     } else {
         gameCode = NTSC_GAME_CODE;
@@ -609,7 +609,7 @@ SIDeviceStatus packOpenFile(s32 controllerIndex, char *fileName, char *fileExt, 
 
     if (frontGetLanguage() == LANGUAGE_JAPANESE) {
         gameCode = JPN_GAME_CODE;
-    } else if (osTvType == TV_TYPE_PAL) {
+    } else if (osTvType == OS_TV_TYPE_PAL) {
         gameCode = PAL_GAME_CODE;
     } else {
         gameCode = NTSC_GAME_CODE;
@@ -685,7 +685,7 @@ SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName
 
     if (frontGetLanguage() == LANGUAGE_JAPANESE) {
         game_code = JPN_GAME_CODE;
-    } else if (osTvType == TV_TYPE_PAL) {
+    } else if (osTvType == OS_TV_TYPE_PAL) {
         game_code = PAL_GAME_CODE;
     } else {
         game_code = NTSC_GAME_CODE;

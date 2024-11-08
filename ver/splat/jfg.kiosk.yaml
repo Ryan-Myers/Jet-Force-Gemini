@@ -93,7 +93,7 @@ segments:
       - [0x73820, c, rzip]
       - [0x73F70, hasm, hasm/inflate]
       - [0x749F0, c, subtitles]
-      - [0x751F0, hasm, libultra/__osLeoInterrupt]
+      - [0x751F0, c, ../libultra/src/io/leointerrupt]
       - [0x75200, hasm, hasm/gen_anim_data]
       - [0x761D0, hasm, hasm/conv_mult_matrix]
       - [0x763A0, hasm, libultra/exceptasm]

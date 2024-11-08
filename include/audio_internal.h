@@ -27,7 +27,8 @@ enum {
     AL_FILTER_START_VOICE_ALT,
     AL_FILTER_START_VOICE,
     AL_FILTER_STOP_VOICE,
-    AL_FILTER_SET_FXAMT
+    AL_FILTER_SET_FXAMT,
+    AL_FILTER_UNK11
 };
 
 #define AL_MAX_RSP_SAMPLES      160
@@ -195,7 +196,11 @@ typedef struct {
     ALSetFXParam        paramHdl;
 } ALFx;
 
+#ifdef RAREDIFFS
 void    alFxNew(ALFx *r, ALSynConfig *c, s16 bus, ALHeap *hp);
+#else
+void    alFxNew(ALFx *r, ALSynConfig *c, ALHeap *hp);
+#endif
 Acmd    *alFxPull(void *f, s16 *outp, s32 out, s32 sampleOffset, Acmd *p);
 s32     alFxParam(void *filter, s32 paramID, void *param);
 s32     alFxParamHdl(void *filter, s32 paramID, void *param);
@@ -296,7 +301,9 @@ typedef struct PVoice_s {
     ALResampler         resampler;
     ALEnvMixer		envmixer;
     s32                 offset;
+#ifdef RAREDIFFS
     u8                  unkDC;
+#endif
 } PVoice;
 
 /*
@@ -304,10 +311,10 @@ typedef struct PVoice_s {
  */
 ALParam         *__allocParam(void);
 void            __freeParam(ALParam *param);
-void            __freePVoices(ALSynth *drvr, PVoice *pvoice);
+void            _freePVoice(ALSynth *drvr, PVoice *pvoice);
 void            _collectPVoices(ALSynth *drvr);
 
-s32             __timeToSamples(ALSynth *ALSynth, s32 micros);
+s32             _timeToSamples(ALSynth *ALSynth, s32 micros);
 ALMicroTime     _samplesToTime(ALSynth *synth, s32 samples);
 
 void            _init_lpfilter(ALLowPass *lp);

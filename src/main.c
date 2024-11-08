@@ -3,7 +3,7 @@
 
 void mainThread(UNUSED void *arg0) {
     //Anti Piracy - This will zero out all RAM if this is a PAL console.
-    if (osTvType == TV_TYPE_PAL) {
+    if (osTvType == OS_TV_TYPE_PAL) {
         s32 i = 0;
         while(1) { ((vu32 *)(RAM_END))[--i] = (u32)0; }
     }
@@ -49,11 +49,11 @@ void mainInitGame(void) {
     rzipInit();
     D_800FE26C_FEE6C = 0;
 
-    if (osTvType == TV_TYPE_PAL) {
+    if (osTvType == OS_TV_TYPE_PAL) {
         viMode = OS_VI_PAL_LPN1;
-    } else if (osTvType == TV_TYPE_NTSC) {
+    } else if (osTvType == OS_TV_TYPE_NTSC) {
         viMode = OS_VI_NTSC_LPN1;
-    } else if (osTvType == TV_TYPE_MPAL) {
+    } else if (osTvType == OS_TV_TYPE_MPAL) {
         viMode = OS_VI_MPAL_LPN1;
     }
     osCreateScheduler(&sc, &Time, 13, viMode, 1);
