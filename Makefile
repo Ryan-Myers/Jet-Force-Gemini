@@ -1,41 +1,89 @@
 BASENAME  = jfg
 VERSION  := kiosk
+NON_MATCHING ?= 0
+
+LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=4 -DBUILD_VERSION_STRING=\"2.0G\" -DRAREDIFFS
+
+# Whether to hide commands or not
+VERBOSE ?= 0
+ifeq ($(VERBOSE),0)
+  V := @
+endif
+
+PRINT = printf
+GREP  = grep -rl
 
 # Colors
 
+# Whether to colorize build messages
+COLOR ?= 1
+GCC_COLOR := -fno-diagnostics-color
+
+ifeq ($(COLOR),1)
 NO_COL  := \033[0m
 RED     := \033[0;31m
-RED2    := \033[1;31m
 GREEN   := \033[0;32m
 YELLOW  := \033[0;33m
 BLUE    := \033[0;34m
 PINK    := \033[0;35m
 CYAN    := \033[0;36m
+COLORIZE := -c
+GCC_COLOR :=
+endif
+
+# Common build print status function
+define print
+  @$(PRINT) "$(GREEN)$(1) $(YELLOW)$(2)$(GREEN) -> $(BLUE)$(3)$(NO_COL)\n"
+endef
 
 # Directories
-
 BIN_DIRS  = assets
-
 ifeq ($(VERSION),kiosk)
 BUILD_DIR = build
 SRC_DIR   = src
-ASM_DIRS  = asm asm/data asm/libultra #For libultra handwritten files
+LIBULTRA_DIR = $(SRC_DIR)/libultra
+ASM_DIRS  = asm asm/data asm/nonmatchings asm/libultra #For libultra handwritten files
+HASM_DIRS = $(SRC_DIR)/hasm $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc
+LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src $(LIBULTRA_DIR)/src/audio $(LIBULTRA_DIR)/src/audio/mips1 
+LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io
+LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/sc
 else
 BUILD_DIR = build_$(VERSION)
 SRC_DIR   = src_$(VERSION)
+LIBULTRA_DIR = $(SRC_DIR)/libultra
 ASM_DIRS  = asm_$(VERSION) asm_$(VERSION)/data asm_$(VERSION)/libultra #For libultra handwritten files
+HASM_DIRS = $(SRC_DIR)/hasm $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc
+LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src $(LIBULTRA_DIR)/src/audio $(LIBULTRA_DIR)/src/audio/mips1 
+LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io
+LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/sc
 endif
+
+# Files requiring pre/post-processing
+GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) </dev/null 2>/dev/null)
+GLOBAL_ASM_O_FILES := $(foreach file,$(GLOBAL_ASM_C_FILES),$(BUILD_DIR)/$(file).o)
 
 LIBULTRA_SRC_DIRS = $(SRC_DIR)/libultra
 
 DEFINE_SRC_DIRS  = $(SRC_DIR) $(SRC_DIR)/core $(LIBULTRA_SRC_DIRS)
 SRC_DIRS = $(DEFINE_SRC_DIRS)
+SYMBOLS_DIR = ver/symbols
 
 TOOLS_DIR = tools
 
+UNAME_S := $(shell uname -s)
+ifeq ($(OS),Windows_NT)
+	$(error Native Windows is currently unsupported for building this repository, use WSL instead c:)
+else ifeq ($(UNAME_S),Linux)
+	DETECTED_OS := linux
+else ifeq ($(UNAME_S),Darwin)
+	DETECTED_OS := macos
+endif
+
+RECOMP_DIR := $(TOOLS_DIR)/ido-recomp/$(DETECTED_OS)
+
 # Files
 
-S_FILES         = $(foreach dir,$(ASM_DIRS),$(wildcard $(dir)/*.s))
+S_FILES         = $(foreach dir,$(ASM_DIRS) $(HASM_DIRS),$(wildcard $(dir)/*.s))
 C_FILES         = $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
 BIN_FILES       = $(foreach dir,$(BIN_DIRS),$(wildcard $(dir)/*.bin))
 
@@ -60,46 +108,38 @@ AS       = $(CROSS)as
 CPP      = cpp
 LD       = $(CROSS)ld
 OBJCOPY  = $(CROSS)objcopy
-PYTHON   = python3
+VENV     = .venv
+PYTHON   = $(VENV)/bin/python3
 GCC      = gcc
 
 XGCC     = mips64-elf-gcc
 
-GREP     = grep -rl
-
 #Options
-CC       = $(TOOLS_DIR)/ido-static-recomp/build/5.3/out/cc
-SPLAT    = $(TOOLS_DIR)/splat/split.py
-CRC      = @tools/n64crc $(BUILD_DIR)/$(BASENAME).$(VERSION).z64
+CC       = $(RECOMP_DIR)/cc
+SPLAT    ?= $(PYTHON) -m splat split
+CRC      = $(TOOLS_DIR)/n64crc $(BUILD_DIR)/$(BASENAME).$(VERSION).z64 $(COLORIZE)
 
 OPT_FLAGS      = -O2
-LOOP_UNROLL    =
 
-MIPSISET       = -mips1 -32
+MIPSISET       = -mips1
 
-INCLUDE_CFLAGS = -I . -I include/libc  -I include/PR -I include/sys -I include -I assets -I $(SRC_DIR)/os 
-
-ASFLAGS        = -EB -mtune=vr4300 -march=vr4300 -mabi=32 -I include
-OBJCOPYFLAGS   = -O binary
-
-# Files requiring pre/post-processing
-GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) </dev/null 2>/dev/null)
-GLOBAL_ASM_O_FILES := $(foreach file,$(GLOBAL_ASM_C_FILES),$(BUILD_DIR)/$(file).o)
-
-
-DEFINES := -D_LANGUAGE_C -D_FINALROM -DWIN32 -DNDEBUG -DTARGET_N64 -D__sgi
-
-
+DEFINES := _FINALROM NDEBUG TARGET_N64 F3DDKR_GBI
 DEFINES += -DVERSION_$(VERSION)
 
 VERIFY = verify
 
-#Soon
-#ifeq ($(NON_MATCHING),1)
-#DEFINES += -DNON_MATCHING
-#VERIFY = no_verify
-#PROGRESS_NONMATCHING = --non-matching
-#endif
+ifeq ($(NON_MATCHING),1)
+	DEFINES += NON_MATCHING
+	DEFINES += AVOID_UB
+	VERIFY = no_verify
+else
+	DEFINES += ANTI_TAMPER
+endif
+
+C_DEFINES := $(foreach d,$(DEFINES),-D$(d)) $(LIBULTRA_VERSION_DEFINE) -D_MIPS_SZLONG=32
+ASM_DEFINES = --defsym _MIPS_SIM=1 --defsym mips=1
+
+INCLUDE_CFLAGS = -I . -I include/libc  -I include/PR -I include/sys -I include -I assets -I $(SRC_DIR)/os
 
 CFLAGS := -Wab,-r4300_mul -non_shared -G 0 -Xcpluscomm -fullwarn -nostdinc -G 0
 CFLAGS += $(DEFINES)
@@ -107,36 +147,57 @@ CFLAGS += $(DEFINES)
 CFLAGS += -woff 649,838
 CFLAGS += $(INCLUDE_CFLAGS)
 
-CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unknown-pragmas -Wunused-function -Wno-unused-parameter -Wno-unused-variable -Wno-missing-braces -Wno-int-conversion
-CC_CHECK := $(GCC) -fsyntax-only -fno-builtin -funsigned-char -std=gnu90 -m32 $(CHECK_WARNINGS) $(INCLUDE_CFLAGS) $(DEFINES)
+ASFLAGS        = -march=vr4300 -32 -G0 $(ASM_DEFINES) $(INCLUDE_CFLAGS)
+OBJCOPYFLAGS   = -O binary
 
-GCC_FLAGS := $(INCLUDE_CFLAGS) $(DEFINES)
-GCC_FLAGS += -G 0 -mno-shared -march=vr4300 -mfix4300 -mabi=32 -mhard-float
-GCC_FLAGS += -mdivide-breaks -fno-stack-protector -fno-common -fno-zero-initialized-in-bss -fno-PIC -mno-abicalls -fno-strict-aliasing -fno-inline-functions -ffreestanding -fwrapv
-GCC_FLAGS += -Wall -Wextra -Wno-missing-braces
+
+CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unknown-pragmas -Wunused-function -Wno-unused-parameter -Werror-implicit-function-declaration
+CHECK_WARNINGS += -Werror-implicit-function-declaration -Wno-unused-variable -Wno-missing-braces -Wno-int-conversion -Wno-main
+CHECK_WARNINGS += -Wno-builtin-declaration-mismatch -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast -Wno-switch
+CC_CHECK := $(GCC) -fsyntax-only -fno-builtin -funsigned-char -std=gnu90 -m32 -D_LANGUAGE_C $(CHECK_WARNINGS) $(INCLUDE_CFLAGS) $(C_DEFINES) $(GCC_COLOR)
 
 TARGET     = $(BUILD_DIR)/$(BASENAME).$(VERSION)
-LD_SCRIPT  = $(BASENAME).$(VERSION).ld
+LD_SCRIPT  = ver/$(BASENAME).$(VERSION).ld
 
-LD_FLAGS   = -T $(LD_SCRIPT) -T undefined_funcs_auto.$(VERSION).txt  -T undefined_syms_auto.$(VERSION).txt -T libultra_undefined_syms.$(VERSION).txt
-LD_FLAGS  += -Map $(TARGET).map --no-check-sections
-
-ifeq ($(VERSION),kiosk)
-LD_FLAGS_EXTRA  =
-LD_FLAGS_EXTRA += $(foreach sym,$(UNDEFINED_SYMS),-u $(sym))
-else
-LD_FLAGS_EXTRA  =
-LD_FLAGS_EXTRA += $(foreach sym,$(UNDEFINED_SYMS),-u $(sym))
-endif
+LD_FLAGS   = -T $(LD_SCRIPT) -T $(SYMBOLS_DIR)/undefined_funcs_auto.$(VERSION).txt  -T $(SYMBOLS_DIR)/undefined_syms_auto.$(VERSION).txt -T $(SYMBOLS_DIR)/libultra_undefined_syms.$(VERSION).txt
+LD_FLAGS  += -Map $(TARGET).map
+LD_FLAGS_EXTRA  = $(foreach sym,$(UNDEFINED_SYMS),-u $(sym))
 
 ASM_PROCESSOR_DIR := $(TOOLS_DIR)/asm-processor
-ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/asm_processor.py
+ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 
 ### Optimisation Overrides
-# $(BUILD_DIR)/$(SRC_DIR)/os/%.c.o: OPT_FLAGS := -O1
-# $(BUILD_DIR)/$(SRC_DIR)/os/audio/%.c.o: OPT_FLAGS := -O2
-# $(BUILD_DIR)/$(SRC_DIR)/os/libc/%.c.o: OPT_FLAGS := -O3
-# $(BUILD_DIR)/$(SRC_DIR)/os/gu/%.c.o: OPT_FLAGS := -O3
+####################### LIBULTRA #########################
+
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: OPT_FLAGS := -O2
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/%.c.o: OPT_FLAGS := -O3
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/mips1/%.c.o: OPT_FLAGS := -O2
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/%.c.o: OPT_FLAGS := -O1
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: OPT_FLAGS := -O1
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: OPT_FLAGS := -O2
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: OPT_FLAGS := -O2
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: OPT_FLAGS := -O2
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/xprintf.c.o : OPT_FLAGS := -O3
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/env.c.o: OPT_FLAGS := -g
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: OPT_FLAGS := -O1
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: MIPSISET := -mips3 -32
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ll.c.o: OPT_FLAGS := -O1
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ll.c.o: MIPSISET := -mips3 -32
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ldiv.c.o: OPT_FLAGS := -O3
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ldiv.c.o: MIPSISET := -mips2
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/xldtob.c.o: OPT_FLAGS := -O3
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/xldtob.c.o: MIPSISET := -mips2
+
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: MIPSISET := -mips2
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/mips1/%.c.o: MIPSISET := -mips1
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: MIPSISET := -mips1
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/sc/sched.c.o: MIPSISET := -mips1
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: MIPSISET := -mips1
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/env.c.o: MIPSISET := -mips1
+
+#Ignore warnings for libultra files
+$(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: CC_WARNINGS := -w
+$(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: CC_CHECK := :
 
 ### Targets
 
@@ -145,33 +206,42 @@ default: all
 all: $(VERIFY)
 
 ldflags:
-	@printf "[$(PINK) LDFLAGS $(NO_COL)]: $(LD_FLAGS)\n[$(PINK) EXTRA $(NO_COL)]: $(LD_FLAGS_EXTRA)\n"
+	$(V)printf "[$(PINK) LDFLAGS $(NO_COL)]: $(LD_FLAGS)\n[$(PINK) EXTRA $(NO_COL)]: $(LD_FLAGS_EXTRA)\n"
 
 dirs:
-	$(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(BIN_DIRS),$(shell mkdir -p $(BUILD_DIR)/$(dir)))
+	$(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(HASM_DIRS) $(BIN_DIRS),$(shell mkdir -p $(BUILD_DIR)/$(dir)))
 
 check: .baserom.$(VERSION).ok
 
 verify: $(TARGET).z64
-	@sha1sum -c $(BASENAME).$(VERSION).sha1
+	$(V)$(CRC)
+ifeq ($(NON_MATCHING),0)
+	@(sha1sum -c --quiet ver/verification/$(BASENAME).$(VERSION).sha1 \
+	&& $(PRINT) "$(GREEN)Verify:$(NO_COL)\
+	 $(YELLOW)OK$(NO_COL)\n")
+	$(V)$(PRINT) "$(YELLOW)    __\n .\`_  _\`.\n| | \`| | |\n| |_|._| |\n \`. __ .\'$(NO_COL)\n\n"
+else
+	$(V)$(PRINT) "$(GREEN)Build Complete!$(NO_COL)\n"
+endif
 
 no_verify: $(TARGET).z64
-	@echo "Skipping SHA1SUM check!"
+	$(V)$(PRINT) "$(GREEN)Build Complete!$(NO_COL)\n"
 
-splat: $(SPLAT)
-
-extract: splat tools
-	$(PYTHON) $(SPLAT) $(BASENAME).$(VERSION).yaml
+extract:
+	$(SPLAT) ver/splat/$(BASENAME).$(VERSION).yaml
 
 extractall: splat tools
-	$(PYTHON) $(SPLAT) $(BASENAME).kiosk.yaml
-	$(PYTHON) $(SPLAT) $(BASENAME).us.yaml
-	$(PYTHON) $(SPLAT) $(BASENAME).pal.yaml
-	$(PYTHON) $(SPLAT) $(BASENAME).jpn.yaml
+	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).kiosk.yaml
+	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).us.yaml
+	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).pal.yaml
+	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).jpn.yaml
 
 dependencies: tools
-	@make -C tools
-	@$(PYTHON) -m pip install -r tools/splat/requirements.txt #Installing the splat dependencies
+	$(V)make -C $(TOOLS_DIR)
+#Set up a python venv so we don't get warnings about breaking system packages.
+	$(V)python3 -m venv $(VENV)
+#Installing the splat dependencies
+	$(V)$(PYTHON) -m pip install -r requirements.txt
 
 clean:
 	rm -rf $(BUILD_DIR)
@@ -182,21 +252,25 @@ cleanall:
 	rm -rf build_pal
 	rm -rf build_jpn
 
-
 distclean: clean
 	rm -rf $(ASM_DIRS)
+	rm -rf $(BIN_DIRS)
 	rm -rf assets
-	rm -f *auto.kiosk.txt
-	rm -f *auto.us.txt
-	rm -f *auto.pal.txt
-	rm -f *auto.jpn.txt
+	rm -f $(SYMBOLS_DIR)/*auto.$(VERSION).txt
 	rm -f $(LD_SCRIPT)
 
 distcleanall: clean
 	rm -rf $(ASM_DIRS)
 	rm -rf assets
-	rm -f *auto.$(VERSION).txt
-	rm -f $(LD_SCRIPT)
+	rm -f $(SYMBOLS_DIR)/*auto.kiosk.txt
+	rm -f $(SYMBOLS_DIR)/*auto.us.txt
+	rm -f $(SYMBOLS_DIR)/*auto.pal.txt
+	rm -f $(SYMBOLS_DIR)/*auto.jpn.txt
+	rm -f ver/jfg.kiosk.ld
+	rm -f ver/jfg.us.ld
+	rm -f ver/jfg.pal.ld
+	rm -f ver/jfg.kiosk.ld
+	rm -f ver/jfg.jpn.ld
 
 #When you just need to wipe old symbol names and re-extract
 cleanextract: distclean extract
@@ -212,60 +286,50 @@ expected: verify
 
 ### Recipes
 
-.baserom.$(VERSION).ok: baserom.$(VERSION).z64
-	@echo "$$(cat $(BASENAME).$(VERSION).sha1)  $<" | sha1sum --check
-	@touch $@
+$(GLOBAL_ASM_O_FILES): CC := $(ASM_PROCESSOR) $(CC) -- $(AS) $(ASFLAGS) --
 
-$(TARGET).elf: dirs $(LD_SCRIPT) $(BUILD_DIR)/$(LIBULTRA) $(O_FILES) $(LANG_RNC_O_FILES) $(IMAGE_O_FILES)
-	@$(LD) $(LD_FLAGS) $(LD_FLAGS_EXTRA) -o $@
-	@printf "[$(PINK) Linker $(NO_COL)]  $<\n"
+$(TARGET).elf: dirs $(LD_SCRIPT) $(O_FILES)
+	@$(PRINT) "$(GREEN)Linking: $(BLUE)$@$(NO_COL)\n"
+	$(V)$(LD) $(LD_FLAGS) $(LD_FLAGS_EXTRA) -o $@
 
 ifndef PERMUTER
-$(GLOBAL_ASM_O_FILES): $(BUILD_DIR)/%.c.o: %.c  include/variables.h include/structs.h
-	@$(CC_CHECK) $<
-	@printf "[$(YELLOW) check $(NO_COL)] $<\n"
-	@$(ASM_PROCESSOR) $(OPT_FLAGS) $< > $(BUILD_DIR)/$<
-	@$(CC) -c $(CFLAGS) $(OPT_FLAGS) $(LOOP_UNROLL) $(MIPSISET) -o $@ $(BUILD_DIR)/$<
-	@$(ASM_PROCESSOR) $(OPT_FLAGS) $< --post-process $@ \
-		--assembler "$(AS) $(ASFLAGS)" --asm-prelude $(ASM_PROCESSOR_DIR)/prelude.inc
-	@printf "[$(GREEN) ido5.3 $(NO_COL)]  $<\n"
+$(GLOBAL_ASM_O_FILES): $(BUILD_DIR)/%.c.o: %.c
+	$(call print,Compiling:,$<,$@)
+#	$(V)$(CC_CHECK) $<
+	$(V)$(CC) -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
 endif
 
 # non asm-processor recipe
 $(BUILD_DIR)/%.c.o: %.c
-#	@$(CC_CHECK) $<
-	@$(CC) -c $(CFLAGS) $(OPT_FLAGS) $(LOOP_UNROLL) $(MIPSISET) -o $@ $<
-	@printf "[$(GREEN) ido5.3 $(NO_COL)]  $<\n"
+	$(call print,Compiling:,$<,$@)
+#	$(V)$(CC_CHECK) $<
+	$(V)$(CC) -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
 
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: $(LIBULTRA_DIR)/src/libc/llcvt.c
+# 	$(call print,Compiling mips3:,$<,$@)
+# 	@$(CC)  -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+# 	$(V)$(PYTHON) tools/patchmips3.py $@ || rm $@
 
-
-$(BUILD_DIR)/$(LIBULTRA): $(LIBULTRA)
-	@mkdir -p $$(dirname $@)
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ll.c.o: $(LIBULTRA_DIR)/src/libc/ll.c
+# 	$(call print,Compiling mips3:,$<,$@)
+# 	@$(CC)  -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+# 	$(V)$(PYTHON) tools/patchmips3.py $@ || rm $@
 
 $(BUILD_DIR)/%.s.o: %.s
-	@$(AS) $(ASFLAGS) -o $@ $<
-	@printf "[$(GREEN)  ASSEMBLER   $(NO_COL)]  $<\n"
+	$(call print,Assembling:,$<,$@)
+	$(V)$(AS) $(ASFLAGS) -o $@ $<
 
 $(BUILD_DIR)/%.bin.o: %.bin
-	@$(LD) -r -b binary -o $@ $<
-	@printf "[$(PINK) Linker $(NO_COL)]  $<\n"
+	$(call print,Linking Binary:,$<,$@)
+	$(V)$(LD) -r -b binary -o $@ $<
 
 $(TARGET).bin: $(TARGET).elf
-	@$(OBJCOPY) $(OBJCOPYFLAGS) $< $@
-	@printf "[$(CYAN) Objcopy $(NO_COL)]  $<\n"
+	$(call print,Objcopy:,$<,$@)
+	$(V)$(OBJCOPY) $(OBJCOPYFLAGS) $< $@
 
 $(TARGET).z64: $(TARGET).bin
-	@printf "[$(BLUE) CopyRom $(NO_COL)]  $<\n"
-	@tools/CopyRom.py $< $@ #Mask
-	@printf "[$(GREEN) CRC $(NO_COL)]  $<\n"
-	@$(CRC)
-
-# fake targets for better error handling
-$(SPLAT):
-	$(info Repo cloned without submodules, attempting to fetch them now...)
-	@which git >/dev/null || echo "ERROR: git binary not found on PATH"
-	@which git >/dev/null
-	git submodule update --init --recursive
+	$(call print,CopyRom:,$<,$@)
+	$(V)$(TOOLS_DIR)/CopyRom.py $< $@
 
 baserom.$(VERSION).z64:
 	$(error Place the Jet Force Gemini $(VERSION) ROM, named '$@', in the root of this repo and try again.)

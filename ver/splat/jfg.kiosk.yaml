@@ -2,25 +2,24 @@ name: J F G Display (North America)
 sha1: f00f7c7fb085d0df57dcb649793aced5be4e8562
 options:
   basename: jfg.kiosk
-  target_path: baserom.kiosk.z64
-  base_path: .
+  target_path: baseroms/baserom.kiosk.z64
+  base_path: ../../
   compiler: IDO
   find_file_boundaries: True
   header_encoding: ASCII
   platform: n64
-  undefined_funcs_auto_path: undefined_funcs_auto.kiosk.txt
-  undefined_syms_auto_path: undefined_syms_auto.kiosk.txt
-  symbol_addrs_path: symbol_addrs.kiosk.txt
+  undefined_funcs_auto_path: ver/symbols/undefined_funcs_auto.kiosk.txt
+  undefined_syms_auto_path: ver/symbols/undefined_syms_auto.kiosk.txt
+  symbol_addrs_path: ver/symbols/symbol_addrs.kiosk.txt
+  symbol_name_format: $VRAM_$ROM
+  ld_script_path: ver/jfg.kiosk.ld
   asm_path: asm
   src_path: src
   build_path: build
-  #extensions_path: tools/splat_ext
-  #mips_abi_float_regs: o32
+  asset_path: assets
   section_order: [".text", ".data", ".rodata", ".bss"]
-  auto_all_sections: [".data", ".rodata", ".bss"]
-  symbol_name_format: $VRAM_$ROM
-  #libultra_symbols: True
-  #hardware_regs: True
+  migrate_rodata_to_functions: False
+  hasm_in_src_path: True
 segments:
   - name: header
     type: header
@@ -35,7 +34,7 @@ segments:
     start: 0x1000
     vram: 0x80000400
     subsegments:
-      - [0x1000, hasm, entrypoint]
+      - [0x1000, hasm, hasm/entrypoint]
 
   - name: main
     type: code
@@ -53,7 +52,7 @@ segments:
       - [0x1E1F0, c, shadows]
       - [0x214A0, c, shadows_214A0]
       - [0x217D0, c, lights]
-      - [0x235F0, hasm, lights2] #hasm?
+      - [0x235F0, hasm, hasm/lights2] #hasm?
       - [0x245E0, c, camlight]
       - [0x25A80, c, spranim]
       - [0x3C240, c, models]
@@ -63,9 +62,9 @@ segments:
       - [0x43760, c, controller]
       - [0x43E50, c, level]
       - [0x45170, c, main]
-      - [0x49A00, hasm, math_util] #hasm
-      - [0x4A5B0, hasm, math_util2]
-      - [0x4ACC0, hasm, math_matrix]
+      - [0x49A00, hasm, hasm/math_util] #hasm
+      - [0x4A5B0, hasm, hasm/math_util2]
+      - [0x4ACC0, hasm, hasm/math_matrix]
       - [0x4B2D0, c, memory]
       - [0x4C040, c, osMotor]
       - [0x4C560, c, saves]
@@ -76,7 +75,7 @@ segments:
       - [0x52610, c, segSetBase]
       - [0x52650, c, sqauds]
       - [0x54030, c, runLink]
-      - [0x55D50, hasm, trapDanglingJump]
+      - [0x55D50, hasm, hasm/trapDanglingJump]
       - [0x55F30, c, gameVi]
       - [0x56B80, c, textures]
       - [0x59780, c, screen]
@@ -92,11 +91,11 @@ segments:
       - [0x70F70, c, font]
       - [0x736B0, c, libultra/pimgr]
       - [0x73820, c, rzip]
-      - [0x73F70, hasm, inflate]
+      - [0x73F70, hasm, hasm/inflate]
       - [0x749F0, c, subtitles]
       - [0x751F0, hasm, libultra/__osLeoInterrupt]
-      - [0x75200, hasm, gen_anim_data]
-      - [0x761D0, hasm, conv_mult_matrix]
+      - [0x75200, hasm, hasm/gen_anim_data]
+      - [0x761D0, hasm, hasm/conv_mult_matrix]
       - [0x763A0, hasm, libultra/exceptasm]
       - [0x76D50, c, libultra/createthread]
       - [0x76E40, c, libultra/guPerspectiveF]
