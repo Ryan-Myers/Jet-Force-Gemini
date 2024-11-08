@@ -210,6 +210,10 @@ segments:
       - [0x9E480, asm]
       - [0x9E610, bin] # - [0x9E610, hasm] - This seems to call a func func_840010E0 which breaks things.
       - [0x9E760, data]
+      - [0x9FE50, hasm]
+      - [0x9FED0, data]
+      - [0x9FF10, hasm]
+      - [0xA0350, data]
       - { start: 0xB1750, type: bss, vram: 0x800B0B50 }
 
   - type: bin

@@ -1,6 +1,8 @@
 #ifndef _MACROS_H_
 #define _MACROS_H_
 
+#include <PRinternal/macros.h>
+
 #ifndef __sgi
 #define GLOBAL_ASM(...)
 #endif
@@ -8,20 +10,13 @@
 #if !defined(__sgi) && (!defined(NON_MATCHING) || !defined(AVOID_UB))
 // asm-process isn't supported outside of IDO, and undefined behavior causes
 // crashes.
-#error Matching build is only possible on IDO; please build with NON_MATCHING=1.
+// #error Matching build is only possible on IDO; please build with NON_MATCHING=1.
 #endif
 
 #define ARRAY_COUNT(arr) (s32)(sizeof(arr) / sizeof(arr[0]))
 
 #define GLUE(a, b) a ## b
 #define GLUE2(a, b) GLUE(a, b)
-
-// Avoid compiler warnings for unused variables
-#ifdef __GNUC__
-#define UNUSED __attribute__((unused))
-#else
-#define UNUSED
-#endif
 
 // Avoid undefined behaviour for non-returning functions
 #ifdef __GNUC__
@@ -64,5 +59,8 @@
 
 // Used to suppress warnings in the ./generate_ctx.sh script.
 #define INCONSISTENT 
+
+// Used to make a u32 colour value look clearer. Transforms 0xFF0000FF to 255, 0, 0, 255
+#define COLOUR_RGBA32(r, g, b, a) (((r << 24) | (g << 16) |  (b << 8) | a))
 
 #endif

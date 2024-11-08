@@ -70,3 +70,4 @@ ctx_includes.c
 tools/n64crc
 !tools/build
 m2cfiles/
+tools/ido-recomp
