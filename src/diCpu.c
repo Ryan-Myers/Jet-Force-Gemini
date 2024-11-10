@@ -64,7 +64,7 @@ void func_800677E4(void) {
     func_80067880_68480(thread);
 }
 
-#ifdef NON_)EQUIVALENT
+#ifdef NON_EQUIVALENT
 extern s32 osCicId;
 extern s32 D_800A6E98_A7A98;
 

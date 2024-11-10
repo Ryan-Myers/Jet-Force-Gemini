@@ -16,6 +16,19 @@ extern s32 controlXjoy;
 extern s32 controlYjoy;
 
 //objects.c
+extern s8 D_800F3860_F4460;
+extern s32 D_800F386C_F446C;
+extern s32 D_800F3870_F4470;
+extern s32 D_800F38AC_F44AC;
+extern s32 D_800F38B8_F44B8;
+extern s32 D_800F38BC_F44BC;
+extern s16 D_800F38C0_F44C0;
+extern s16 D_800F38C2_F44C2;
+extern s32 D_800F38C4_F44C4;
+extern s32 D_800F3908_F4508;
+extern s32 D_800F3910_F4510;
+extern s32 D_800F391C_F451C;
+extern s32 D_800F3948_F4548;
 extern s32 ObjListCount;
 extern Object **ObjList; // Not sure about the number of elements
 extern VertexPosition gEnvmapPos;

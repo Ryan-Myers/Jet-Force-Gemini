@@ -1,7 +1,22 @@
 #include "common.h"
 #include "math.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/resetVars.s")
+void resetVars(void) {
+    D_800F3860_F4460 = 1;
+    D_800F386C_F446C = 0;
+    D_800F3870_F4470 = 0;
+    D_800F3908_F4508 = 0;
+    D_800F3910_F4510 = 0;
+    D_800F391C_F451C = 0;
+    ObjListCount = 0;
+    D_800F38AC_F44AC = 0;
+    D_800F38B8_F44B8 = 0;
+    D_800F38BC_F44BC = 0;
+    D_800F38C4_F44C4 = 0;
+    D_800F38C0_F44C0 = 0;
+    D_800F38C2_F44C2 = 0;
+    D_800F3948_F4548 = 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objFreeAll.s")
 
@@ -257,133 +272,3 @@ f32 GetRangeSquared(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objAddMine.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objDeleteMine.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackUpdateFX.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackDraw.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80012564_13164.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8001276C_1336C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/initSky.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackSkySet.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8001296C_1356C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80013214_13E14.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80013478_14078.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackGetSky.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_800135E0_141E0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackAddTextureScroll.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackUpdateTextureScroll.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackLightAllocate.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackLightFreeMem.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackLightAdd.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackLightDelete.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackLightColour.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackLightMove.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80013DCC_149CC.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackUpdateLighting.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8001412C_14D2C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8001424C_14E4C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80014B6C_1576C.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_800150A4_15CA4.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_800152C0_15EC0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackGetBlock.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackGetBlockList.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackGetCubeBlockList.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackBlockDim.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80015738_16338.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_800159B8_165B8.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80015CB8_168B8.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80015D54_16954.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackGetIntersect.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackGetPlayerIntersect.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80016EA0_17AA0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_800175A0_181A0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackCylinderIntersect.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackSphereIntersect.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_800182C0_18EC0.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackNearestIntersection.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackClip3D.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80019324_19F24.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackPolyHeight.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackGetLedgeCrossed.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackGetAdjacentLedge.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackCylinderHeights.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8001A990_1B590.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackGetNearestPoly.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackGetHeights.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackGetTrack.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackFreeAll.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackMakeAbsolute.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8001B6D8_1C2D8.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackSetFog.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackGetFog.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackSetFogOff.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8001BBFC_1C7FC.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8001BD94_1C994.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackChangeFog.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/trackFadeFog.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8001C448_1D048.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8001C550_1D150.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8001C570_1D170.s")
