@@ -1771,6 +1771,13 @@ gzip_cpdist = 0x800AFA52; // type:s16
 gzip_cpdext = 0x800AFA8E; // type:s16
 gzip_mask_bits = 0x800AFAAC; // type:s16
 
+__libm_qnan_f = 0x800B0600;
+
+// ucode
 aspMainTextStart = 0x8009E2A0;
 rspF3DDKRBootStart = 0x8009FAE0;
 rspF3DDKRDramStart = 0x8009FC60;
+
+// ucode_data
+aspMainDataStart = 0x800B0770;
+rspF3DDKRDataDramStart = 0x800B0EB0;
