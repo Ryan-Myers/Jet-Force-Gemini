@@ -1774,6 +1774,7 @@ __osPiTable = 0x800A794C;
 __osCurrentHandle = 0x800A7950;
 __Dom1SpeedParam = 0x80104DE0;
 __Dom2SpeedParam = 0x80104E58;
+__osTimerList = 0x800AA8C0;
 
 gIntDisFlag = 0x800A3E40;
 gSineTable = 0x800A7F50; // type:s16
