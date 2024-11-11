@@ -270,7 +270,8 @@ segments:
       - [0x9EEA0, textbin, ucode_audio]
       - [0xA06E0, textbin, ucode_boot]
       - [0xA0860, textbin, ucode_f3ddkr_dram]
-      - [0xA1AF0, data]
+      - [0xA1AF0, data, audio_manager_1050]
+      - [0xA1B50, data, audiomgr]
       - [0xA45E0, .data, controller]
       - [0xA45F0, data, level]
       - [0xA4620, data, main]
@@ -280,6 +281,8 @@ segments:
       - [0xA4F30, data]
       - [0xA8560, .data, rzip]
       - [0xA8570, data]
+      - [0xA8A40, .data, libultra/exceptasm]
+      - [0xA8A70, data]
       - [0xAB550, rodata, audio_manager_1050]
       - [0xAB680, rodata]
       - [0xAB6E0, rodata, audiomgr]
@@ -333,8 +336,11 @@ segments:
       - [0xB10C0, rodata, alAuxBus]
       - [0xB10D0, rodata, alLpFilter]
       - [0xB10E0, rodata, acosf]
+      - [0xB10F0, rodata, resample]
+      - [0xB1100, rodata, sinf]
       - [0xB1150, rodata, llcvt]
       - [0xB1160, rodata, setintmask]
+      - [0xB11E0, rodata, devmgr]
       - [0xB1200, rodata, libm_vals]
       - [0xB1210, rodata, xprintf]
       - [0xB1310, rodata, xldtob]
@@ -353,7 +359,8 @@ segments:
       - { start: auto, type: bss, vram: 0x800FF6B0, name: next_bss4}
       - { start: auto, type: .bss, vram: 0x80105220, name: rzip }
       - { start: auto, type: bss, vram: 0x80105230, name: next_bss5 }
-
+      - { start: auto, type: .bss, vram: 0x80106280, name: libultra/exceptasm }
+      - { start: auto, type: bss, vram: 0x80106430, name: next_bss6 }
 
   - name: assets
     type: bin

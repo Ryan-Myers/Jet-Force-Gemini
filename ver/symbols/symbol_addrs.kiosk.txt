@@ -1758,9 +1758,17 @@ _zeroes = 0x800AA8F4; // type:asciz
 ldigs = 0x800AA920; // type:asciz
 udigs = 0x800AA934; // type:asciz
 
-__osHwIntTable = 0x800A7E40;
+__osThreadSave = 0x80106280;
+__osRunQueue = 0x800AA838;
 __osIntOffTable = 0x800AFAD0;
 __osIntTable = 0x800AFAF0; // size:0x24
+__osShutdown = 0x800AA408;
+__OSGlobalIntMask = 0x800AA40C;
+__osFaultedThread = 0x800AA844;
+__osEventStateTab = 0x80105D10;
+__osRcpImTable = 0x800B0560;
+__osPiIntTable = 0x800A7E68;
+__osHwIntTable = 0x800A7E40;
 gSineTable = 0x800A7F50; // type:s16
 gArcTanTable = 0x800A9758; // type:s16
 
