@@ -11,6 +11,15 @@
     \label:
 .endm
 
+.macro dlabel label
+    .global \label
+    \label:
+.endm
+
+.macro jlabel label
+    \label:
+.endm
+
 .macro .word32 x
     .word \x
 .endm
