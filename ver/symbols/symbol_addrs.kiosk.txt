@@ -1384,7 +1384,7 @@ _Ldtob = 0x8009DBC0;
 lldiv = 0x8009E110;
 ldiv = 0x8009E210;
 
-
+_allocatePVoice = 0x8008D2B8;
 
 
 osTvType = 0x80000300;
