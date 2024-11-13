@@ -3,18 +3,6 @@
 #include "PR/os_version.h"
 #include "PRinternal/piint.h"
 
-/*
- * Values for osTvType 
- */
-#define	OS_TV_PAL		0
-#define	OS_TV_NTSC		1
-#define	OS_TV_MPAL		2
-
-/*
- * Size of buffer the retains contents after NMI
- */
-#define OS_APP_NMI_BUFSIZE	64
-
 typedef struct {
     /* 0x0 */ unsigned int inst1;
     /* 0x4 */ unsigned int inst2;
@@ -27,18 +15,9 @@ extern OSPiHandle __Dom1SpeedParam;
 extern OSPiHandle __Dom2SpeedParam;
 
 OSTime osClockRate = OS_CLOCK_RATE;
-#ifdef RAREDIFFS
-extern s32 osViClock;
-extern s32		__osLeoInterrupt(void);
-#include "PR/os_internal_exception.h"
-#else
 s32 osViClock = VI_NTSC_CLOCK;
-#endif
 u32 __osShutdown = 0;
 u32 __OSGlobalIntMask = OS_IM_ALL;
-#ifdef RAREDIFFS
-s32 gLeoFound = FALSE;
-#endif
 #ifdef _FINALROM
 u32 __osFinalrom;
 #else
@@ -85,10 +64,6 @@ void INITIALIZE_FUNC() {
 #if BUILD_VERSION < VERSION_K
     u32 clock = 0;
 #endif
-#ifdef RAREDIFFS
-   u32 leostatus;
-   u32 pistatus;
-#endif
 
 #ifdef _FINALROM
     __osFinalrom = TRUE;
@@ -131,18 +106,6 @@ void INITIALIZE_FUNC() {
         bzero(osAppNMIBuffer, OS_APP_NMI_BUFSIZE);
     }
 
-#ifdef RAREDIFFS
-   pistatus = IO_READ(PI_STATUS_REG);
-   while (pistatus & PI_STATUS_ERROR) {
-      pistatus = IO_READ(PI_STATUS_REG);
-   };
-   if (!((leostatus = IO_READ(LEO_STATUS)) & LEO_STATUS_PRESENCE_MASK)) {
-      gLeoFound = TRUE;
-      __osSetHWIntrRoutine(1, __osLeoInterrupt);
-   } else {
-      gLeoFound = FALSE;
-   }
-#else
     if (osTvType == OS_TV_PAL) {
         osViClock = VI_PAL_CLOCK;
     } else if (osTvType == OS_TV_MPAL) {
@@ -150,7 +113,6 @@ void INITIALIZE_FUNC() {
     } else {
         osViClock = VI_NTSC_CLOCK;
     }
-#endif
 
 #if BUILD_VERSION >= VERSION_J
     // Wait until there are no RCP interrupts

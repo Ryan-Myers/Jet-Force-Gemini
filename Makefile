@@ -2,7 +2,7 @@ BASENAME  = jfg
 VERSION  := kiosk
 NON_MATCHING ?= 0
 # Libultra version might be at least J, but still labeled in the header as G for some reason.
-LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=4 -DBUILD_VERSION_STRING=\"2.0G\" -DRAREDIFFS -DJFGDIFFS
+LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7 -DBUILD_VERSION_STRING=\"2.0J\" -DRAREDIFFS -DJFGDIFFS
 
 # Whether to hide commands or not
 VERBOSE ?= 0
@@ -118,6 +118,7 @@ SPLAT    ?= $(PYTHON) -m splat split
 CRC      = $(TOOLS_DIR)/n64crc $(BUILD_DIR)/$(BASENAME).$(VERSION).z64 $(COLORIZE)
 
 OPT_FLAGS      = -O2
+DEBUG_FLAGS    = -G 0
 
 MIPSISET       = -mips1
 
@@ -195,6 +196,15 @@ ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/sc/sched.c.o: MIPSISET := -mips1
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: MIPSISET := -mips1
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/env.c.o: MIPSISET := -mips1
+
+# $(BUILD_DIR)/src/libultra/cents2ratio.c.o: DEBUG_FLAGS := -g
+# $(BUILD_DIR)/src/libultra/cents2ratio.c.o: OPT_FLAGS :=
+# $(BUILD_DIR)/src/libultra/cents2ratio.c.o: MIPSISET := -mips2
+
+
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/cents2ratio.c.o: DEBUG_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/cents2ratio.c.o: OPT_FLAGS :=
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/cents2ratio.c.o: MIPSISET := -mips2
 
 #Ignore warnings for libultra files
 $(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: CC_WARNINGS := -w
@@ -300,23 +310,23 @@ ifndef PERMUTER
 $(GLOBAL_ASM_O_FILES): $(BUILD_DIR)/%.c.o: %.c
 	$(call print,Compiling:,$<,$@)
 #	$(V)$(CC_CHECK) $<
-	$(V)$(CC) -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+	$(V)$(CC) -c $(DEBUG_FLAGS) $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
 endif
 
 # non asm-processor recipe
 $(BUILD_DIR)/%.c.o: %.c
 	$(call print,Compiling:,$<,$@)
 #	$(V)$(CC_CHECK) $<
-	$(V)$(CC) -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+	$(V)$(CC) -c $(DEBUG_FLAGS) $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
 
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: $(LIBULTRA_DIR)/src/libc/llcvt.c
 # 	$(call print,Compiling mips3:,$<,$@)
-# 	@$(CC)  -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+# 	@$(CC)  -c $(DEBUG_FLAGS) $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
 # 	$(V)$(PYTHON) tools/patchmips3.py $@ || rm $@
 
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ll.c.o: $(LIBULTRA_DIR)/src/libc/ll.c
 # 	$(call print,Compiling mips3:,$<,$@)
-# 	@$(CC)  -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+# 	@$(CC)  -c $(DEBUG_FLAGS) $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
 # 	$(V)$(PYTHON) tools/patchmips3.py $@ || rm $@
 
 $(BUILD_DIR)/%.s.o: %.s

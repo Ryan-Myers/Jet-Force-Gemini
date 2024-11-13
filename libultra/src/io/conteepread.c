@@ -12,27 +12,15 @@ static void __osPackEepReadData(u8 address);
 s32 osEepromRead(OSMesgQueue* mq, u8 address, u8* buffer) {
     s32 ret = 0;
     int i = 0;
-#ifndef RAREDIFFS
     u16 type;
-#endif
     u8* ptr;
     OSContStatus sdata;
     __OSContEepromFormat eepromformat;
 
     ptr = (u8*)&__osEepPifRam.ramarray;
-
-#ifdef RAREDIFFS
-    if (address > EEPROM_MAXBLOCKS) {
-        return -1;
-    }
-#endif
-
     __osSiGetAccess();
     ret = __osEepStatus(mq, &sdata);
-
-#ifndef RAREDIFFS
     type = sdata.type & (CONT_EEPROM | CONT_EEP16K);
-#endif
 
 #if BUILD_VERSION >= VERSION_J
     if (ret == 0) {
@@ -63,17 +51,10 @@ s32 osEepromRead(OSMesgQueue* mq, u8 address, u8* buffer) {
         return ret;
     }
 #else
-#ifdef RAREDIFFS
-    if (ret != 0 || sdata.type != CONT_EEPROM)
-    {
-        return CONT_NO_RESPONSE_ERROR;
-    }
-#else
     if (ret != 0)
     {
         __osSiRelAccess();
         return CONT_NO_RESPONSE_ERROR;
-
     } else {
         switch (type) {
             case CONT_EEPROM:
@@ -95,7 +76,6 @@ s32 osEepromRead(OSMesgQueue* mq, u8 address, u8* buffer) {
         }
     }
 #endif
-#endif
 
     while (sdata.status & CONT_EEPROM_BUSY) {
         __osEepStatus(mq, &sdata);
@@ -104,15 +84,6 @@ s32 osEepromRead(OSMesgQueue* mq, u8 address, u8* buffer) {
     __osPackEepReadData(address);
     ret = __osSiRawStartDma(OS_WRITE, &__osEepPifRam); // send command to pif
     osRecvMesg(mq, NULL, OS_MESG_BLOCK);
-
-#ifdef RAREDIFFS
-    for (i = 0; i <= ARRLEN(__osEepPifRam.ramarray); i++) {
-        __osEepPifRam.ramarray[i] = CONT_CMD_NOP;
-    }
-
-    __osEepPifRam.pifstatus = CONT_CMD_REQUEST_STATUS;
-#endif
-
     ret = __osSiRawStartDma(OS_READ, &__osEepPifRam); // recv response
     __osContLastCmd = CONT_CMD_READ_EEPROM;
     osRecvMesg(mq, NULL, OS_MESG_BLOCK);
@@ -140,11 +111,7 @@ static void __osPackEepReadData(u8 address) {
     int i;
 
 #if BUILD_VERSION < VERSION_J
-#ifdef RAREDIFFS
-    for (i = 0; i <= ARRLEN(__osEepPifRam.ramarray); i++) {
-#else
     for (i = 0; i < ARRLEN(__osEepPifRam.ramarray); i++) {
-#endif
         __osEepPifRam.ramarray[i] = CONT_CMD_NOP;
     }
 #endif
