@@ -1645,6 +1645,7 @@ mmDelay = 0x800FE85C;
 FreeRAM = 0x800FE860;
 D_800FE868 = 0x800FE868;
 mmEndRam = 0x800FE878;
+D_800FBCA0 = 0x800FBCA0; // size:0x220
 
 
 sControllerMesgQueue = 0x800FEAC0;

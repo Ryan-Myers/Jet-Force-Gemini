@@ -40,6 +40,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetPrevOfWorld.s")
 
+// The reference to gfxBase is false, as it's checking the end of the D_800FBCA0 array
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelInitRegionFlags.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetRegionFlags.s")

@@ -101,7 +101,7 @@ segments:
       - [0x763A0, hasm, libultra/exceptasm]
       - [0x76D50, c, libultra/createthread]
       - [0x76E40, c, libultra/perspective]
-      - [0x76FC0, c, refractOutputAssembler]
+      - [0x76FC0, c, refractOutputAssembler] # Could be hasm as it uses bnel which isn't mips1
       - [0x773A0, c, anim]
       - [0x7ADF0, c, hit]
       - [0x84A40, c, fmvInit]
@@ -398,16 +398,30 @@ segments:
       - { start: 0xB1370, type: databin, name: data_audio,       linker_section_order: .rodata }
       - { start: 0xB1630, type: databin, name: data_unk,         linker_section_order: .rodata }
       - { start: 0xB1AB0, type: databin, name: data_f3ddkr_dram, linker_section_order: .rodata }
-      - { start: auto, type: bss, vram: 0x800B16B0, name: bss_start }
-      - { start: auto, type: bss, vram: 0x800EA050, name: audio_manager_1050 }
+      - { start: auto, type: bss, vram: 0x800B16B0, name: audio_manager_1050 }
       - { start: auto, type: bss, vram: 0x800EA400, name: audiomgr }
+      - { start: auto, type: bss, vram: 0x800F35F0, name: audio_manager_36D0 }
+      - { start: auto, type: bss, vram: 0x800F3710, name: audio_manager_4C50 }
       - { start: auto, type: bss, vram: 0x800F3860, name: objects }
+      - { start: auto, type: bss, vram: 0x800F3A30, name: track }
+      - { start: auto, type: bss, vram: 0x800F3E90, name: shadows }
+      - { start: auto, type: bss, vram: 0x800F65E0, name: lights }
+      - { start: auto, type: bss, vram: 0x800F6610, name: camlight }
+      - { start: auto, type: bss, vram: 0x800F75C0, name: explosion }
+      - { start: auto, type: bss, vram: 0x800F7860, name: charControl }
+      - { start: auto, type: bss, vram: 0x800F79D0, name: models }
+      - { start: auto, type: bss, vram: 0x800F7B20, name: boot }
+      - { start: auto, type: bss, vram: 0x800FAF90, name: camera }
+      - { start: auto, type: bss, vram: 0x800FBB40, name: staticcamera }
       - { start: auto, type: .bss, vram: 0x800FBB50, name: controller }
-      - { start: auto, type: bss, vram: 0x800FBBD0, name: next_bss }
+      - { start: auto, type: bss, vram: 0x800FBBD0, name: level }
+      - { start: auto, type: bss, vram: 0x800FBEC0, name: main }
+      - { start: auto, type: bss, vram: 0x800FE2F0, name: refractOutputAssembler }
       - { start: auto, type: .bss, vram: 0x800FE310, name: memory }
-      - { start: auto, type: bss, vram: 0x800FE880, name: next_bss2 }
+      - { start: auto, type: bss, vram: 0x800FE880, name: osMotor }
+      - { start: auto, type: bss, vram: 0x800FEAC0, name: saves }
       - { start: auto, type: .bss, vram: 0x800FECF0, name: pi }
-      - { start: auto, type: bss, vram: 0x800FED90, name: next_bss3 }
+      - { start: auto, type: bss, vram: 0x800FED90, name: rcpFast3d }
       - { start: auto, type: bss, vram: 0x800FF660, name: sched }
       - { start: auto, type: bss, vram: 0x800FF6B0, name: next_bss4}
       - { start: auto, type: .bss, vram: 0x80105220, name: rzip }
