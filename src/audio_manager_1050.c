@@ -74,22 +74,31 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amSndSetPitchDirect.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amGetSfxCount.s")
+/**
+ * Return the number of playable sounds in the audio table.
+ * DKR name: sound_count
+ */
+extern ALBankFile *sfxBankPtr;
+u16 amGetSfxCount(void) {
+    return sfxBankPtr->bankArray[0]->instArray[0]->soundCount;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amGetSfxSettings.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amSoundIsLooped.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000169C_229C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000169C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000170C_230C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000170C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001990_2590.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001990.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001B88_2788.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001B88.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneSetReverbOnOff.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/forcelink.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/scalevol.s")
+s32 scalevol(s32 vol) {
+    return (vol * 0.5f);
+}

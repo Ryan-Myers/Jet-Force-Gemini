@@ -4,4 +4,4 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/pfsallocatefile/__osPfsDeclearPage.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/pfsallocatefile/func_80098908_99508.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/pfsallocatefile/func_80098908.s")

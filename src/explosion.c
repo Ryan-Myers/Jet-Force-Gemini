@@ -28,10 +28,10 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/explosion/explosionBlastHit.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/explosion/func_8002A7DC_2B3DC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/explosion/func_8002A7DC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/explosion/func_8002A958_2B558.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/explosion/func_8002A958.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/explosion/func_8002AA30_2B630.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/explosion/func_8002AA30.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/explosion/func_8002ABA4_2B7A4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/explosion/func_8002ABA4.s")

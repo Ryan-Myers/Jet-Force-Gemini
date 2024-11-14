@@ -2,19 +2,19 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/part/partFreeLib.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005D930_5E530.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005D930.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005DA70_5E670.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005DA70.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005DC3C_5E83C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005DC3C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005DC7C_5E87C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005DC7C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005DD88_5E988.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005DD88.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005E100_5ED00.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005E100.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005E3DC_5EFDC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005E3DC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/part/partInitTrigger.s")
 
@@ -22,15 +22,15 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/part/partInitTriggerPos.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005F918_60518.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005F918.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005F99C_6059C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005F99C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005FAE8_606E8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005FAE8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005FD34_60934.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005FD34.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005FED8_60AD8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8005FED8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/part/partObjFreeTriggers.s")
 
@@ -38,45 +38,45 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/part/partUpdateTriggers.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8006020C_60E0C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8006020C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80060400_61000.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80060400.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_800608EC_614EC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_800608EC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/part/partModelObjEmitModelPart.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80060ED4_61AD4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80060ED4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80061948_62548.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80061948.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80061B50_62750.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80061B50.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80061CAC_628AC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80061CAC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8006211C_62D1C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_8006211C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_800626B4_632B4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_800626B4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80062A4C_6364C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80062A4C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80062BFC_637FC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80062BFC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063484_64084.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063484.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063514_64114.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063514.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_800637E0_643E0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_800637E0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063890_64490.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063890.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063990_64590.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063990.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063AB4_646B4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063AB4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063C14_64814.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063C14.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063CC8_648C8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/part/func_80063CC8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/part/partUpdateParticles.s")
 

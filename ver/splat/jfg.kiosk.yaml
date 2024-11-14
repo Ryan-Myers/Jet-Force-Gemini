@@ -11,7 +11,7 @@ options:
   undefined_funcs_auto_path: ver/symbols/undefined_funcs_auto.kiosk.txt
   undefined_syms_auto_path: ver/symbols/undefined_syms_auto.kiosk.txt
   symbol_addrs_path: ver/symbols/symbol_addrs.kiosk.txt
-  symbol_name_format: $VRAM_$ROM
+  symbol_name_format: $VRAM
   ld_script_path: ver/jfg.kiosk.ld
   asm_path: asm
   src_path: src
@@ -399,6 +399,9 @@ segments:
       - { start: 0xB1630, type: databin, name: data_unk,         linker_section_order: .rodata }
       - { start: 0xB1AB0, type: databin, name: data_f3ddkr_dram, linker_section_order: .rodata }
       - { start: auto, type: bss, vram: 0x800B16B0, name: bss_start }
+      - { start: auto, type: bss, vram: 0x800EA050, name: audio_manager_1050 }
+      - { start: auto, type: bss, vram: 0x800EA400, name: audiomgr }
+      - { start: auto, type: bss, vram: 0x800F3860, name: objects }
       - { start: auto, type: .bss, vram: 0x800FBB50, name: controller }
       - { start: auto, type: bss, vram: 0x800FBBD0, name: next_bss }
       - { start: auto, type: .bss, vram: 0x800FE310, name: memory }

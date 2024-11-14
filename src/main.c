@@ -7,14 +7,14 @@ void mainThread(UNUSED void *unused) {
         s32 i = 0;
         while(1) { ((vu32 *)(RAM_END))[--i] = (u32)0; }
     }
-    D_800A3B70_A4770 = osBootRamTest1_6105();
-    D_800A3B74_A4774 = osBootRamTest2_6105();
+    D_800A3B70 = osBootRamTest1_6105();
+    D_800A3B74 = osBootRamTest2_6105();
     mainInitGame();
     load_save_flags = joyRead(load_save_flags, 0);
-    D_800FE280_B4960 = 0;
+    D_800FE280 = 0;
     mainGameMode = 6;
-    mainChangeLevel(0, D_800A3AB0_A46B0, 0, 0, 1, 0);
-    func_80046070_46C70(0x1E);
+    mainChangeLevel(0, D_800A3AB0, 0, 0, 1, 0);
+    func_80046070(0x1E);
     while (1) {
         if (mainResetPressed()) {
             rumbleKill();
@@ -26,7 +26,7 @@ void mainThread(UNUSED void *unused) {
                             | DPC_CLR_CMD_CTR | DPC_CLR_CMD_CTR);
             while (1){ } // Infinite loop
         }
-        func_80044938_45538();
+        func_80044938();
         if (joyGetPressed(1) & L_TRIG) {
             mainSetGameFlag(0x58, 1);
         }
@@ -47,7 +47,7 @@ void mainInitGame(void) {
     mmInit();
     securitybuffer = mmAlloc(16, COLOUR_TAG_GREY);
     rzipInit();
-    D_800FE26C_B494C = 0;
+    D_800FE26C = 0;
 
     if (osTvType == OS_TV_TYPE_PAL) {
         viMode = OS_VI_PAL_LPN1;
@@ -65,10 +65,10 @@ void mainInitGame(void) {
     runlinkFreeCode(0x24);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800448B0_454B0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800448B0.s")
 
 //main_game_loop in DKR
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80044938_45538.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80044938.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainAddZBCheck.s")
 
@@ -78,17 +78,17 @@ s8 mainGetZBCheck(s32 arg0) {
     if ((arg0 < 0) || (arg0 >= 8)) {
         return 1;
     }
-    return D_800FE217_B48F7[arg0].ZBCheck;
+    return D_800FE217[arg0].ZBCheck;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainCPUeffects.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetGameWindow.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004552C_4612C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004552C.s")
 
 s16 mainGameWindowChanging(void) {
-    return D_800A3A80_A4680;
+    return D_800A3A80;
 }
 
 void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
@@ -98,13 +98,13 @@ void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
     *y2 = mainGameWindowSizeY2;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800456F8_462F8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800456F8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800457F4_463F4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800457F4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainRestartAfterDeath.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80045D44_46944.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80045D44.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainChangeLevel.s")
 
@@ -118,7 +118,7 @@ void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetNextLevel.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80046070_46C70.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80046070.s")
 
 void mainSetAutoSave(s32 autoSave) {
     mainGameAutoSave = autoSave;
@@ -226,12 +226,12 @@ s32 mainResetPressed(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetPlayerCharacter.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047EE8_48AE8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047EE8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047FC0_48BC0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047FC0.s")
 
 //Main debug menu
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004809C_48C9C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004809C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainResetRegion.s")
 
@@ -240,4 +240,4 @@ void mainToggleDebug(void) {
 }
 
 //Draw debug menu Lower Right section
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80048B38_49738.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80048B38.s")

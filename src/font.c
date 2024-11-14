@@ -49,9 +49,9 @@ void fontSetButtonMode(s32 mode) {
 }
 
 void fontSetWindowNoise(u8 arg0, u8 arg1, u8 arg2) {
-    D_800A7868_A8468 = arg0;
-    D_800A786C_A846C = arg1;
-    D_800A7870_A8470 = arg2;
+    D_800A7868 = arg0;
+    D_800A786C = arg1;
+    D_800A7870 = arg2;
 }
 
 void fontUseFont(s32 font) {
@@ -86,7 +86,7 @@ void fontPrintWindowXY(Gfx **displayList, s32 windowId, s32 xpos, s32 ypos, char
         DialogueBoxBackground *temp = &Window[windowId];
         temp->xpos = (xpos == POS_CENTRED) ? temp->width >> 1 : xpos;
         temp->ypos = (ypos == POS_CENTRED) ? temp->height >> 1 : ypos;
-        func_80070518_71118(displayList, temp, text, alignmentFlags);
+        func_80070518(displayList, temp, text, alignmentFlags);
     }
 }
 
@@ -96,7 +96,7 @@ void fontPrintWindowXY(Gfx **displayList, s32 windowId, s32 xpos, s32 ypos, char
  * Loops through a string, then draws each character onscreen.
  * Will also draw a fillrect if text backgrounds are enabled.
  */
-void func_80070518_71118(Gfx **dList, DialogueBoxBackground *box, char *text, AlignmentFlags alignmentFlags) {
+void func_80070518(Gfx **dList, DialogueBoxBackground *box, char *text, AlignmentFlags alignmentFlags) {
     s32 scisOffset;
     s32 scisPos;
     s32 ypos;
@@ -128,7 +128,7 @@ void func_80070518_71118(Gfx **dList, DialogueBoxBackground *box, char *text, Al
         xpos = box->xpos;
         ypos = box->ypos;
         fontData = &Font[box->font];
-        gSPDisplayList((*dList)++, D_800A77F0_A83F0);
+        gSPDisplayList((*dList)++, D_800A77F0);
         if (box != Window) {
             scisOffset = (((box->y2 - box->y1) + 1) / (f32) 2) * 4.0f;
             scisPos = (box->y1 + box->y2) >> 1;
@@ -153,7 +153,7 @@ void func_80070518_71118(Gfx **dList, DialogueBoxBackground *box, char *text, Al
             if (xAlignmentDiff == -1) {
                 xAlignmentDiff = fontStringWidth(text, xpos, box->font);
             }
-            gDPSetPrimColor((*dList)++, 0, 0, D_800A7868_A8468, D_800A786C_A846C, D_800A7870_A8470, 0);
+            gDPSetPrimColor((*dList)++, 0, 0, D_800A7868, D_800A786C, D_800A7870, 0);
             newTempX = xpos + xAlignmentDiff - 1;
             newTempY = ypos + fontData->y - 1;
             gDkrDmaDisplayList((*dList)++, &D_A7858, 2);
@@ -247,7 +247,7 @@ void func_80070518_71118(Gfx **dList, DialogueBoxBackground *box, char *text, Al
     }
 }
 #else
-#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80070518_71118.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80070518.s")
 #endif
 
 #ifdef NON_EQUIVALENT
@@ -379,7 +379,7 @@ void *fontWindowAddStringXY(s32 windowId, s32 posX, s32 posY, char *text, s32 nu
         if (Window[windowId].font != FONT_UNK_FF) {
             fontData = &Font[Window[windowId].font];
             if (flags & (HORZ_ALIGN_CENTER | HORZ_ALIGN_RIGHT)) {
-                func_80071A0C_7260C(text, combineBuffer, number);
+                func_80071A0C(text, combineBuffer, number);
                 width = fontStringWidth(combineBuffer, Window[windowId].font, 1);
                 if (flags & HORZ_ALIGN_RIGHT) {
                     posX = (posX - width) + 1;
@@ -474,8 +474,8 @@ void fontStringAddNumber(unsigned char **outString, s32 number) {
 
     // Loop through digit places.
     hasDigit = FALSE;
-    for (i = 0; number < D_800A7874_A8474[i]; i++) {
-        pow = D_800A7874_A8474[i];
+    for (i = 0; number < D_800A7874[i]; i++) {
+        pow = D_800A7874[i];
         digit = '0';
         if (number >= pow) {
             div = number / pow;
@@ -501,14 +501,14 @@ void fontStringAddNumber(unsigned char **outString, s32 number) {
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontWindowsDraw.s")
 
 //render_fill_rectangle
-#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071564_72164.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071564.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontWindowDraw.s")
 
 //parse_string_with_number
-#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071A0C_7260C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071A0C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071B08_72708.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071B08.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontCreateDisplayList.s")
 

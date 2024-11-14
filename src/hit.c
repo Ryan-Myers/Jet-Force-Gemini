@@ -8,9 +8,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/hit/hitInitObjectHit.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007A638_7B238.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007A638.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007A944_7B544.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007A944.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/hit/hitUpdate.s")
 
@@ -22,15 +22,15 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/hit/hitVectorCheck.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007D1E8_7DDE8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007D1E8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007D420_7E020.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007D420.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007D5AC_7E1AC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007D5AC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007D660_7E260.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007D660.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007E2F0_7EEF0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007E2F0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/hit/hitPlayer.s")
 
@@ -42,9 +42,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/hit/hitModelsTick.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007EA44_7F644.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007EA44.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007EBEC_7F7EC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/hit/func_8007EBEC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/hit/hitTransformBox.s")
 

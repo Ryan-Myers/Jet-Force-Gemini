@@ -30,12 +30,12 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/amSndSetEcho.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003AC0_46C0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003AC0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003C44_4844.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003C44.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003DC4_49C4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003DC4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003E24_4A24.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003E24.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/amSndGetXYZVolume.s")

@@ -41,14 +41,14 @@ static void     __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
 void	__scYield(OSSched *s);
 
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
-void func_80050670_51270(OSSched *sc);
+void func_80050670(OSSched *sc);
 
-extern OSViMode D_800AA460_AB060; //PAL
-extern OSViMode D_800AA4B0_AB0B0; //MPAL
-extern OSViMode D_800AA500_AB100; //NTSC
+extern OSViMode D_800AA460; //PAL
+extern OSViMode D_800AA4B0; //MPAL
+extern OSViMode D_800AA500; //NTSC
 
-extern OSTime D_800FF668_B2B88;
-//OSTime D_800FF668_B2B88; //gYieldTime
+extern OSTime D_800FF668;
+//OSTime D_800FF668; //gYieldTime
 
 void osCreateScheduler(OSSched *sc, void *stack, OSPri priority, u8 mode, u8 numFields) {
     sc->curRSPTask      = 0;
@@ -69,13 +69,13 @@ void osCreateScheduler(OSSched *sc, void *stack, OSPri priority, u8 mode, u8 num
     osCreateViManager(OS_PRIORITY_VIMGR);    
     switch (mode) {
         case OS_VI_PAL_LPN1:
-            osViSetMode(&D_800AA460_AB060);
+            osViSetMode(&D_800AA460);
             break;
         case OS_VI_MPAL_LPN1:
-            osViSetMode(&D_800AA4B0_AB0B0);
+            osViSetMode(&D_800AA4B0);
             break;
         default:
-            osViSetMode(&D_800AA500_AB100);
+            osViSetMode(&D_800AA500);
             break;
     }
     osViBlack(TRUE);
@@ -166,7 +166,7 @@ static void __scMain(void *arg) {
                 break;
 
             case (UNK_MSG):
-                func_80050670_51270(sc);
+                func_80050670(sc);
                 break;
 
             case (PRE_NMI_MSG):
@@ -189,7 +189,7 @@ static void __scMain(void *arg) {
     }
 }
 
-void func_80050670_51270(OSSched *sc) {
+void func_80050670(OSSched *sc) {
     s32 state;
     OSScTask *sp = 0;
     OSScTask *dp = 0;
@@ -213,41 +213,41 @@ char *osScGetTaskType(s32 taskID) {
     switch (taskID) {
     case 1:
         //"(Audio task)"
-        return &D_800AD510_AE110;
+        return &D_800AD510;
     case 2:
         //"(Game task)"
-        return &D_800AD520_AE120;
+        return &D_800AD520;
     case 3:
         //"(DI task)"
-        return &D_800AD52C_AE12C;
+        return &D_800AD52C;
     case 4:
         //"(DI benchmark test)"
-        return &D_800AD538_AE138;
+        return &D_800AD538;
     case 5:
         //"(Clone task)"
-        return &D_800AD550_AE150;
+        return &D_800AD550;
     case 6:
         //"(Refract task)"
-        return &D_800AD560_AE160;
+        return &D_800AD560;
     case 7:
         //"(Blur task)"
-        return &D_800AD570_AE170;
+        return &D_800AD570;
     default:
         //"(Unknown task type %d)"
-        return &D_800AD580_AE180;
+        return &D_800AD580;
     }
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/osScGetTaskType.s")
 #endif
 
-void func_800507A4_513A4(OSScTask *task) {}
+void func_800507A4(OSScTask *task) {}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800507AC_513AC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800507AC.s")
 
 #if 0
 void diRcpTraceGetInfo(Gfx*, u32*, char**, u32*, s32*, u32*, char**, u32*, s32*);
-Gfx *func_80050AA4_516A4(OSSched *sc, 
+Gfx *func_80050AA4(OSSched *sc, 
     char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
     char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2) {
 
@@ -391,12 +391,12 @@ Gfx *func_80050AA4_516A4(OSSched *sc,
     return displayListPtr;
 }
 #else
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050AA4_516A4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050AA4.s")
 #endif
 
 #ifdef NON_MATCHING
 //Need to migrate bss in order to match this.
-extern u64 D_800A4324_A4F24;
+extern u64 D_800A4324;
 u64 gRetraceCounter64;
 
 void __scHandleRetrace(OSSched *sc) {
@@ -443,9 +443,9 @@ void __scHandleRetrace(OSSched *sc) {
     if ((gCurRSPTaskCounter > 10) && (sc->curRSPTask)) {
         if (gCurRSPTaskIsSet) {
             osScGetTaskType(sc->curRSPTask->taskID); //Returns a string containing the name of the task
-            func_800507A4_513A4(sc->curRSPTask); //Func is empty
+            func_800507A4(sc->curRSPTask); //Func is empty
             if (sc->curRSPTask->list.t.type == M_GFXTASK) {
-                spGfx = (Gfx *) func_80050AA4_516A4(sc, &spB4, &spA4, &spC4, &spB0, &spA0, &spC0);
+                spGfx = (Gfx *) func_80050AA4(sc, &spB4, &spA4, &spC4, &spB0, &spA0, &spC0);
             }
             gCurRSPTaskIsSet = FALSE;
         }
@@ -460,13 +460,13 @@ void __scHandleRetrace(OSSched *sc) {
 
     if ((gCurRDPTaskCounter > 10) && (sc->curRDPTask)) {
         if (sc->curRDPTask->unk68 == 0) {
-            osSendMesg(sc->curRDPTask->msgQ, &D_800A4308_A4F08, OS_MESG_BLOCK);
+            osSendMesg(sc->curRDPTask->msgQ, &D_800A4308, OS_MESG_BLOCK);
         }
         if (gCurRDPTaskIsSet) {
             osScGetTaskType(sc->curRDPTask->taskID); //Returns a string containing the name of the task
-            func_800507A4_513A4(sc->curRDPTask); //Func is empty
+            func_800507A4(sc->curRDPTask); //Func is empty
             if (sc->curRDPTask->list.t.type == M_GFXTASK) {
-                dpGfx = (Gfx *) func_80050AA4_516A4(sc, &spAC, &sp9C, &spBC, &spA8, &sp98, &unkTask);
+                dpGfx = (Gfx *) func_80050AA4(sc, &spAC, &sp9C, &spBC, &spA8, &sp98, &unkTask);
             }
             gCurRDPTaskIsSet = FALSE;
         }
@@ -507,36 +507,36 @@ void __scHandleRetrace(OSSched *sc) {
         if (spGfx != 0) {
             diPrintfSetXY(30, 30);
             //"SP CRASHED, gfx=%x"
-            diPrintf(D_800AD7D4_AE3D4, spGfx);
+            diPrintf(D_800AD7D4, spGfx);
         }
         if (dpGfx != 0) {
             diPrintfSetXY(30, 70);
             //"DP CRASHED, gfx=%x"
-            diPrintf(D_800AD7E8_AE3E8, dpGfx);
+            diPrintf(D_800AD7E8, dpGfx);
         }
         yPos = 110;
         if (gGfxOverflowed) {
             diPrintfSetXY(30, yPos);
             //"** GFX overflow **"
-            diPrintf(D_800AD7FC_AE3FC);
+            diPrintf(D_800AD7FC);
             yPos += 10;
         }
         if (gMtxOverflowed) {
             diPrintfSetXY(30, yPos);
             //"** MTX overflow **"
-            diPrintf(D_800AD810_AE410);
+            diPrintf(D_800AD810);
             yPos += 10;
         }
         if (gVtxOverflowed) {
             diPrintfSetXY(30, yPos);
             //"** VTX overflow **"
-            diPrintf(D_800AD824_AE424);
+            diPrintf(D_800AD824);
             yPos += 10;
         }
         if (gPolOverflowed) {
             diPrintfSetXY(30, yPos);
             //"** POL overflow **"
-            diPrintf(D_800AD838_AE438);
+            diPrintf(D_800AD838);
             yPos += 10;
             set_curRDPTask_NULL = 0;
         }
@@ -544,7 +544,7 @@ void __scHandleRetrace(OSSched *sc) {
         dpGfx = 0;
         diPrintfSetXY(30, yPos + 10);
         //"Version %s" - "7.2"
-        diPrintf(D_800AD84C_AE44C, D_800AD7D0_AE3D0);
+        diPrintf(D_800AD84C, D_800AD7D0);
         diPrintfAll(&dlist);
         __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 |
             SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 | SP_CLR_SIG4 |
@@ -573,7 +573,7 @@ void __scHandleRetrace(OSSched *sc) {
     if (__scSchedule(sc, &sp, &dp, state) != state)
         __scExec(sc, sp, dp);
 
-    gRetraceCounter64 = D_800A4324_A4F24 + 1;
+    gRetraceCounter64 = D_800A4324 + 1;
     
     
     sc->frameCount+=1; // If you want to make the game 60FPS, change this to 2.
@@ -584,7 +584,7 @@ void __scHandleRetrace(OSSched *sc) {
             if ((unkTask2->unk68) || (unkTask2->msg)) {
                 osSendMesg(unkTask2->msgQ, unkTask2->msg, OS_MESG_BLOCK);
             } else {
-                osSendMesg(unkTask2->msgQ, &D_800A4300_A4F00, OS_MESG_BLOCK);
+                osSendMesg(unkTask2->msgQ, &D_800A4300, OS_MESG_BLOCK);
             }
         }
         sc->frameCount = 0;
@@ -597,7 +597,7 @@ void __scHandleRetrace(OSSched *sc) {
             if (gNextFrameCount <= 0) {
                 osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
                 if (sc->audioListHead) {
-                    func_80050670_51270(sc);
+                    func_80050670(sc);
                 }
                 gNextFrameCount = amAudioMgrGetNextFrameCount();
             }
@@ -692,7 +692,7 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
                 if (t->unk68 || t->msg) {
                     osSendMesg(t->msgQ, t->msg, OS_MESG_BLOCK);
                 } else {
-                    osSendMesg(t->msgQ, &D_800A4300_A4F00, OS_MESG_BLOCK);
+                    osSendMesg(t->msgQ, &D_800A4300, OS_MESG_BLOCK);
                 }
                 sc->frameCount = 0;
                 return 1;
@@ -701,7 +701,7 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
                 osSendMesg(t->msgQ, t->msg, OS_MESG_BLOCK);
                 return 1;
             }
-            osSendMesg(t->msgQ, &D_800A4300_A4F00, OS_MESG_BLOCK);
+            osSendMesg(t->msgQ, &D_800A4300, OS_MESG_BLOCK);
         }
         return 1;
     }
@@ -759,7 +759,7 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
 void __scYield(OSSched *sc) {
     if (sc->curRSPTask->list.t.type == M_GFXTASK) {
         sc->curRSPTask->state |= OS_SC_YIELD;
-        D_800FF668_B2B88 = osGetTime();
+        D_800FF668 = osGetTime();
         osSpTaskYield();
     } 
 }

@@ -1,6 +1,6 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_drvrNew/func_8008DD20_8E920.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_drvrNew/func_8008DD20.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_drvrNew/n_alFxInitlpfilter.s")
 

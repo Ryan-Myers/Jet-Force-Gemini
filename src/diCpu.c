@@ -17,12 +17,12 @@ void diCpuTraceInit(void) {
 void diCpuThread(void *unused) {
     s32 sp2C;
     s32 var_s0 = 0;
-    osCreateMesgQueue(&D_801031C0_B5DC0, &D_801031D8_B5DD8, 8);
-    osSetEventMesg(OS_EVENT_FAULT, &D_801031C0_B5DC0, (void *)8);
-    osSetEventMesg(OS_EVENT_CPU_BREAK, &D_801031C0_B5DC0, (void *)2);
-    osCreatePiManager(150, &D_80103218_B5E18, &D_801031F8_B5DF8, 8);
+    osCreateMesgQueue(&D_801031C0, &D_801031D8, 8);
+    osSetEventMesg(OS_EVENT_FAULT, &D_801031C0, (void *)8);
+    osSetEventMesg(OS_EVENT_CPU_BREAK, &D_801031C0, (void *)2);
+    osCreatePiManager(150, &D_80103218, &D_801031F8, 8);
     while (1) {
-        osRecvMesg(&D_801031C0_B5DC0, (OSMesg) &sp2C, 1);
+        osRecvMesg(&D_801031C0, (OSMesg) &sp2C, 1);
         var_s0 |= (s32)sp2C;
         if ((var_s0 & 8) == 0 && (var_s0 & 2) == 0) {
             continue;
@@ -46,7 +46,7 @@ void stop_all_threads_except_main(void) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800676F8_682F8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800676F8.s")
 
 void func_800677E4(void) {
     OSThread *thread;
@@ -59,45 +59,45 @@ void func_800677E4(void) {
         }
     }
     if (thread->priority != -1) {
-        func_800676F8_682F8(thread);
+        func_800676F8(thread);
     }
-    func_80067880_68480(thread);
+    func_80067880(thread);
 }
 
 #ifdef NON_EQUIVALENT
 extern s32 osCicId;
-extern s32 D_800A6E98_A7A98;
+extern s32 D_800A6E98;
 
-void func_80067880_68480(OSThread *thread) {
+void func_80067880(OSThread *thread) {
     s32 i;
 
     // Anti Piracy Check
-    if ((D_800A3B74_A4774 == 0) || (osCicId != 6105)) {
+    if ((D_800A3B74 == 0) || (osCicId != 6105)) {
         while(1){}
     }
-    if (D_800A6E98_A7A98 == 0) {
+    if (D_800A6E98 == 0) {
         if (thread && thread && thread) {}
     }
     if (viGetVideoMode() != 0) {
-        D_800A6EDC_A7ADC = 1;
+        D_800A6EDC = 1;
     } else {
-        D_800A6EDC_A7ADC = 0;
+        D_800A6EDC = 0;
     }
     for (i = 0; i < 100; i++) {
-        func_8006869C_6929C();
+        func_8006869C();
     }
     while(1){}
 }
 #else
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067880_68480.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067880.s")
 #endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuReportWatchpoint.s")
 
 #ifdef NON_EQUIVALENT
-extern s32 D_800A6E90_A7A90;
-extern s32 D_800A6E94_A7A94;
-extern s32 D_800A6E98_A7A98;
+extern s32 D_800A6E90;
+extern s32 D_800A6E94;
+extern s32 D_800A6E98;
 
 void diCpuLogMessage(const char *format, ...) {
     va_list args;
@@ -111,7 +111,7 @@ void diCpuLogMessage(const char *format, ...) {
     vsprintf(&sp20, format, &args);
     va_end(args);
 
-    var_a1 = (D_800A6E94_A7A94 * 41) + 0x80700000;
+    var_a1 = (D_800A6E94 * 41) + 0x80700000;
     var_v0 = &sp20;
     i = 0;
     if (var_v0[i] != 0) {
@@ -127,20 +127,20 @@ loop_2:
         }
     }
     *var_a1 = 0;
-    D_800A6E94_A7A94++;
-    if (D_800A6E94_A7A94 >= 500) {
-        D_800A6E98_A7A98 = 1;
-        D_800A6E94_A7A94 = 0;
+    D_800A6E94++;
+    if (D_800A6E94 >= 500) {
+        D_800A6E98 = 1;
+        D_800A6E94 = 0;
     }
-    if (D_800A6E98_A7A98 != 0) {
-        D_800A6E90_A7A90 = D_800A6E94_A7A94;
+    if (D_800A6E98 != 0) {
+        D_800A6E90 = D_800A6E94;
     }
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuLogMessage.s")
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067AA0_686A0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067AA0.s")
 
 void render_epc_lock_up_display(epcInfo *arg0);
 
@@ -161,18 +161,18 @@ s32 diCpuTraceGetFault(void) {
 }
 
 void diCpuTraceTick(s32 arg0) {
-    D_800A6E8C_A7A8C += arg0;
-    if (D_800A6E8C_A7A8C > 60) {
-        D_800A6E8C_A7A8C = 0;
-        D_800A6E88_A7A88++;
+    D_800A6E8C += arg0;
+    if (D_800A6E8C > 60) {
+        D_800A6E8C = 0;
+        D_800A6E88++;
     }
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/render_epc_lock_up_display.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800683D0_68FD0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800683D0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800684F0_690F0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800684F0.s")
 
 
 void cpuXYPrintf(s32 x, s32 y, const char *format, ...) {
@@ -183,8 +183,8 @@ void cpuXYPrintf(s32 x, s32 y, const char *format, ...) {
     vsprintf(s, format, args);
     va_end(args);
 
-    if (D_800A6EDC_A7ADC != 0) {
-        if (D_800A6EDC_A7ADC == 1) {
+    if (D_800A6EDC != 0) {
+        if (D_800A6EDC == 1) {
             y -= 8;
         } else {
             y -= 104;
@@ -195,11 +195,11 @@ void cpuXYPrintf(s32 x, s32 y, const char *format, ...) {
         }
     } else {
 block_7:
-        func_800684F0_690F0(x, y, s);
+        func_800684F0(x, y, s);
     }
 }
 
-void func_8006869C_6929C(void) {
+void func_8006869C(void) {
     UNUSED s32 pad;
     s32 height;
     s32 width;

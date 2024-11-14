@@ -1,7 +1,7 @@
 #include "common.h"
 #include "stdarg.h"
 
-#define RENDER_PRINTF_CMD_ARG_BYTE(val) *D_800A6D44_A7944 = val; D_800A6D44_A7944++;
+#define RENDER_PRINTF_CMD_ARG_BYTE(val) *D_800A6D44 = val; D_800A6D44++;
 #define RENDER_PRINTF_CMD_ARG_SHORT(val) RENDER_PRINTF_CMD_ARG_BYTE(val) RENDER_PRINTF_CMD_ARG_BYTE(val >> 8)
 
 #define RENDER_PRINTF_CMD_END RENDER_PRINTF_CMD_ARG_BYTE(0)
@@ -53,7 +53,7 @@ void *memset(void *s, int c, size_t n) {
 #pragma GLOBAL_ASM("asm/nonmatchings/diprint/_itoa.s")
 
 void sprintfSetSpacingCodes(s32 arg0) {
-    D_800A6D40_A7940 = arg0;
+    D_800A6D40 = arg0;
 }
 
 UNUSED int sprintf(char *s, const char *format, ...) {
@@ -66,24 +66,24 @@ UNUSED int sprintf(char *s, const char *format, ...) {
 #pragma GLOBAL_ASM("asm/nonmatchings/diprint/vsprintf.s")
 
 void diPrintfInit(void) {
-    D_80101F40_B4B40 = texLoadTexture(0);
-    D_80101F44_B4B44 = texLoadTexture(1);
-    D_80101F48_B4B48 = texLoadTexture(2);
-    D_800A6D44_A7944 = D_80101640_B4240;
+    D_80101F40 = texLoadTexture(0);
+    D_80101F44 = texLoadTexture(1);
+    D_80101F48 = texLoadTexture(2);
+    D_800A6D44 = D_80101640;
 }
 
 s32 diPrintf(const char *format, ...) {
     va_list args;
     s32 written;
     va_start(args, format);
-    if ((D_800A6D44_A7944 - D_80101640_B4240) > 0x800) {
+    if ((D_800A6D44 - D_80101640) > 0x800) {
         return -1;
     }
     sprintfSetSpacingCodes(1);
-    written = vsprintf(D_800A6D44_A7944, format, args);
+    written = vsprintf(D_800A6D44, format, args);
     sprintfSetSpacingCodes(0);
     if (written > 0) {
-        D_800A6D44_A7944 = &D_800A6D44_A7944[written] + 1;
+        D_800A6D44 = &D_800A6D44[written] + 1;
     }
     return 0;
 }
@@ -99,31 +99,31 @@ void diPrintfAll(Gfx **dList) {
 
     rcpInitDp(dList);
     viGetCurrentSize(&height, &width);
-    D_80101F70_B4B70 = height;
-    D_80101F72_B4B72 = width;
-    gDPSetScissor((*dList)++, 0, 0, 0, D_80101F70_B4B70, D_80101F72_B4B72);
-    func_800665C8_671C8();
-    gSPDisplayList((*dList)++, D_800A6E08_A7A08);
-    buffer = (char *) D_80101640_B4240;
-    func_80066658_67258();
-    D_80101F6C_B4B6C = -1;
-    D_80101F54_B4B54 = 0;
-    D_80101F50_B5470 = D_80101F4C_B4B4C;
-    D_80101F52_B5472 = D_80101F4E_B4B4E;
-    while ((s32)buffer != (s32)D_800A6D44_A7944) {
-        D_80101F58_B4B58 = FALSE;
-        buffer += func_80065CB4_668B4(dList, buffer);
+    D_80101F70 = height;
+    D_80101F72 = width;
+    gDPSetScissor((*dList)++, 0, 0, 0, D_80101F70, D_80101F72);
+    func_800665C8();
+    gSPDisplayList((*dList)++, D_800A6E08);
+    buffer = (char *) D_80101640;
+    func_80066658();
+    D_80101F6C = -1;
+    D_80101F54 = 0;
+    D_80101F50 = D_80101F4C;
+    D_80101F52 = D_80101F4E;
+    while ((s32)buffer != (s32)D_800A6D44) {
+        D_80101F58 = FALSE;
+        buffer += func_80065CB4(dList, buffer);
     }
-    func_800660D4_66CD4(dList, D_80101F50_B5470, D_80101F52_B5472, D_80101F4C_B4B4C, D_80101F4E_B4B4E + 10);
-    buffer = (char *) D_80101640_B4240;
-    func_80066658_67258();
-    D_80101F6C_B4B6C = -1;
-    D_80101F54_B4B54 = 0;
-    while ((s32)buffer != (s32)D_800A6D44_A7944) {
-        D_80101F58_B4B58 = TRUE;
-        buffer += func_80065CB4_668B4(dList, buffer);
+    func_800660D4(dList, D_80101F50, D_80101F52, D_80101F4C, D_80101F4E + 10);
+    buffer = (char *) D_80101640;
+    func_80066658();
+    D_80101F6C = -1;
+    D_80101F54 = 0;
+    while ((s32)buffer != (s32)D_800A6D44) {
+        D_80101F58 = TRUE;
+        buffer += func_80065CB4(dList, buffer);
     }
-    D_800A6D44_A7944 = D_80101640_B4240;
+    D_800A6D44 = D_80101640;
 }
 
 /**
@@ -148,9 +148,9 @@ void diPrintfSetXY(u16 x, u16 y) {
 }
 
 //Same as func_800B653C in DKR
-#pragma GLOBAL_ASM("asm/nonmatchings/diprint/func_80065CB4_668B4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diprint/func_80065CB4.s")
 
-void func_800660D4_66CD4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry) {
+void func_800660D4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry) {
     if (!((ulx == lrx) | (uly == lry))) {
         if (ulx >= 2) {
             ulx -= 2;
@@ -163,70 +163,70 @@ void func_800660D4_66CD4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry) {
 
 //Same as func_800B69FC in DKR
 //Loads a font texture and returns the width of the character given.
-s32 func_80066174_66D74(Gfx **dList, s32 asciiVal) {
+s32 func_80066174(Gfx **dList, s32 asciiVal) {
     s32 fontCharWidth;
     s32 fontCharU;
 
     if (asciiVal < 0x40) {
         //Character is a symbol or number and not a letter
-        if (D_80101F6C_B4B6C != 0) {
-            if (D_80101F58_B4B58) {
-                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F40_B4B40 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
+        if (D_80101F6C != 0) {
+            if (D_80101F58) {
+                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F40 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
             }
-            D_80101F6C_B4B6C = 0;
+            D_80101F6C = 0;
         }
         asciiVal -= 0x21;
     } else if (asciiVal < 0x60) {
         //Character is a upper case letter
-        if (D_80101F6C_B4B6C != 1) {
-            if (D_80101F58_B4B58) {
-                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F44_B4B44 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11, 0, 2, 2, 0, 0, 0, 0);
+        if (D_80101F6C != 1) {
+            if (D_80101F58) {
+                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F44 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11, 0, 2, 2, 0, 0, 0, 0);
             }
-            D_80101F6C_B4B6C = 1;
+            D_80101F6C = 1;
         }
         asciiVal -= 0x40;
     } else if (asciiVal < 0x80) {
         //Character is a lower case letter
-        if (D_80101F6C_B4B6C != 2) {
-            if (D_80101F58_B4B58) {
-                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F48_B4B48 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
+        if (D_80101F6C != 2) {
+            if (D_80101F58) {
+                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F48 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
             }
-            D_80101F6C_B4B6C = 2;
+            D_80101F6C = 2;
         }
         asciiVal -= 0x60;
     }
-    fontCharU = D_800A6D48_A7948[D_80101F6C_B4B6C][asciiVal].u;
-    fontCharWidth = (D_800A6D48_A7948[D_80101F6C_B4B6C][asciiVal].v - fontCharU) + 1;
-    if (D_80101F58_B4B58) {
+    fontCharU = D_800A6D48[D_80101F6C][asciiVal].u;
+    fontCharWidth = (D_800A6D48[D_80101F6C][asciiVal].v - fontCharU) + 1;
+    if (D_80101F58) {
         gDPSetCombineMode((*dList)++, DKR_CC_UNK14, DKR_CC_UNK14);
-        gSPTextureRectangle((*dList)++, (D_80101F4C_B4B4C << 2), (D_80101F4E_B4B4E << 2), ((D_80101F4C_B4B4C + fontCharWidth) << 2), ((D_80101F4E_B4B4E + 10) << 2), 0, (fontCharU << 5), 0, 1024, 1024);
+        gSPTextureRectangle((*dList)++, (D_80101F4C << 2), (D_80101F4E << 2), ((D_80101F4C + fontCharWidth) << 2), ((D_80101F4E + 10) << 2), 0, (fontCharU << 5), 0, 1024, 1024);
     }
     return fontCharWidth;
 }
 
-void func_800665C8_671C8(void) {
-    if (D_80101F70_B4B70 <= 320) {
-        D_80101F5C_B4B5C = 16;
-        D_80101F60_B4B60 = D_80101F70_B4B70 - 16;
+void func_800665C8(void) {
+    if (D_80101F70 <= 320) {
+        D_80101F5C = 16;
+        D_80101F60 = D_80101F70 - 16;
     } else {
-        D_80101F5C_B4B5C = 32;
-        D_80101F60_B4B60 = D_80101F70_B4B70 - 32;
+        D_80101F5C = 32;
+        D_80101F60 = D_80101F70 - 32;
     }
-    if (D_80101F72_B4B72 <= 240) {
-        D_80101F64_B4B64 = 16;
-        D_80101F68_B4B68 = D_80101F72_B4B72 - 16;
+    if (D_80101F72 <= 240) {
+        D_80101F64 = 16;
+        D_80101F68 = D_80101F72 - 16;
     } else {
-        D_80101F64_B4B64 = 32;
-        D_80101F68_B4B68 = D_80101F72_B4B72 - 32;
+        D_80101F64 = 32;
+        D_80101F68 = D_80101F72 - 32;
     }
 }
 
-void func_80066658_67258(void) {
-    D_80101F4C_B4B4C = D_80101F5C_B4B5C;
-    D_80101F4E_B4B4E = D_80101F64_B4B64;
+void func_80066658(void) {
+    D_80101F4C = D_80101F5C;
+    D_80101F4E = D_80101F64;
 }
 
-void func_8006667C_6727C(void) {
-    D_80101F4C_B4B4C = D_80101F5C_B4B5C;
-    D_80101F4E_B4B4E += 11;
+void func_8006667C(void) {
+    D_80101F4C = D_80101F5C;
+    D_80101F4E += 11;
 }

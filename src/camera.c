@@ -14,7 +14,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camDistance.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_8003F66C_4026C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_8003F66C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camGetMode.s")
 

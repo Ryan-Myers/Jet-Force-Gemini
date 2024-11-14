@@ -2,20 +2,20 @@
 #include "math.h"
 
 void resetVars(void) {
-    D_800F3860_F4460 = 1;
-    D_800F386C_F446C = 0;
-    D_800F3870_F4470 = 0;
-    D_800F3908_F4508 = 0;
-    D_800F3910_F4510 = 0;
-    D_800F391C_F451C = 0;
+    D_800F3860 = 1;
+    D_800F386C = 0;
+    D_800F3870 = 0;
+    D_800F3908 = 0;
+    D_800F3910 = 0;
+    D_800F391C = 0;
     ObjListCount = 0;
-    D_800F38AC_F44AC = 0;
-    D_800F38B8_F44B8 = 0;
-    D_800F38BC_F44BC = 0;
-    D_800F38C4_F44C4 = 0;
-    D_800F38C0_F44C0 = 0;
-    D_800F38C2_F44C2 = 0;
-    D_800F3948_F4548 = 0;
+    D_800F38AC = 0;
+    D_800F38B8 = 0;
+    D_800F38BC = 0;
+    D_800F38C4 = 0;
+    D_800F38C0 = 0;
+    D_800F38C2 = 0;
+    D_800F3948 = 0;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objFreeAll.s")
@@ -36,13 +36,13 @@ s32 objTvTimes(s32 timer) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_800052B4_5EB4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_800052B4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objLoadObjList.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objSetupPlayers.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80005DDC_69DC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80005DDC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objDeleteRomDef.s")
 
@@ -62,31 +62,31 @@ Object *objGetObject(s32 index) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objSetupObject.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80006FFC_7BFC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80006FFC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000710C_7D0C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000710C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007494_8094.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007494.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_800075EC_81EC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_800075EC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007648_8248.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007648.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007760_8360.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007760.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007968_8568.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007968.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007974_8574.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007974.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007984_8584.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007984.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objFreeObject.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objDoFrees.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007EA0_8AA0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80007EA0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80008F60_9B60.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80008F60.s")
 
 void objObjectsPauseTick(void) {
 }
@@ -100,7 +100,7 @@ void objObjectsPauseTick(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objResetAnimModels.s")
 
 void objMoveXYZnocheck(void) {
-    D_800A1208_A1E08 = 1;
+    D_800A1208 = 1;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objMoveXYZ.s")
@@ -113,19 +113,19 @@ void objMoveXYZnocheck(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objDrawTracer.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000A9C0_B5C0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000A9C0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objPrintCustomObject.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objDrawDoor.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000B3DC_BFDC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000B3DC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objMakeGunMtx.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000BDCC_C9CC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000BDCC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000C028_CC28.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000C028.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objDrawPlayerEffects.s")
 
@@ -133,7 +133,7 @@ void objMoveXYZnocheck(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objClearFlashes.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000C964_D564.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000C964.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objPrintModelObject.s")
 
@@ -155,7 +155,7 @@ void objDoPlayerTumble(Object *this) {
         tmp_f0 = ((tmp_f0 < 0.0f) ? 0.0f : tmp_f0 * tmp_f0);
         tmp_f0 = ((1.0f - tmp_f0)) * 24.0f + sp_20->unk64;
         this->segment.trans.y_position += tmp_f0;
-        D_800F3A20_F4620 = tmp_f0;
+        D_800F3A20 = tmp_f0;
     }
 }
 #else
@@ -168,13 +168,13 @@ void objUndoPlayerTumble(Object *obj) {
         obj->segment.trans.y_rotation -= racer->y_rotation_offset;
         obj->segment.trans.x_rotation -= racer->x_rotation_offset;
         obj->segment.trans.z_rotation -= racer->z_rotation_offset;
-        obj->segment.trans.y_position -= D_800F3A20_F4620;
+        obj->segment.trans.y_position -= D_800F3A20;
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000DCE8_E8E8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000DCE8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000DD1C_E91C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000DD1C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objScrollTexture.s")
 
@@ -217,17 +217,17 @@ s32 *objGetTable(s32 index) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objSetAnimGroup.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000E5F0_F1F0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000E5F0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objSetup.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000F8E8_104E8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000F8E8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000FB60_10760.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_8000FB60.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80010430_11030.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80010430.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80011200_11E00.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80011200.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objAnimDframe.s")
 
@@ -243,7 +243,7 @@ s32 *objGetTable(s32 index) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objRemoveDependancy.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80011AD4_126D4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80011AD4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objCutCameraActive.s")
 

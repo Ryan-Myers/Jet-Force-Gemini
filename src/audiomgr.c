@@ -17,7 +17,7 @@ s32 amAudioMgrGetNextFrameCount(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/__amHandleDoneMsg.s")
 
 //__amDma
-#pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/func_80002764_3364.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/func_80002764.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/__amDmaNew.s")
 

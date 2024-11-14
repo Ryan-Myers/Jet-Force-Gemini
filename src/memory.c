@@ -2,7 +2,7 @@
 
 #define MAIN_POOL_SLOT_COUNT 1600
 #define RAM_END 0x80400000
-#define EXTENDED_RAM_END 0x80600000
+#define EXTENDED_RAM 0x80600000
 #define _ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
 
 u8 mmExtendedRam = FALSE;
@@ -15,13 +15,13 @@ u8 gFreeQueueDelay[255];
 s32 gFreeQueueCount;
 s32 mmDelay;
 s32 FreeRAM;
-s32 D_800FE868_FF468[4]; //Same count of gMemoryPools. Possibly stores the size of each pool. Used in Debug meny to show free memory
+s32 D_800FE868[4]; //Same count of gMemoryPools. Possibly stores the size of each pool. Used in Debug meny to show free memory
 s32 mmEndRam;
 
 void mmInit(void) {
     gNumberOfMemoryPools = -1;
     if (mmExtendedRam) {
-        mmEndRam = EXTENDED_RAM_END;
+        mmEndRam = EXTENDED_RAM;
     } else {
         mmEndRam = RAM_END;
     }
@@ -87,7 +87,7 @@ MemoryPoolSlot *new_memory_pool(MemoryPoolSlot *slots, s32 poolSize, s32 numSlot
     if (poolCount == 0) {
         FreeRAM = firstSlotSize;
     }
-    D_800FE868_FF468[poolCount] = firstSlotSize;
+    D_800FE868[poolCount] = firstSlotSize;
     return gMemoryPools[poolCount].slots;
 }
 
@@ -250,7 +250,7 @@ void mmFree(void *data) {
     if (mmDelay == 0) {
         free_slot_containing_address(data);
     } else {
-        func_8004B05C_4BC5C(data);
+        func_8004B05C(data);
     }
     enableInterrupts(flags);
 }
@@ -307,7 +307,7 @@ void free_slot_containing_address(u8 *address) {
     }
 }
 
-void func_8004B05C_4BC5C(void *dataAddress) {
+void func_8004B05C(void *dataAddress) {
     gFreeQueue[gFreeQueueCount].dataAddress = dataAddress;
     gFreeQueueDelay[gFreeQueueCount] = mmDelay;
     gFreeQueueCount++;
@@ -351,7 +351,7 @@ void free_memory_pool_slot(s32 poolIndex, s32 slotIndex) {
     if (poolIndex == 0) {
         FreeRAM += slots[slotIndex].size;
     }
-    D_800FE868_FF468[poolIndex] += slots[slotIndex].size;
+    D_800FE868[poolIndex] += slots[slotIndex].size;
     if (nextIndex != -1) {
         if (nextSlot->flags == 0) {
             slots[slotIndex].size += nextSlot->size;
@@ -400,7 +400,7 @@ s32 allocate_memory_pool_slot(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIs
         if (poolIndex == 0) {
             FreeRAM -= size;
         }
-        D_800FE868_FF468[poolIndex] -= size;
+        D_800FE868[poolIndex] -= size;
     }
 
     pool = &gMemoryPools[poolIndex];

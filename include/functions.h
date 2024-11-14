@@ -5,6 +5,10 @@
 #include "libultra_internal.h"
 #include "sched.h"
 
+void *ad_sndp_play(ALBank *arg0, s16 arg1, u16 arg2, u8 arg3, f32 arg4, u8 arg5, void **arg6);
+ALLink *func_80085EF0(ALBank *arg0, ALSound *arg1);
+u16 amGetSfxCount(void);
+s32 scalevol(s32 vol);
 OSPiHandle *osCartRomInit(void);
 OSPiHandle *osFlashInit(void);
 void *mmAlloc(s32 size, u32 colourTag);
@@ -35,12 +39,12 @@ s32 *disableInterrupts(void);
 void enableInterrupts(s32*);
 void *mmAlloc(s32 size, u32 colourTag);
 void free_slot_containing_address(u8 *address);
-void func_8004B05C_4BC5C(void *dataAddress);
+void func_8004B05C(void *dataAddress);
 MemoryPoolSlot *allocate_from_memory_pool(s32 poolIndex, s32 size, u32 colourTag);
 s32 runlinkLowMemoryPanic(void);
 s32 runlinkIsModuleLoaded(s32 module);
 s32 runlinkGetAddressInfo(u32 arg0, s32 *arg1, s32 *arg2, u32 **arg3);
-void func_800676F8_682F8(void *arg0);
+void func_800676F8(void *arg0);
 void stop_all_threads_except_main(void);
 void func_800677E4(void);
 void camlightDelete(void *arg0); //TODO: arg0 typing is incorrect
@@ -70,17 +74,17 @@ typedef enum AlignmentFlags {
     ALIGN_BOTTOM_RIGHT  = VERT_ALIGN_BOTTOM | HORZ_ALIGN_RIGHT
 } AlignmentFlags;
 
-void func_80070518_71118(Gfx **dList, DialogueBoxBackground *box, char *text, AlignmentFlags alignmentFlags);
+void func_80070518(Gfx **dList, DialogueBoxBackground *box, char *text, AlignmentFlags alignmentFlags);
 void fontPrintWindowXY(Gfx **displayList, s32 windowId, s32 xpos, s32 ypos, char *text, AlignmentFlags alignmentFlags);
 
 
 void camSetScissor(Gfx **dlist);
 void fontConvertString(char *arg0, char *arg1);
 s32 fontStringWidth(char *text, s32 font, s32 arg2);
-void func_80071A0C_7260C(char *input, char *output, s32 number); //parse_string_with_number
-void *func_80071B08_72708(u8); //returns cacheline?
+void func_80071A0C(char *input, char *output, s32 number); //parse_string_with_number
+void *func_80071B08(u8); //returns cacheline?
 void texDPInit(Gfx **);
-void func_800660D4_66CD4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry);
+void func_800660D4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry);
 
 void RevealReturnAddresses(void);
 void mmInit(void);
@@ -92,20 +96,20 @@ void rzipInit(void);
 void viInit(OSSched *sc);
 
 s32 vsprintf(char *s, const char *format, ...);
-s32 func_80066174_66D74(Gfx **dList, s32 asciiVal);
-void func_800665C8_671C8(void);
-void func_80066658_67258(void);
-void func_8006667C_6727C(void);
+s32 func_80066174(Gfx **dList, s32 asciiVal);
+void func_800665C8(void);
+void func_80066658(void);
+void func_8006667C(void);
 void sprintfSetSpacingCodes(s32 arg0);
 TextureHeader *load_texture(s32 arg0);
 
 void viGetCurrentSize(s32 *arg0, s32 *arg1);
 void rcpInitDp(Gfx **dList);
 TextureHeader *texLoadTexture(s32 arg0);
-s32 func_80065CB4_668B4(Gfx **dlist, char *buffer);
+s32 func_80065CB4(Gfx **dlist, char *buffer);
 
 
-void func_80021444_22044(unk800DC950 *arg0, s32 arg1);
+void func_80021444(unk800DC950 *arg0, s32 arg1);
 s32 *objGetTable(s32 index);
 void resetMixCycle(PulsatingLightData *data);
 void updateMixCycle(PulsatingLightData *data, s32 timeDelta);
@@ -114,8 +118,8 @@ void initColourCycle(unkResetColourCycle *arg0, s32 arg1);
 s32 mathRnd(s32, s32);
 void texAnimateTexture(TextureHeader *texture, u32 *triangleBatchInfoFlags, s32 *arg2, s32 updateRate);
 void setTexMemColour(s32 tagId);
-//void func_80057B8C_5878C(TextureHeader *tex, u8 *addr); //build_tex_display_list in DKR
-void func_80057C50_58850(Gfx **dlist, TextureHeader *tex, s32 arg2, s32 arg3);
+//void func_80057B8C(TextureHeader *tex, u8 *addr); //build_tex_display_list in DKR
+void func_80057C50(Gfx **dlist, TextureHeader *tex, s32 arg2, s32 arg3);
 void sprSetIA2ColOverride(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5);
 void sprClearIA2ColOverride(void);
 void sprSetTextureFilter(s32 arg0);
@@ -127,7 +131,7 @@ s32 packClose(UNUSED s32 controllerIndex);
 SIDeviceStatus packOpenFile(s32 controllerIndex, char *fileName, char *fileExt, s32 *fileNumber);
 s32 frontGetLanguage(void);
 SIDeviceStatus packReadFile(s32 controllerIndex, s32 fileNum, u8 *data, s32 dataLength);
-s32 func_8004DDC4_4E9C4(s32 controllerIndex, s32 fileNum);
+s32 func_8004DDC4(s32 controllerIndex, s32 fileNum);
 char *font_codes_to_string(char *inString, char *outString, s32 stringLength);
 SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName, char *fileExt, u8 *dataToWrite, s32 fileSize);
 SIDeviceStatus packCopyFile(s32 controllerIndex, s32 fileNumber, s32 secondControllerIndex);
@@ -151,8 +155,8 @@ void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2);
 void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2);
 void amStop(void);
 void bootCheckStack(void);
-void func_80044938_45538(void);
-void func_80046070_46C70(s32 arg0);
+void func_80044938(void);
+void func_80046070(s32 arg0);
 void mainChangeLevel(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 void mainInitGame(void);
 void mainSetGameFlag(s32 arg0, s32 arg1);
@@ -163,12 +167,12 @@ void diPrintfAll(Gfx **dList);
 void diPrintfSetBG(u8 red, u8 green, u8 blue, u8 alpha);
 void diPrintfSetXY(u16 x, u16 y);
 s32 amAudioMgrGetNextFrameCount(void);
-void func_80050670_51270(OSSched *sc);
+void func_80050670(OSSched *sc);
 char *osScGetTaskType(s32 taskID);
-void func_800507A4_513A4(OSScTask *task);
+void func_800507A4(OSScTask *task);
 void mmSlotPrint(void);
 void segSetBase(Gfx **dlist, s32 segment, s32 base);
-Gfx *func_80050AA4_516A4(OSSched *sc, 
+Gfx *func_80050AA4(OSSched *sc, 
     char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
     char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2);
 void objUndoPlayerTumble(Object *obj);
@@ -190,7 +194,7 @@ s32 osFlashWriteArray(u32 page_num);
 s32 osFlashWriteBuffer(OSIoMesg* mb, s32 priority, void* dramAddr, OSMesgQueue* mq);
 s32 osFlashReadArray(OSIoMesg* mb, s32 priority, u32 page_num, void* dramAddr, u32 n_pages, OSMesgQueue* mq);
 // void diRcpPrintDL(Gfx *, Gfx *, s32);
-// u32 *func_800507AC_513AC(OSSched *arg0, s32 arg1, Gfx *arg2, OSMesgQueue *arg3, u32 *arg4);
+// u32 *func_800507AC(OSSched *arg0, s32 arg1, Gfx *arg2, OSMesgQueue *arg3, u32 *arg4);
 // void diRcpTraceGetInfo(u32 arg0, s32 *arg1, s32 *arg2, s32 *arg3, s32 *arg4, s32 *arg5, s32 *arg6);
 
 
@@ -232,10 +236,10 @@ f32 lightDirectionCalc(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg
 s32 lightKillGlowingLight(void *arg0); //TODO: arg0 typing is incorrect
 
 //diCpu.c
-void func_800684F0_690F0(s32 x, s32 y, char *s);
+void func_800684F0(s32 x, s32 y, char *s);
 void cpuXYPrintf(s32 x, s32 y, const char *format, ...);
-void func_8006869C_6929C(void);
-void func_80067880_68480(OSThread *);
+void func_8006869C(void);
+void func_80067880(OSThread *);
 
 //gameVi.c
 s32 viGetVideoMode(void);

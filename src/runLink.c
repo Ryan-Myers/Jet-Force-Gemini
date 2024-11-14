@@ -18,11 +18,11 @@ char *GetSymbolName(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/GetSymbolName.s")
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_800534B4_540B4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_800534B4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_80053640_54240.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_80053640.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_800536F8_542F8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_800536F8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkDownloadCode.s")
 
@@ -32,16 +32,16 @@ typedef struct runlinkModule {
     s32 unk0;
     u8 pad4[25];
 } runlinkModule;
-extern runlinkModule *D_800FF780_B2380;
+extern runlinkModule *D_800FF780;
 s32 runlinkIsModuleLoaded(s32 module) {
-    return D_800FF780_B2380[module].unk0;
+    return D_800FF780[module].unk0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_80053FC8_54BC8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_80053FC8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkFreeCode.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_80054368_54F68.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_80054368.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkFlushModules.s")
 

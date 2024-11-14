@@ -61,28 +61,28 @@ typedef struct SpriteCacheEntry {
     Sprite *sprite;
 } SpriteCacheEntry;
 
-extern SpriteCacheEntry *D_800FF9EC_1005EC;
-extern s32 D_800FF9F8_1005F8;
+extern SpriteCacheEntry *D_800FF9EC;
+extern s32 D_800FF9F8;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texInitTextures.s")
 
 void texDisableModes(s32 flags) {
-    D_800A5838_A6438 |= flags;
+    D_800A5838 |= flags;
 }
 
 void texEnableModes(s32 flags) {
-    D_800A5838_A6438 &= ~flags;
+    D_800A5838 &= ~flags;
 }
 
 void texModelTextureLoad(u8 arg0) {
-    D_800A583C_A643C = arg0;
+    D_800A583C = arg0;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texLoadTexture.s")
 
 #ifdef NON_EQUIVALENT
-extern s32 D_800FF9D0_1005D0;
-extern TextureCacheEntry *D_800FF9C8_1005C8;
+extern s32 D_800FF9D0;
+extern TextureCacheEntry *D_800FF9C8;
 void texFreeTexture(TextureHeader *tex) {
     s32 i;
     s32 j;
@@ -91,13 +91,13 @@ void texFreeTexture(TextureHeader *tex) {
     if (tex != NULL) {
         tex->numberOfInstances--;
         if (tex->numberOfInstances <= 0) {
-            for (i = 0; i < D_800FF9D0_1005D0; i++) {
+            for (i = 0; i < D_800FF9D0; i++) {
                 j = i << 1;
-                if (tex == D_800FF9C8_1005C8[j].texture) {
+                if (tex == D_800FF9C8[j].texture) {
                     texId = -1;
                     mmFree(tex);
-                    D_800FF9C8_1005C8[j].id = texId;
-                    D_800FF9C8_1005C8[j].texture = (TextureHeader *) texId;
+                    D_800FF9C8[j].id = texId;
+                    D_800FF9C8[j].texture = (TextureHeader *) texId;
                     break;
                 }
             }
@@ -111,13 +111,13 @@ void texFreeTexture(TextureHeader *tex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texGetTextureNum.s")
 
 void texLoadTextureAddr(s32 arg0, s32 arg1) {
-    D_800A584C_A644C = arg1;
+    D_800A584C = arg1;
     texLoadTexture(arg0);
-    D_800A584C_A644C = 0;
+    D_800A584C = 0;
 }
 
 void setTexMemColour(s32 tagId) {
-    D_800A5830_A6430 = tagId;
+    D_800A5830 = tagId;
 }
 
 typedef struct Struct_Unk_8007B46C {
@@ -141,13 +141,13 @@ TextureHeader *texFrame(TextureHeader *arg0, s32 arg1) {
  * The next draw call will be forced to apply all settings instead of skipping unecessary steps.
 */
 void texDPInit(Gfx **dlist) {
-    D_800A5838_A6438 = 0;
-    D_800FFA14_B2614 = 0;
-    D_800FFA18_B2618 = 0;
-    D_800FFA10_B2610 = 0;
-    D_800FFA1C_B261C = 0;
-    D_800FFA20_B2620 = 1;
-    D_800FFA24_B2624 = 1;
+    D_800A5838 = 0;
+    D_800FFA14 = 0;
+    D_800FFA18 = 0;
+    D_800FFA10 = 0;
+    D_800FFA1C = 0;
+    D_800FFA20 = 1;
+    D_800FFA24 = 1;
     if (dlist != NULL) {
         gDPPipeSync((*dlist)++);
         gSPSetGeometryMode((*dlist)++, G_FOG | G_SHADING_SMOOTH | G_SHADE | G_ZBUFFER);
@@ -158,21 +158,21 @@ void texDPInit(Gfx **dlist) {
 
 
 void sprSetTextureFilter(s32 arg0) {
-    D_800A5834_A6434 = arg0;
+    D_800A5834 = arg0;
 }
 
 void sprSetIA2ColOverride(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5) {
-    D_800FFA28_B2628 = arg0;
-    D_800FFA29_B2629 = arg1;
-    D_800FFA2A_B262A = arg2;
-    D_800FFA2B_B262B = arg3;
-    D_800FFA2C_B262C = arg4;
-    D_800FFA2D_B262D = arg5;
-    D_800A5844_A6444 = 1;
+    D_800FFA28 = arg0;
+    D_800FFA29 = arg1;
+    D_800FFA2A = arg2;
+    D_800FFA2B = arg3;
+    D_800FFA2C = arg4;
+    D_800FFA2D = arg5;
+    D_800A5844 = 1;
 }
 
 void sprClearIA2ColOverride(void) {
-    D_800A5844_A6444 = 0;
+    D_800A5844 = 0;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/sprDPset.s")
@@ -189,18 +189,18 @@ void texFreeSprite(Sprite *sprite){
     if (sprite != 0){
         sprite->numberOfInstances--;
         if (sprite->numberOfInstances <= 0) {
-            for (i = 0; i < D_800FF9F8_1005F8; i++) {
-                if (sprite == D_800FF9EC_1005EC[i].sprite){
+            for (i = 0; i < D_800FF9F8; i++) {
+                if (sprite == D_800FF9EC[i].sprite){
                     
-                    if (D_800FF9EC_1005EC[i].sprite == 0) {}
+                    if (D_800FF9EC[i].sprite == 0) {}
 
                     for (frame = 0; frame < sprite->numberOfFrames; frame++){
                         texFreeTexture(sprite->frames[frame]);
                     }
                     spriteId = -1;
                     mmFree(sprite);
-                    D_800FF9EC_1005EC[i].id = spriteId;
-                    D_800FF9EC_1005EC[i].sprite = (Sprite *) spriteId;
+                    D_800FF9EC[i].id = spriteId;
+                    D_800FF9EC[i].sprite = (Sprite *) spriteId;
                     break;
                 }
             }
@@ -211,30 +211,30 @@ void texFreeSprite(Sprite *sprite){
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texFreeSprite.s")
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/func_800577D8_583D8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/textures/func_800577D8.s")
 
-//build_tex_display_list in DKR
-void func_80057B8C_5878C(TextureHeader *tex, u8 *addr) {
+//builD_tex_list in DKR
+void func_80057B8C(TextureHeader *tex, u8 *addr) {
     u8 *dlist;
 
     dlist = addr;
     if (tex) { }
     tex->cmd = (s32 *)addr;
-    func_80057C50_58850((Gfx **) &dlist, tex, 0, 0);
+    func_80057C50((Gfx **) &dlist, tex, 0, 0);
     //tex->flags & 0x40 - U clamp flag. Wrap
     if ((tex->unk1B < 2) && (tex->flags & 0x40)) {
         if (!(tex->format & 0xF)) {
-            func_80057C50_58850((Gfx **) &dlist, tex, 1, (0x1000 - tex->textureSize) >> 3);
+            func_80057C50((Gfx **) &dlist, tex, 1, (0x1000 - tex->textureSize) >> 3);
         } else {
-            func_80057C50_58850((Gfx **) &dlist, tex, 1, 0x100);
+            func_80057C50((Gfx **) &dlist, tex, 1, 0x100);
         }
     }
     tex->numberOfCommands = ((s32) (dlist - (s32)tex->cmd) >> 3);
 }
 
-//Shrunk build_tex_display_list
+//Shrunk builD_tex_list
 #ifdef NON_EQUIVALENT
-void func_80057C50_58850(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem) {
+void func_80057C50(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem) {
     s32 tileImgSiz;
     s32 imgSiz;
     s32 imgSizIncr;
@@ -391,7 +391,7 @@ void func_80057C50_58850(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem) {
     }
 }
 #else
-#pragma GLOBAL_ASM("asm/nonmatchings/textures/func_80057C50_58850.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/textures/func_80057C50.s")
 #endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texAnimateSprite.s")

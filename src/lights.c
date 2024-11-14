@@ -1,30 +1,30 @@
 #include "common.h"
 #include "math.h"
 
-extern void *D_800A18A0_A24A0;
-extern void *D_800F65E0_F71E0;
+extern void *D_800A18A0;
+extern void *D_800F65E0;
 
 void freeLights(void) {
-    if (D_800A1898_A2498 != NULL) {
-        mmFree(D_800A1898_A2498);
-        D_800A1898_A2498 = NULL;
-        D_800A189C_A249C = 0;
+    if (D_800A1898 != NULL) {
+        mmFree(D_800A1898);
+        D_800A1898 = NULL;
+        D_800A189C = 0;
     }
-    if (D_800F65E0_F71E0 != NULL) {
-        mmFree(D_800F65E0_F71E0);
-        D_800F65E0_F71E0 = NULL;
+    if (D_800F65E0 != NULL) {
+        mmFree(D_800F65E0);
+        D_800F65E0 = NULL;
     }
-    if (D_800A18A0_A24A0 != NULL) {
-        mmFree(D_800A18A0_A24A0);
-        D_800A18A0_A24A0 = NULL;
+    if (D_800A18A0 != NULL) {
+        mmFree(D_800A18A0);
+        D_800A18A0 = NULL;
     }
-    D_800A1894_A2494 = 0;
-    D_800A1890_A2490 = 0;
+    D_800A1894 = 0;
+    D_800A1890 = 0;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/setupLights.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80020D94_21994.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80020D94.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/addRomdefLight.s")
 
@@ -64,25 +64,25 @@ void changeLightIntensity(UnkLight *light, u8 intensity) {
 
 void lightUpdateLights(s32 arg0) {
     s32 i;
-    for (i = 0; i < D_800A1894_A2494; i++) {
-        func_80021444_22044(D_800A1898_A2498[i], arg0);
+    for (i = 0; i < D_800A1894; i++) {
+        func_80021444(D_800A1898[i], arg0);
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021444_22044.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021444.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/killLight.s")
 
 UNUSED unk800DC950 **lightGetLights(s32 *arg0) {
-    *arg0 = D_800A1894_A2494;
-    return D_800A1898_A2498;
+    *arg0 = D_800A1894;
+    return D_800A1898;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightGetStrongestEffect.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightUpdateObjects.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021B9C_2279C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021B9C.s")
 
 #ifdef NON_EQUIVALENT
 //Matching, but needs rodata migration for the jump table.
