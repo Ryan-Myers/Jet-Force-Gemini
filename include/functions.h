@@ -5,6 +5,8 @@
 #include "libultra_internal.h"
 #include "sched.h"
 
+
+s32 runlinkDownloadCode(s32);
 void *ad_sndp_play(ALBank *arg0, s16 arg1, u16 arg2, u8 arg3, f32 arg4, u8 arg5, void **arg6);
 ALLink *func_80085EF0(ALBank *arg0, ALSound *arg1);
 u16 amGetSfxCount(void);

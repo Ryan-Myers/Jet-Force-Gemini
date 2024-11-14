@@ -32,3 +32,7 @@
 #define COLOUR_TAG_NONE 0x00000000
 
 #define RAM_END 0x80400000
+
+
+#define CAST_TO_S16(var) (*((s16 *)&var))
+#define CAST_TO_U8(var) (*((u8 *)&var))

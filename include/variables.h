@@ -301,7 +301,10 @@ extern ScreenViewport D_800A3728[4]; //gScreenViewports
 extern s32 nextFrameCount; // = 2;
 
 //squads.c
-extern s32 BaddyDataArray;
+extern u32 *BaddyDataArray;
+extern s32 GlobalSizeOfRomdefList;
+extern u8 *GlobalStartOfRomdefList;
+extern s32 PlayersDisguise;
 
 //gameVi.c
 extern s8 D_800FF988; //videoMode
