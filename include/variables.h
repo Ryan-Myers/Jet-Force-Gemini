@@ -303,7 +303,7 @@ extern s32 nextFrameCount; // = 2;
 //squads.c
 extern u32 *BaddyDataArray;
 extern s32 GlobalSizeOfRomdefList;
-extern u8 *GlobalStartOfRomdefList;
+extern RomDefHeader *GlobalStartOfRomdefList;
 extern s32 PlayersDisguise;
 
 //gameVi.c

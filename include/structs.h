@@ -463,4 +463,9 @@ typedef struct RumbleStruct {
     s16 timer;
 } RumbleStruct;
 
+typedef struct RomDefHeader {
+    s16 id;
+    u8 size;
+} RomDefHeader;
+
 #endif

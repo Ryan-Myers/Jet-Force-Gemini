@@ -36,24 +36,24 @@ void squadsInit(void) {
     BaddyDataArray = piRomLoad(0x3E);
 }
 
-void squadsPreInit(u8 *list, s32 listSize) {
-    u8 *listBytes;
+void squadsPreInit(RomDefHeader *list, s32 listSize) {
+    RomDefHeader *header;
     s32 i;
 
     PlayersDisguise = 0;
     GlobalStartOfRomdefList = list;
     GlobalSizeOfRomdefList = listSize;
-    listBytes = list;
+    header = list;
     for (i = 0; i < listSize; ) {
-        // TODO: Figure out a better match...
-        if ((CAST_TO_S16(listBytes[0]) == 0x61) || (CAST_TO_S16(listBytes[0]) == 5) || (CAST_TO_S16(listBytes[0]) == 0x4F)) {
+        if (header->id == 0x61 || header->id == 5 || header->id == 0x4F) {
             runlinkDownloadCode(3);
             break;
         }
-        i += CAST_TO_U8(listBytes[2]);
-        listBytes += CAST_TO_U8(listBytes[2]);
+        i += header->size;
+        header = (RomDefHeader *) ((u32) (header) + header->size);
     }
 }
+
 
 
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsAddInterestingEvent.s")
