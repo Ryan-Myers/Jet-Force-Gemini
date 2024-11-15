@@ -448,8 +448,12 @@ segments:
       - { start: auto, type: bss, vram: 0x80105D90, name: os_controller }
       - { start: auto, type: bss, vram: 0x80105E20, name: pfsisplug }
       - { start: auto, type: bss, vram: 0x80105E60, name: siacs }
+      - { start: auto, type: bss, vram: 0x80105E80, name: cartrominit }
+      - { start: auto, type: bss, vram: 0x80105F00, name: vimgr }
+      - { start: auto, type: bss, vram: 0x80106220, name: sptask }
+      - { start: auto, type: bss, vram: 0x80106260, name: piacs }
       - { start: auto, type: .bss, vram: 0x80106280, name: libultra/exceptasm }
-      - { start: auto, type: bss, vram: 0x80106430, name: next_bss6 }
+      - { start: auto, type: bss, vram: 0x80106430, name: timerintr }
 
   - name: assets
     type: bin

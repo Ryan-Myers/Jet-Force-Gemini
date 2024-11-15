@@ -1790,6 +1790,10 @@ __osEepromTimer = 0x80105DD2; // type:OSTimer
 __osEepromTimerQ = 0x80105DF8;
 __osEepromTimerMsg = 0x80105E10;
 __osPfsPifRam = 0x80105E20; // size:0x40
+siAccessBuf = 0x80105E60;
+__osSiAccessQueue = 0x80105E68;
+__CartRomHandle = 0x80105E80; // type:OSPiHandle size:0x80
+
 
 gIntDisFlag = 0x800A3E40;
 gSineTable = 0x800A7F50; // type:s16
