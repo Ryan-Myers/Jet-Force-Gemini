@@ -1782,6 +1782,14 @@ piEventBuf = 0x80105218;
 piThread = 0x80104ED0;
 __osPiAccessQueue = 0x80106260;
 __osPiAccessQueueEnabled = 0x800AA820;
+__osFinalrom = 0x80105D00;
+__osContPifRam = 0x80105D90; // size:0x40
+__osContLastCmd = 0x80105DD0; // type:u8
+__osMaxControllers = 0x80105DD1; // type:u8 size:0x1
+__osEepromTimer = 0x80105DD2; // type:OSTimer
+__osEepromTimerQ = 0x80105DF8;
+__osEepromTimerMsg = 0x80105E10;
+__osPfsPifRam = 0x80105E20; // size:0x40
 
 gIntDisFlag = 0x800A3E40;
 gSineTable = 0x800A7F50; // type:s16

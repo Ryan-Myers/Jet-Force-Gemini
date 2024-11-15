@@ -43,9 +43,9 @@ segments:
     follows_vram: entry
     bss_size: 0x54DC0
     subsegments:
-      - [0x1050, c, audio_manager_1050]
+      - [0x1050, c, audio_manager_1050] # audio in DKR
       - [0x28D0, c, audiomgr]
-      - [0x36D0, c, audio_manager_36D0]
+      - [0x36D0, c, audio_manager_36D0] # audio_spatial in DKR?
       - [0x4C50, c, audio_manager_4C50]
       - [0x5660, c, objects]
       - [0x12B10, c, track]
@@ -334,10 +334,9 @@ segments:
       - [0xAB4D0, data, xprintf]
       - [0xAB520, data, xlitob]
       - [0xAB550, rodata, audio_manager_1050]
-      - [0xAB680, rodata]
-      - [0xAB6E0, rodata, audiomgr]
-      - [0xAB700, rodata, audio_manager_36D0]
-      - [0xAB740, rodata, audio_manager_4C50]
+      - [0xAB680, rodata, audiomgr]
+      - [0xAB6E0, rodata, audio_manager_36D0]
+      - [0xAB700, rodata, audio_manager_4C50]
       - [0xAB750, rodata, objects]
       - [0xAC9F0, rodata, track]
       - [0xACF50, rodata, shadows]
@@ -425,8 +424,30 @@ segments:
       - { start: auto, type: bss, vram: 0x800FF660, name: sched }
       - { start: auto, type: .bss, vram: 0x800FF6B0, name: squads }
       - { start: auto, type: bss, vram: 0x800FF780, name: runLink }
+      - { start: auto, type: bss, vram: 0x800FF840, name: gameVi }
+      - { start: auto, type: bss, vram: 0x800FF9C0, name: textures }
+      - { start: auto, type: bss, vram: 0x800FFA30, name: globals } # so many variables in here are referenced in several files.
+      - { start: auto, type: bss, vram: 0x80101520, name: weather }
+      - { start: auto, type: bss, vram: 0x801015C0, name: part }
+      - { start: auto, type: bss, vram: 0x80101640, name: diprint }
+      - { start: auto, type: bss, vram: 0x80101F80, name: diRcpTrace }
+      - { start: auto, type: bss, vram: 0x80102F90, name: diCpu }
+      - { start: auto, type: bss, vram: 0x80104DE0, name: pimgr }
       - { start: auto, type: .bss, vram: 0x80105220, name: rzip }
-      - { start: auto, type: bss, vram: 0x80105230, name: next_bss5 }
+      - { start: auto, type: bss, vram: 0x80105230, name: subtitles }
+      - { start: auto, type: bss, vram: 0x80105280, name: anim }
+      - { start: auto, type: bss, vram: 0x801054B0, name: hit }
+      - { start: auto, type: .bss, vram: 0x80105B20, name: fmvInit }
+      - { start: auto, type: bss, vram: 0x80105B70, name: osFlash }
+      - { start: auto, type: bss, vram: 0x80105C30, name: gsSnd }
+      - { start: auto, type: bss, vram: 0x80105CA0, name: n_csplayer }
+      - { start: auto, type: bss, vram: 0x80105CE0, name: alsurround }
+      - { start: auto, type: bss, vram: 0x80105CF0, name: n_event }
+      - { start: auto, type: bss, vram: 0x80105D00, name: initialize }
+      - { start: auto, type: bss, vram: 0x80105D10, name: seteventmesg }
+      - { start: auto, type: bss, vram: 0x80105D90, name: os_controller }
+      - { start: auto, type: bss, vram: 0x80105E20, name: pfsisplug }
+      - { start: auto, type: bss, vram: 0x80105E60, name: siacs }
       - { start: auto, type: .bss, vram: 0x80106280, name: libultra/exceptasm }
       - { start: auto, type: bss, vram: 0x80106430, name: next_bss6 }
 

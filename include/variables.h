@@ -301,7 +301,6 @@ extern ScreenViewport D_800A3728[4]; //gScreenViewports
 extern s32 nextFrameCount; // = 2;
 
 //squads.c
-extern u32 *BaddyDataArray;
 extern s32 GlobalSizeOfRomdefList;
 extern RomDefHeader *GlobalStartOfRomdefList;
 extern s32 PlayersDisguise;
