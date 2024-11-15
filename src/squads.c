@@ -84,8 +84,6 @@ void squadsPreInit(RomDefHeader *list, s32 listSize) {
     }
 }
 
-
-
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsAddInterestingEvent.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/CopyStaticsToKernel.s")

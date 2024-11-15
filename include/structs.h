@@ -4,7 +4,7 @@
 /* Note: Structs are not complete, take them with a grain of salt. */
 
 #include "types.h"
-#include "src/memory.h"
+#include "memory.h"
 
 //Size: 0x538
 typedef struct Game {
