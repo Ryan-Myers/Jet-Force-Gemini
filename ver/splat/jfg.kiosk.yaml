@@ -291,7 +291,7 @@ segments:
       - [0xA4B90, data, prnBorder]
       - [0xA4C00, data, rcpFast3d]
       - [0xA4F00, data, sched]
-      - [0xA4F30, data, squads]
+      - [0xA4F30, .data, squads]
       - [0xA4F40, data, runLink]
       - [0xA4F50, data, gameVi]
       - [0xA5160, data, textures]
@@ -423,7 +423,8 @@ segments:
       - { start: auto, type: .bss, vram: 0x800FECF0, name: pi }
       - { start: auto, type: bss, vram: 0x800FED90, name: rcpFast3d }
       - { start: auto, type: bss, vram: 0x800FF660, name: sched }
-      - { start: auto, type: bss, vram: 0x800FF6B0, name: next_bss4}
+      - { start: auto, type: .bss, vram: 0x800FF6B0, name: squads }
+      - { start: auto, type: bss, vram: 0x800FF780, name: runLink }
       - { start: auto, type: .bss, vram: 0x80105220, name: rzip }
       - { start: auto, type: bss, vram: 0x80105230, name: next_bss5 }
       - { start: auto, type: .bss, vram: 0x80106280, name: libultra/exceptasm }
