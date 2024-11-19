@@ -1,3 +1,3 @@
 #include <sys/regdef.h>
-#include <sgidefs.h>
+#include <gcc/sgidefs.h>
 #include <sys/fpregdef.h>
