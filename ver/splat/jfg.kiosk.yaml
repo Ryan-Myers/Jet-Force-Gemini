@@ -68,7 +68,7 @@ segments:
       - [auto, hasm, hasm/math_data_tables]
       - [0x4ACC0, hasm, hasm/math_matrix]
       - [0x4B2D0, c, memory]
-      - [0x4C040, c, osMotor]
+      - [0x4C040, c, ../libultra/src/io/motor]
       - [0x4C560, c, saves]
       - [0x4EA40, c, pi]
       - [0x4EE80, c, prnBorder]
@@ -417,7 +417,7 @@ segments:
       - { start: auto, type: bss, vram: 0x800FBEC0, name: main }
       - { start: auto, type: bss, vram: 0x800FE2F0, name: refractOutputAssembler }
       - { start: auto, type: .bss, vram: 0x800FE310, name: memory }
-      - { start: auto, type: bss, vram: 0x800FE880, name: osMotor }
+      - { start: auto, type: .bss, vram: 0x800FE880, name: ../libultra/src/io/motor }
       - { start: auto, type: bss, vram: 0x800FEAC0, name: saves }
       - { start: auto, type: .bss, vram: 0x800FECF0, name: pi }
       - { start: auto, type: bss, vram: 0x800FED90, name: rcpFast3d }
