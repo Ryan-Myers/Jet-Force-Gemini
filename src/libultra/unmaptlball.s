@@ -17,14 +17,14 @@ glabel osUnmapTLBAll
     /* 9B74C 8009AB4C 408A5000 */  mtc0       $t2, $10 /* handwritten instruction */
     /* 9B750 8009AB50 40801000 */  mtc0       $zero, $2 /* handwritten instruction */
     /* 9B754 8009AB54 40801800 */  mtc0       $zero, $3 /* handwritten instruction */
-  .L8009AB58_9B758:
+  .L8009AB58:
     /* 9B758 8009AB58 40890000 */  mtc0       $t1, $0 /* handwritten instruction */
     /* 9B75C 8009AB5C 00000000 */  nop
     /* 9B760 8009AB60 42000002 */  tlbwi /* handwritten instruction */
     /* 9B764 8009AB64 00000000 */  nop
     /* 9B768 8009AB68 00000000 */  nop
     /* 9B76C 8009AB6C 2129FFFF */  addi       $t1, $t1, -0x1 /* handwritten instruction */
-    /* 9B770 8009AB70 5520FFF9 */  bnel       $t1, $zero, .L8009AB58_9B758
+    /* 9B770 8009AB70 5520FFF9 */  bnel       $t1, $zero, .L8009AB58
     /* 9B774 8009AB74 00000000 */   nop
     /* 9B778 8009AB78 40885000 */  mtc0       $t0, $10 /* handwritten instruction */
     /* 9B77C 8009AB7C 03E00008 */  jr         $ra

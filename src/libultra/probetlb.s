@@ -26,7 +26,7 @@ glabel __osProbeTLB
     /* 9B460 8009A860 400B0000 */  mfc0       $t3, $0 /* handwritten instruction */
     /* 9B464 8009A864 3C018000 */  lui        $at, (0x80000000 >> 16)
     /* 9B468 8009A868 01615824 */  and        $t3, $t3, $at
-    /* 9B46C 8009A86C 1560001A */  bnez       $t3, .L8009A8D8_9B4D8
+    /* 9B46C 8009A86C 1560001A */  bnez       $t3, .L8009A8D8
     /* 9B470 8009A870 00000000 */   nop
     /* 9B474 8009A874 42000001 */  tlbr /* handwritten instruction */
     /* 9B478 8009A878 00000000 */  nop
@@ -36,16 +36,16 @@ glabel __osProbeTLB
     /* 9B488 8009A888 216B2000 */  addi       $t3, $t3, 0x2000 /* handwritten instruction */
     /* 9B48C 8009A88C 000B5842 */  srl        $t3, $t3, 1
     /* 9B490 8009A890 01646024 */  and        $t4, $t3, $a0
-    /* 9B494 8009A894 15800004 */  bnez       $t4, .L8009A8A8_9B4A8
+    /* 9B494 8009A894 15800004 */  bnez       $t4, .L8009A8A8
     /* 9B498 8009A898 216BFFFF */   addi      $t3, $t3, -0x1 /* handwritten instruction */
     /* 9B49C 8009A89C 40021000 */  mfc0       $v0, $2 /* handwritten instruction */
-    /* 9B4A0 8009A8A0 10000002 */  b          .L8009A8AC_9B4AC
+    /* 9B4A0 8009A8A0 10000002 */  b          .L8009A8AC
     /* 9B4A4 8009A8A4 00000000 */   nop
-  .L8009A8A8_9B4A8:
+  .L8009A8A8:
     /* 9B4A8 8009A8A8 40021800 */  mfc0       $v0, $3 /* handwritten instruction */
-  .L8009A8AC_9B4AC:
+  .L8009A8AC:
     /* 9B4AC 8009A8AC 304D0002 */  andi       $t5, $v0, 0x2
-    /* 9B4B0 8009A8B0 11A00009 */  beqz       $t5, .L8009A8D8_9B4D8
+    /* 9B4B0 8009A8B0 11A00009 */  beqz       $t5, .L8009A8D8
     /* 9B4B4 8009A8B4 00000000 */   nop
     /* 9B4B8 8009A8B8 3C013FFF */  lui        $at, (0x3FFFFFC0 >> 16)
     /* 9B4BC 8009A8BC 3421FFC0 */  ori        $at, $at, (0x3FFFFFC0 & 0xFFFF)
@@ -53,11 +53,11 @@ glabel __osProbeTLB
     /* 9B4C4 8009A8C4 00021180 */  sll        $v0, $v0, 6
     /* 9B4C8 8009A8C8 008B6824 */  and        $t5, $a0, $t3
     /* 9B4CC 8009A8CC 004D1020 */  add        $v0, $v0, $t5 /* handwritten instruction */
-    /* 9B4D0 8009A8D0 10000002 */  b          .L8009A8DC_9B4DC
+    /* 9B4D0 8009A8D0 10000002 */  b          .L8009A8DC
     /* 9B4D4 8009A8D4 00000000 */   nop
-  .L8009A8D8_9B4D8:
+  .L8009A8D8:
     /* 9B4D8 8009A8D8 2402FFFF */  addiu      $v0, $zero, -0x1
-  .L8009A8DC_9B4DC:
+  .L8009A8DC:
     /* 9B4DC 8009A8DC 40885000 */  mtc0       $t0, $10 /* handwritten instruction */
     /* 9B4E0 8009A8E0 03E00008 */  jr         $ra
     /* 9B4E4 8009A8E4 00000000 */   nop

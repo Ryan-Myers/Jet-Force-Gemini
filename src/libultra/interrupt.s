@@ -19,3 +19,14 @@ glabel __osDisableInt
     /* 9A894 80099C94 00000000 */  nop
     /* 9A898 80099C98 03E00008 */  jr         $ra
     /* 9A89C 80099C9C 00000000 */   nop
+
+/* Handwritten function */
+glabel __osRestoreInt
+    /* 9A8A0 80099CA0 40086000 */  mfc0       $t0, $12 /* handwritten instruction */
+    /* 9A8A4 80099CA4 01044025 */  or         $t0, $t0, $a0
+    /* 9A8A8 80099CA8 40886000 */  mtc0       $t0, $12 /* handwritten instruction */
+    /* 9A8AC 80099CAC 00000000 */  nop
+    /* 9A8B0 80099CB0 00000000 */  nop
+    /* 9A8B4 80099CB4 03E00008 */  jr         $ra
+    /* 9A8B8 80099CB8 00000000 */   nop
+    /* 9A8BC 80099CBC 00000000 */  nop
