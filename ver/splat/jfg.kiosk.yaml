@@ -83,7 +83,7 @@ segments:
       - [0x59780, c, screen]
       - [0x59B20, c, menu]
       - [0x5C1A0, c, weather]
-      - [0x5E500, c, part] #TODO: particles
+      - [0x5E500, c, particles]
       - [0x64EB0, c, diprint]
       - [0x672B0, c, diRcpTrace]
       - [0x67550, c, diRcp]
@@ -105,7 +105,16 @@ segments:
       - [0x773A0, c, anim]
       - [0x7ADF0, c, hit]
       - [0x84A40, c, fmvInit]
-      - [0x84AA0, c, osFlash]
+      - [0x84AA0, c, libultra/flashreinit]
+      - [0x84AF0, c, libultra/flashinit]
+      - [0x84BE0, c, libultra/flashreadstatus]
+      - [0x84C70, c, libultra/flashreadid]
+      #- [0x84D44, c, libultra/flashclearstatus]
+      - [0x84D90, c, libultra/flashallerase]
+      - [0x84E60, c, libultra/flashsectorerase]
+      #- [0x84F38, c, libultra/flashwritebuffer]
+      #- [0x84FBC, c, libultra/flashwritearray]
+      - [0x85090, c, libultra/flashreadarray]
       - [0x85150, c, osBootRamTest]
       - [0x851E0, c, gsSnd]
       - [0x87570, c, libultra/n_cspsetvol]
@@ -299,7 +308,7 @@ segments:
       - [0xA6580, data, globals] # so many variables in here are referenced in several files.
       - [0xA6650, data, menu]
       - [0xA6F00, data, weather]
-      - [0xA7320, data, part]
+      - [0xA7320, data, particles]
       - [0xA7940, data, diprint]
       - [0xA7A70, data, diRcpTrace]
       - [0xA7A80, data, diCpu]
@@ -361,7 +370,7 @@ segments:
       - [0xAEB00, rodata, screen]
       - [0xAEB20, rodata, menu]
       - [0xAED80, rodata, weather]
-      - [0xAED90, rodata, part]
+      - [0xAED90, rodata, particles]
       - [0xAF000, rodata, diprint]
       - [0xAF270, rodata, diRcpTrace]
       - [0xAF2C0, rodata, diRcp]
@@ -428,7 +437,7 @@ segments:
       - { start: auto, type: bss, vram: 0x800FF9C0, name: textures }
       - { start: auto, type: bss, vram: 0x800FFA30, name: globals } # so many variables in here are referenced in several files.
       - { start: auto, type: bss, vram: 0x80101520, name: weather }
-      - { start: auto, type: bss, vram: 0x801015C0, name: part }
+      - { start: auto, type: bss, vram: 0x801015C0, name: particles }
       - { start: auto, type: bss, vram: 0x80101640, name: diprint }
       - { start: auto, type: bss, vram: 0x80101F80, name: diRcpTrace }
       - { start: auto, type: bss, vram: 0x80102F90, name: diCpu }
@@ -438,7 +447,7 @@ segments:
       - { start: auto, type: bss, vram: 0x80105280, name: anim }
       - { start: auto, type: bss, vram: 0x801054B0, name: hit }
       - { start: auto, type: .bss, vram: 0x80105B20, name: fmvInit }
-      - { start: auto, type: bss, vram: 0x80105B70, name: osFlash }
+      - { start: auto, type: bss, vram: 0x80105B70, name: flashinit }
       - { start: auto, type: bss, vram: 0x80105C30, name: gsSnd }
       - { start: auto, type: bss, vram: 0x80105CA0, name: n_csplayer }
       - { start: auto, type: bss, vram: 0x80105CE0, name: alsurround }

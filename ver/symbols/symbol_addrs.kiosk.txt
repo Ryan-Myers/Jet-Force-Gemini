@@ -1793,6 +1793,12 @@ __osPfsPifRam = 0x80105E20; // size:0x40
 siAccessBuf = 0x80105E60;
 __osSiAccessQueue = 0x80105E68;
 __CartRomHandle = 0x80105E80; // type:OSPiHandle size:0x80
+__osFlashVersion = 0x80105C28;
+__osFlashHandler = 0x80105BB0;
+__osFlashMsg = 0x80105B80;
+__osFlashMessageQ = 0x80105B98;
+__osFlashMsgBuf = 0x80105C24;
+__osFlashID = 0x80105B70; // type:u32 size:0x10
 
 
 gIntDisFlag = 0x800A3E40;

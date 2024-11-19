@@ -2,7 +2,7 @@ BASENAME  = jfg
 VERSION  := kiosk
 NON_MATCHING ?= 0
 # Libultra version might be at least J, but still labeled in the header as G for some reason.
-LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7 -DBUILD_VERSION_STRING=\"2.0J\" -DRAREDIFFS -DJFGDIFFS
+LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6 -DBUILD_VERSION_STRING=\"2.0I\" -DRAREDIFFS -DJFGDIFFS
 
 # Whether to hide commands or not
 VERBOSE ?= 0
