@@ -43,7 +43,7 @@ void *mmAlloc(s32 size, u32 colourTag);
 void free_slot_containing_address(u8 *address);
 void func_8004B05C(void *dataAddress);
 MemoryPoolSlot *allocate_from_memory_pool(s32 poolIndex, s32 size, u32 colourTag);
-s32 runlinkLowMemoryPanic(void);
+void runlinkLowMemoryPanic(void);
 s32 runlinkIsModuleLoaded(s32 module);
 s32 runlinkGetAddressInfo(u32 arg0, s32 *arg1, s32 *arg2, u32 **arg3);
 void func_800676F8(void *arg0);
