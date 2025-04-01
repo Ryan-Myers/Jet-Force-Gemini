@@ -1751,7 +1751,12 @@ trackFade = 0x801053D4;
 animlight = 0x801053D8;
 Table = 0x80105B20;
 Player = 0x80105B28;
+__BSS_SECTION_START = 0x800B16B0;
 gMainMemoryPool = 0x80106470;
+
+// gMainMemoryPool = main_BSS_END;         /* This variable is just supposed to be available at the end of BSS for allocating memory to  */
+// __BSS_SECTION_START = main_BSS_START;   /* Entrypoint addresses */
+// __BSS_SECTION_SIZE = main_BSS_SIZE;     /* Entrypoint addresses */
 
 // xprintf.c 
 _spaces = 0x800AA8D0; // type:asciz

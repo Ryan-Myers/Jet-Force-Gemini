@@ -468,4 +468,4 @@ segments:
     type: bin
     start: 0xB22B0
     follows_vram: main
-  - [0x2000000]
+  - [0x1B9FB40]

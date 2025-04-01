@@ -2,7 +2,7 @@
 
 import sys
 
-NBYTES = 0x120000
+NBYTES = 0x2000000
 
 def get_files(rom_file, mask_file):
     total = 0

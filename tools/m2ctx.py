@@ -6,7 +6,7 @@ from pathlib import Path
 script_dir = os.path.dirname(os.path.realpath(__file__))
 root_dir = script_dir + "/../"
 src_dir = root_dir + "src/"
-lib_dir = root_dir + "lib/"
+lib_dir = root_dir + "libultra/"
 
 
 def get_c_dir(dirname):
