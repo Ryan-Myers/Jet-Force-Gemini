@@ -103,14 +103,11 @@ else
 endif
 
 AS       = $(CROSS)as
-CPP      = cpp
 LD       = $(CROSS)ld
 OBJCOPY  = $(CROSS)objcopy
 VENV     = .venv
 PYTHON   = $(VENV)/bin/python3
 GCC      = gcc
-
-XGCC     = mips64-elf-gcc
 
 #Options
 CC       = $(RECOMP_DIR)/cc
@@ -136,7 +133,7 @@ else
 endif
 
 C_DEFINES := $(foreach d,$(DEFINES),-D$(d)) $(LIBULTRA_VERSION_DEFINE) -D_MIPS_SZLONG=32
-ASM_DEFINES = --defsym _MIPS_SIM=1 --defsym mips=1
+ASM_DEFINES = $(foreach d,$(DEFINES),$(if $(findstring =,$(d)),--defsym $(d),)) --defsym _MIPS_SIM=1 --defsym mips=1 --defsym VERSION_$(VERSION)=1
 
 INCLUDE_CFLAGS  = -I . -I include -I include/libc  -I include/PR -I include/sys -I $(BIN_DIRS) -I $(SRC_DIR) -I $(LIBULTRA_DIR)
 INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/gu -I $(LIBULTRA_DIR)/src/libc -I $(LIBULTRA_DIR)/src/io  -I $(LIBULTRA_DIR)/src/sc 
@@ -144,6 +141,13 @@ INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/audio -I $(LIBULTRA_DIR)/src/os
 
 ASFLAGS        = -march=vr4300 -32 -G0 $(ASM_DEFINES) $(INCLUDE_CFLAGS)
 OBJCOPYFLAGS   = -O binary
+
+# Pad to 32MB if matching, otherwise build to a necessary minimum of 1.004MB
+ifeq ($(NON_MATCHING),1)
+  OBJCOPYFLAGS += --pad-to=0x101000 --gap-fill=0xFF
+else
+  OBJCOPYFLAGS += --pad-to=0x2000000 --gap-fill=0xFF
+endif
 
 #IDO Warnings to Ignore. These are coding style warnings we don't follow
 CC_WARNINGS := -fullwarn -Xfullwarn -woff 838,649,624
@@ -163,7 +167,6 @@ LD_SCRIPT  = ver/$(BASENAME).$(VERSION).ld
 
 LD_FLAGS   = -T $(LD_SCRIPT) -T $(SYMBOLS_DIR)/undefined_funcs_auto.$(VERSION).txt  -T $(SYMBOLS_DIR)/undefined_syms_auto.$(VERSION).txt -T $(SYMBOLS_DIR)/libultra_undefined_syms.$(VERSION).txt
 LD_FLAGS  += -Map $(TARGET).map
-LD_FLAGS_EXTRA  = $(foreach sym,$(UNDEFINED_SYMS),-u $(sym))
 
 ASM_PROCESSOR_DIR := $(TOOLS_DIR)/asm-processor
 ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
@@ -216,13 +219,8 @@ default: all
 
 all: $(VERIFY)
 
-ldflags:
-	$(V)printf "[$(PINK) LDFLAGS $(NO_COL)]: $(LD_FLAGS)\n[$(PINK) EXTRA $(NO_COL)]: $(LD_FLAGS_EXTRA)\n"
-
 dirs:
 	$(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(HASM_DIRS) $(BIN_DIRS),$(shell mkdir -p $(BUILD_DIR)/$(dir)))
-
-check: .baserom.$(VERSION).ok
 
 verify: $(TARGET).z64
 	$(V)$(CRC)
@@ -236,26 +234,32 @@ else
 endif
 
 no_verify: $(TARGET).z64
+	$(V)$(CRC)
 	$(V)$(PRINT) "$(GREEN)Build Complete!$(NO_COL)\n"
 
 extract:
 	$(SPLAT) ver/splat/$(BASENAME).$(VERSION).yaml
 
-extractall: extract tools
+extractall:
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).kiosk.yaml
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).us.yaml
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).pal.yaml
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).jpn.yaml
 
-dependencies: tools
-	$(V)make -C $(TOOLS_DIR)
+setup:
 #Set up a python venv so we don't get warnings about breaking system packages.
 	$(V)python3 -m venv $(VENV)
 #Installing the splat dependencies
 	$(V)$(PYTHON) -m pip install -r requirements.txt
+	$(V)make -C $(TOOLS_DIR)
 
 clean:
 	rm -rf $(BUILD_DIR)
+
+clean_src:
+	rm -rf $(BUILD_DIR)/asm
+	rm -rf $(BUILD_DIR)/libultra
+	rm -rf $(BUILD_DIR)/src
 	
 cleanall:
 	rm -rf build
@@ -274,7 +278,7 @@ distclean: clean
 	rm -f $(SYMBOLS_DIR)/*auto.$(VERSION).txt
 	rm -f $(LD_SCRIPT)
 
-distcleanall: clean cleanall
+distcleanall: cleanall
 	rm -rf assets
 	rm -f $(SYMBOLS_DIR)/*auto.kiosk.txt
 	rm -f $(SYMBOLS_DIR)/*auto.us.txt
@@ -304,34 +308,34 @@ $(GLOBAL_ASM_O_FILES): CC := $(ASM_PROCESSOR) $(CC) -- $(AS) $(ASFLAGS) --
 
 $(TARGET).elf: dirs $(LD_SCRIPT) $(O_FILES)
 	@$(PRINT) "$(GREEN)Linking: $(BLUE)$@$(NO_COL)\n"
-	$(V)$(LD) $(LD_FLAGS) $(LD_FLAGS_EXTRA) -o $@
+	$(V)$(LD) $(LD_FLAGS) -o $@
 
 ifndef PERMUTER
 $(GLOBAL_ASM_O_FILES): $(BUILD_DIR)/%.c.o: %.c
 	$(call print,Compiling:,$<,$@)
-#	$(V)$(CC_CHECK) $<
-	$(V)$(CC) -c $(DEBUG_FLAGS) $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+	$(V)$(CC_CHECK) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
+	$(V)$(CC) -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
 endif
 
 # non asm-processor recipe
 $(BUILD_DIR)/%.c.o: %.c
 	$(call print,Compiling:,$<,$@)
-#	$(V)$(CC_CHECK) $<
-	$(V)$(CC) -c $(DEBUG_FLAGS) $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+	$(V)$(CC_CHECK) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
+	$(V)$(CC) -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
 
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: $(LIBULTRA_DIR)/src/libc/llcvt.c
 # 	$(call print,Compiling mips3:,$<,$@)
-# 	@$(CC)  -c $(DEBUG_FLAGS) $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
-# 	$(V)$(PYTHON) tools/patchmips3.py $@ || rm $@
+# 	@$(CC) -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+# 	$(V)$(PYTHON) $(TOOLS_DIR)/patchmips3.py $@ || rm $@
 
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ll.c.o: $(LIBULTRA_DIR)/src/libc/ll.c
 # 	$(call print,Compiling mips3:,$<,$@)
-# 	@$(CC)  -c $(DEBUG_FLAGS) $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
-# 	$(V)$(PYTHON) tools/patchmips3.py $@ || rm $@
+# 	@$(CC) -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+# 	$(V)$(PYTHON) $(TOOLS_DIR)/patchmips3.py $@ || rm $@
 
 $(BUILD_DIR)/%.s.o: %.s
 	$(call print,Assembling:,$<,$@)
-	$(V)$(AS) $(ASFLAGS) -o $@ $<
+	$(V)$(AS) $(ASFLAGS) -MD $(BUILD_DIR)/$*.d -o $@ $< 
 
 $(BUILD_DIR)/%.bin.o: %.bin
 	$(call print,Linking Binary:,$<,$@)
@@ -343,9 +347,11 @@ $(TARGET).bin: $(TARGET).elf
 
 $(TARGET).z64: $(TARGET).bin
 	$(call print,CopyRom:,$<,$@)
-	$(V)$(TOOLS_DIR)/CopyRom.py $< $@
+	$(V)$(PYTHON) $(TOOLS_DIR)/CopyRom.py $< $@
 
 ### Settings
 .SECONDARY:
-.PHONY: all clean default
+.PHONY: all clean cleanextract default
 SHELL = /bin/bash -e -o pipefail
+
+-include $(BUILD_DIR)/**/*.d

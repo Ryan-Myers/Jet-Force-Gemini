@@ -14,13 +14,13 @@ git submodule update --init --recursive
 
 Install Dependencies
 ```sh
-sudo apt install build-essential pkg-config git python3 wget python3-pip binutils-mips-linux-gnu python3.10-venv
+sudo apt install build-essential pkg-config git python3 wget python3-pip binutils-mips-linux-gnu python3-venv
 ```
 
 Drop in `kiosk` into the `baseroms` folder as `baserom.kiosk.z64` (sha1sum: `f00f7c7fb085d0df57dcb649793aced5be4e8562`)
 
 ```sh
-make dependencies
+make setup
 make extract
 make
 ```

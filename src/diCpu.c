@@ -1,6 +1,8 @@
 #include "common.h"
 #include "stdarg.h"
 
+extern OSThread *	__osGetActiveQueue(void);
+
 /**
  * Start the exception program counter thread.
 */

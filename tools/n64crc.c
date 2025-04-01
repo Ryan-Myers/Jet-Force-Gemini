@@ -55,136 +55,136 @@
 #define CHECKSUM_CIC6106 0x1FEA617A
 
 #define Write32(Buffer, Offset, Value)\
-	Buffer[Offset] = (Value & 0xFF000000) >> 24;\
-	Buffer[Offset + 1] = (Value & 0x00FF0000) >> 16;\
-	Buffer[Offset + 2] = (Value & 0x0000FF00) >> 8;\
-	Buffer[Offset + 3] = (Value & 0x000000FF);\
+    Buffer[Offset] = (Value & 0xFF000000) >> 24;\
+    Buffer[Offset + 1] = (Value & 0x00FF0000) >> 16;\
+    Buffer[Offset + 2] = (Value & 0x0000FF00) >> 8;\
+    Buffer[Offset + 3] = (Value & 0x000000FF);\
 
 unsigned int crc_table[256];
 
 void gen_table() {
-	unsigned int crc, poly;
-	int	i, j;
+    unsigned int crc, poly;
+    int	i, j;
 
-	poly = 0xEDB88320;
-	for (i = 0; i < 256; i++) {
-		crc = i;
-		for (j = 8; j > 0; j--) {
-			if (crc & 1) crc = (crc >> 1) ^ poly;
-			else crc >>= 1;
-		}
-		crc_table[i] = crc;
-	}
+    poly = 0xEDB88320;
+    for (i = 0; i < 256; i++) {
+        crc = i;
+        for (j = 8; j > 0; j--) {
+            if (crc & 1) crc = (crc >> 1) ^ poly;
+            else crc >>= 1;
+        }
+        crc_table[i] = crc;
+    }
 }
 
 unsigned int crc32(unsigned char *data, int len) {
-	unsigned int crc = ~0;
-	int i;
+    unsigned int crc = ~0;
+    int i;
 
-	for (i = 0; i < len; i++) {
-		crc = (crc >> 8) ^ crc_table[(crc ^ data[i]) & 0xFF];
-	}
+    for (i = 0; i < len; i++) {
+        crc = (crc >> 8) ^ crc_table[(crc ^ data[i]) & 0xFF];
+    }
 
-	return ~crc;
+    return ~crc;
 }
 
 
 int N64GetCIC(unsigned char *data) {
-	switch (crc32(&data[N64_HEADER_SIZE], N64_BC_SIZE)) {
-		case 0x6170A4A1: return 6101;
-		case 0x90BB6CB5: return 6102;
-		case 0x0B050EE0: return 6103;
-		case 0x98BC2C86: return 6105;
-		case 0xACC8580A: return 6106;
-	}
+    switch (crc32(&data[N64_HEADER_SIZE], N64_BC_SIZE)) {
+        case 0x6170A4A1: return 6101;
+        case 0x90BB6CB5: return 6102;
+        case 0x0B050EE0: return 6103;
+        case 0x98BC2C86: return 6105;
+        case 0xACC8580A: return 6106;
+    }
 
-	return 6105;
+    return 0;
 }
 
 int N64CalcCRC(unsigned int *crc, unsigned char *data) {
-	int bootcode, i;
-	unsigned int seed;
+    int bootcode, i;
+    unsigned int seed;
 
-	unsigned int t1, t2, t3;
-	unsigned int t4, t5, t6;
-	unsigned int r, d;
+    unsigned int t1, t2, t3;
+    unsigned int t4, t5, t6;
+    unsigned int r, d;
 
 
-	switch ((bootcode = N64GetCIC(data))) {
-		case 6101:
-		case 6102:
-			seed = CHECKSUM_CIC6102;
-			break;
-		case 6103:
-			seed = CHECKSUM_CIC6103;
-			break;
-		case 6105:
-			seed = CHECKSUM_CIC6105;
-			break;
-		case 6106:
-			seed = CHECKSUM_CIC6106;
-			break;
-		default:
-			return 1;
-	}
+    switch ((bootcode = N64GetCIC(data))) {
+        case 6101:
+        case 6102:
+            seed = CHECKSUM_CIC6102;
+            break;
+        case 6103:
+            seed = CHECKSUM_CIC6103;
+            break;
+        case 6105:
+            seed = CHECKSUM_CIC6105;
+            break;
+        case 6106:
+            seed = CHECKSUM_CIC6106;
+            break;
+        default:
+            return 1;
+    }
 
-	t1 = t2 = t3 = t4 = t5 = t6 = seed;
+    t1 = t2 = t3 = t4 = t5 = t6 = seed;
 
-	i = CHECKSUM_START;
-	while (i < (CHECKSUM_START + CHECKSUM_LENGTH)) {
-		d = BYTES2LONG(&data[i]);
-		if ((t6 + d) < t6) t4++;
-		t6 += d;
-		t3 ^= d;
-		r = ROL(d, (d & 0x1F));
-		t5 += r;
-		if (t2 > d) t2 ^= r;
-		else t2 ^= t6 ^ d;
+    i = CHECKSUM_START;
+    while (i < (CHECKSUM_START + CHECKSUM_LENGTH)) {
+        d = BYTES2LONG(&data[i]);
+        if ((t6 + d) < t6) t4++;
+        t6 += d;
+        t3 ^= d;
+        r = ROL(d, (d & 0x1F));
+        t5 += r;
+        if (t2 > d) t2 ^= r;
+        else t2 ^= t6 ^ d;
 
-		if (bootcode == 6105) t1 += BYTES2LONG(&data[N64_HEADER_SIZE + 0x0710 + (i & 0xFF)]) ^ d;
-		else t1 += t5 ^ d;
+        if (bootcode == 6105) t1 += BYTES2LONG(&data[N64_HEADER_SIZE + 0x0710 + (i & 0xFF)]) ^ d;
+        else t1 += t5 ^ d;
 
-		i += 4;
-	}
-	if (bootcode == 6103) {
-		crc[0] = (t6 ^ t4) + t3;
-		crc[1] = (t5 ^ t2) + t1;
-	}
-	else if (bootcode == 6106) {
-		crc[0] = (t6 * t4) + t3;
-		crc[1] = (t5 * t2) + t1;
-	}
-	else {
-		crc[0] = t6 ^ t4 ^ t3;
-		crc[1] = t5 ^ t2 ^ t1;
-	}
+        i += 4;
+    }
+    if (bootcode == 6103) {
+        crc[0] = (t6 ^ t4) + t3;
+        crc[1] = (t5 ^ t2) + t1;
+    }
+    else if (bootcode == 6106) {
+        crc[0] = (t6 * t4) + t3;
+        crc[1] = (t5 * t2) + t1;
+    }
+    else {
+        crc[0] = t6 ^ t4 ^ t3;
+        crc[1] = t5 ^ t2 ^ t1;
+    }
 
-	return 0;
+    return 0;
 }
 
 int main(int argc, char **argv) {
-	FILE *fin;
-	int cic;
-	unsigned int crc[2];
-	unsigned char *buffer;
-    char colorize_arg[2];
+    FILE *fin;
+    int cic;
+    unsigned int crc[2];
+    unsigned char *buffer;
+    char colorize_arg[20];
     unsigned char colorize = 0;
 
-	//Init CRC algorithm
-	gen_table();
+    //Init CRC algorithm
+    gen_table();
 
-	//Check args
-	if (argc != 2 && argc != 3) {
+    //Check args
+    if (argc != 2 && argc != 3) {
         printf("argc: %d\n", argc);
-		printf("Usage: n64crc <infile> <-c>\n");
-		return 1;
-	}
+        printf("Usage: n64crc <infile> <-c>\n");
+        return 1;
+    }
 
-	//Open file
-	if (!(fin = fopen(argv[1], "r+b"))) {
-		printf("Unable to open \"%s\" in mode \"%s\"\n", argv[1], "r+b");
-		return 1;
-	}
+    //Open file
+    if (!(fin = fopen(argv[1], "r+b"))) {
+        printf("Unable to open \"%s\" in mode \"%s\"\n", argv[1], "r+b");
+        return 1;
+    }
 
     //Check for colorize flag
     if (argc == 3) {
@@ -200,63 +200,63 @@ int main(int argc, char **argv) {
         }
     }
 
-	//Allocate memory
-	if (!(buffer = (unsigned char*)malloc((CHECKSUM_START + CHECKSUM_LENGTH)))) {
-		printf("Unable to allocate %d bytes of memory\n", (CHECKSUM_START + CHECKSUM_LENGTH));
-		fclose(fin);
-		return 1;
-	}
+    //Allocate memory
+    if (!(buffer = (unsigned char*)malloc((CHECKSUM_START + CHECKSUM_LENGTH)))) {
+        printf("Unable to allocate %d bytes of memory\n", (CHECKSUM_START + CHECKSUM_LENGTH));
+        fclose(fin);
+        return 1;
+    }
 
-	//Read data
-	if (fread(buffer, 1, (CHECKSUM_START + CHECKSUM_LENGTH), fin) != (CHECKSUM_START + CHECKSUM_LENGTH)) {
-		printf("Unable to read %d bytes of data (invalid N64 image?)\n", (CHECKSUM_START + CHECKSUM_LENGTH));
-		fclose(fin);
-		free(buffer);
-		return 1;
-	}
+    //Read data
+    if (fread(buffer, 1, (CHECKSUM_START + CHECKSUM_LENGTH), fin) != (CHECKSUM_START + CHECKSUM_LENGTH)) {
+        printf("Unable to read %d bytes of data (invalid N64 image?)\n", (CHECKSUM_START + CHECKSUM_LENGTH));
+        fclose(fin);
+        free(buffer);
+        return 1;
+    }
 
-	//Check CIC BootChip
-	cic = N64GetCIC(buffer);
-	printf("%sBootChip:%s ",GREEN, NO_COL);
-	if (cic)
-		printf("%sCIC-NUS-%d%s\n",YELLOW, cic, NO_COL);
-	else
-		printf("%sUnknown%s\n", RED, NO_COL);
+    //Check CIC BootChip
+    cic = N64GetCIC(buffer);
+    printf("%sBootChip:%s ",GREEN, NO_COL);
+    if (cic)
+        printf("%sCIC-NUS-%d%s\n",YELLOW, cic, NO_COL);
+    else
+        printf("%sUnknown%s\n", RED, NO_COL);
 
-	//Calculate CRC
-	if (N64CalcCRC(crc, buffer)) {
-		printf("%sUnable to calculate CRC%s\n",RED, NO_COL);
-	}
-	else {
-		printf("%sCRC 1: %s0x%08X%s ", GREEN, YELLOW, BYTES2LONG(&buffer[N64_CRC1]), NO_COL);
-		if (crc[0] == (unsigned int) BYTES2LONG(&buffer[N64_CRC1])) {
-			printf("%sCalculated: %s0x%08X%s ", GREEN, YELLOW, crc[0], NO_COL);
-			printf("%s(Good)%s\n",GREEN, NO_COL);
-		}
-		else {
-			printf("%sCalculated: %s0x%08X%s ", GREEN, RED, crc[0], NO_COL);
-			Write32(buffer, N64_CRC1, crc[0]);
-			fseek(fin, N64_CRC1, SEEK_SET);
-			fwrite(&buffer[N64_CRC1], 1, 4, fin);
-			printf("%s(Bad, fixed)%s\n",RED, NO_COL);
-		}
+    //Calculate CRC
+    if (N64CalcCRC(crc, buffer)) {
+        printf("%sUnable to calculate CRC%s\n",RED, NO_COL);
+    }
+    else {
+        printf("%sCRC 1: %s0x%08X%s ", GREEN, YELLOW, BYTES2LONG(&buffer[N64_CRC1]), NO_COL);
+        if (crc[0] == (unsigned int) BYTES2LONG(&buffer[N64_CRC1])) {
+            printf("%sCalculated: %s0x%08X%s ", GREEN, YELLOW, crc[0], NO_COL);
+            printf("%s(Good)%s\n",GREEN, NO_COL);
+        }
+        else {
+            printf("%sCalculated: %s0x%08X%s ", GREEN, RED, crc[0], NO_COL);
+            Write32(buffer, N64_CRC1, crc[0]);
+            fseek(fin, N64_CRC1, SEEK_SET);
+            fwrite(&buffer[N64_CRC1], 1, 4, fin);
+            printf("%s(Bad, fixed)%s\n",RED, NO_COL);
+        }
 
-		printf("%sCRC 2: %s0x%08X%s ", GREEN, YELLOW, BYTES2LONG(&buffer[N64_CRC2]), NO_COL);
-		if (crc[1] == (unsigned int) BYTES2LONG(&buffer[N64_CRC2])) {
-			printf("%sCalculated: %s0x%08X%s ", GREEN, YELLOW, crc[1], NO_COL);
-			printf("%s(Good)%s\n", GREEN, NO_COL);
-		}
-		else {
-			printf("%sCalculated: %s0x%08X%s ", GREEN, RED, crc[1], NO_COL);
-			Write32(buffer, N64_CRC2, crc[1]);
-			fseek(fin, N64_CRC2, SEEK_SET);
-			fwrite(&buffer[N64_CRC2], 1, 4, fin);
-			printf("%s(Bad, fixed)%s\n", RED, NO_COL);
-		}
-	}
+        printf("%sCRC 2: %s0x%08X%s ", GREEN, YELLOW, BYTES2LONG(&buffer[N64_CRC2]), NO_COL);
+        if (crc[1] == (unsigned int) BYTES2LONG(&buffer[N64_CRC2])) {
+            printf("%sCalculated: %s0x%08X%s ", GREEN, YELLOW, crc[1], NO_COL);
+            printf("%s(Good)%s\n", GREEN, NO_COL);
+        }
+        else {
+            printf("%sCalculated: %s0x%08X%s ", GREEN, RED, crc[1], NO_COL);
+            Write32(buffer, N64_CRC2, crc[1]);
+            fseek(fin, N64_CRC2, SEEK_SET);
+            fwrite(&buffer[N64_CRC2], 1, 4, fin);
+            printf("%s(Bad, fixed)%s\n", RED, NO_COL);
+        }
+    }
 
-	fclose(fin);
-	free(buffer);
+    fclose(fin);
+    free(buffer);
 
-	return 0;
+    return 0;
 }
