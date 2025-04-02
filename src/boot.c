@@ -1,12 +1,14 @@
 #include "common.h"
 
+void bootThread(UNUSED void *args);
+
 void boot(void) {
     osInitialize();
-    osCreateThread(&D_800F9B30, 1, func_8003F088, 0, &D_800F7B20, OS_PRIORITY_IDLE);
+    osCreateThread(&D_800F9B30, 1, bootThread, 0, &D_800F7B20, OS_PRIORITY_IDLE);
     osStartThread(&D_800F9B30);
 }
 
-void func_8003F088(void *arg0) {
+void bootThread(void *args) {
     diCpuTraceInit();
     osCreateThread(&D_800F9D60, 3, mainThread, 0, &D_800F9B28, 10);
     D_800F7B28[0x400] = 0;

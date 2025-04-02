@@ -29,20 +29,13 @@ segments:
     type: bin
     start: 0x40
 
-  - name: entry
+  - name: main
     type: code
     start: 0x1000
     vram: 0x80000400
-    subsegments:
-      - [0x1000, hasm, hasm/entrypoint]
-
-  - name: main
-    type: code
-    start: 0x1050
-    vram: 0x80000450
-    follows_vram: entry
     bss_size: 0x54DC0
     subsegments:
+      - [0x1000, hasm, hasm/entrypoint]
       - [0x1050, c, audio_manager_1050] # audio in DKR
       - [0x28D0, c, audiomgr]
       - [0x36D0, c, audio_manager_36D0] # audio_spatial in DKR?
@@ -133,7 +126,7 @@ segments:
       - [0x8C900, c, libultra/slHeap] # Bit weird, but it looks like this is a split of 
       - [0x8C9B0, c, libultra/sl] # these two files which are combined in later versions?
       - [0x8CA30, c, libultra/n_synthesizer]
-      - [0x8D4B0, c, ../libultra/src/audio/cents2ratio]
+      - [0x8D4B0, c, libultra/cents2ratio]
       - [0x8D550, c, libultra/alsurround] # This may be a custom Rare file.
       - [0x8D760, c, libultra/n_event]
       - [0x8DCE0, c, libultra/n_synallocvoice]
@@ -385,7 +378,7 @@ segments:
       - [0xB0B80, rodata, gsSnd]
       - [0xB0CD0, rodata, n_csplayer]
       - [0xB0FD0, rodata, n_synthesizer]
-      - [0xB0FE0, .rodata, ../libultra/src/audio/cents2ratio]
+      - [0xB0FE0, rodata, libultra/cents2ratio]
       - [0xB0FF0, rodata, n_drvrNew]
       - [0xB1010, rodata, n_synsetfxparam]
       - [0xB1020, rodata, n_reverb]
@@ -406,63 +399,64 @@ segments:
       - { start: 0xB1370, type: databin, name: data_audio,       linker_section_order: .rodata }
       - { start: 0xB1630, type: databin, name: data_unk,         linker_section_order: .rodata }
       - { start: 0xB1AB0, type: databin, name: data_f3ddkr_dram, linker_section_order: .rodata }
-      - { start: auto, type: bss, vram: 0x800B16B0, name: audio_manager_1050 }
-      - { start: auto, type: bss, vram: 0x800EA400, name: audiomgr }
-      - { start: auto, type: bss, vram: 0x800F35F0, name: audio_manager_36D0 }
-      - { start: auto, type: bss, vram: 0x800F3710, name: audio_manager_4C50 }
-      - { start: auto, type: bss, vram: 0x800F3860, name: objects }
-      - { start: auto, type: bss, vram: 0x800F3A30, name: track }
-      - { start: auto, type: bss, vram: 0x800F3E90, name: shadows }
-      - { start: auto, type: bss, vram: 0x800F65E0, name: lights }
-      - { start: auto, type: bss, vram: 0x800F6610, name: camlight }
-      - { start: auto, type: bss, vram: 0x800F75C0, name: explosion }
-      - { start: auto, type: bss, vram: 0x800F7860, name: charControl }
-      - { start: auto, type: bss, vram: 0x800F79D0, name: models }
-      - { start: auto, type: bss, vram: 0x800F7B20, name: boot }
-      - { start: auto, type: bss, vram: 0x800FAF90, name: camera }
-      - { start: auto, type: bss, vram: 0x800FBB40, name: staticcamera }
-      - { start: auto, type: .bss, vram: 0x800FBB50, name: controller }
-      - { start: auto, type: bss, vram: 0x800FBBD0, name: level }
-      - { start: auto, type: bss, vram: 0x800FBEC0, name: main }
-      - { start: auto, type: bss, vram: 0x800FE2F0, name: refractOutputAssembler }
-      - { start: auto, type: .bss, vram: 0x800FE310, name: memory }
-      - { start: auto, type: .bss, vram: 0x800FE880, name: ../libultra/src/io/motor }
-      - { start: auto, type: bss, vram: 0x800FEAC0, name: saves }
-      - { start: auto, type: .bss, vram: 0x800FECF0, name: pi }
-      - { start: auto, type: bss, vram: 0x800FED90, name: rcpFast3d }
-      - { start: auto, type: bss, vram: 0x800FF660, name: sched }
-      - { start: auto, type: .bss, vram: 0x800FF6B0, name: squads }
-      - { start: auto, type: bss, vram: 0x800FF780, name: runLink }
-      - { start: auto, type: bss, vram: 0x800FF840, name: gameVi }
-      - { start: auto, type: bss, vram: 0x800FF9C0, name: textures }
-      - { start: auto, type: bss, vram: 0x800FFA30, name: globals } # so many variables in here are referenced in several files.
-      - { start: auto, type: bss, vram: 0x80101520, name: weather }
-      - { start: auto, type: bss, vram: 0x801015C0, name: particles }
-      - { start: auto, type: bss, vram: 0x80101640, name: diprint }
-      - { start: auto, type: bss, vram: 0x80101F80, name: diRcpTrace }
-      - { start: auto, type: bss, vram: 0x80102F90, name: diCpu }
-      - { start: auto, type: bss, vram: 0x80104DE0, name: pimgr }
-      - { start: auto, type: .bss, vram: 0x80105220, name: rzip }
-      - { start: auto, type: bss, vram: 0x80105230, name: subtitles }
-      - { start: auto, type: bss, vram: 0x80105280, name: anim }
-      - { start: auto, type: bss, vram: 0x801054B0, name: hit }
-      - { start: auto, type: .bss, vram: 0x80105B20, name: fmvInit }
-      - { start: auto, type: bss, vram: 0x80105B70, name: flashinit }
-      - { start: auto, type: bss, vram: 0x80105C30, name: gsSnd }
-      - { start: auto, type: bss, vram: 0x80105CA0, name: n_csplayer }
-      - { start: auto, type: bss, vram: 0x80105CE0, name: alsurround }
-      - { start: auto, type: bss, vram: 0x80105CF0, name: n_event }
-      - { start: auto, type: bss, vram: 0x80105D00, name: initialize }
-      - { start: auto, type: bss, vram: 0x80105D10, name: seteventmesg }
-      - { start: auto, type: bss, vram: 0x80105D90, name: libultra_controller }
-      - { start: auto, type: bss, vram: 0x80105E20, name: pfsisplug }
-      - { start: auto, type: bss, vram: 0x80105E60, name: siacs }
-      - { start: auto, type: bss, vram: 0x80105E80, name: cartrominit }
-      - { start: auto, type: bss, vram: 0x80105F00, name: vimgr }
-      - { start: auto, type: bss, vram: 0x80106220, name: sptask }
-      - { start: auto, type: bss, vram: 0x80106260, name: piacs }
-      - { start: auto, type: .bss, vram: 0x80106280, name: libultra/exceptasm }
-      - { start: auto, type: bss, vram: 0x80106430, name: timerintr }
+      - { type: bss, vram: 0x800B16B0, name: audio_manager_1050 }
+      - { type: bss, vram: 0x800EA400, name: audiomgr }
+      - { type: bss, vram: 0x800F35F0, name: audio_manager_36D0 }
+      - { type: bss, vram: 0x800F3710, name: audio_manager_4C50 }
+      - { type: bss, vram: 0x800F3860, name: objects }
+      - { type: bss, vram: 0x800F3A30, name: track }
+      - { type: bss, vram: 0x800F3E90, name: shadows }
+      - { type: bss, vram: 0x800F65E0, name: lights }
+      - { type: bss, vram: 0x800F6610, name: camlight }
+      - { type: bss, vram: 0x800F75C0, name: explosion }
+      - { type: bss, vram: 0x800F7860, name: charControl }
+      - { type: bss, vram: 0x800F79D0, name: models }
+      - { type: bss, vram: 0x800F7B20, name: boot }
+      - { type: .bss, vram: 0x800F9F90, name: hasm/entrypoint }
+      - { type: bss, vram: 0x800FAF90, name: camera }
+      - { type: bss, vram: 0x800FBB40, name: staticcamera }
+      - { type: .bss, vram: 0x800FBB50, name: controller }
+      - { type: bss, vram: 0x800FBBD0, name: level }
+      - { type: bss, vram: 0x800FBEC0, name: main }
+      - { type: bss, vram: 0x800FE2F0, name: refractOutputAssembler }
+      - { type: .bss, vram: 0x800FE310, name: memory }
+      - { type: .bss, vram: 0x800FE880, name: ../libultra/src/io/motor }
+      - { type: bss, vram: 0x800FEAC0, name: saves }
+      - { type: .bss, vram: 0x800FECF0, name: pi }
+      - { type: bss, vram: 0x800FED90, name: rcpFast3d }
+      - { type: bss, vram: 0x800FF660, name: sched }
+      - { type: .bss, vram: 0x800FF6B0, name: squads }
+      - { type: bss, vram: 0x800FF780, name: runLink }
+      - { type: bss, vram: 0x800FF840, name: gameVi }
+      - { type: bss, vram: 0x800FF9C0, name: textures }
+      - { type: bss, vram: 0x800FFA30, name: globals } # so many variables in here are referenced in several files.
+      - { type: bss, vram: 0x80101520, name: weather }
+      - { type: bss, vram: 0x801015C0, name: particles }
+      - { type: bss, vram: 0x80101640, name: diprint }
+      - { type: bss, vram: 0x80101F80, name: diRcpTrace }
+      - { type: bss, vram: 0x80102F90, name: diCpu }
+      - { type: bss, vram: 0x80104DE0, name: pimgr }
+      - { type: .bss, vram: 0x80105220, name: rzip }
+      - { type: bss, vram: 0x80105230, name: subtitles }
+      - { type: bss, vram: 0x80105280, name: anim }
+      - { type: bss, vram: 0x801054B0, name: hit }
+      - { type: .bss, vram: 0x80105B20, name: fmvInit }
+      - { type: bss, vram: 0x80105B70, name: flashinit }
+      - { type: bss, vram: 0x80105C30, name: gsSnd }
+      - { type: bss, vram: 0x80105CA0, name: n_csplayer }
+      - { type: bss, vram: 0x80105CE0, name: alsurround }
+      - { type: bss, vram: 0x80105CF0, name: n_event }
+      - { type: bss, vram: 0x80105D00, name: initialize }
+      - { type: bss, vram: 0x80105D10, name: seteventmesg }
+      - { type: bss, vram: 0x80105D90, name: libultra_controller }
+      - { type: bss, vram: 0x80105E20, name: pfsisplug }
+      - { type: bss, vram: 0x80105E60, name: siacs }
+      - { type: bss, vram: 0x80105E80, name: cartrominit }
+      - { type: bss, vram: 0x80105F00, name: vimgr }
+      - { type: bss, vram: 0x80106220, name: sptask }
+      - { type: bss, vram: 0x80106260, name: piacs }
+      - { type: .bss, vram: 0x80106280, name: libultra/exceptasm }
+      - { type: bss, vram: 0x80106430, name: timerintr }
 
   - name: assets
     type: bin

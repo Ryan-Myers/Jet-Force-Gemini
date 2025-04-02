@@ -24,7 +24,6 @@ s32 inflate_block(void);
 void _blkclr(void *, size_t);
 void _bcopy(const void *, void *, size_t);
 
-void func_8003F088(void *); //bootThread
 void mainThread(void *);
 void diCpuTraceInit(void);
 f32 Cosf(s32);

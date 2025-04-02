@@ -413,6 +413,7 @@ modFreeAnimEvents = 0x8003EE88;
 modGetMakeBuffer = 0x8003EF54;
 modSetTextureFrame = 0x8003EF6C;
 boot = 0x8003F030;
+bootThread = 0x8003F088;
 bootCheckStack = 0x8003F120;
 camInit = 0x8003F170;
 camUseShake = 0x8003F328;
