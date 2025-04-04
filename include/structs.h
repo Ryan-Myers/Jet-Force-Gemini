@@ -468,4 +468,21 @@ typedef struct RomDefHeader {
     u8 size;
 } RomDefHeader;
 
+/* Size: 0x24 / 36 bytes */
+typedef struct SoundMask {
+    /* 0x00 */ Vec3f pos;
+    /* 0x0C */ u16 soundId;
+    /* 0x0E */ u8 volume;
+    /* 0x0F */ u8 pitch;
+    /* 0x10 */ u8 unk10;
+    /* 0x11 */ u8 unk11;
+    /* 0x12 */ u8 unk12;
+    /* 0x14 */ s32 distance;
+    /* 0x18 */ s32 unk18;
+    /* 0x1C */ struct SoundMask **soundMask;
+    /* 0x20 */ u8 unk20;
+    /* 0x21 */ u8 unk21;
+    /* 0x22 */ u8 unk22;
+} SoundMask;
+
 #endif

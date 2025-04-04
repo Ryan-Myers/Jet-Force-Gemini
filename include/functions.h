@@ -182,6 +182,7 @@ void objDoPlayerTumble(Object *this);
 
 Game *mainGetGame(void);
 Game *mainGetGameArrayPtr(void);
+s32 mainGetNumberOfCameras(void);
 s32 packClearGameEprom(s32 saveFileNum, Game *game);
 void packEraseEprom(void);
 s32 packLoadGameEprom(s32 saveFileNum, Game *game);
@@ -244,5 +245,16 @@ void func_80067880(OSThread *);
 
 //gameVi.c
 s32 viGetVideoMode(void);
+
+//math_util
+u16 Arctanf(f32, f32);
+void mathMtxXFMF(Matrix mf, float x, float y, float z, float *ox, float *oy, float *oz);
+
+// audio_manager_1050
+void amAmbientStop(void);
+void amSndSetVolXYZ(SoundMask *soundMask, u8 volume);
+void amSndSetXYZ(SoundMask *soundMask, f32 x, f32 y, f32 z);
+void func_80003E24(s32 arg0);
+
 
 #endif

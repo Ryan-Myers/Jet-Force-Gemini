@@ -115,7 +115,6 @@ SPLAT    ?= $(PYTHON) -m splat split
 CRC      = $(TOOLS_DIR)/n64crc $(BUILD_DIR)/$(BASENAME).$(VERSION).z64 $(COLORIZE)
 
 OPT_FLAGS      = -O2
-DEBUG_FLAGS    = -G 0
 
 MIPSISET       = -mips1
 
@@ -200,14 +199,15 @@ ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: MIPSISET := -mips1
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/env.c.o: MIPSISET := -mips1
 
-# $(BUILD_DIR)/src/libultra/cents2ratio.c.o: DEBUG_FLAGS := -g
-# $(BUILD_DIR)/src/libultra/cents2ratio.c.o: OPT_FLAGS :=
+# $(BUILD_DIR)/src/libultra/cents2ratio.c.o: OPT_FLAGS := -g
 # $(BUILD_DIR)/src/libultra/cents2ratio.c.o: MIPSISET := -mips2
 
 
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/cents2ratio.c.o: DEBUG_FLAGS := -g
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/cents2ratio.c.o: OPT_FLAGS :=
+# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/cents2ratio.c.o: OPT_FLAGS := -g
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/cents2ratio.c.o: MIPSISET := -mips2
+
+# $(BUILD_DIR)/src/gsSnd.c.o: OPT_FLAGS := -O2 -g1
+# $(BUILD_DIR)/src/gsSnd.c.o: MIPSISET := -mips2
 
 #Ignore warnings for libultra files
 $(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: CC_WARNINGS := -w

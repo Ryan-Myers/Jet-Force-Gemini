@@ -599,6 +599,16 @@ typedef struct {
 } ALOscEvent;
 
 typedef struct {
+    u8 pad[0x43];
+    u8 flags;
+    s32 pad_44;
+} AlMsgUnk_Unk0;
+
+typedef struct {
+    AlMsgUnk_Unk0 *unk0;
+} AlMsgUnk;
+
+typedef struct {
     s16                 	type;
     union {
         ALMIDIEvent     	midi;
@@ -612,6 +622,7 @@ typedef struct {
 	ALSeqpSeqEvent		spseq;
 	ALSeqpBankEvent		spbank;
         ALOscEvent      	osc;
+        AlMsgUnk            unk;
     } msg;
 } ALEvent;
 
