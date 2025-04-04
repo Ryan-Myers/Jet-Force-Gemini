@@ -1,7 +1,5 @@
 #include "common.h"
 
-// This file appears to be audiosfx.c in DKR.
-
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpNew.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/func_80084848.s")
@@ -20,19 +18,29 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/func_80086120.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpSetPriority.s")
+typedef struct {
+    u8 pad[0x40];
+    u8 unk40;
+    u8 pad41[0x3];
+    u8 unk44;
+} UnkSndPriority;
 
-void func_80086284(void) {
+void gsSndpSetPriority(UnkSndPriority *arg0, u8 arg1) {
+    if (arg0 != NULL) {
+        arg0->unk40 = (s16) arg1;
+    }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpGetState.s")
-
-void func_800862B4(void) {
+u8 gsSndpGetState(UnkSndPriority *arg0) {
+    if (arg0 != NULL) {
+        return arg0->unk44;
+    } else {
+        return 0;
+    }
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/ad_sndp_play.s")
 
-#if 0
 typedef struct unk800DC6BC_40 {
     ALLink node;
     u8 pad0C[0x38];
@@ -68,9 +76,6 @@ void gsSndpStop(AlMsgUnk_Unk0 *msg) {
         //osSyncPrintf("WARNING: Attempt to stop NULL sound aborted\n");
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpStop.s")
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/func_80086624.s")
 
@@ -82,30 +87,33 @@ void gsSndpStop(AlMsgUnk_Unk0 *msg) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpSetParam.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpGetMasterVolume.s")
+extern u16 *D_80105C94;
 
-void func_800867F0(void) {
-}
-
-void func_800867F8(void) {
+u16 gsSndpGetMasterVolume(u8 arg0) {
+    return D_80105C94[arg0];
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpSetMasterVolume.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpSetGlobalVolume.s")
+extern u32 D_800A9F80;
 
-void func_80086900(void) {
+void gsSndpSetGlobalVolume(u32 arg0) {
+    if (arg0 > 0x100) {
+        arg0 = 0x100;
+    }
+    D_800A9F80 = arg0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpGetGlobalVolume.s")
+extern u32 D_800A9F80;
 
-void func_80086914(void) {
+u32 gsSndpGetGlobalVolume(void) {
+    return D_800A9F80;
 }
 
-void func_8008691C(void) {
-}
-
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpLimitVoices.s")
-
-void func_80086964(void) {
+void gsSndpLimitVoices(s32 arg0) {
+    if (D_800A9F7C->soundChannelsMax >= arg0) {
+        D_800A9F7C->curTime = arg0;
+    } else {
+        D_800A9F7C->curTime = D_800A9F7C->soundChannelsMax;
+    }
 }
