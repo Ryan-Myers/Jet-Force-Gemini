@@ -1,4 +1,5 @@
 #include "common.h"
+#include "gsSnd.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpNew.s")
 
@@ -12,7 +13,77 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/func_80085CF8.s")
 
+extern ALSoundState D_800A9F70;
+#if 0
+u16 getSoundStateCounts(u16 *lastAllocListIndex, u16 *lastFreeListIndex) {
+    OSIntMask mask;
+    u16 freeListNextIndex;
+    u16 allocListNextIndex;
+    u16 freeListLastIndex;
+    ALSoundState *nextFreeList;
+    ALSoundState *nextAllocList;
+    ALSoundState *prevFreeList;
+
+    mask = osSetIntMask(OS_IM_NONE);
+    nextFreeList = D_800A9F70.next;
+    nextAllocList = D_800A9F70.unk8;
+    prevFreeList = D_800A9F70.prev;
+
+    for (freeListNextIndex = 0; nextFreeList != 0; freeListNextIndex++) {
+        nextFreeList = nextFreeList->next;
+    }
+    
+    for (allocListNextIndex = 0; nextAllocList != 0; allocListNextIndex++) {
+        nextAllocList = nextAllocList->next;
+    }
+
+    for (freeListLastIndex = 0; prevFreeList != 0; freeListLastIndex++) {
+        prevFreeList = prevFreeList->prev;
+    }
+
+    *lastAllocListIndex = allocListNextIndex;
+    *lastFreeListIndex = freeListNextIndex;
+
+    osSetIntMask(mask);
+
+    return freeListLastIndex;
+}
+// u16 getSoundStateCounts(u16 *lastAllocListIndex, u16 *lastFreeListIndex) {
+//     u32 mask;
+//     u16 freeListNextIndex;
+//     u16 allocListNextIndex;
+//     u16 freeListLastIndex;
+//     ALSoundState *nextFreeList;
+//     ALSoundState *nextAllocList;
+//     ALSoundState *prevFreeList;
+
+//     mask = osSetIntMask(OS_IM_NONE);
+//     nextFreeList = D_800A9F70.next;
+//     nextAllocList = D_800A9F70.unk8;
+//     prevFreeList = D_800A9F70.prev;
+//     freeListNextIndex = 0;
+//     while (nextFreeList != NULL) {
+//         freeListNextIndex++;
+//         nextFreeList = nextFreeList->next;
+//     }
+//     allocListNextIndex = 0;
+//     while (nextAllocList != NULL) {
+//         allocListNextIndex++;
+//         nextAllocList = nextAllocList->next;
+//     }
+//     freeListLastIndex = 0;
+//     while (prevFreeList != NULL) {
+//         prevFreeList = prevFreeList->prev;
+//         freeListLastIndex++;
+//     }
+//     *lastAllocListIndex = allocListNextIndex;
+//     *lastFreeListIndex = freeListNextIndex;
+//     osSetIntMask(mask);
+//     return freeListLastIndex;
+// }
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/getSoundStateCounts.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/func_80085EF0.s")
 
@@ -63,13 +134,13 @@ extern void		osSyncPrintf(const char *fmt, ...);
 void n_alEvtqPostEvent(ALEventQueue *evtq, ALEvent *evt, ALMicroTime delta);
 extern const char D_800B002C[];
 
-void gsSndpStop(AlMsgUnk_Unk0 *msg) {
+void gsSndpStop(AlMsgUnk_Unk0 *soundState) {
     ALEvent alEvent;
 
     alEvent.type = 0x400; // Could be a custom Rare event type.
-    alEvent.msg.unk.unk0 = msg;
-    if (msg != NULL) {
-        alEvent.msg.unk.unk0->flags &= ~(1 << 4);
+    alEvent.msg.unk.unk0 = soundState;
+    if (soundState != NULL) {
+        alEvent.msg.unk.unk0->flags &= ~AL_SNDP_PITCH_EVT;
         n_alEvtqPostEvent(&D_800A9F7C->evtq, &alEvent, 0);
     } else {
         osSyncPrintf((char *) &D_800B002C);
@@ -77,23 +148,90 @@ void gsSndpStop(AlMsgUnk_Unk0 *msg) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/func_80086624.s")
+void func_80086624(u8 event) {
+    OSIntMask mask;
+    ALEvent evt;
+    ALSoundState *queue;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpStopAll.s")
+    mask = osSetIntMask(OS_IM_NONE);
+    queue = D_800A9F70.next;
+    while (queue != NULL) {
+        evt.type = AL_SNDP_UNK_10_EVT;
+        evt.msg.unk.unk0 = queue;
+        if ((queue->flags & event) == event) {
+            evt.msg.unk.unk0->flags &= ~AL_SNDP_PITCH_EVT;
+            n_alEvtqPostEvent(&D_800A9F7C->evtq, &evt, 0);
+        }
+        queue = queue->next;
+    }
+    osSetIntMask(mask);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpStopAllRetrigger.s")
+void gsSndpStopAll(void) {
+    func_80086624(AL_SNDP_PLAY_EVT);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpStopAllLooped.s")
+void gsSndpStopAllRetrigger(void) {
+    func_80086624(AL_SNDP_PLAY_EVT | AL_SNDP_PITCH_EVT);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpSetParam.s")
+void gsSndpStopAllLooped(void) {
+    func_80086624(AL_SNDP_PLAY_EVT | AL_SNDP_STOP_EVT);
+}
+
+typedef union {
+    ALEvent msg;
+
+    struct{
+        s16 type;
+        SoundMask *state;
+        u32 param;
+    }snd_event;
+
+} ALEvent2;
+extern const char D_800B005C[];
+void gsSndpSetParam(s32 soundMask, s16 type, u32 volume) {
+    ALEvent2 sndEvt;
+    sndEvt.snd_event.type = type;
+    sndEvt.snd_event.state = (void *) soundMask;
+    sndEvt.snd_event.param = volume;
+    if (soundMask != NULL) {
+        n_alEvtqPostEvent(&D_800A9F7C->evtq, (ALEvent *) &sndEvt, 0);
+    } else {
+        osSyncPrintf((char *) &D_800B005C);
+        //osSyncPrintf("WARNING: Attempt to modify NULL sound aborted\n");
+    }
+}
 
 extern u16 *D_80105C94;
 
-u16 gsSndpGetMasterVolume(u8 arg0) {
-    return D_80105C94[arg0];
+u16 gsSndpGetMasterVolume(u8 channel) {
+    return D_80105C94[channel];
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpSetMasterVolume.s")
+void gsSndpSetMasterVolume(u8 channel, u16 volume) {
+    OSIntMask mask;
+    ALEventQueue *queue;    
+    s32 sp2C;
+    ALEvent evt;
+
+    mask = osSetIntMask(OS_IM_NONE);
+    queue = (ALEventQueue *) D_800A9F70.next;
+    D_80105C94[channel] = volume;
+    
+    for (sp2C = 0; queue != NULL;) {
+        // This is almost definitely the wrong struct list, but it matches so I'm not going to complain
+        if ((((ALInstrument *) queue->allocList.next->prev)->priority & 0x3F) == channel) {
+            evt.type = AL_SNDP_UNK_11_EVT;
+            evt.msg.spseq.seq = (void *) queue;
+            n_alEvtqPostEvent(&D_800A9F7C->evtq, &evt, 0);
+        }
+        sp2C++,
+        queue = (ALEventQueue *) queue->freeList.next;
+    }
+
+    osSetIntMask(mask);
+}
 
 extern u32 D_800A9F80;
 
