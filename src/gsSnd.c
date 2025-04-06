@@ -14,9 +14,10 @@
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/func_80085CF8.s")
 
 extern ALSoundState D_800A9F70;
-#if 0
+
+
 u16 getSoundStateCounts(u16 *lastAllocListIndex, u16 *lastFreeListIndex) {
-    OSIntMask mask;
+    u32 mask;
     u16 freeListNextIndex;
     u16 allocListNextIndex;
     u16 freeListLastIndex;
@@ -29,61 +30,17 @@ u16 getSoundStateCounts(u16 *lastAllocListIndex, u16 *lastFreeListIndex) {
     nextAllocList = D_800A9F70.unk8;
     prevFreeList = D_800A9F70.prev;
 
-    for (freeListNextIndex = 0; nextFreeList != 0; freeListNextIndex++) {
-        nextFreeList = nextFreeList->next;
-    }
-    
-    for (allocListNextIndex = 0; nextAllocList != 0; allocListNextIndex++) {
-        nextAllocList = nextAllocList->next;
-    }
-
-    for (freeListLastIndex = 0; prevFreeList != 0; freeListLastIndex++) {
-        prevFreeList = prevFreeList->prev;
-    }
+    for (freeListNextIndex = 0; nextFreeList != NULL; freeListNextIndex++, nextFreeList = nextFreeList->next); 
+    for (allocListNextIndex = 0; nextAllocList != NULL; allocListNextIndex++, nextAllocList = nextAllocList->next);
+    for (freeListLastIndex = 0; prevFreeList != NULL; freeListLastIndex++, prevFreeList = prevFreeList->prev);
 
     *lastAllocListIndex = allocListNextIndex;
     *lastFreeListIndex = freeListNextIndex;
-
+    
     osSetIntMask(mask);
 
     return freeListLastIndex;
 }
-// u16 getSoundStateCounts(u16 *lastAllocListIndex, u16 *lastFreeListIndex) {
-//     u32 mask;
-//     u16 freeListNextIndex;
-//     u16 allocListNextIndex;
-//     u16 freeListLastIndex;
-//     ALSoundState *nextFreeList;
-//     ALSoundState *nextAllocList;
-//     ALSoundState *prevFreeList;
-
-//     mask = osSetIntMask(OS_IM_NONE);
-//     nextFreeList = D_800A9F70.next;
-//     nextAllocList = D_800A9F70.unk8;
-//     prevFreeList = D_800A9F70.prev;
-//     freeListNextIndex = 0;
-//     while (nextFreeList != NULL) {
-//         freeListNextIndex++;
-//         nextFreeList = nextFreeList->next;
-//     }
-//     allocListNextIndex = 0;
-//     while (nextAllocList != NULL) {
-//         allocListNextIndex++;
-//         nextAllocList = nextAllocList->next;
-//     }
-//     freeListLastIndex = 0;
-//     while (prevFreeList != NULL) {
-//         prevFreeList = prevFreeList->prev;
-//         freeListLastIndex++;
-//     }
-//     *lastAllocListIndex = allocListNextIndex;
-//     *lastFreeListIndex = freeListNextIndex;
-//     osSetIntMask(mask);
-//     return freeListLastIndex;
-// }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/getSoundStateCounts.s")
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/func_80085EF0.s")
 
@@ -134,13 +91,13 @@ extern void		osSyncPrintf(const char *fmt, ...);
 void n_alEvtqPostEvent(ALEventQueue *evtq, ALEvent *evt, ALMicroTime delta);
 extern const char D_800B002C[];
 
-void gsSndpStop(AlMsgUnk_Unk0 *soundState) {
+void gsSndpStop(ALSoundState *queue) {
     ALEvent alEvent;
 
     alEvent.type = 0x400; // Could be a custom Rare event type.
-    alEvent.msg.unk.unk0 = soundState;
-    if (soundState != NULL) {
-        alEvent.msg.unk.unk0->flags &= ~AL_SNDP_PITCH_EVT;
+    alEvent.msg.sndpevent.soundState = queue;
+    if (queue != NULL) {
+        alEvent.msg.sndpevent.soundState->flags &= ~AL_SNDP_PITCH_EVT;
         n_alEvtqPostEvent(&D_800A9F7C->evtq, &alEvent, 0);
     } else {
         osSyncPrintf((char *) &D_800B002C);
@@ -157,9 +114,9 @@ void func_80086624(u8 event) {
     queue = D_800A9F70.next;
     while (queue != NULL) {
         evt.type = AL_SNDP_UNK_10_EVT;
-        evt.msg.unk.unk0 = queue;
+        evt.msg.sndpevent.soundState = queue;
         if ((queue->flags & event) == event) {
-            evt.msg.unk.unk0->flags &= ~AL_SNDP_PITCH_EVT;
+            evt.msg.sndpevent.soundState->flags &= ~AL_SNDP_PITCH_EVT;
             n_alEvtqPostEvent(&D_800A9F7C->evtq, &evt, 0);
         }
         queue = queue->next;
@@ -233,7 +190,7 @@ void gsSndpSetMasterVolume(u8 channel, u16 volume) {
     osSetIntMask(mask);
 }
 
-extern u32 D_800A9F80;
+extern u32 D_800A9F80; // u32 globalVolume = 0x100;
 
 void gsSndpSetGlobalVolume(u32 arg0) {
     if (arg0 > 0x100) {
