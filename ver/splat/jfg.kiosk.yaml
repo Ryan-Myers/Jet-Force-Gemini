@@ -461,5 +461,33 @@ segments:
   - name: assets
     type: bin
     start: 0xB22B0
-    follows_vram: main
+
+  - name: overlaydata #?
+    type: bin
+    start: 0xB23E0
+
+  - name: runlinks_section1
+    type: bin
+    start: 0x1A7C4D0
+
+  - name: runlinks_section2
+    type: bin
+    start: 0x1A7D500
+
+  - name: runlinks_section3
+    type: bin
+    start: 0x1A7F9E0
+
+  - name: runlinks_section4
+    type: bin
+    start: 0x1A80D60
+
+  - name: symbolsTable_offsets
+    type: bin
+    start: 0x1B94430
+
+  - name: symbolsTable_symbol_names
+    type: bin
+    start: 0x1B96910
+
   - [0x1B9FB40]

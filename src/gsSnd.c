@@ -15,7 +15,6 @@
 
 extern ALSoundState D_800A9F70;
 
-
 u16 getSoundStateCounts(u16 *lastAllocListIndex, u16 *lastFreeListIndex) {
     u32 mask;
     u16 freeListNextIndex;
@@ -36,7 +35,7 @@ u16 getSoundStateCounts(u16 *lastAllocListIndex, u16 *lastFreeListIndex) {
 
     *lastAllocListIndex = allocListNextIndex;
     *lastFreeListIndex = freeListNextIndex;
-    
+
     osSetIntMask(mask);
 
     return freeListLastIndex;

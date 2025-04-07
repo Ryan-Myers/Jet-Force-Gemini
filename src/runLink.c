@@ -7,18 +7,21 @@ typedef struct runlinkModule {
 extern runlinkModule *D_800FF780;
 
 #if 0
-//extern u8 __SYMBOLS_LUT_START[], __SYMBOLS_LUT_EMD[];
-extern u32 D_1B94430[], D_1B96910[];
+extern u32 D_1B94430[], D_1B96910[]; // Linker symbols for the start of two lookup tables.
+// D_1B94430 is a 4 byte value used as an offset in the list symbols for the start 
+// D_1B96910 is just a list of symbol names as ascii strings with null byte seperators
 
-char *GetSymbolName(s32 arg0) {
-    u32 *ramAddress;
-    u8 *secondRomOffset;
-    u32 *romOffset;
-    romOffset = D_1B94430[arg0] & ~7;
-    romCopy((u32) (romOffset), (u32) ramAddress, 8);
-    secondRomOffset = *(&ramAddress + ((s32) romOffset & 7)) + *D_1B96910;
-    romCopy((u32) (*secondRomOffset & ~7), (u32) ramAddress, 96);
-    return &ramAddress + ((u32)secondRomOffset & 7);
+char *GetSymbolName(u32 arg0) {
+    char symbolName[96];
+    u32 secondRomOffset;
+    u32 symbolBytes;
+    u32 romOffset;
+    romOffset = &D_1B94430[arg0];
+    romCopy((u32) romOffset, &symbolBytes, 8);
+    secondRomOffset = *(&symbolBytes + ((u32) &romOffset & 7)) + (u32) D_1B96910;
+    symbolBytes = ((u32) secondRomOffset & 7);
+    romCopy(((u32) secondRomOffset & ~7), &symbolName, 96);
+    return symbolName + symbolBytes;
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/GetSymbolName.s")
