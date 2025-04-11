@@ -256,33 +256,54 @@ void func_80070518(Gfx **dList, DialogueBoxBackground *box, char *text, Alignmen
 #endif
 
 #ifdef NON_EQUIVALENT
-s32 fontStringWidth(char *text, s32 font, s32 convertString) {
-    FontCharDataAlt *fontData;
-    s32 index;
-    u8 *dxData;
-    char ch;
-    u8 width;
-    s32 stringWidth;
+typedef struct FontJpSpacing {
+    u8 spacing[256]; // 256 characters in the japanese font
+} FontJpSpacing;
+// Japanese Font Header, 0x10 bytes
+// Asset45 contains 4 font headers.
+typedef struct FontData_JP {
+    u8 unk0;
+    u8 x;
+    u8 y;
+    u8 charWidth;
+    u8 height;
+    u8 pad[3];
+    s32 offsetToData;
+    s32 bytesPerCharacter;
+} FontData_JP;
 
-    dxData = (&dxTable)[font];
-    fontData = &Font[font];
+FontData_JP *dxTable;
+s32 fontStringWidth(char *text, s32 font, s32 convertString) {
+    FontCharDataAlt  *currentFontSpacing;
+    FontData_JP *currentFont;
+    s32 glyphIndex;
+    s32 length;
+    s32 retLength;
+    char currentChar;
+
+    do {
+        currentChar = *input++;
+
+    currentFont = (&dxTable)[font];
+    currentFontSpacing = &Font[font];
     if (convertString) {
         fontConvertString(text, convertBuffer);
         text = convertBuffer;
     }
-    stringWidth = 0;
-    for (index = 0; text[index] != '\0'; index++) {
-        ch = text[index];
-        width = fontData->width;
-        if (ch & 0x80) {
-            //index++;
-            if ((ch!= 0) && (ch != 0xF)) {
-                width = dxData[ch];
+    retLength = 0;
+    do {
+        length += currentFont->charWidth;
+        if (*text & 0x80) {
+            glyphIndex = (text[1] & 0xFF) | ((text[0] & 0x7F) << 8);
+            text += 2;
+            if ((glyphIndex == 0) || (glyphIndex == 15)) {
+                length += currentFont->charWidth;
             }
         }
-        stringWidth = width;
-    }
-    return stringWidth;
+        text++;
+        retLength += length;   
+    } while (*text != '\0');
+    return retLength;
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontStringWidth.s")
