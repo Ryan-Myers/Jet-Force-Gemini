@@ -214,22 +214,20 @@ void texFreeSprite(Sprite *sprite){
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/func_800577D8.s")
 
 //builD_tex_list in DKR
-void func_80057B8C(TextureHeader *tex, u8 *addr) {
-    u8 *dlist;
-
-    dlist = addr;
+void func_80057B8C(TextureHeader *tex, Gfx *_dlist) {
+    Gfx *dlist = _dlist;
     if (tex) { }
-    tex->cmd = (s32 *)addr;
-    func_80057C50((Gfx **) &dlist, tex, 0, 0);
+    tex->cmd = dlist;
+    func_80057C50(&dlist, tex, 0, 0);
     //tex->flags & 0x40 - U clamp flag. Wrap
-    if ((tex->unk1B < 2) && (tex->flags & 0x40)) {
+    if (tex->unk1B < 2 && tex->flags & 0x40) {
         if (!(tex->format & 0xF)) {
-            func_80057C50((Gfx **) &dlist, tex, 1, (0x1000 - tex->textureSize) >> 3);
+            func_80057C50(&dlist, tex, 1, (0x1000 - tex->textureSize) >> 3);
         } else {
-            func_80057C50((Gfx **) &dlist, tex, 1, 0x100);
+            func_80057C50(&dlist, tex, 1, 0x100);
         }
     }
-    tex->numberOfCommands = ((s32) (dlist - (s32)tex->cmd) >> 3);
+    tex->numberOfCommands = dlist - tex->cmd;
 }
 
 //Shrunk builD_tex_list

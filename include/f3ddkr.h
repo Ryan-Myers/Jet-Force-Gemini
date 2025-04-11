@@ -152,4 +152,10 @@
 }
 #endif
 
+#if defined(F3DDKR_GBI)
+ // ?????? - Needed to modify this to work with matching build_tex_display_list
+#undef TXL2WORDS_4b
+#define TXL2WORDS_4b(txls) ((txls)/16)
+#endif
+
 #endif

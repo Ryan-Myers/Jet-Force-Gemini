@@ -96,7 +96,9 @@ void fontPrintWindowXY(Gfx **displayList, s32 windowId, s32 xpos, s32 ypos, char
  * Loops through a string, then draws each character onscreen.
  * Will also draw a fillrect if text backgrounds are enabled.
  */
+extern u8 fontInUse;
 void func_80070518(Gfx **dList, DialogueBoxBackground *box, char *text, AlignmentFlags alignmentFlags) {
+    s32 fontInUse_saved;
     s32 scisOffset;
     s32 scisPos;
     s32 ypos;
@@ -121,129 +123,132 @@ void func_80070518(Gfx **dList, DialogueBoxBackground *box, char *text, Alignmen
     s32 newTempX;
     s32 newTempY;
     u8 curChar;
+
     xAlignmentDiff = -1;
     lastTextureIndex = -1;
-    if (text != NULL) {
-        textureLry = 0;
-        xpos = box->xpos;
-        ypos = box->ypos;
-        fontData = &Font[box->font];
-        gSPDisplayList((*dList)++, D_800A77F0);
-        if (box != Window) {
-            scisOffset = (((box->y2 - box->y1) + 1) / (f32) 2) * 4.0f;
-            scisPos = (box->y1 + box->y2) >> 1;
-            gDPSetScissor((*dList)++, 0, box->x1, scisPos - scisOffset, box->x2, scisPos + scisOffset);
-        }
-        if (alignmentFlags & (HORZ_ALIGN_RIGHT | HORZ_ALIGN_CENTER)) {
-            xAlignmentDiff = fontStringWidth(text, xpos, box->font);
-            if (alignmentFlags & HORZ_ALIGN_RIGHT) {
-                xpos = (xpos - xAlignmentDiff) + 1;
-            } else {
-                xpos -= xAlignmentDiff >> 1;
-            }
-        }
-        if (alignmentFlags & VERT_ALIGN_BOTTOM) {
-            ypos = (ypos - fontData->y) + 1;
-        }
-        if (alignmentFlags & VERT_ALIGN_MIDDLE) {
-            ypos -= fontData->y >> 1;
-        }
-        if (box->textBGColourA != 0) {
-            gDPSetEnvColor((*dList)++, box->textBGColourR, box->textBGColourG, box->textBGColourB, box->textBGColourA);
-            if (xAlignmentDiff == -1) {
-                xAlignmentDiff = fontStringWidth(text, xpos, box->font);
-            }
-            gDPSetPrimColor((*dList)++, 0, 0, D_800A7868, D_800A786C, D_800A7870, 0);
-            newTempX = xpos + xAlignmentDiff - 1;
-            newTempY = ypos + fontData->y - 1;
-            gDkrDmaDisplayList((*dList)++, &D_A7858, 2);
-            gDPFillRectangle((*dList)++, xpos + box->x1, ypos + box->y1, newTempX + box->x1, newTempY + box->y1);
-            gDPPipeSync((*dList)++);
-        }
-        gDPSetPrimColor((*dList)++, textureLry, 0, 255, 255, 255, box->opacity);
-        gDPSetEnvColor((*dList)++, box->textColourR, box->textColourG, box->textColourB, box->textColourA);
-        //gDkrDmaDisplayList((*dList)++, OS_K0_TO_PHYSICAL(dDialogueBoxDrawModes[0]), 2);
-        //gDPPipeSync((*dList)++);
-        xpos += box->textOffsetX;
-        ypos += box->textOffsetY;
-        for (charIndex = 0; (text[charIndex] != '\0') && (box->y2 >= ypos);
-             xpos += charSpace, charIndex++) {
-            curChar = text[charIndex];
-            newData = FALSE;
-            charSpace = 0;
-            if (curChar <= 0x20 || curChar >= 0x80) {
-                switch (curChar) {
-                    case ' ': // Space
-                        xpos += fontData->charWidth;
-                        break;
-                    case '\n': // Line Feed
-                        xpos = box->textOffsetX;
-                        ypos += fontData->y;
-                        break;
-                    case '\t': // Tab
-                        xpos += fontData->charHeight - ((xpos - box->textOffsetX) % fontData->charHeight);
-                        break;
-                    case '\v': // VT - Vertical Tab
-                        ypos += fontData->y;
-                        break;
-                    case '\r': // Carriage Return
-                        xpos = box->textOffsetX;
-                        break;
-                    default:
-                        xpos += fontData->charWidth;
-                        break;
-                }
-            } else {
-                curChar -= 0x20; // Convert lower case to upper case ASCII
-                textureIndex = fontData->letter[curChar].textureID;
-                if (textureIndex != 0xFF) {
-                    newData = TRUE;
-                    if (lastTextureIndex != textureIndex) {
-                        lastTextureIndex = textureIndex;
-                        texture = fontData->texturePointers[textureIndex];
-                        gDkrDmaDisplayList((*dList)++, OS_PHYSICAL_TO_K0(texture->cmd), texture->numberOfCommands);
-                    }
-                    textureWidth = fontData->letter[curChar].width;
-                    textureHeight = fontData->letter[curChar].height;
-                    textureS = fontData->letter[curChar].s;
-                    textureT = fontData->letter[curChar].t;
-                    xAlignmentDiff = fontData->letter[curChar].lrx;
-                    yAlignmentDiff = fontData->letter[curChar].lry;
-                    charSpace =
-                        (fontData->x == 0) ? (fontData->letter[curChar].ulx) : (fontData->x);
-                    newData = TRUE;
-                }
-            }
-            if (newData) {
-                textureUlx = ((box->x1 + xpos) + textureWidth) * 4;
-                textureUly = ((box->y1 + ypos) + textureHeight) * 4;
-                textureLrx = (xAlignmentDiff * 4) + textureUlx;
-                newTempY = (yAlignmentDiff * 4) + textureUly;
-                textureS *= 32;
-                textureT *= 32;
-                if ((textureUlx < 0) && (textureLrx > 0)) {
-                    textureS += (-textureUlx) * 8;
-                    textureUlx = 0;
-                }
-                if ((textureUly <= (0 - 1)) && (newTempY > 0)) {
-                    textureT += -textureUly * 8;
-                    textureUly = 0;
-                }
-                gSPTextureRectangle((*dList)++, textureUlx, textureUly, textureLrx, newTempY, 0, textureS, textureT, 1 << 10, 1 << 10);
-            }
-            if (squash && charSpace) {
-                charSpace--;
-            }
-        }
+    if (text == NULL) {
+        return;
+    }
 
-        box->xpos = xpos - box->textOffsetX;
-        box->ypos = ypos - box->textOffsetY;
-        gDPPipeSync((*dList)++);
-        if (box != Window) {
-            camSetScissor(dList);
+    fontInUse_saved = fontInUse;
+    fontInUse = box->font;
+    xpos = box->xpos;
+    ypos = box->ypos;
+    fontData = &Font[fontInUse];
+    gSPDisplayList((*dList)++, D_800A77F0);
+    if (box != Window) {
+        scisOffset = (((box->y2 - box->y1) + 1) / (f32) 2) * 4.0f;
+        scisPos = (box->y1 + box->y2) >> 1;
+        gDPSetScissor((*dList)++, 0, box->x1, scisPos - scisOffset, box->x2, scisPos + scisOffset);
+    }
+    if (alignmentFlags & (HORZ_ALIGN_RIGHT | HORZ_ALIGN_CENTER)) {
+        xAlignmentDiff = fontStringWidth(text, xpos, box->font);
+        if (alignmentFlags & HORZ_ALIGN_RIGHT) {
+            xpos = (xpos - xAlignmentDiff) + 1;
+        } else {
+            xpos -= xAlignmentDiff >> 1;
         }
-        texDPInit(dList);
+    }
+    if (alignmentFlags & VERT_ALIGN_BOTTOM) {
+        ypos = (ypos - fontData->y) + 1;
+    }
+    if (alignmentFlags & VERT_ALIGN_MIDDLE) {
+        ypos -= fontData->y >> 1;
+    }
+    if (box->textBGColourA != 0) {
+        gDPSetEnvColor((*dList)++, box->textBGColourR, box->textBGColourG, box->textBGColourB, box->textBGColourA);
+        if (xAlignmentDiff == -1) {
+            xAlignmentDiff = fontStringWidth(text, xpos, box->font);
+        }
+        gDPSetPrimColor((*dList)++, 0, 0, D_800A7868, D_800A786C, D_800A7870, 0);
+        newTempX = xpos + xAlignmentDiff - 1;
+        newTempY = ypos + fontData->y - 1;
+        gDkrDmaDisplayList((*dList)++, &D_A7858, 2);
+        gDPFillRectangle((*dList)++, xpos + box->x1, ypos + box->y1, newTempX + box->x1, newTempY + box->y1);
         gDPPipeSync((*dList)++);
+    }
+    gDPSetPrimColor((*dList)++, textureLry, 0, 255, 255, 255, box->opacity);
+    gDPSetEnvColor((*dList)++, box->textColourR, box->textColourG, box->textColourB, box->textColourA);
+    //gDkrDmaDisplayList((*dList)++, OS_K0_TO_PHYSICAL(dDialogueBoxDrawModes[0]), 2);
+    //gDPPipeSync((*dList)++);
+    xpos += box->textOffsetX;
+    ypos += box->textOffsetY;
+    for (charIndex = 0; (text[charIndex] != '\0') && (box->y2 >= ypos);
+            xpos += charSpace, charIndex++) {
+        curChar = text[charIndex];
+        newData = FALSE;
+        charSpace = 0;
+        if (curChar <= 0x20 || curChar >= 0x80) {
+            switch (curChar) {
+                case ' ': // Space
+                    xpos += fontData->charWidth;
+                    break;
+                case '\n': // Line Feed
+                    xpos = box->textOffsetX;
+                    ypos += fontData->y;
+                    break;
+                case '\t': // Tab
+                    xpos += fontData->charHeight - ((xpos - box->textOffsetX) % fontData->charHeight);
+                    break;
+                case '\v': // VT - Vertical Tab
+                    ypos += fontData->y;
+                    break;
+                case '\r': // Carriage Return
+                    xpos = box->textOffsetX;
+                    break;
+                default:
+                    xpos += fontData->charWidth;
+                    break;
+            }
+        } else {
+            curChar -= 0x20; // Convert lower case to upper case ASCII
+            textureIndex = fontData->letter[curChar].textureID;
+            if (textureIndex != 0xFF) {
+                newData = TRUE;
+                if (lastTextureIndex != textureIndex) {
+                    lastTextureIndex = textureIndex;
+                    texture = fontData->texturePointers[textureIndex];
+                    gDkrDmaDisplayList((*dList)++, OS_PHYSICAL_TO_K0(texture->cmd), texture->numberOfCommands);
+                }
+                textureWidth = fontData->letter[curChar].width;
+                textureHeight = fontData->letter[curChar].height;
+                textureS = fontData->letter[curChar].s;
+                textureT = fontData->letter[curChar].t;
+                xAlignmentDiff = fontData->letter[curChar].lrx;
+                yAlignmentDiff = fontData->letter[curChar].lry;
+                charSpace =
+                    (fontData->x == 0) ? (fontData->letter[curChar].ulx) : (fontData->x);
+                newData = TRUE;
+            }
+        }
+        if (newData) {
+            textureUlx = ((box->x1 + xpos) + textureWidth) * 4;
+            textureUly = ((box->y1 + ypos) + textureHeight) * 4;
+            textureLrx = (xAlignmentDiff * 4) + textureUlx;
+            newTempY = (yAlignmentDiff * 4) + textureUly;
+            textureS *= 32;
+            textureT *= 32;
+            if ((textureUlx < 0) && (textureLrx > 0)) {
+                textureS += (-textureUlx) * 8;
+                textureUlx = 0;
+            }
+            if ((textureUly <= (0 - 1)) && (newTempY > 0)) {
+                textureT += -textureUly * 8;
+                textureUly = 0;
+            }
+            gSPTextureRectangle((*dList)++, textureUlx, textureUly, textureLrx, newTempY, 0, textureS, textureT, 1 << 10, 1 << 10);
+        }
+        if (squash && charSpace) {
+            charSpace--;
+        }
+    }
+
+    box->xpos = xpos - box->textOffsetX;
+    box->ypos = ypos - box->textOffsetY;
+    fontInUse = fontInUse_saved;
+    texDPInit(dList);
+    if (box != Window) {
+        camSetScissor(dList);
     }
 }
 #else
@@ -453,17 +458,16 @@ void fontWindowDisable(s32 windowId) {
     Window[windowId].flags &= WINDOW_CLOSED;
 }
 
-#ifdef NON_EQUIVALENT
 /**
  * Convert an integer to a string.
  */
-void fontStringAddNumber(unsigned char **outString, s32 number) {
+void fontStringAddNumber(char **outString, s32 number) {
     u8 digit;
     s32 i;
     s32 hasDigit; // boolean
     s32 div;
-    s32 pow;
-    unsigned char *ret = *outString;
+    s32 *pow;
+    char *ret = *outString;
 
     // Check for a negative number
     if (number < 0) {
@@ -474,12 +478,12 @@ void fontStringAddNumber(unsigned char **outString, s32 number) {
 
     // Loop through digit places.
     hasDigit = FALSE;
-    for (i = 0; number < D_800A7874[i]; i++) {
-        pow = D_800A7874[i];
+    for (i = 0; D_800A7874[i] != 0; i++) {
         digit = '0';
-        if (number >= pow) {
-            div = number / pow;
-            number -= div * pow;
+        pow = &D_800A7874[i];
+        if (number >= *pow) {
+            div = number / *pow;
+            number -= div * *pow;
             digit += div;
             hasDigit = TRUE;
         }
@@ -490,13 +494,9 @@ void fontStringAddNumber(unsigned char **outString, s32 number) {
     }
 
     // One's digit place
-    *ret = '0' + number;
-    ret++;
+    *ret++ = '0' + number;
     *outString = ret;
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/font/fontStringAddNumber.s")
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontWindowsDraw.s")
 
@@ -505,14 +505,58 @@ void fontStringAddNumber(unsigned char **outString, s32 number) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontWindowDraw.s")
 
+void fontStringAddNumber(char **outString, s32 number);
 //parse_string_with_number
-#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071A0C.s")
+void func_80071A0C(char *input, char *output, s32 number) {
+    char currentChar;
+
+    do {
+        currentChar = *input++;
+        if (currentChar & 0x80) {
+            char nextChar = *input++;
+            if (nextChar == 0xE) {
+                fontStringAddNumber(&output, number);
+            } else {
+                *output++ = currentChar;
+                *output++ = nextChar;
+            }
+        } else if (currentChar == '~') { // ~ is equivalent to a %d.
+            fontStringAddNumber(&output, number);
+        } else {
+            *output++ = currentChar;
+        }
+    } while (currentChar);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071B08.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontCreateDisplayList.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/font/fontConvertString.s")
+// char D_800A78C4[] = {
+//     0x0F, 0x34, 0x0A, 0x36, 0x02, 0x06, 0x0D, 0x37, 0x03, 0x04, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D,
+//     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x3E, 0x05, 0x0B, 0x3F, 0x0C, 0x40,
+//     0x41, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
+//     0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30, 0x31, 0x32, 0x33, 0x07, 0x0F, 0x08, 0x0F, 0x0F,
+//     0x09, 0x95, 0x96, 0x97, 0x98, 0x99, 0x9A, 0x9B, 0x9C, 0x9D, 0x9E, 0x9F, 0xA0, 0xA1, 0xA2, 0xA3,
+//     0xA4, 0xA5, 0xA6, 0xA7, 0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0x03, 0x0F, 0x04, 0x0E, 0x0F,
+// };
+void fontConvertString(char *inString, char *outString) {
+    char currentChar;
+    char *conversionTable = D_800A78C4;
+
+    do {
+        currentChar = *inString++;
+        if (currentChar & 0x80) {
+            *outString++ = currentChar;
+            *outString++ = *inString++;
+        } else if (currentChar < 32) {
+            *outString++ = currentChar;
+        } else {
+            *outString++ = 0x80;
+            *outString++ = conversionTable[currentChar - 32];
+        }
+    } while (currentChar);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontGetLine.s")
 

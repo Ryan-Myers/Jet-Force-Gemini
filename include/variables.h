@@ -95,12 +95,13 @@ extern s32 D_800A7874[9];
 
 extern Gfx D_800A77F0[7];
 extern u32 D_A7858; //Font asset location?
+extern u32 D_A7318; //Font asset location?
 extern u32 *cache;
 extern u8 *dxTable;
 extern u8 squash;
 extern DialogueTextElement String[]; //Sizeof(32)?
 //dDialogueBoxBegin?
-extern u8 D_800A78C4[100];
+extern char D_800A78C4[100];
 
 /* Size: 10 bytes */
 typedef struct FontCharDataAlt {

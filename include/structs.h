@@ -5,6 +5,7 @@
 
 #include "types.h"
 #include "memory.h"
+#include "gbi.h"
 
 //Size: 0x538
 typedef struct Game {
@@ -174,41 +175,41 @@ typedef struct huft {
 
 /* Size: 0x20 bytes */
 typedef struct TextureHeader {
-  /* 0x00 */ u8 width;
-  /* 0x01 */ u8 height;
-  /* 0x02 */ u8 format; // Lower 4 bits determines image format.
-      // 0 = RGBA32
-      // 1 = RGBA16
-      // 2 = I8
-      // 3 = I4
-      // 4 = IA16
-      // 5 = IA8
-      // 6 = IA4
-      // 7 = CI4 (16 colors)
-      // 8 = CI8 (64 colors)
-  /* 0x03 */ u8 unk3;
-  /* 0x04 */ u8 unk4;
-  /* 0x05 */ u8 numberOfInstances; // Always 1 in the ROM.
-  /* 0x06 */ s16 flags;
-      // 0x04 = Interlaced texture
-      // 0x40 = U clamp flag. 0 = Wrap, 1 = Clamp
-      // 0x80 = V clamp flag. 0 = Wrap, 1 = Clamp
-  /* 0x08 */ s16 ciPaletteOffset;
-  /* 0x0A */ s16 numberOfCommands; // initialized in RAM; Number of commands in the texture display list. (Usually 0x07)
-  /* 0x0C */ s32* cmd; // initialized in RAM; Pointer to texture display list.
-  /* 0x10 */ u8 unk10;
-  /* 0x11 */ u8 unk11;
-  /* 0x12 */ u16 numOfTextures; // For animated textures, static textures are just 0x01. Each texture has it's own header.
-  /* 0x14 */ u16 frameAdvanceDelay; // How many frames to delay before moving to the next texture.
-  /* 0x16 */ s16 textureSize; // Size in number of bytes, including the header
-  /* 0x18 */ u8 unk18;
-  /* 0x19 */ u8 unk19;
-  /* 0x1A */ u8 unk1A;
-  /* 0x1B */ u8 unk1B;
-  /* 0x1C */ u8 unk1C;
-  /* 0x1D */ u8 isCompressed;
-  /* 0x1E */ u8 unk1E;
-  /* 0x1F */ u8 unk1F;
+    /* 0x00 */ u8 width;
+    /* 0x01 */ u8 height;
+    /* 0x02 */ u8 format; // Lower 4 bits determines image format.
+        // 0 = RGBA32
+        // 1 = RGBA16
+        // 2 = I8
+        // 3 = I4
+        // 4 = IA16
+        // 5 = IA8
+        // 6 = IA4
+        // 7 = CI4 (16 colors)
+        // 8 = CI8 (64 colors)
+    /* 0x03 */ s8 unk3;
+    /* 0x04 */ s8 unk4;
+    /* 0x05 */ u8 numberOfInstances; // Always 1 in the ROM.
+    /* 0x06 */ s16 flags;
+        // 0x04 = Interlaced texture
+        // 0x40 = U clamp flag. 0 = Wrap, 1 = Clamp
+        // 0x80 = V clamp flag. 0 = Wrap, 1 = Clamp
+    /* 0x08 */ s16 ciPaletteOffset;
+    /* 0x0A */ s16 numberOfCommands; // initialized in RAM; Number of commands in the texture display list. (Usually 0x07)
+    /* 0x0C */ Gfx *cmd; // initialized in RAM; Pointer to texture display list.
+    /* 0x10 */ u8 unk10;
+    /* 0x11 */ u8 unk11;
+    /* 0x12 */ u16 numOfTextures; // For animated textures, static textures are just 0x01. Each texture has it's own header.
+    /* 0x14 */ u16 frameAdvanceDelay; // How many frames to delay before moving to the next texture.
+    /* 0x16 */ s16 textureSize; // Size in number of bytes, including the header
+    /* 0x18 */ u8 unk18;
+    /* 0x19 */ u8 unk19;
+    /* 0x1A */ u8 unk1A;
+    /* 0x1B */ u8 unk1B;
+    /* 0x1C */ u8 unk1C;
+    /* 0x1D */ u8 isCompressed;
+    /* 0x1E */ u8 unk1E;
+    /* 0x1F */ u8 unk1F;
 } TextureHeader;
 
 /* Size: 8 bytes */
