@@ -1,5 +1,8 @@
 #include "common.h"
 
+const char D_800AAB00[] = "am: Unknown OSCILLATOR type %d\n";
+const char D_800AAB20[] = "am: Out of oscillator states\n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_4C50/amVibratoInit.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_4C50/amInitOsc.s")

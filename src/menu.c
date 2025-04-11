@@ -1,5 +1,9 @@
 #include "common.h"
 
+// const char D_800ADF20[] = "front/front.c";
+// const char D_800ADF30[] = "front/front.c";
+// const char D_800ADF40[] = "loadFrontEndItem() - Item no %d out of range 0-%d\n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setLanguage.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/initFront.s")

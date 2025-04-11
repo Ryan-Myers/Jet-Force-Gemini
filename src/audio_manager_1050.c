@@ -1,5 +1,11 @@
 #include "common.h"
 
+const char D_800AA950[] = "WARNING: Sync arrived before wait - music will be out of sync with sequence\n";
+const char D_800AA9A0[] = "amSndPlay: Illegal sound effects table index\n";
+const char D_800AA9D0[] = "amSndPlayDirect: Somebody tried to play illegal sound %d\n";
+const char D_800AAA0C[] = "Invalid midi sequence index\n";
+const char D_800AAA2C[] = "amTuneRestart:Jump failed - not previously pushed onto seq player %x\n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amSetMuteMode.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTunePlay.s")

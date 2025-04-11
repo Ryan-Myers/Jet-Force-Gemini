@@ -18,6 +18,18 @@ s32 FreeRAM;
 s32 D_800FE868[4]; //Same count of gMemoryPools. Possibly stores the size of each pool. Used in Debug meny to show free memory
 s32 mmEndRam;
 
+const char D_800AD1C0[] = "*** mmAllocAtAddr: size = 0 ***\n";
+const char D_800AD1E4[] = "\n*** mm Error *** ---> No more slots available.\n";
+const char D_800AD218[] = "\n*** mm Error *** ---> Can't allocate memory at desired address. (%x, size = %d bytes)\n";
+const char D_800AD270[] = "\n*** mm Error *** ---> Can't free ram at this location: %x\n";
+const char D_800AD2AC[] = "\n*** mm Error *** ---> stbf stack too deep!\n";
+const char D_800AD2DC[] = "Region = %d\t loc = %x\t size = %x, col = %x\t";
+const char D_800AD308[] = "FREE";
+const char D_800AD310[] = "ALLOCATED";
+const char D_800AD31C[] = "ALLOCATED,FIXED";
+const char D_800AD32C[] = "\n";
+const char D_800AD330[] = "\n";
+
 void mmInit(void) {
     gNumberOfMemoryPools = -1;
     if (mmExtendedRam) {

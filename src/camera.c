@@ -1,5 +1,11 @@
 #include "common.h"
 
+const char D_800ACC60[] = "Camera Error: Illegal mode!\n";
+const char D_800ACC80[] = "Illegal CAMERA number %d\n";
+const char D_800ACC9C[] = "%f\n";
+const char D_800ACCA0[] = "\nCam do 2D sprite called with NULL pointer!";
+const char D_800ACCCC[] = "CAM Error!! Convlist overflow.\n";
+
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240
 #define SCREEN_HEIGHT_PAL (SCREEN_HEIGHT + 44)

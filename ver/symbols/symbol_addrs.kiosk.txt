@@ -1826,3 +1826,14 @@ rspF3DDKRDramStart = 0x8009FC60;
 // ucode_data
 aspMainDataStart = 0x800B0770;
 rspF3DDKRDataDramStart = 0x800B0EB0;
+
+D_800AC6A4 = 0x800AC6A4; // type:f32 function_owner:func_8002C078 force_migration:true
+D_800AC6A8 = 0x800AC6A8; // type:f32 function_owner:func_8002C078 force_migration:true
+D_800AC6AC = 0x800AC6AC; // type:f32 function_owner:func_8002C078 force_migration:true
+D_800AD508 = 0x800AD508; // type:f32 function_owner:rumbleTick force_migration:true
+D_800AE400 = 0x800AE400; // type:u8 function_owner:_itoa force_migration:true
+D_800AE428 = 0x800AE428; // type:u8 function_owner:_itoa force_migration:true
+D_800AE450 = 0x800AE450; // type:u8 function_owner:vsprintf force_migration:true
+D_800AE454 = 0x800AE454; // type:u8 function_owner:vsprintf force_migration:true
+D_800AE45C = 0x800AE45C; // type:u8 function_owner:vsprintf force_migration:true
+D_800AF408 = 0x800AF408; // type:asciz function_owner:func_800676F8 force_migration:true

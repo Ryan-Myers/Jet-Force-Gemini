@@ -1,5 +1,6 @@
 #include "common.h"
 
+UNUSED const char D_800AAAE0[] = "OUT OF AUDIO POINTS\n";
 
 #define SOUND_MASK_HEAP_COUNT 40
 
@@ -75,7 +76,6 @@ void amSndSetXYZ(SoundMask *soundMask, f32 x, f32 y, f32 z) {
     }
 }
 
-#if 1
 extern SoundMask **D_800F35F4; //gSoundMaskHeapUsed
 
 void amSndStopXYZ(SoundMask* soundMask) {
@@ -90,9 +90,6 @@ void amSndStopXYZ(SoundMask* soundMask) {
         }
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/amSndStopXYZ.s")
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/amSndUnlinkHandleXYZ.s")
 

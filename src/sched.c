@@ -50,6 +50,39 @@ extern OSViMode D_800AA500; //NTSC
 extern OSTime D_800FF668;
 //OSTime D_800FF668; //gYieldTime
 
+// const char D_800AD510[] = "(Audio task)";
+// const char D_800AD520[] = "(Game task)";
+// const char D_800AD52C[] = "(DI task)\n";
+// const char D_800AD538[] = "(DI benchmark test)\n";
+// const char D_800AD550[] = "(Clone task)\n";
+// const char D_800AD560[] = "(Refract task)\n";
+// const char D_800AD570[] = "(Blur task)\n";
+// const char D_800AD580[] = "(Unknown task type %d)\n";
+// const char D_800AD598[] = "\nRCP TASK INFO\n";
+// const char D_800AD5A8[] = "-------------\n";
+// const char D_800AD5B8[] = "\ttype\t\t= %u\n";
+// const char D_800AD5C8[] = "\tflags\t\t= %u\n";
+// const char D_800AD5D8[] = "\tucode_boot\t\t= %p\n";
+// const char D_800AD5EC[] = "\tucode_boot_size\t\t= %u\n";
+// const char D_800AD604[] = "\tucode\t\t= %p\n";
+// const char D_800AD614[] = "\tucode_size\t\t= %u\n";
+// const char D_800AD628[] = "\tucode_data\t\t= %p\n";
+// const char D_800AD63C[] = "\tucode_data_size\t\t= %u\n";
+// const char D_800AD654[] = "\toutput_buff\t\t= %p\n";
+// const char D_800AD668[] = "\toutput_buff_size\t\t= %u\n";
+// const char D_800AD684[] = "\tdata_ptr\t\t= %p\n";
+// const char D_800AD698[] = "\tdata_size\t\t= %u\n";
+// const char D_800AD6AC[] = "\tframebuffer\t\t= %p\n";
+// const char D_800AD6C0[] = "Branch DisplayList Crash gfx ptr = %x\n";
+// const char D_800AD6E8[] = "*** CHILD DISPLAY LIST\n";
+// const char D_800AD700[] = "Crash gfx ptr = %x\n";
+// const char D_800AD714[] = "Surrounding traces:\n";
+// const char D_800AD72C[] = "Previous:\t%s:%5d gfx=%x\n";
+// const char D_800AD748[] = "Next:\t\t%s:%5d gfx=%x\n";
+// const char D_800AD760[] = "No traces available\n";
+// const char D_800AD778[] = "scheduler: Looks like the SP has crashed %s";
+// const char D_800AD7A4[] = "scheduler: Looks like the DP has crashed %s";
+
 void osCreateScheduler(OSSched *sc, void *stack, OSPri priority, u8 mode, u8 numFields) {
     sc->curRSPTask      = 0;
     sc->curRDPTask      = 0;

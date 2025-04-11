@@ -15,6 +15,25 @@
 //So basically, flash is written in sectors, and changing a single page needs to read a sector, modify the page, and write back the whole sector.
 #define SECTOR_SIZE 128
 
+// const char D_800AD340[] = "JFG-CHARACTER";
+// const char D_800AD350[] = "JFG-CHARACTER";
+// const char D_800AD360[] = "JFG-CHARACTER";
+// const char D_800AD370[] = "Used %08x Extension '%s'\n";
+// const char D_800AD38C[] = "JFG-CHARACTER";
+// const char D_800AD39C[] = "*** SAVING GAME ***\n";
+// const char D_800AD3B4[] = "FlashSectorErase failed\n";
+// const char D_800AD3D0[] = "*** ERASING GAME %d***\n";
+// const char D_800AD3E8[] = "FlashSectorErase failed\n";
+// const char D_800AD404[] = "*** ERASING FLASH ROM ***\n";
+// const char D_800AD420[] = "FlashSectorErase failed\n";
+// const char D_800AD43C[] = "Global Flags size = %d\n";
+// const char D_800AD454[] = "Loaded Globals :: (%04x == %04x) ?\n";
+// const char D_800AD478[] = "RESET GLOBAL FLAGS\n";
+// const char D_800AD48C[] = "FlashSectorErase failed\n";
+// const char D_800AD4A8[] = "Saved Globals :: %04x\n";
+// const char D_800AD4C0[] = "osFlashWriteArray failed (%d)\n";
+// const char D_800AD4E0[] = "osFlashReadArray failed!\n";
+
 typedef enum Language {
     LANGUAGE_0,
     LANGUAGE_1,
@@ -41,7 +60,7 @@ UNUSED void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
         rumblePak = &D_800FEC68[controllerNum];
         if (rumblePak->state.upper != 2) {
             rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
-            rumblePak->unk2 = ((arg1 * arg1) * D_800AD4FC);
+            rumblePak->unk2 = ((arg1 * arg1) * 0.1000000015);
             rumblePak->unk4 = rumblePak->unk2;
             rumblePak->rumbleTime = (arg2 * 60.0f);
         }
@@ -73,7 +92,7 @@ void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
         controllerNum = joyGetController(controllerIndex);
         rumblePak = &D_800FEC6A[controllerNum];
         if (arg1 != 0) {
-            rumblePak->state.half = ((arg1 * arg1) * D_800AD500);
+            rumblePak->state.half = ((arg1 * arg1) * 0.1000000015);
         }
         rumblePak = &D_800FEC68[controllerNum];
         if (rumblePak->state.upper != 2 && arg2 != 0.0f) {
@@ -92,7 +111,7 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
         controllerNum = joyGetController(controllerIndex);
         rumblePak = &D_800FEC68[controllerNum];
         if (arg1 != 0) {
-            arg1 = ((arg1 * arg1) * D_800AD504);
+            arg1 = ((arg1 * arg1) * 0.1000000015);
             if (rumblePak->unk2 < arg1) {
                 rumblePak->unk2 = arg1;
             }

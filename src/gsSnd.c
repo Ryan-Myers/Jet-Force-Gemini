@@ -1,6 +1,13 @@
 #include "common.h"
 #include "gsSnd.h"
 
+// const char D_800AFF80[] = "Bad soundState: voices =%d, states free =%d, states busy =%d, type %d data %x\n";
+// const char D_800AFFD0[] = "playing a playing sound\n";
+// const char D_800AFFEC[] = "Nonsense sndp event\n";
+// const char D_800B0004[] = "Sound state allocate failed - sndId %d\n";
+const char D_800B002C[] = "WARNING: Attempt to stop NULL sound aborted\n";
+const char D_800B005C[] = "WARNING: Attempt to modify NULL sound aborted\n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpNew.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/func_80084848.s")

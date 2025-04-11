@@ -1,5 +1,7 @@
 #include "common.h"
 
+const char D_800ACC30 [] = "WARNING: Stack overflow/underflow!!!\n";
+
 void bootThread(UNUSED void *args);
 
 void boot(void) {
@@ -21,4 +23,7 @@ void bootThread(void *args) {
 void bootCheckStack(void) {
     D_800F7B28[0x400]++;
     D_800F7B28[0]++;
+    // if ((D_800F7B28[0x400] != D_800F7B28[0])) {
+    //     stubbed_printf("WARNING: Stack overflow/underflow!!!\n");
+    // }
 }

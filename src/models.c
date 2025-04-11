@@ -1,5 +1,19 @@
 #include "common.h"
 
+const char D_800AC900[] = "Error: Model no. out of range on load. !!\n";
+const char D_800AC92C[] = "TEXTURE ERROR!!\n%d,%d\n";
+const char D_800AC944[] = "Error: Model table overflow!!\n";
+const char D_800AC964[] = "CREATE LOD MODEL :: null model pointer!";
+const char D_800AC98C[] = "WARNING :: createModelInstance called with NULL pointer\n";
+const char D_800AC9C8[] = "MODELS Error: Tryed to deallocate non-existent model!\n";
+const char D_800ACA00[] = "MODELS Error : cannot free NULL model instance pointer!!\n";
+const char D_800ACA3C[] = "modLoadAnim: Overflowed AnimTab!\n";
+const char D_800ACA60[] = "modFreeAnim : NULL anim!!\n";
+const char D_800ACA7C[] = "Anim Error: Tryed to deallocate non-existent anim!!\n";
+const char D_800ACAB4[] = "modLoadAnimEvent: Overflowed AnimEventTab!\n";
+const char D_800ACAE0[] = "modFreeAnimEvents : NULL anim event table!!\n";
+const char D_800ACB10[] = "Anim Event Error: Tryed to deallocate non-existent anim event!\n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003B640.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/modInitModels.s")

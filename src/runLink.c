@@ -1,5 +1,9 @@
 #include "common.h"
 
+const char D_800ADC90[] = "WARNING: Unimplemented linkage operation %d\n";
+const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";
+//const char D_800ADCEC[] = "unknown";
+
 typedef struct runlinkModule {
     s32 unk0;
     u8 pad4[25];

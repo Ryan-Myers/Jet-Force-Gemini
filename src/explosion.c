@@ -1,5 +1,7 @@
 #include "common.h"
 
+const char D_800AC3F0[] = "explosion %d out of range\n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/explosion/explosionStart.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/explosion/objExplosionSetupTriggers.s")
