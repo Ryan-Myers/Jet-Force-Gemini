@@ -435,6 +435,8 @@ segments:
       - { type: bss, vram: 0x80101640, name: diprint }
       - { type: bss, vram: 0x80101F80, name: diRcpTrace }
       - { type: bss, vram: 0x80102F90, name: diCpu }
+      - { type: bss, vram: 0x80103440, name: fx }
+      - { type: bss, vram: 0x80104870, name: font }
       - { type: bss, vram: 0x80104DE0, name: pimgr }
       - { type: .bss, vram: 0x80105220, name: rzip }
       - { type: bss, vram: 0x80105230, name: subtitles }
