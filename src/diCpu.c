@@ -1,5 +1,6 @@
 #include "common.h"
 #include "stdarg.h"
+#include "PR/rdb.h"
 
 extern OSThread *	__osGetActiveQueue(void);
 
@@ -219,13 +220,18 @@ void func_8006869C(void) {
 
 //File split?
 
-void __rmonSendFault(s32 arg0) {
-    UNUSED volatile f32 sp2C; //Fakematch?
-    u32 i;
+void __rmonSendFault(OSThread* thread) {
+    volatile float f UNUSED;
+    u8* tPtr;
+    u32 sent = 0;
 
-    i = 0;
-    sp2C = 0.0f;
-    do {
-        i += TrapDanglingJump(i + arg0, 560 - i, 2);
-    } while (i < 560);
+    /* touch fpu to ensure registers are saved to the context structure */
+    f = 0.0f;
+
+    tPtr = (u8*)thread;
+    // sizeof(OSThread) in original, 0x230 in this.
+    // TrapDanglingJump is __osRdbSend in the orginal
+    while (sent < 0x230) {
+        sent += TrapDanglingJump(tPtr + sent, 0x230 - sent, RDB_TYPE_GtoH_FAULT);
+    }
 }
