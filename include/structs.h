@@ -374,7 +374,6 @@ typedef struct unk800DC950 {
 } unk800DC950;
 
 
-// Used to update the pulsating lights in Spaceport Alpha
 typedef struct PulsatingLightDataFrame {
     u16 value;
     u16 time;
@@ -385,7 +384,7 @@ typedef struct PulsatingLightData {
     u16 time;
     u16 totalTime;
     s32 outColorValue;
-    PulsatingLightDataFrame frames[1]; // Length varies based on numberFrames.
+    PulsatingLightDataFrame frames[1];
 } PulsatingLightData;
 
 typedef struct UnkLight {
@@ -485,5 +484,144 @@ typedef struct SoundMask {
     /* 0x21 */ u8 unk21;
     /* 0x22 */ u8 unk22;
 } SoundMask;
+
+/* Size: 8 bytes */
+typedef struct LevelHeader_70_18 {
+    s32 unk0; //0x0000001E
+    u8 red; //0xFF
+    u8 green; //0x70
+    u8 blue; //0x00
+    u8 alpha; //0xFF
+} LevelHeader_70_18;
+
+/* Unknown size */
+typedef struct LevelHeader_70 {
+    /* 0x00 */ s32 unk0;  //0x00000004
+    /* 0x04 */ s32 unk4;  //0x00000000
+    /* 0x08 */ s32 unk8;  //0x00000000
+    /* 0x0C */ s32 unkC;  //0x00000000
+    /* 0x10 */ u8 red;    //0x72
+    /* 0x11 */ u8 green;  //0x75
+    /* 0x12 */ u8 blue;   //0x73
+    /* 0x13 */ u8 alpha;  //0x20
+    /* 0x14 */ u8 red2;   //0xFF
+    /* 0x15 */ u8 green2; //0x00
+    /* 0x16 */ u8 blue2;  //0x00
+    /* 0x17 */ u8 alpha2; //0xFF
+    /* 0x18 */ LevelHeader_70_18 unk18[1]; // Actual length depends on unk0
+  } LevelHeader_70;
+
+/* Size: 0xC4 bytes */
+typedef struct LevelHeader {
+    /* 0x00 */ s8 world;
+    /* 0x01 */ u8 unk1;
+    /* 0x02 */ s8 unk2;
+    /* 0x03 */ s8 unk3;
+    /* 0x04 */ s8 unk4[4];
+    /* 0x08 */ f32 course_height;
+    /* 0x0C */ u8 unkC[10];
+    /* 0x16 */ u8 unk16[10];
+    /* 0x20 */ s8 *AILevelTable;
+  
+    /* 0x24 */ u8 pad24[6];
+    /* 0x2A */ u8 unk2A;
+    /* 0x2B */ u8 pad2B[9];
+  
+    /* 0x34 */ s16 geometry;
+    /* 0x36 */ s16 collectables; // Objects such as bananas, balloons, etc.
+    /* 0x38 */ s16 skybox;
+  
+    // Fog related?
+    /* 0x3A */ s16 fogNear;
+    /* 0x3C */ s16 fogFar;
+    /* 0x3E */ s16 fogR;
+    /* 0x40 */ s16 fogG;
+    /* 0x42 */ s16 fogB;
+  
+    /* 0x44 */ u8 unk44[0x5];
+  
+    /* 0x49 */ s8 skyDome;
+    /* 0x4A */ s8 playerIndex;
+    /* 0x4B */ s8 laps;
+    /* 0x4C */ s8 race_type;
+    /* 0x4D */ s8 vehicle;
+    /* 0x4E */ s8 available_vehicles;
+  
+    /* 0x4F */ s8 unk4F[3];
+  
+    /* 0x52 */ u8 music;
+    /* 0x53 */ u8 unk53;
+    /* 0x54 */ u16 instruments;
+    /* 0x56 */ u8 unk56; // values between 2 and 8 (except 5 and 7), used to determine waves count?
+    /* 0x57 */ u8 unk57; // possible values: 2,4,8,16,20, related to waves
+    /* 0x58 */ u8 unk58; // possible values: 1,2,4
+    /* 0x59 */ u8 unk59; // always 0?
+    /* 0x5A */ s16 unk5A; // values between 512 and 4608
+    /* 0x5C */ u8 unk5C; // possible values: 1,2,4
+    /* 0x5D */ u8 unk5D; // always 0?
+    /* 0x5E */ s16 unk5E; // values between 512 and 4963
+    /* 0x60 */ s16 unk60; // possible values: 120, 130, 157, 178, 187
+    /* 0x62 */ s16 wavePower; // always 256
+    /* 0x64 */ s16 unk64; // Always 153 except in Smokey Castle where it's 0 and the title screen where it's 256 (Some form of secondary power)
+    /* 0x66 */ s16 unk66; // values between 908 and 2560
+    /* 0x68 */ s16 textureId; // always 62 except in the trophy race where it's 205
+    /* 0x6A */ u8 unk6A; // values between 1 and 6
+    /* 0x6B */ u8 unk6B; // values between 1 and 6
+    /* 0x6C */ s8 unk6C; // values between 0 and 4
+    /* 0x6D */ s8 unk6D; // values between 0 and 2 except in Hot Top Volcano where it's -2
+    /* 0x6E */ s16 unk6E; // possible values: 3,5
+  
+      //func_800B8134 Seems to use this struct, and it differs on unk70 only.
+    union {
+    /* 0x70 */ LevelHeader_70 *unk70[1]; // unknown size, however only size of 1 matches
+        struct {
+    /* 0x70 */ u8 darkVertexColours; // always 1 except in Hot Top Volcano where it's 0
+    /* 0x71 */ u8 unk71; // possible values: 0,1
+        };
+    };
+  
+    /* 0x74 */ LevelHeader_70 *unk74[7];
+  
+    // Weather related?
+    /* 0x90 */ s16 weatherEnable; // This affects snow density, but for rain, it simply needs to be nonzero.
+    /* 0x92 */ s16 weatherType;
+    /* 0x94 */ u8 weatherIntensity;
+    /* 0x95 */ u8 weatherOpacity;
+    /* 0x96 */ s16 weatherVelX;
+    /* 0x98 */ s16 weatherVelY;
+    /* 0x9A */ s16 weatherVelZ;
+  
+    /* 0x9C */ s8 cameraFOV; // Must be a value within [0, 90]
+    /* 0x9D */ u8 bgColorRed;
+    /* 0x9E */ u8 bgColorGreen;
+    /* 0x9F */ u8 bgColorBlue;
+    /* 0xA0 */ s16 unkA0;
+    /* 0xA2 */ s8 unkA2;
+    /* 0xA3 */ s8 unkA3;
+    /* 0xA4 */ TextureHeader *unkA4;
+    /* 0xA8 */ s16 unkA8;
+    /* 0xAA */ s16 unkAA;
+    /* 0xAC */ PulsatingLightData *pulseLightData;
+  
+    /* 0xB0 */ s16 unkB0;
+    /* 0xB2 */ u8 unkB2;
+    /* 0xB3 */ u8 voiceLimit;
+    /* 0xB4 */ u8 unkB4;
+    /* 0xB5 */ u8 unkB5;
+    /* 0xB6 */ u8 unkB6;
+    /* 0xB7 */ u8 unkB7;
+    /* 0xB8 */ s8 bossRaceID;
+    /* 0xB9 */ u8 unkB9;
+    /* 0xBA */ s16 unkBA;
+    /* 0xBC */ u8 unkBC;
+    /* 0xBD */ s8 unkBD;
+    // Multiplayer gradient background
+    /* 0xBE */ u8 BGColourBottomR;
+    /* 0xBF */ u8 BGColourBottomG;
+    /* 0xC0 */ u8 BGColourBottomB;
+    /* 0xC1 */ u8 BGColourTopR;
+    /* 0xC2 */ u8 BGColourTopG;
+    /* 0xC3 */ u8 BGColourTopB;
+} LevelHeader;
 
 #endif

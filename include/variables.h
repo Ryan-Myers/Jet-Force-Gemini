@@ -313,4 +313,7 @@ extern s8 D_800FF988; //videoMode
 extern Matrix D_800F3608; //.data
 extern s8 D_800F3604; //.data
 
+//level.c
+extern LevelHeader *D_800FBBD8;
+
 #endif

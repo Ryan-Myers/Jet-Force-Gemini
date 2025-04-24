@@ -30,7 +30,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetCamera.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetLevel.s")
+LevelHeader *levelGetLevel(void) {
+    return D_800FBBD8;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetName.s")
 
