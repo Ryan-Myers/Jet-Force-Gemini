@@ -63,7 +63,8 @@ void func_8002C070(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlPlayerReInit.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlDecapitatePlayer.s")
+void controlDecapitatePlayer(s32 arg0) {
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlPlayerInit.s")
 
@@ -199,9 +200,17 @@ void controlReadJoypad(s32 player) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlGetGunBarrelPos.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlPlayerTiltList.s")
+// TODO: This is clearly wrong, but it works.
+s32 controlPlayerTiltList(Object *obj) {
+    Object_Racer *player = &obj->racer[1];
+    return &player->pad68[0x90];
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlSidekickTiltList.s")
+// TODO: same as above
+s32 controlSidekickTiltList(Object *obj) {
+    Object_Racer *player = &obj->racer[0];
+    return &player->pad68[0x2E];
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlGravity.s")
 
@@ -215,7 +224,11 @@ void controlReadJoypad(s32 player) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlGetPlayerSetup.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlClearPlayerSetup.s")
+extern u8 D_800A3708[8];
+
+void controlClearPlayerSetup(void) {
+    D_800A3708[0] = 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlPlayerOpenChest.s")
 
