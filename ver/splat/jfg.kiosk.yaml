@@ -42,6 +42,7 @@ segments:
       - [0x4C50, c, audio_manager_4C50]
       - [0x5660, c, objects]
       - [0x12B10, c, track]
+      - [0x1D800, hasm, hasm/trackasm]
       - [0x1E1F0, c, shadows]
       - [0x214A0, c, shadows_214A0]
       - [0x217D0, c, lights]
