@@ -206,7 +206,55 @@ void trackSetFogOff(s32 playerID) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackChangeFog.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/trackFadeFog.s")
+void trackFadeFog(s32 fogIdx, s32 red, s32 green, s32 blue, s32 near, s32 far, f32 timer) {
+    s32 temp;
+    s32 switchTimer;
+    FogData *fogData;
+
+    fogData = &D_800F3D20[fogIdx];
+
+    if (osTvType == OS_TV_TYPE_PAL) {
+        switchTimer = (timer * 50.0f);
+    } else {
+        switchTimer = (timer * 60.0f);
+    }
+
+    if (far < near) {
+        temp = near;
+        near = far;
+        far = temp;
+    }
+
+    if (far > 1023) {
+        far = 1023;
+    }
+    if (near >= far - 5) {
+        near = far - 5;
+    }
+
+    fogData->intendedFog.r = red;
+    fogData->intendedFog.g = green;
+    fogData->intendedFog.b = blue;
+    fogData->intendedFog.near = near;
+    fogData->intendedFog.far = far;
+
+    if (switchTimer > 0) {
+        fogData->switchTimer = switchTimer;
+        fogData->addFog.r = ((red << 16) - fogData->fog.r) / switchTimer;
+        fogData->addFog.g = ((green << 16) - fogData->fog.g) / switchTimer;
+        fogData->addFog.b = ((blue << 16) - fogData->fog.b) / switchTimer;
+        fogData->addFog.near = ((near << 16) - fogData->fog.near) / switchTimer;
+        fogData->addFog.far = ((far << 16) - fogData->fog.far) / switchTimer;
+    } else {
+        fogData->switchTimer = 0;
+        fogData->fog.r = red << 16;
+        fogData->fog.g = green << 16;
+        fogData->fog.b = blue << 16;
+        fogData->fog.near = near << 16;
+        fogData->fog.far = far << 16;
+    }
+    fogData->fogChanger = NULL;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001C448.s")
 
