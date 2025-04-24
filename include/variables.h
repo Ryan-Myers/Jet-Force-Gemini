@@ -54,8 +54,8 @@ extern OSThread diCpuOSThread;
 void diCpuThread(void *);
 extern u64 diCpuThreadStack[1];
 extern OSMesgQueue D_801031C0;
-extern void *D_801031D8;
-extern void *D_801031F8;
+extern OSMesg D_801031D8[8];
+extern OSMesg D_801031F8[8];
 extern OSMesgQueue D_80103218;
 extern s32 D_800A6E88;
 extern s32 D_800A6E8C;
@@ -229,6 +229,7 @@ extern char D_800AF40C[];// =
 // %1x %d lines logged
 // Page %d/%d"
 extern char D_800AF4AC[];// = "Watchpoint exception at %x";
+extern char D_800AF4C8[]; // = "Module %d at %08x";
 
 //lights.c
 extern s32 D_800A1890;

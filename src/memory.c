@@ -93,18 +93,18 @@ MemoryPoolSlot *new_memory_pool(MemoryPoolSlot *slots, s32 poolSize, s32 numSlot
 
 void *mmAlloc(s32 size, u32 colourTag) {
     UNUSED s32 pad;
-    s32 sp28;
-    s32 sp24;
+    s32 moduleId;
+    s32 moduleAddress;
     u32 newColourTag;
-    volatile s32 sp1C = 0x666;
+    volatile s32 address = 0x666;
     newColourTag = colourTag;
     if (mmColourTagUnk1 != -1) {
         newColourTag = mmColourTagUnk1 | 0xFF000000;
     } else if (mmColourTagUnk2 != -1) {
         newColourTag = mmColourTagUnk2 | 0xFE000000;
     } else {
-        runlinkGetAddressInfo(sp1C - 8, &sp28, &sp24, NULL);
-        newColourTag = (sp28 << 24) | sp24;
+        runlinkGetAddressInfo(address - 8, &moduleId, &moduleAddress, NULL);
+        newColourTag = (moduleId << 24) | moduleAddress;
     }
     return allocate_from_memory_pool(0, size, newColourTag);
 }
@@ -112,18 +112,18 @@ void *mmAlloc(s32 size, u32 colourTag) {
 //Only differs from above by not returning a value.
 void mmAlloc2(s32 size, u32 colourTag) {
     UNUSED s32 pad;
-    s32 sp28;
-    s32 sp24;
+    s32 moduleId;
+    s32 moduleAddress;
     u32 newColourTag;
-    volatile s32 sp1C = 0x666; //fakematch?
+    volatile s32 address = 0x666; //fakematch?
     newColourTag = colourTag;
     if (mmColourTagUnk1 != -1) {
         newColourTag = mmColourTagUnk1 | 0xFF000000;
     } else if (mmColourTagUnk2 != -1) {
         newColourTag = mmColourTagUnk2 | 0xFE000000;
     } else {
-        runlinkGetAddressInfo(sp1C - 8, &sp28, &sp24, NULL);
-        newColourTag = (sp28 << 24) | sp24;
+        runlinkGetAddressInfo(address - 8, &moduleId, &moduleAddress, NULL);
+        newColourTag = (moduleId << 24) | moduleAddress;
     }
     allocate_from_memory_pool(0, size, newColourTag);
 }
@@ -163,7 +163,7 @@ MemoryPoolSlot *allocate_from_memory_pool(s32 poolIndex, s32 size, u32 colourTag
         nextIndex = curSlot->nextIndex;
     } while (nextIndex != -1);
     if (currIndex != -1) {
-        allocate_memory_pool_slot(poolIndex, (s32) currIndex, size, 1, 0, colourTag);
+        allocate_memory_pool_slot(poolIndex, (s32) currIndex, size, TRUE, FALSE, colourTag);
         enableInterrupts(flags);
         return (MemoryPoolSlot *) (slots + currIndex)->data;
     }
@@ -186,10 +186,14 @@ void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag) {
     MemoryPoolSlot *curSlot;
     MemoryPoolSlot *slots;
     s32 *flags;
-    s32 sp4C;
-    s32 sp48;
+    s32 moduleId;
+    s32 moduleAddress;
     UNUSED s32 pad;
-    volatile s32 sp40 = 0x666; //fakematch?
+    volatile s32 vaddress = 0x666; //fakematch?
+
+    if (size == 0) {
+        stubbed_printf("*** mmAllocAtAddr: size = 0 ***\n");
+    }
 
     flags = disableInterrupts();
     if (mmColourTagUnk1 != -1) {
@@ -197,11 +201,12 @@ void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag) {
     } else if (mmColourTagUnk2 != -1) {
         colorTag = mmColourTagUnk2 | 0xFE000000;
     } else {        
-        runlinkGetAddressInfo(sp40 - 8, &sp4C, &sp48, NULL);
-        colorTag = (sp4C << 24) | sp48;
+        runlinkGetAddressInfo(vaddress - 8, &moduleId, &moduleAddress, NULL);
+        colorTag = (moduleId << 24) | moduleAddress;
     }
     if ((gMemoryPools[0].curNumSlots + 1) == gMemoryPools[0].maxNumSlots) {
         enableInterrupts(flags);
+        stubbed_printf("\n*** mm Error *** ---> No more slots available.\n");
     } else {
         if (size & 0xF) {
             size = _ALIGN16(size);
@@ -210,14 +215,14 @@ void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag) {
         for (i = 0; i != -1; i = curSlot->nextIndex) {
             curSlot = &slots[i];
             if (curSlot->flags == 0) {
-                if ((u32) address >= (u32) curSlot->data && (u32)address + size <= (u32) curSlot->data + curSlot->size)  {
+                if ((u32) address >= (u32) curSlot->data && (u32) address + size <= (u32) curSlot->data + curSlot->size)  {
                     if (address == (u8 *) curSlot->data) {
-                        allocate_memory_pool_slot(0, i, size, 1, 0, colorTag);
+                        allocate_memory_pool_slot(0, i, size, TRUE, FALSE, colorTag);
                         enableInterrupts(flags);
                         return curSlot->data;
                     } else {
-                        i = allocate_memory_pool_slot(0, i, (u32) address - (u32) curSlot->data, 0, 1, colorTag);
-                        allocate_memory_pool_slot(0, i, size, 1, 0, colorTag);
+                        i = allocate_memory_pool_slot(0, i, (u32) address - (u32) curSlot->data, FALSE, TRUE, colorTag);
+                        allocate_memory_pool_slot(0, i, size, TRUE, FALSE, colorTag);
                         enableInterrupts(flags);
                         return (slots + i)->data;
                     }
@@ -226,6 +231,7 @@ void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag) {
         }
         enableInterrupts(flags);
     }
+    stubbed_printf("\n*** mm Error *** ---> Can't allocate memory at desired address. (%x, size = %d bytes)\n", address, size);
     return NULL;
 }
 
@@ -275,12 +281,16 @@ void mmFreeTick(void) {
             gFreeQueueDelay[i] = gFreeQueueDelay[gFreeQueueCount - 1];
             gFreeQueueCount--;
         } else {
+            stubbed_printf("\n*** mm Error *** ---> Can't free ram at this location: %x\n", gFreeQueue[i].dataAddress);
             i++;
         }
     }
 
     enableInterrupts(flags);
 }
+
+// Not sure where to put this string.
+const char D_800AD2AC[] = "\n*** mm Error *** ---> stbf stack too deep!\n";
 
 void free_slot_containing_address(u8 *address) {
     s32 slotIndex;
@@ -454,29 +464,38 @@ u8 *mmAlign4(u8 *address) {
 void mmSlotPrint(void) {
     s32 i;
     s32 skip;
+    s32 flags;
     s32 index;
-    s32 index2;
     s32 nextIndex;
     MemoryPoolSlot *slot;
 
-    for (i = 0; (gNumberOfMemoryPools ^ 0) >= i; i++) {
-        if (i && i) {} // Fakematch
+    for (i = 0; i <= gNumberOfMemoryPools; i++) {
+        stubbed_printf("Region = %d\t loc = %x\t size = %x, col = %x\t", i, gMemoryPools[i].slots, gMemoryPools[i].size);
         slot = &gMemoryPools[i].slots[0];
-        index = 1;
-        index2 = -index;
         do {
-            index = slot->flags;
+            flags = slot->flags;
             nextIndex = slot->nextIndex;
-            skip = nextIndex == index2;
-            if (index) {
-                if (((((((((!slot->nextIndex) & 0xFFu) & 0xFFu) & 0xFFu) & 0xFFu) & 0xFFu) & 0xFFu) & 0xFFu) & 0xFFu) {
-                    if (nextIndex && nextIndex) {} // Fakematch
-                }
+
+            switch (flags) {
+                case 0:
+                    stubbed_printf("FREE");
+                    break;
+                case 1:
+                    stubbed_printf("ALLOCATED");
+                    break;
+                case 2:
+                    stubbed_printf("ALLOCATED,FIXED");
+                    break;
+                default:
+                    stubbed_printf("\n");
+                    break;
             }
-            if (skip) {
+            stubbed_printf("\n");
+            if (nextIndex == -1) {
                 continue;
+            } else {
+                slot = &gMemoryPools[i].slots[slot->nextIndex];
             }
-            slot = &gMemoryPools[i].slots[slot->nextIndex];
-        } while (nextIndex != (-1));
+        } while (nextIndex != -1);
     }
 }

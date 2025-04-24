@@ -1,6 +1,7 @@
 #include "common.h"
 #include "stdarg.h"
 #include "PR/rdb.h"
+#include "PRinternal/rmonint.h"
 
 extern OSThread *	__osGetActiveQueue(void);
 
@@ -17,20 +18,20 @@ void diCpuTraceInit(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuTraceInit.s")
 #endif
 
-void diCpuThread(void *unused) {
+void diCpuThread(UNUSED void *unused) {
     s32 sp2C;
-    s32 var_s0 = 0;
-    osCreateMesgQueue(&D_801031C0, &D_801031D8, 8);
-    osSetEventMesg(OS_EVENT_FAULT, &D_801031C0, (void *)8);
-    osSetEventMesg(OS_EVENT_CPU_BREAK, &D_801031C0, (void *)2);
-    osCreatePiManager(150, &D_80103218, &D_801031F8, 8);
+    s32 s0 = 0;
+    osCreateMesgQueue(&D_801031C0, D_801031D8, ARRAY_COUNT(D_801031D8));
+    osSetEventMesg(OS_EVENT_FAULT, &D_801031C0, (OSMesg) RMON_MESG_FAULT);
+    osSetEventMesg(OS_EVENT_CPU_BREAK, &D_801031C0, (OSMesg) RMON_MESG_CPU_BREAK);
+    osCreatePiManager(150, &D_80103218, D_801031F8, ARRAY_COUNT(D_801031F8));
     while (1) {
         osRecvMesg(&D_801031C0, (OSMesg) &sp2C, 1);
-        var_s0 |= (s32)sp2C;
-        if ((var_s0 & 8) == 0 && (var_s0 & 2) == 0) {
+        s0 |= sp2C;
+        if (!(s0 & RMON_MESG_FAULT) && !(s0 & RMON_MESG_CPU_BREAK)) {
             continue;
         }
-        var_s0 &= ~8;
+        s0 &= ~RMON_MESG_FAULT;
         stop_all_threads_except_main();
         func_800677E4();
     }
@@ -49,8 +50,43 @@ void stop_all_threads_except_main(void) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800676F8.s")
+#if 0
+extern s32 D_800A6E90;
+extern s32 D_800A6E94;
+extern s32 D_800A6E98;
+extern s8 D_800AF400;
+extern s8 D_800AF408;
+extern void *D_80103234;
+extern ? D_80103238;
+extern s32 D_80705014;
+extern s32 D_80705018;
+extern s32 D_8070501C;
 
+void func_800676F8(void *arg0) {
+    void *sp28;
+    s32 var_v1;
+    void *temp_a0;
+
+    D_80705014 = D_800A6E98;
+    D_80705018 = D_800A6E90;
+    D_8070501C = D_800A6E94;
+    _bcopy(arg0, (void *)0x80705094, 0x230);
+    temp_a0 = arg0->unkF4;
+    sp28 = temp_a0;
+    _bcopy(temp_a0, (void *)0x80705294, 0x200);
+    D_80103234 = temp_a0;
+    _bcopy(temp_a0, &D_80103238, 0x200);
+    var_v1 = 0x100005494;
+    if (0x100005494 & 0x1F) {
+        var_v1 = (0x100005494 & ~0x1F) + 0x20;
+    }
+    packWriteFile(0, -1, &D_800AF400, &D_800AF408, (u8 *)0x80700000, var_v1);
+}
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800676F8.s")
+#endif
+
+// write_epc_data_to_cpak
 void func_800677E4(void) {
     OSThread *thread;
 
@@ -95,7 +131,19 @@ void func_80067880(OSThread *thread) {
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067880.s")
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuReportWatchpoint.s")
+UNUSED void diCpuReportWatchpoint(u32 address) {
+    s32 moduleAddress;
+    s32 moduleId;
+    s32 i;
+    for (i = 0; i < 100; i++) {
+        func_8006869C();
+    }
+    cpuXYPrintf(30, 80, (char *) &D_800AF4AC /* "Watchpoint exception at %x" */, address);
+    if (runlinkGetAddressInfo(address, &moduleId, &moduleAddress, NULL)) {
+        cpuXYPrintf(30, 100, (char *)  &D_800AF4C8 /* "Module %d at %08x" */, moduleId, moduleAddress);
+    }
+    while (1) {} // Infinite loop; waiting for the player to reset the console?
+}
 
 #ifdef NON_EQUIVALENT
 extern s32 D_800A6E90;
@@ -202,6 +250,7 @@ block_7:
     }
 }
 
+// Zeroes out `otherScreen`
 void func_8006869C(void) {
     UNUSED s32 pad;
     s32 height;

@@ -44,7 +44,7 @@ void func_8004B05C(void *dataAddress);
 MemoryPoolSlot *allocate_from_memory_pool(s32 poolIndex, s32 size, u32 colourTag);
 void runlinkLowMemoryPanic(void);
 s32 runlinkIsModuleLoaded(s32 module);
-s32 runlinkGetAddressInfo(u32 arg0, s32 *arg1, s32 *arg2, u32 **arg3);
+s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, u32 **arg3);
 void func_800676F8(void *arg0);
 void stop_all_threads_except_main(void);
 void func_800677E4(void);

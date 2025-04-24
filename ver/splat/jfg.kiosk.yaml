@@ -354,7 +354,7 @@ segments:
       - [0xAD920, rodata, level]
       - [0xAD9B0, rodata, main]
       - [0xADD90, .rodata, hasm/math_util]
-      - [0xADDC0, rodata, memory]
+      - [0xADDC0, .rodata, memory]
       - [0xADF40, rodata, saves]
       - [0xAE110, rodata, sched]
       - [0xAE490, rodata, squads]
