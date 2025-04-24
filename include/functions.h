@@ -262,6 +262,7 @@ LevelHeader *levelGetLevel(void);
 
 // track
 void trackSetFog(s32 fogIdx, s16 near, s16 far, s16 arg3, u8 red, u8 green, u8 blue, s8 arg7);
+void trackSetFogOff(s32 playerID);
 
 //camera 
 s32 camGetMode(void);

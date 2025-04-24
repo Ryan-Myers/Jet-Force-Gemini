@@ -183,7 +183,22 @@ void trackSetFog(s32 fogIdx, s16 near, s16 far, s16 arg3, u8 red, u8 green, u8 b
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackGetFog.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/trackSetFogOff.s")
+void trackSetFogOff(s32 playerID) {
+    D_800F3D20[playerID].addFog.near = 0;
+    D_800F3D20[playerID].addFog.far = 0;
+    D_800F3D20[playerID].addFog.r = 0;
+    D_800F3D20[playerID].addFog.g = 0;
+    D_800F3D20[playerID].addFog.b = 0;
+    D_800F3D20[playerID].fog.near = 1018 << 16;
+    D_800F3D20[playerID].fog.far = 1023 << 16;
+    D_800F3D20[playerID].intendedFog.r = D_800F3D20[playerID].fog.r >> 16;
+    D_800F3D20[playerID].intendedFog.g = D_800F3D20[playerID].fog.g >> 16;
+    D_800F3D20[playerID].intendedFog.b = D_800F3D20[playerID].fog.b >> 16;
+    D_800F3D20[playerID].intendedFog.near = 1018;
+    D_800F3D20[playerID].intendedFog.far = 1023;
+    D_800F3D20[playerID].switchTimer = 0;
+    D_800F3D20[playerID].fogChanger = NULL;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001BBFC.s")
 
