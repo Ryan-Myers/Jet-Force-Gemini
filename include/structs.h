@@ -596,7 +596,7 @@ typedef struct LevelHeader {
     /* 0x9E */ u8 bgColorGreen;
     /* 0x9F */ u8 bgColorBlue;
     /* 0xA0 */ s16 unkA0;
-    /* 0xA2 */ s8 unkA2;
+    /* 0xA2 */ u8 unkA2;
     /* 0xA3 */ s8 unkA3;
     /* 0xA4 */ TextureHeader *unkA4;
     /* 0xA8 */ s16 unkA8;
@@ -623,5 +623,4 @@ typedef struct LevelHeader {
     /* 0xC2 */ u8 BGColourTopG;
     /* 0xC3 */ u8 BGColourTopB;
 } LevelHeader;
-
 #endif

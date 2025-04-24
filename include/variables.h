@@ -315,5 +315,8 @@ extern s8 D_800F3604; //.data
 
 //level.c
 extern LevelHeader *D_800FBBD8;
+extern s32 D_800A66D8; // gWeatherType
+extern s32 D_800A66DC; // gLightningFrequency
+extern s32 D_800A66E8; // gRainOpacity
 
 #endif

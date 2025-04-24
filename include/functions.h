@@ -257,4 +257,13 @@ void amSndSetXYZ(SoundMask *soundMask, f32 x, f32 y, f32 z);
 void func_80003E24(s32 arg0);
 
 
+// level
+LevelHeader *levelGetLevel(void);
+
+// track
+void trackSetFog(s32 fogIdx, s16 near, s16 far, s16 arg3, u8 red, u8 green, u8 blue, s8 arg7);
+
+//camera 
+s32 camGetMode(void);
+
 #endif

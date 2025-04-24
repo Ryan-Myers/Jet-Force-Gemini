@@ -1,5 +1,17 @@
 #include "common.h"
 
+typedef enum WeatherType {
+    WEATHER_SNOW,
+    WEATHER_RAIN,
+    WEATHER_UNK
+} WeatherType;
+enum ViewportCount {
+    VIEWPORTS_COUNT_1_PLAYER,
+    VIEWPORTS_COUNT_2_PLAYERS,
+    VIEWPORTS_COUNT_3_PLAYERS,
+    VIEWPORTS_COUNT_4_PLAYERS
+};
+
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/initWeather.s")
 
 typedef struct {
@@ -38,13 +50,18 @@ void setWeatherLimits(s16 arg0, s16 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005C858.s")
 
-s32 get_current_viewport(void);
-void trackSetFog(s32 fogIdx, s16 near, s16 far, u8 red, u8 green, u8 blue);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/rainSetFog.s")
+void rainSetFog(void) {
+    s32 a, b;
 
-extern s32 D_800A66DC;
-extern s32 D_800A66E8;
+    if (D_800A66D8 != WEATHER_SNOW && camGetMode() == VIEWPORTS_COUNT_1_PLAYER) {
+        if (!(levelGetLevel()->unkA2 & 1)) {
+            a = ((D_800A66DC * -38) >> 16) + 1018;
+            b = ((D_800A66DC * -20) >> 16) + 1023;
+            trackSetFog(0, a, b, a, 28, 15, 36, 0);
+        }
+    }
+}
 
 f32 rainDensity(void) {
     f32 var_f2;
