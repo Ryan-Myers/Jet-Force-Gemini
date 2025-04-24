@@ -268,4 +268,9 @@ void trackFadeFog(s32 fogIdx, s32 red, s32 green, s32 blue, s32 near, s32 far, f
 //camera 
 s32 camGetMode(void);
 
+// This function is unique in that it has no specific limit on arguments, 
+// and they can change even within the same funciton call it.
+// This empty signature seems to be the way to handle it.
+s32 TrapDanglingJump();
+
 #endif

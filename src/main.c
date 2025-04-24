@@ -39,7 +39,6 @@ void mainThread(UNUSED void *unused) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
 
-void TrapDanglingJump(void);
 void mainInitGame(void) {
     s32 viMode;
 

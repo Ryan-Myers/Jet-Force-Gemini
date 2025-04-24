@@ -218,8 +218,7 @@ void func_8006869C(void) {
 }
 
 //File split?
-//TODO: TrapDanglingJump Seems to have a different definition here vs in mmFreeTick
-s32 TrapDanglingJump(s32, s32, s32);
+
 void __rmonSendFault(s32 arg0) {
     UNUSED volatile f32 sp2C; //Fakematch?
     u32 i;

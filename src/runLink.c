@@ -55,7 +55,6 @@ typedef struct func_800534B4_arg3 {
 extern s32 *D_800B16B0;
 extern s32 *D_800FF788;
 extern u32 *D_800FF7B4;
-extern void TrapDanglingJump(void);
 extern void amSetMuteMode(void); // Start of functions Address
 extern s32 tuneSeqPlayer; // Start of Data Address
 

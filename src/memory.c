@@ -255,8 +255,6 @@ void mmFree(void *data) {
     enableInterrupts(flags);
 }
 
-//TODO: TrapDanglingJump Seems to have a different definition here vs in __rmonSendFault
-void TrapDanglingJump(void);
 void mmFreeTick(void) {
     s32 i;
     s32 *flags;
