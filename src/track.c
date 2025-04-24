@@ -123,7 +123,7 @@ typedef struct EnvironmentFogCompact {
  /* 0x30 */ u8 r;
  /* 0x31 */ u8 g;
  /* 0x32 */ u8 b;
- /* 0x33 */ u8 unk33;
+ /* 0x33 */ s8 unk33;
  /* 0x34 */ s16 near;
  /* 0x36 */ s16 far;
 } EnvironmentFogCompact;
@@ -181,7 +181,31 @@ void trackSetFog(s32 fogIdx, s16 near, s16 far, s16 arg3, u8 red, u8 green, u8 b
     fogData->intendedFog.b = blue;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/trackGetFog.s")
+void trackGetFog(s32 playerID, s16 *near, s16 *far, s16 *unk18, u8 *r, u8 *g, u8 *b, s8 *unk33) {
+    FogData *fogData;
+
+    if (runlinkIsModuleLoaded(39) != 0) {
+        TrapDanglingJump(near, far, r, g, b);
+        *unk18 = 0;
+        *unk33 = 0;
+    } else if (runlinkIsModuleLoaded(23) != 0) {
+        TrapDanglingJump(near, far, r, g, b);
+        *unk18 = 0;
+        *unk33 = 0;
+    } else {
+        fogData = &D_800F3D20[playerID];
+        *near = fogData->fog.near >> 16;
+        *far = fogData->fog.far >> 16;
+        *unk18 = fogData->unk18 >> 16;
+        *r = fogData->fog.r >> 16;
+        *g = fogData->fog.g >> 16;
+        *b = fogData->fog.b >> 16;
+        *unk33 = fogData->intendedFog.unk33 & 0x7F;
+    }
+    if (runlinkIsModuleLoaded(29) != 0) {
+        TrapDanglingJump(r, g, b, near, far, unk33);
+    }
+}
 
 void trackSetFogOff(s32 playerID) {
     D_800F3D20[playerID].addFog.near = 0;
