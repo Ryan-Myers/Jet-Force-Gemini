@@ -38,6 +38,9 @@ void setWeatherLimits(s16 arg0, s16 arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005C858.s")
 
+s32 get_current_viewport(void);
+void trackSetFog(s32 fogIdx, s16 near, s16 far, u8 red, u8 green, u8 blue);
+
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/rainSetFog.s")
 
 extern s32 D_800A66DC;

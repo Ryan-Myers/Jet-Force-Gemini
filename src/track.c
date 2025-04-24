@@ -110,7 +110,76 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001B6D8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/trackSetFog.s")
+// In this struct, data is rightshifted 16 bytes, so make the smooth transition more precise.
+typedef struct EnvironmentFog {
+ /* 0x00 */ s32 r;
+ /* 0x04 */ s32 g;
+ /* 0x08 */ s32 b;
+ /* 0x0C */ s32 near;
+ /* 0x10 */ s32 far;
+} EnvironmentFog;
+
+typedef struct EnvironmentFogCompact {
+ /* 0x30 */ u8 r;
+ /* 0x31 */ u8 g;
+ /* 0x32 */ u8 b;
+ /* 0x33 */ u8 unk33;
+ /* 0x34 */ s16 near;
+ /* 0x36 */ s16 far;
+} EnvironmentFogCompact;
+
+/* Size: 0x40 bytes */
+typedef struct FogData {
+    EnvironmentFog fog;                 // Current fog properties. What you'll actually see ingame.
+    /* 0x14 */ s32 unk14;
+    /* 0x18 */ s32 unk18;
+    /* 0x20 */ EnvironmentFog addFog;              // Fog override. This will apply over the current fog to give a smooth transition effect.
+    EnvironmentFogCompact intendedFog;  // Fog properties the game will try to be if the switch timer is 0.
+    /* 0x38 */ s32 switchTimer;
+    /* 0x3C */ Object *fogChanger;
+} FogData;
+extern FogData D_800F3D20[4];
+
+void trackSetFog(s32 fogIdx, s16 near, s16 far, s16 arg3, u8 red, u8 green, u8 blue, s8 arg7) {    
+    s32 tempNear;
+    FogData *fogData;
+
+    fogData = &D_800F3D20[fogIdx];
+
+    if (far < near) {
+        tempNear = near;
+        near = far;
+        far = tempNear;
+    }
+
+    if (far > 1023) {
+        far = 1023;
+    }
+    if (near >= far - 5) {
+        near = far - 5;
+    }
+
+    fogData->addFog.near = 0;
+    fogData->addFog.far = 0;
+    fogData->addFog.r = 0;
+    fogData->addFog.g = 0;
+    fogData->addFog.b = 0;
+    fogData->fog.r = red << 16;
+    fogData->fog.g = green << 16;
+    fogData->fog.b = blue << 16;
+    fogData->fog.near = near << 16;
+    fogData->fog.far = far << 16;
+    fogData->unk14 = near << 16;    
+    fogData->unk18 = arg3 << 16;
+    fogData->intendedFog.unk33 = arg7;
+    fogData->intendedFog.near = near;
+    fogData->intendedFog.far = far;
+    fogData->switchTimer = 0;
+    fogData->fogChanger = NULL;
+    fogData->intendedFog.r = red;
+    fogData->intendedFog.g = green;
+    fogData->intendedFog.b = blue;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackGetFog.s")
 
