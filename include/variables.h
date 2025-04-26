@@ -264,6 +264,14 @@ extern s32 D_800A5834; //textureFilter
 extern u8 sBackgroundPrimColourR;
 extern u8 sBackgroundPrimColourG;
 extern u8 sBackgroundPrimColourB;
+extern s32 D_800A4034; // gGfxTaskIsRunning
+extern OSMesgQueue D_800FF1C8; //gGfxTaskMsgQueue
+extern OSMesgQueue D_800FF628; //blurDoneMsgQueue
+extern s32 blurTaskActive;
+extern s32 cloneTaskActive;
+extern OSMesgQueue refractDoneMsgQueue;
+extern s32 refractTaskActive;
+
 
 //saves.c
 extern OSPfs pfs[MAXCONTROLLERS];

@@ -209,6 +209,8 @@ ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: MIPSISET := -mips2
 
+$(BUILD_DIR)/$(SRC_DIR)/diCpuTraceCurrentStack.c.o: OPT_FLAGS := -dollar
+
 #Ignore warnings for libultra files
 $(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: CC_WARNINGS := -w
 $(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: CC_CHECK := :

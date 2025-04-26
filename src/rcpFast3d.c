@@ -2,7 +2,30 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/rcpFast3d/rcpFast3d.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/rcpFast3d/rcpWaitDP.s")
+s32 rcpWaitDP(void) {
+    s32 *unkMsg = NULL;
+    s32 *refractDoneMsg = NULL;
+    s32 *blurDoneMsg = NULL;
+
+    if (D_800A4034 == FALSE) {
+        return 0;
+    }
+    osRecvMesg(&D_800FF1C8, (OSMesg) &unkMsg, OS_MESG_BLOCK);
+    if (blurTaskActive) {
+        osRecvMesg(&D_800FF628, (OSMesg) &blurDoneMsg, OS_MESG_BLOCK);
+        blurTaskActive = FALSE;
+    }
+    if (refractTaskActive) {
+        osRecvMesg(&refractDoneMsgQueue, (OSMesg) &refractDoneMsg, OS_MESG_BLOCK);
+        refractTaskActive = FALSE;
+    }
+    if (cloneTaskActive) {
+        TrapDanglingJump();
+        cloneTaskActive = FALSE;
+    }
+    D_800A4034 = FALSE;
+    return unkMsg[1];
+}
 
 /**
  * Sets the primitive colour for the cyclemode fillrect background.
