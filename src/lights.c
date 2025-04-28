@@ -2,7 +2,7 @@
 #include "math.h"
 
 extern void *D_800A18A0;
-extern void *D_800F65E0;
+extern ObjectLightUnk70 *D_800F65E0;
 
 void freeLights(void) {
     if (D_800A1898 != NULL) {
@@ -22,9 +22,46 @@ void freeLights(void) {
     D_800A1890 = 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/setupLights.s")
+#ifdef NON_MATCHING
+extern s32 D_800A1890; //gMaxLights
+extern void *D_800A18A0;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80020D94.s")
+// Reasonably certain this 0x200 is the size of ObjectLightUnk70
+#define SIZE_0X200 sizeof(ObjectLightUnk70)
+
+void setupLights(s32 count, UNUSED s32 arg1, UNUSED s32 arg2) {
+    s32 i;    
+    ObjectLight **buffer;
+
+    freeLights();
+    D_800A1890 = count;
+    buffer = mmAlloc(D_800A1890 * (sizeof(s32 *) + sizeof(ObjectLight)), COLOUR_TAG_MAGENTA);
+    D_800F65E0 = mmAlloc((D_800A1890 * SIZE_0X200) + SIZE_0X200, COLOUR_TAG_MAGENTA);
+    D_800A18A0 = mmAlloc(SIZE_0X200 + 0x40, COLOUR_TAG_MAGENTA);
+    D_800A1898 = buffer;
+    D_800A189C = (ObjectLight *) &buffer[D_800A1890];
+    for (i = 0; i < D_800A1890; i++) {
+        D_800A1898[i] = &D_800A189C[i];
+        D_800A189C[i].unk70 = &D_800F65E0[(i * SIZE_0X200)];
+    }
+    lightCreateLightTable(0xFF, 0xFF, 0xFF, D_800F65E0);
+}
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/lights/setupLights.s")
+#endif
+
+extern f32 D_800AC360; // = 0.3000000119f
+void *trackLightAdd(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, s32 arg5, s32 arg6, s32 arg7);
+void func_80020D94(ObjectLight *arg0) {
+    if (!(arg0->type & 0x40)) {
+        arg0->unk6C = trackLightAdd(arg0->pos.z, arg0->unk1C, arg0->unk20, arg0->unk24 * 1.25f, arg0->unk24 * D_800AC360, 
+                (s32) (arg0->unk40 * arg0->unk43) >> 8, 
+                (s32) (arg0->unk41 * arg0->unk43) >> 8, 
+                (s32) (arg0->unk42 * arg0->unk43) >> 8);
+    } else {
+        arg0->unk6C = NULL;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/addRomdefLight.s")
 

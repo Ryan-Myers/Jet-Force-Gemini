@@ -630,4 +630,72 @@ typedef struct StackInfo {
     unsigned int sp;
 } StackInfo;
 
+typedef struct SubMiscAssetObjectHeader24 {
+    u8 unk0;
+    u8 unk1;
+    u8 unk2;
+    u8 unk3;
+    s32 unk4;
+} SubMiscAssetObjectHeader24;
+
+typedef struct MiscAssetObjectHeader24 {
+    s32 unk0;
+    u8 pad2[16];
+    SubMiscAssetObjectHeader24 unk14[1];
+} MiscAssetObjectHeader24;
+
+/* Size: 0x200 bytes */
+typedef struct ObjectLightUnk70 {
+    u8 pad[0x200];
+} ObjectLightUnk70;
+
+/* Size: 0x74 bytes */
+typedef struct ObjectLight {
+    u8 unk0;
+    u8 unk1;
+    u8 unk2;
+    u8 type;
+    u8 enabled;
+    u8 unk5;
+    s16 homeX;
+    s16 homeY;
+    s16 homeZ;
+    Object *owner;
+    Vec3f pos;
+    f32 unk1C;
+    f32 unk20;
+    f32 unk24;
+    s32 unk28;
+    s32 unk2C;
+    s32 unk30;
+    s32 unk34;
+    s32 unk38;
+    u16 unk3C;
+    u16 unk3E;
+    u8 unk40;
+    u8 unk41;
+    u8 unk42;
+    u8 unk43;
+    union {
+        SubMiscAssetObjectHeader24 *unk44;
+        MiscAssetObjectHeader24 *unk44_asset;
+    };    
+    u16 unk48;
+    u16 unk4A;
+    u16 unk4C;
+    u16 unk4E;
+    s16 unk50;
+    s16 unk52;
+    s16 unk54;
+    s16 unk56;
+    s16 unk58;
+    s16 unk5A;
+    f32 radius;
+    f32 unk60;
+    f32 unk64;
+    f32 radiusSquare;
+    s32 *unk6C;
+    ObjectLightUnk70 *unk70;
+} ObjectLight;
+
 #endif

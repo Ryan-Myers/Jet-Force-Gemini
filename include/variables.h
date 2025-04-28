@@ -232,10 +232,10 @@ extern char D_800AF4AC[];// = "Watchpoint exception at %x";
 extern char D_800AF4C8[]; // = "Module %d at %08x";
 
 //lights.c
-extern s32 D_800A1890;
-extern s32 D_800A189C;
+extern s32 D_800A1890; //gMaxLights
+extern ObjectLight *D_800A189C;
 extern s32 D_800A1894;
-extern unk800DC950 **D_800A1898;
+extern ObjectLight **D_800A1898; //gActiveLights
 
 //textures.c
 extern u8 blinkMode;

@@ -38,7 +38,6 @@ void free_memory_pool_slot(s32 poolIndex, s32 slotIndex);
 void mmSetDelay(s32 arg0);
 s32 *disableInterrupts(void);
 void enableInterrupts(s32*);
-void *mmAlloc(s32 size, u32 colourTag);
 void free_slot_containing_address(u8 *address);
 void func_8004B05C(void *dataAddress);
 MemoryPoolSlot *allocate_from_memory_pool(s32 poolIndex, s32 size, u32 colourTag);
@@ -236,6 +235,7 @@ void lightUpdateLights(s32 arg0);
 unk800DC950 **lightGetLights(s32 *arg0);
 f32 lightDirectionCalc(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6);
 s32 lightKillGlowingLight(void *arg0); //TODO: arg0 typing is incorrect
+void freeLights(void);
 
 //diCpu.c
 void func_800684F0(s32 x, s32 y, char *s);
