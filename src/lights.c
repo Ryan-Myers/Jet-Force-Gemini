@@ -106,6 +106,7 @@ void lightUpdateLights(s32 arg0) {
     }
 }
 
+// Same as func_80032424 in DKR
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021444.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/killLight.s")
