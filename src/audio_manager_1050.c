@@ -83,9 +83,28 @@ u16 amGetSfxCount(void) {
     return sfxBankPtr->bankArray[0]->instArray[0]->soundCount;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amGetSfxSettings.s")
+extern s32 maxSound;
+extern s32 sfxIndex;
+extern s32 sfxIndexSize;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amSoundIsLooped.s")
+void amGetSfxSettings(s32 *arg0, s32 *arg1, s32 *arg2) {
+    if (arg0 != NULL) {
+        *arg0 = sfxIndex;
+    }
+    if (arg1 != NULL) {
+        *arg1 = sfxIndexSize;
+    }
+    if (arg2 != NULL) {
+        *arg2 = maxSound;
+    }
+}
+
+u8 amSoundIsLooped(u16 soundID) {
+    if (soundID <= 0 || sfxBankPtr->bankArray[0]->instArray[0]->soundCount < soundID) {
+        return 0;
+    }
+    return ((u32) (1 + sfxBankPtr->bankArray[0]->instArray[0]->soundArray[soundID - 1]->envelope->decayTime) == 0);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000169C.s")
 
