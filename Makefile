@@ -38,7 +38,6 @@ endef
 
 # Directories
 BIN_DIRS  = assets
-ifeq ($(VERSION),kiosk)
 BUILD_DIR = build
 SRC_DIR   = src
 OLD_LIBULTRA_DIR = $(SRC_DIR)/libultra
@@ -48,16 +47,6 @@ HASM_DIRS = $(SRC_DIR)/hasm $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBU
 LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src $(LIBULTRA_DIR)/src/audio $(LIBULTRA_DIR)/src/audio/mips1 
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/sc
-else
-BUILD_DIR = build_$(VERSION)
-SRC_DIR   = src_$(VERSION)
-LIBULTRA_DIR = $(SRC_DIR)/libultra
-ASM_DIRS  = asm_$(VERSION) asm_$(VERSION)/data asm_$(VERSION)/libultra
-HASM_DIRS = $(SRC_DIR)/hasm $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc
-LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src $(LIBULTRA_DIR)/src/audio $(LIBULTRA_DIR)/src/audio/mips1 
-LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io
-LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/sc
-endif
 
 # Files requiring pre/post-processing
 GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) $(LIBULTRA_DIR) </dev/null 2>/dev/null)
@@ -69,10 +58,16 @@ SYMBOLS_DIR = ver/symbols
 TOOLS_DIR = tools
 
 UNAME_S := $(shell uname -s)
+UNAME_M := $(shell uname -m)
+
 ifeq ($(OS),Windows_NT)
 	$(error Native Windows is currently unsupported for building this repository, use WSL instead c:)
 else ifeq ($(UNAME_S),Linux)
-	DETECTED_OS := linux
+	ifneq ($(filter aarch%,$(UNAME_M)),)
+		DETECTED_OS := linux-arm
+	else
+		DETECTED_OS := linux
+	endif
 else ifeq ($(UNAME_S),Darwin)
 	DETECTED_OS := macos
 endif
@@ -95,11 +90,17 @@ find-command = $(shell which $(1) 2>/dev/null)
 # Tools
 
 ifeq ($(shell type mips-linux-gnu-ld >/dev/null 2>/dev/null; echo $$?), 0)
-  CROSS := mips-linux-gnu-
+	CROSS := mips-linux-gnu-
 else ifeq ($(shell type mips64-linux-gnu-ld >/dev/null 2>/dev/null; echo $$?), 0)
-  CROSS := mips64-linux-gnu-
+	CROSS := mips64-linux-gnu-
+else ifeq ($(shell type mips64-elf-ld >/dev/null 2>/dev/null; echo $$?), 0)
+	CROSS := mips64-elf-
 else
-  CROSS := mips64-elf-
+# No binutil packages were found, so we have to download the source & build it.
+ifeq ($(wildcard $(TOOLS_DIR)/binutils/.*),)
+	DUMMY != $(TOOLS_DIR)/get-binutils.sh >&2 || echo FAIL
+endif
+	CROSS := $(TOOLS_DIR)/binutils/mips64-elf-
 endif
 
 AS       = $(CROSS)as
@@ -124,13 +125,17 @@ DEFINES += VERSION_$(VERSION)
 VERIFY = verify
 
 ifeq ($(NON_MATCHING),1)
-	DEFINES += NON_MATCHING
-	DEFINES += AVOID_UB
+	MATCHDEFS += NON_MATCHING=1
+	MATCHDEFS += AVOID_UB=1
 	VERIFY = no_verify
+	MIPSISET = -mips2
+	C_STANDARD := -std=gnu99
 else
-	DEFINES += ANTI_TAMPER
+	MATCHDEFS += ANTI_TAMPER=1
+	C_STANDARD := -std=gnu90
 endif
 
+DEFINES += $(MATCHDEFS)
 C_DEFINES := $(foreach d,$(DEFINES),-D$(d)) $(LIBULTRA_VERSION_DEFINE) -D_MIPS_SZLONG=32
 ASM_DEFINES = $(foreach d,$(DEFINES),$(if $(findstring =,$(d)),--defsym $(d),)) --defsym _MIPS_SIM=1 --defsym mips=1 --defsym VERSION_$(VERSION)=1
 
@@ -149,7 +154,7 @@ else
 endif
 
 #IDO Warnings to Ignore. These are coding style warnings we don't follow
-CC_WARNINGS := -fullwarn -Xfullwarn -woff 838,649,624
+CC_WARNINGS := -fullwarn -Xfullwarn -woff 838,649,624,835,516
 
 CFLAGS := -G 0 -non_shared -verbose -Xcpluscomm -nostdinc -Wab,-r4300_mul
 CFLAGS += $(C_DEFINES)
@@ -159,7 +164,12 @@ CFLAGS += $(INCLUDE_CFLAGS)
 CHECK_WARNINGS := -Wall -Wextra -Wno-format-security -Wno-unknown-pragmas -Wunused-function -Wno-unused-parameter
 CHECK_WARNINGS += -Werror-implicit-function-declaration -Wno-unused-variable -Wno-missing-braces -Wno-int-conversion -Wno-main
 CHECK_WARNINGS += -Wno-builtin-declaration-mismatch -Wno-pointer-to-int-cast -Wno-int-to-pointer-cast -Wno-switch
-CC_CHECK := $(GCC) -fsyntax-only -fno-builtin -funsigned-char -std=gnu90 -m32 -D_LANGUAGE_C $(CHECK_WARNINGS) $(INCLUDE_CFLAGS) $(C_DEFINES) $(GCC_COLOR)
+CC_CHECK := $(GCC) -fsyntax-only -fno-builtin -funsigned-char $(C_STANDARD) -D_LANGUAGE_C $(CHECK_WARNINGS) $(INCLUDE_CFLAGS) $(C_DEFINES) $(GCC_COLOR)
+
+# Only add -m32 for x86_64 machines.
+ifneq ($(filter x86_64%,$(UNAME_M)),)
+	CC_CHECK += -m32
+endif
 
 TARGET     = $(BUILD_DIR)/$(BASENAME).$(VERSION)
 LD_SCRIPT  = ver/$(BASENAME).$(VERSION).ld
@@ -246,9 +256,9 @@ extract:
 
 extractall:
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).kiosk.yaml
-	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).us.yaml
-	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).pal.yaml
-	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).jpn.yaml
+	# $(PYTHON) $(SPLAT) ver/splat/$(BASENAME).us.yaml
+	# $(PYTHON) $(SPLAT) ver/splat/$(BASENAME).pal.yaml
+	# $(PYTHON) $(SPLAT) ver/splat/$(BASENAME).jpn.yaml
 
 setup:
 #Set up a python venv so we don't get warnings about breaking system packages.
@@ -266,14 +276,7 @@ clean_src:
 	rm -rf $(BUILD_DIR)/src
 	
 cleanall:
-	rm -rf build
-	rm -rf build_us
-	rm -rf build_pal
-	rm -rf build_jpn
-	rm -rf asm
-	rm -rf asm_us
-	rm -rf asm_pal
-	rm -rf asm_jpn
+	rm -rf $(BUILD_DIR)
 
 distclean: clean
 	rm -rf $(ASM_DIRS)
@@ -354,7 +357,6 @@ $(TARGET).z64: $(TARGET).bin
 	$(V)$(PYTHON) $(TOOLS_DIR)/CopyRom.py $< $@
 
 ### Settings
-.SECONDARY:
 .PHONY: all clean cleanextract default
 SHELL = /bin/bash -e -o pipefail
 

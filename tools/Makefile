@@ -1,5 +1,5 @@
 CC := gcc
-CFLAGS := -I . -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99 $(OPT) -s
+CFLAGS := -I . -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99 -O2 -s
 LDFLAGS := -lm
 PROGRAMS := n64crc
 
@@ -13,9 +13,9 @@ else ifeq ($(UNAME_S),Darwin)
 	LDFLAGS += -I/opt/homebrew/lib -lpcre2-8
 else ifeq ($(UNAME_S),Linux)
 	DETECTED_OS := linux
-	UNAME_P := $(shell uname -p)
+	UNAME_M := $(shell uname -m)
 # If we detect arm as a platform for linux, but not mac, we'll make this -arm to download that version (Mostly used for raspi)
-	ifneq ($(filter arm%,$(UNAME_P)),)
+	ifneq ($(filter aarch%,$(UNAME_M)),)
 		DETECTED_OS := linux-arm
 	endif
 endif
@@ -26,9 +26,8 @@ default: all
 
 n64crc_SOURCES := n64crc.c
 
-all: $(PROGRAMS) recomp 
+all: $(PROGRAMS) recomp
 
-# make clean for flips doesn't work, so just manually delete it on a clean. 
 clean:
 	$(RM) -Rf $(PROGRAMS)
 	$(RM) -rf $(RECOMP_DIR)
@@ -46,4 +45,3 @@ recomp:
 	$(RM) ido-5.3-recomp-${DETECTED_OS}.tar.gz
 
 .PHONY: all clean distclean default
-
