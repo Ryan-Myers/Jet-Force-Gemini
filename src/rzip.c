@@ -176,7 +176,7 @@ void huft_build(u32 *b, u32 n, u32 s, u16 *d, u16 *e, huft **t, s32 *m) {
                         if ((f <<= 1) <= *++xp) {
                             break; /* enough codes to use up j bits */
                         }
-                        f -= *xp;  /* else deduct codes from patterns */
+                        f -= *xp; /* else deduct codes from patterns */
                     }
                 }
                 z = 1 << j; /* table entries for j-bit table */

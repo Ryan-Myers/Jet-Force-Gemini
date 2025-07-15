@@ -219,6 +219,9 @@ ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: MIPSISET := -mips2
 
+$(BUILD_DIR)/$(SRC_DIR)/acoss.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(SRC_DIR)/acoss.c.o: MIPSISET := -mips2
+
 $(BUILD_DIR)/$(SRC_DIR)/acosf.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/acosf.c.o: MIPSISET := -mips2
 

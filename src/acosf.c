@@ -2,6 +2,9 @@
 
 u16 acoss(s16);
 
+/**
+ * Official Name: acosf
+ */
 f32 acosf(f32 x) {
     s16 signed_num;
     u16 unsigned_num;
