@@ -1,13 +1,11 @@
-#include "common.h"
-
-u16 acoss(s16);
+#include "math.h"
 
 /**
  * Official Name: acosf
  */
-f32 acosf(f32 x) {
-    s16 signed_num;
-    u16 unsigned_num;
+float acosf(float x) {
+    signed short signed_num;
+    unsigned short unsigned_num;
 
     if (x >= 1.0f) {
         signed_num = 0x7FFF;
@@ -17,5 +15,5 @@ f32 acosf(f32 x) {
         signed_num = x * 0x7FFF;
     }
     unsigned_num = acoss(signed_num);
-    return (unsigned_num * 3.141592741f) / 0xFFFF;
+    return (unsigned_num * MATH_PI) / 0xFFFF;
 }

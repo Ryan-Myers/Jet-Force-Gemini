@@ -1,7 +1,4 @@
-float acosf(float);
-float sqrtf(float x);
-
-#define MATH_PI 3.141592741f
+#include "math.h"
 
 float atan2f(float y, float x) {
     float z;
