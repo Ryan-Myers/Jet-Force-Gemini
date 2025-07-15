@@ -1,37 +1,38 @@
-#include "common.h"
+float acosf(float);
+float sqrtf(float x);
 
-f32 acosf(f32);
+#define MATH_PI 3.141592741f
 
-f32 atan2f(f32 y, f32 x) {
-    f32 z;
+float atan2f(float y, float x) {
+    float z;
 
     z = 0.0f;
     if (y == 0.0f) {
         if (x >= 0.0f) {
             z = 0.0f;
         } else {
-            z = 3.141592741f;
+            z = MATH_PI;
         }
     } else if (x == 0.0f) {
         if (y > 0.0f) {
-            z = 1.570796371f;
+            z = (MATH_PI / 2);
         } else {
-            z = 4.712388992f;
+            z = ((3 * MATH_PI) / 2);
         }
     } else {
-        f32 sqrt = sqrtf((y * y) + (x * x));
+        float sqrt = sqrtf((y * y) + (x * x));
         if (y > x) {
             z = acosf(x / sqrt);
             if (y < 0.0f) {
-                z = 6.283185482f - z;
+                z = (2 * MATH_PI) - z;
             }
         } else {
-            z = 1.570796371f - acosf(y / sqrt);
+            z = (MATH_PI / 2) - acosf(y / sqrt);
             if (x < 0.0f) {
-                z = 3.141592741f - z;
+                z = MATH_PI - z;
             }
             if (z < 0.0f) {
-                z += 6.283185482f;
+                z += (2 * MATH_PI);
             }
         }
     }

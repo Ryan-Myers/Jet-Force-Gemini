@@ -225,8 +225,8 @@ $(BUILD_DIR)/$(SRC_DIR)/arcfuncs.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(SRC_DIR)/acosf.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/acosf.c.o: MIPSISET := -mips2
 
-$(BUILD_DIR)/$(SRC_DIR)/atan2f.c.o: OPT_FLAGS := -g
-$(BUILD_DIR)/$(SRC_DIR)/atan2f.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(SRC_DIR)/math_atan.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(SRC_DIR)/math_atan.c.o: MIPSISET := -mips2
 
 $(BUILD_DIR)/$(SRC_DIR)/shadows_214A0.c.o: MIPSISET := -mips2
 
