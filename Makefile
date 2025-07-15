@@ -40,6 +40,7 @@ endef
 BIN_DIRS  = assets
 BUILD_DIR = build
 SRC_DIR   = src
+MATH_DIR  = $(SRC_DIR)/math
 OLD_LIBULTRA_DIR = $(SRC_DIR)/libultra
 LIBULTRA_DIR = libultra
 ASM_DIRS  = asm asm/data asm/nonmatchings asm/data/libultra
@@ -52,7 +53,7 @@ LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_
 GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) $(LIBULTRA_DIR) </dev/null 2>/dev/null)
 GLOBAL_ASM_O_FILES := $(foreach file,$(GLOBAL_ASM_C_FILES),$(BUILD_DIR)/$(file).o)
 
-SRC_DIRS = $(SRC_DIR) $(LIBULTRA_SRC_DIRS) $(OLD_LIBULTRA_DIR)
+SRC_DIRS = $(SRC_DIR) $(MATH_DIR) $(LIBULTRA_SRC_DIRS) $(OLD_LIBULTRA_DIR)
 SYMBOLS_DIR = ver/symbols
 
 TOOLS_DIR = tools
@@ -219,14 +220,8 @@ ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: MIPSISET := -mips2
 
-$(BUILD_DIR)/$(SRC_DIR)/arcfuncs.c.o: OPT_FLAGS := -g
-$(BUILD_DIR)/$(SRC_DIR)/arcfuncs.c.o: MIPSISET := -mips2
-
-$(BUILD_DIR)/$(SRC_DIR)/acosf.c.o: OPT_FLAGS := -g
-$(BUILD_DIR)/$(SRC_DIR)/acosf.c.o: MIPSISET := -mips2
-
-$(BUILD_DIR)/$(SRC_DIR)/math_atan.c.o: OPT_FLAGS := -g
-$(BUILD_DIR)/$(SRC_DIR)/math_atan.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(MATH_DIR)/%.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(MATH_DIR)/%.c.o: MIPSISET := -mips2
 
 $(BUILD_DIR)/$(SRC_DIR)/shadows_214A0.c.o: MIPSISET := -mips2
 
