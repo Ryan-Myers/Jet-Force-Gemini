@@ -4,6 +4,7 @@
 #include "structs.h"
 #include "libultra_internal.h"
 #include "sched.h"
+#include "memory.h"
 
 void squadsPreInit(RomDefHeader *list, s32 listSize);
 s32 runlinkDownloadCode(s32);
@@ -13,9 +14,7 @@ u16 amGetSfxCount(void);
 s32 scalevol(s32 vol);
 OSPiHandle *osCartRomInit(void);
 OSPiHandle *osFlashInit(void);
-void *mmAlloc(s32 size, u32 colourTag);
 void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes);
-void mmFree(void *data);
 u8 *rzipUncompress(u8 *compressedInput, u8 *decompressedOutput);
 s32 rzipUncompressSize(u8 *arg0);
 u32 *piRomLoad(u32 assetIndex);
@@ -31,16 +30,8 @@ void camPopModelMtx(Gfx **dlist);
 void camRestoreModelMtx(Gfx **dlist);
 void camPushModelMtx(Gfx **dList, MatrixS **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
 
-MemoryPoolSlot *new_memory_pool(MemoryPoolSlot *, s32, s32); // new_memory_pool
-s32 allocate_memory_pool_slot(s32 poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken, s32 newSlotIsTaken, u32 colourTag);
-s32 get_memory_pool_index_containing_address(u8 *address);
-void free_memory_pool_slot(s32 poolIndex, s32 slotIndex);
-void mmSetDelay(s32 arg0);
-s32 *disableInterrupts(void);
-void enableInterrupts(s32*);
-void free_slot_containing_address(u8 *address);
-void func_8004B05C(void *dataAddress);
-MemoryPoolSlot *allocate_from_memory_pool(s32 poolIndex, s32 size, u32 colourTag);
+u32 disableInterrupts(void);
+void enableInterrupts(u32 flags);
 void runlinkLowMemoryPanic(void);
 s32 runlinkIsModuleLoaded(s32 module);
 s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, u32 **arg3);
@@ -80,14 +71,13 @@ void fontPrintWindowXY(Gfx **displayList, s32 windowId, s32 xpos, s32 ypos, char
 
 void camSetScissor(Gfx **dlist);
 void fontConvertString(char *inString, char *outString);
-s32 fontStringWidth(char *text, s32 font, s32 arg2);
+s32 fontStringWidth(char *text, s32 font, s32 convertString);
 void func_80071A0C(char *input, char *output, s32 number); //parse_string_with_number
 void *func_80071B08(u8); //returns cacheline?
 void texDPInit(Gfx **);
 void func_800660D4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry);
 
 void RevealReturnAddresses(void);
-void mmInit(void);
 void piInit(void);
 void rcpInit(OSSched *sc);
 void runlinkFreeCode(s32 arg0);
@@ -95,7 +85,7 @@ void runlinkInitialise(void);
 void rzipInit(void);
 void viInit(OSSched *sc);
 
-s32 vsprintf(char *s, const char *format, ...);
+s32 vsprintf(char *s, const char *fmt, ...);
 s32 func_80066174(Gfx **dList, s32 asciiVal);
 void func_800665C8(void);
 void func_80066658(void);
@@ -119,7 +109,7 @@ s32 mathRnd(s32, s32);
 void texAnimateTexture(TextureHeader *texture, u32 *triangleBatchInfoFlags, s32 *arg2, s32 updateRate);
 void setTexMemColour(s32 tagId);
 //void func_80057B8C(TextureHeader *tex, u8 *addr); //build_tex_display_list in DKR
-void func_80057C50(Gfx **dlist, TextureHeader *tex, s32 arg2, s32 arg3);
+void func_80057C50(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem);
 void sprSetIA2ColOverride(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5);
 void sprClearIA2ColOverride(void);
 void sprSetTextureFilter(s32 arg0);
@@ -170,7 +160,6 @@ s32 amAudioMgrGetNextFrameCount(void);
 void func_80050670(OSSched *sc);
 char *osScGetTaskType(s32 taskID);
 void func_800507A4(OSScTask *task);
-void mmSlotPrint(void);
 void segSetBase(Gfx **dlist, s32 segment, s32 base);
 Gfx *func_80050AA4(OSSched *sc, 
     char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,

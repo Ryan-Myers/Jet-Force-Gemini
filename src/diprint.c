@@ -1,7 +1,9 @@
 #include "common.h"
 #include "stdarg.h"
 
-#define RENDER_PRINTF_CMD_ARG_BYTE(val) *D_800A6D44 = val; D_800A6D44++;
+#define RENDER_PRINTF_CMD_ARG_BYTE(val) \
+    *D_800A6D44 = val;                  \
+    D_800A6D44++;
 #define RENDER_PRINTF_CMD_ARG_SHORT(val) RENDER_PRINTF_CMD_ARG_BYTE(val) RENDER_PRINTF_CMD_ARG_BYTE(val >> 8)
 
 #define RENDER_PRINTF_CMD_END RENDER_PRINTF_CMD_ARG_BYTE(0)
@@ -25,7 +27,7 @@
     tempY = y >> 8;                          \
     RENDER_PRINTF_CMD_ARG_BYTE(tempY)        \
     RENDER_PRINTF_CMD_END
-    
+
 #define RENDER_PRINTF_CMD_SET_BACKGROUND_COLOR(red, green, blue, alpha) \
     RENDER_PRINTF_CMD_ARG_BYTE(0x85)                                    \
     RENDER_PRINTF_CMD_ARG_BYTE(red)                                     \
@@ -56,10 +58,10 @@ void sprintfSetSpacingCodes(s32 arg0) {
     D_800A6D40 = arg0;
 }
 
-UNUSED int sprintf(char *s, const char *format, ...) {
+UNUSED int sprintf(char *s, const char *fmt, ...) {
     va_list args;
-    va_start(args, format);
-    vsprintf(s, format, args);
+    va_start(args, fmt);
+    vsprintf(s, fmt, args);
     va_end(args);
 }
 
@@ -110,7 +112,7 @@ void diPrintfAll(Gfx **dList) {
     D_80101F54 = 0;
     D_80101F50 = D_80101F4C;
     D_80101F52 = D_80101F4E;
-    while ((s32)buffer != (s32)D_800A6D44) {
+    while ((s32) buffer != (s32) D_800A6D44) {
         D_80101F58 = FALSE;
         buffer += func_80065CB4(dList, buffer);
     }
@@ -119,7 +121,7 @@ void diPrintfAll(Gfx **dList) {
     func_80066658();
     D_80101F6C = -1;
     D_80101F54 = 0;
-    while ((s32)buffer != (s32)D_800A6D44) {
+    while ((s32) buffer != (s32) D_800A6D44) {
         D_80101F58 = TRUE;
         buffer += func_80065CB4(dList, buffer);
     }
@@ -142,12 +144,12 @@ void diPrintfSetBG(u8 red, u8 green, u8 blue, u8 alpha) {
 
 /**
  * Sets the character position of further prints to the given coordinates.
-*/
+ */
 void diPrintfSetXY(u16 x, u16 y) {
     RENDER_PRINTF_CMD_SET_POSITION(x, y)
 }
 
-//Same as func_800B653C in DKR
+// Same as func_800B653C in DKR
 #pragma GLOBAL_ASM("asm/nonmatchings/diprint/func_80065CB4.s")
 
 void func_800660D4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry) {
@@ -161,35 +163,38 @@ void func_800660D4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry) {
     }
 }
 
-//Same as func_800B69FC in DKR
-//Loads a font texture and returns the width of the character given.
+// Same as func_800B69FC in DKR
+// Loads a font texture and returns the width of the character given.
 s32 func_80066174(Gfx **dList, s32 asciiVal) {
     s32 fontCharWidth;
     s32 fontCharU;
 
     if (asciiVal < 0x40) {
-        //Character is a symbol or number and not a letter
+        // Character is a symbol or number and not a letter
         if (D_80101F6C != 0) {
             if (D_80101F58) {
-                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F40 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
+                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F40 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
+                                     0, 2, 2, 0, 0, 0, 0);
             }
             D_80101F6C = 0;
         }
         asciiVal -= 0x21;
     } else if (asciiVal < 0x60) {
-        //Character is a upper case letter
+        // Character is a upper case letter
         if (D_80101F6C != 1) {
             if (D_80101F58) {
-                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F44 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11, 0, 2, 2, 0, 0, 0, 0);
+                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F44 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11,
+                                     0, 2, 2, 0, 0, 0, 0);
             }
             D_80101F6C = 1;
         }
         asciiVal -= 0x40;
     } else if (asciiVal < 0x80) {
-        //Character is a lower case letter
+        // Character is a lower case letter
         if (D_80101F6C != 2) {
             if (D_80101F58) {
-                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F48 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11, 0, 2, 2, 0, 0, 0, 0);
+                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(D_80101F48 + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
+                                     0, 2, 2, 0, 0, 0, 0);
             }
             D_80101F6C = 2;
         }
@@ -199,7 +204,8 @@ s32 func_80066174(Gfx **dList, s32 asciiVal) {
     fontCharWidth = (D_800A6D48[D_80101F6C][asciiVal].v - fontCharU) + 1;
     if (D_80101F58) {
         gDPSetCombineMode((*dList)++, DKR_CC_UNK14, DKR_CC_UNK14);
-        gSPTextureRectangle((*dList)++, (D_80101F4C << 2), (D_80101F4E << 2), ((D_80101F4C + fontCharWidth) << 2), ((D_80101F4E + 10) << 2), 0, (fontCharU << 5), 0, 1024, 1024);
+        gSPTextureRectangle((*dList)++, (D_80101F4C << 2), (D_80101F4E << 2), ((D_80101F4C + fontCharWidth) << 2),
+                            ((D_80101F4E + 10) << 2), 0, (fontCharU << 5), 0, 1024, 1024);
     }
     return fontCharWidth;
 }

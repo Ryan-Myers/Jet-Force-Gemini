@@ -44,16 +44,16 @@ typedef struct TextureCacheEntry {
 } TextureCacheEntry;
 
 typedef struct Sprite {
-  /* 0x00 */ s16 baseTextureId;
-  /* 0x02 */ s16 numberOfFrames; // 1 means static texture
-  /* 0x04 */ s16 numberOfInstances;
-  /* 0x06 */ s16 unk6;
-  /* 0x08 */ u8 pad8[8];
-  /* 0x10 */ TextureHeader **frames;
-  union {
-    /* 0x0C */ u8 val[1]; // Actual size varies.
-    /* 0x0C */ u8 *ptr[1]; // Display list?
-  } unkC;
+    /* 0x00 */ s16 baseTextureId;
+    /* 0x02 */ s16 numberOfFrames; // 1 means static texture
+    /* 0x04 */ s16 numberOfInstances;
+    /* 0x06 */ s16 unk6;
+    /* 0x08 */ u8 pad8[8];
+    /* 0x10 */ TextureHeader **frames;
+    union {
+        /* 0x0C */ u8 val[1];  // Actual size varies.
+        /* 0x0C */ u8 *ptr[1]; // Display list?
+    } unkC;
 } Sprite;
 
 typedef struct SpriteCacheEntry {
@@ -131,7 +131,7 @@ typedef struct Struct_Unk_8007B46C {
 TextureHeader *texFrame(TextureHeader *arg0, s32 arg1) {
     TextureHeader *ret = arg0 + 1;
     if ((arg1 > 0) && (arg1 < arg0->numOfTextures << 8)) {
-        ret = (TextureHeader *) (((u8*)arg0) + ((arg1 >> 16) * arg0->textureSize)) + 1;
+        ret = (TextureHeader *) (((u8 *) arg0) + ((arg1 >> 16) * arg0->textureSize)) + 1;
     }
     return ret;
 }
@@ -139,7 +139,7 @@ TextureHeader *texFrame(TextureHeader *arg0, s32 arg1) {
 /**
  * Resets all render settings to the default state.
  * The next draw call will be forced to apply all settings instead of skipping unecessary steps.
-*/
+ */
 void texDPInit(Gfx **dlist) {
     D_800A5838 = 0;
     D_800FFA14 = 0;
@@ -155,7 +155,6 @@ void texDPInit(Gfx **dlist) {
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texDPTextureX.s")
-
 
 void sprSetTextureFilter(s32 arg0) {
     D_800A5834 = arg0;
@@ -181,20 +180,20 @@ void sprClearIA2ColOverride(void) {
 
 #ifdef NON_MATCHING
 
-void texFreeSprite(Sprite *sprite){
+void texFreeSprite(Sprite *sprite) {
     s32 i;
     s32 frame;
     s32 spriteId;
 
-    if (sprite != 0){
+    if (sprite != 0) {
         sprite->numberOfInstances--;
         if (sprite->numberOfInstances <= 0) {
             for (i = 0; i < D_800FF9F8; i++) {
-                if (sprite == D_800FF9EC[i].sprite){
-                    
+                if (sprite == D_800FF9EC[i].sprite) {
+
                     if (D_800FF9EC[i].sprite == 0) {}
 
-                    for (frame = 0; frame < sprite->numberOfFrames; frame++){
+                    for (frame = 0; frame < sprite->numberOfFrames; frame++) {
                         texFreeTexture(sprite->frames[frame]);
                     }
                     spriteId = -1;
@@ -213,13 +212,13 @@ void texFreeSprite(Sprite *sprite){
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/func_800577D8.s")
 
-//builD_tex_list in DKR
+// builD_tex_list in DKR
 void func_80057B8C(TextureHeader *tex, Gfx *_dlist) {
     Gfx *dlist = _dlist;
-    if (tex) { }
+    if (tex) {}
     tex->cmd = dlist;
     func_80057C50(&dlist, tex, 0, 0);
-    //tex->flags & 0x40 - U clamp flag. Wrap
+    // tex->flags & 0x40 - U clamp flag. Wrap
     if (tex->unk1B < 2 && tex->flags & 0x40) {
         if (!(tex->format & 0xF)) {
             func_80057C50(&dlist, tex, 1, (0x1000 - tex->textureSize) >> 3);
@@ -230,7 +229,7 @@ void func_80057B8C(TextureHeader *tex, Gfx *_dlist) {
     tex->numberOfCommands = dlist - tex->cmd;
 }
 
-//Shrunk builD_tex_list
+// Shrunk builD_tex_list
 #ifdef NON_EQUIVALENT
 void func_80057C50(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem) {
     s32 tileImgSiz;
@@ -276,7 +275,7 @@ void func_80057C50(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem) {
             imgSizShift = G_IM_SIZ_8b_SHIFT;
             imgSizTileBytes = G_IM_SIZ_8b_TILE_BYTES;
             break;
-        default:          
+        default:
             tileImgSiz = G_IM_SIZ_4b;
             imgSiz = 2;
             imgSizIncr = G_IM_SIZ_4b_INCR;
@@ -298,7 +297,7 @@ void func_80057C50(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem) {
             imgFmt = G_IM_FMT_IA;
             tex->flags |= 4;
             break;
-        default:          
+        default:
             imgFmt = G_IM_FMT_I;
             break;
     }
@@ -313,7 +312,7 @@ void func_80057C50(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem) {
             var_v1 += (texWidth >> i) * (texHeight >> i);
         }
         gDPSetTextureImage((*dlist)++, imgFmt, imgSiz, 1, OS_PHYSICAL_TO_K0(tex + 1));
-        //gDPSetTile - Maybe not? arg3 is just using the first 13 bits, 0-12
+        // gDPSetTile - Maybe not? arg3 is just using the first 13 bits, 0-12
         gDPSetTile((*dlist)++, imgFmt, imgSiz, 0, tmem & 0x1FF, G_TX_LOADTILE, 0, 0, 0, 0, 0, 0, 0);
         gDPLoadSync((*dlist)++);
         gDPLoadBlock((*dlist)++, G_TX_LOADTILE, 0, 0, (((s32) (var_v1 + imgSizIncr) >> imgSizShift) - 1), 0);
@@ -321,8 +320,10 @@ void func_80057C50(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem) {
         i = 0;
         while (i < tex->unk1B) {
             tileLine = ((line) + 7) >> 3;
-            gDPSetTile((*dlist)++, imgFmt, tileImgSiz, tileLine, tmem & 0x1FF, rtile, 0, tex->unk1E, (tex->unk1F - i), i, tex->unk1C, (tex->isCompressed - i), i);
-            gDPSetTileSize((*dlist)++, rtile, 0, 0, ((texWidth)-1) << G_TEXTURE_IMAGE_FRAC, ((texHeight)-1) << G_TEXTURE_IMAGE_FRAC);
+            gDPSetTile((*dlist)++, imgFmt, tileImgSiz, tileLine, tmem & 0x1FF, rtile, 0, tex->unk1E, (tex->unk1F - i),
+                       i, tex->unk1C, (tex->isCompressed - i), i);
+            gDPSetTileSize((*dlist)++, rtile, 0, 0, ((texWidth) -1) << G_TEXTURE_IMAGE_FRAC,
+                           ((texHeight) -1) << G_TEXTURE_IMAGE_FRAC);
             i++;
             tmem += tileLine * texHeight;
             rtile++;
@@ -333,35 +334,33 @@ void func_80057C50(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem) {
         gSPTexture((*dlist)++, 0, 0, (tex->unk1B - 1), 0, 1);
         gSPEndDisplayList((*dlist)++);
     } else {
-        gDkrDPLoadMultiBlockS(
-            (*dlist)++,//pkt
-            OS_PHYSICAL_TO_K0(tex + 1),//timg
-            tmem,//tmem
-            rtile,//rtile
-            imgFmt,//fmt
-            imgSiz,//sizblk
-            tileImgSiz, //siztile
-            imgSizIncr,//sizincr
-            0,//sizbytes
-            imgSizShift, //sizshift
-            line, //line
-            texWidth,//width
-            texHeight,//height
-            0,//pal
-            tex->unk1C,//cms
-            tex->unk1E,//cmt
-            tex->isCompressed,//masks
-            tex->unk1F,//maskt
-            0,//shifts
-            0//shiftt
+        gDkrDPLoadMultiBlockS((*dlist)++,                 // pkt
+                              OS_PHYSICAL_TO_K0(tex + 1), // timg
+                              tmem,                       // tmem
+                              rtile,                      // rtile
+                              imgFmt,                     // fmt
+                              imgSiz,                     // sizblk
+                              tileImgSiz,                 // siztile
+                              imgSizIncr,                 // sizincr
+                              0,                          // sizbytes
+                              imgSizShift,                // sizshift
+                              line,                       // line
+                              texWidth,                   // width
+                              texHeight,                  // height
+                              0,                          // pal
+                              tex->unk1C,                 // cms
+                              tex->unk1E,                 // cmt
+                              tex->isCompressed,          // masks
+                              tex->unk1F,                 // maskt
+                              0,                          // shifts
+                              0                           // shiftt
         );
         // //gDPLoadTextureBlock
         // {
         //     gDPSetTextureImage((*dlist)++, imgFmt, imgSiz, 1, OS_PHYSICAL_TO_K0(tex + 1));
-        //     gDPSetTile((*dlist)++, imgFmt, imgSiz, 0, arg3 & 0x1FF, G_TX_LOADTILE, 0, tex->unk1E, tex->unk1F, 0, tex->unk1C, tex->isCompressed, 0);
-        //     gDPLoadSync((*dlist)++);
-        //     gDPLoadBlock((*dlist)++, G_TX_LOADTILE, 0, 0, (((s32) ((texWidth * texHeight) + imgSizIncr) >> imgSizShift) - 1), 0);
-        //     gDPPipeSync((*dlist)++);
+        //     gDPSetTile((*dlist)++, imgFmt, imgSiz, 0, arg3 & 0x1FF, G_TX_LOADTILE, 0, tex->unk1E, tex->unk1F, 0,
+        //     tex->unk1C, tex->isCompressed, 0); gDPLoadSync((*dlist)++); gDPLoadBlock((*dlist)++, G_TX_LOADTILE, 0, 0,
+        //     (((s32) ((texWidth * texHeight) + imgSizIncr) >> imgSizShift) - 1), 0); gDPPipeSync((*dlist)++);
         //     gDPSetTile(
         //         (*dlist)++,//pkt
         //         imgFmt,//fmt
@@ -442,7 +441,7 @@ void texAnimateTexture(TextureHeader *texture, u32 *triangleBatchInfoFlags, s32 
         if (!(flags & BATCH_FLAGS_BIT19)) {
             arg2Temp += texture->frameAdvanceDelay * updateRate;
         } else {
-            //Probably a fake match var, but it works.
+            // Probably a fake match var, but it works.
             frameAdvanceDelay = &texture->frameAdvanceDelay;
             arg2Temp -= (*frameAdvanceDelay) * updateRate;
         }

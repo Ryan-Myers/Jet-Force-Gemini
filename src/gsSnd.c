@@ -1,5 +1,5 @@
-#include "common.h"
 #include "gsSnd.h"
+#include "common.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpNew.s")
 
@@ -29,9 +29,9 @@ u16 getSoundStateCounts(u16 *lastAllocListIndex, u16 *lastFreeListIndex) {
     nextAllocList = D_800A9F70.unk8;
     prevFreeList = D_800A9F70.prev;
 
-    for (freeListNextIndex = 0; nextFreeList != NULL; freeListNextIndex++, nextFreeList = nextFreeList->next); 
-    for (allocListNextIndex = 0; nextAllocList != NULL; allocListNextIndex++, nextAllocList = nextAllocList->next);
-    for (freeListLastIndex = 0; prevFreeList != NULL; freeListLastIndex++, prevFreeList = prevFreeList->prev);
+    for (freeListNextIndex = 0; nextFreeList != NULL; freeListNextIndex++, nextFreeList = nextFreeList->next) {}
+    for (allocListNextIndex = 0; nextAllocList != NULL; allocListNextIndex++, nextAllocList = nextAllocList->next) {}
+    for (freeListLastIndex = 0; prevFreeList != NULL; freeListLastIndex++, prevFreeList = prevFreeList->prev) {}
 
     *lastAllocListIndex = allocListNextIndex;
     *lastFreeListIndex = freeListNextIndex;
@@ -73,20 +73,20 @@ typedef struct unk800DC6BC_40 {
     u8 pad0C[0x38];
 } unk800DC6BC_40;
 typedef struct unk800DC6BC {
-    ALPlayer        node;
-    ALEventQueue    evtq;
-    ALEvent         nextEvent;
-    ALSynth        *drvr;
-    u32             unk3C;
+    ALPlayer node;
+    ALEventQueue evtq;
+    ALEvent nextEvent;
+    ALSynth *drvr;
+    u32 unk3C;
     unk800DC6BC_40 *unk40;
-    s32             soundChannelsMax;
-    s32             soundChannels;
-    s32             frameTime;
-    ALMicroTime     nextDelta;
-    ALMicroTime     curTime;
-} unk800DC6BC; //ALSndPlayer
+    s32 soundChannelsMax;
+    s32 soundChannels;
+    s32 frameTime;
+    ALMicroTime nextDelta;
+    ALMicroTime curTime;
+} unk800DC6BC; // ALSndPlayer
 extern unk800DC6BC *D_800A9F7C;
-extern void		osSyncPrintf(const char *fmt, ...);
+extern void osSyncPrintf(const char *fmt, ...);
 void n_alEvtqPostEvent(ALEventQueue *evtq, ALEvent *evt, ALMicroTime delta);
 extern const char D_800B002C[];
 
@@ -100,7 +100,7 @@ void gsSndpStop(ALSoundState *queue) {
         n_alEvtqPostEvent(&D_800A9F7C->evtq, &alEvent, 0);
     } else {
         osSyncPrintf((char *) &D_800B002C);
-        //osSyncPrintf("WARNING: Attempt to stop NULL sound aborted\n");
+        // osSyncPrintf("WARNING: Attempt to stop NULL sound aborted\n");
     }
 }
 
@@ -138,11 +138,11 @@ void gsSndpStopAllLooped(void) {
 typedef union {
     ALEvent msg;
 
-    struct{
+    struct {
         s16 type;
         SoundMask *state;
         u32 param;
-    }snd_event;
+    } snd_event;
 
 } ALEvent2;
 extern const char D_800B005C[];
@@ -155,7 +155,7 @@ void gsSndpSetParam(s32 soundMask, s16 type, u32 volume) {
         n_alEvtqPostEvent(&D_800A9F7C->evtq, (ALEvent *) &sndEvt, 0);
     } else {
         osSyncPrintf((char *) &D_800B005C);
-        //osSyncPrintf("WARNING: Attempt to modify NULL sound aborted\n");
+        // osSyncPrintf("WARNING: Attempt to modify NULL sound aborted\n");
     }
 }
 
@@ -167,14 +167,14 @@ u16 gsSndpGetMasterVolume(u8 channel) {
 
 void gsSndpSetMasterVolume(u8 channel, u16 volume) {
     OSIntMask mask;
-    ALEventQueue *queue;    
+    ALEventQueue *queue;
     s32 sp2C;
     ALEvent evt;
 
     mask = osSetIntMask(OS_IM_NONE);
     queue = (ALEventQueue *) D_800A9F70.next;
     D_80105C94[channel] = volume;
-    
+
     for (sp2C = 0; queue != NULL;) {
         // This is almost definitely the wrong struct list, but it matches so I'm not going to complain
         if ((((ALInstrument *) queue->allocList.next->prev)->priority & 0x3F) == channel) {
@@ -182,8 +182,7 @@ void gsSndpSetMasterVolume(u8 channel, u16 volume) {
             evt.msg.spseq.seq = (void *) queue;
             n_alEvtqPostEvent(&D_800A9F7C->evtq, &evt, 0);
         }
-        sp2C++,
-        queue = (ALEventQueue *) queue->freeList.next;
+        sp2C++, queue = (ALEventQueue *) queue->freeList.next;
     }
 
     osSetIntMask(mask);

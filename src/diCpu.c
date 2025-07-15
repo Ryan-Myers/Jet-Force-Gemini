@@ -1,15 +1,15 @@
 #include "common.h"
-#include "stdarg.h"
 #include "PR/rdb.h"
 #include "PRinternal/rmonint.h"
+#include "stdarg.h"
 
-extern OSThread *	__osGetActiveQueue(void);
+extern OSThread *__osGetActiveQueue(void);
 
 /**
  * Start the exception program counter thread.
-*/
+ */
 #ifdef NON_MATCHING
-//Need to migrate data to define diCpuThreadStack
+// Need to migrate data to define diCpuThreadStack
 void diCpuTraceInit(void) {
     osCreateThread(&diCpuOSThread, 0, diCpuThread, 0, &diCpuThreadStack, OS_PRIORITY_MAX);
     osStartThread(&diCpuOSThread);
@@ -112,7 +112,7 @@ void func_80067880(OSThread *thread) {
 
     // Anti Piracy Check
     if ((D_800A3B74 == 0) || (osCicId != 6105)) {
-        while(1){}
+        while (1) {}
     }
     if (D_800A6E98 == 0) {
         if (thread && thread && thread) {}
@@ -125,7 +125,7 @@ void func_80067880(OSThread *thread) {
     for (i = 0; i < 100; i++) {
         func_8006869C();
     }
-    while(1){}
+    while (1) {}
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067880.s")
@@ -140,7 +140,7 @@ UNUSED void diCpuReportWatchpoint(u32 address) {
     }
     cpuXYPrintf(30, 80, (char *) &D_800AF4AC /* "Watchpoint exception at %x" */, address);
     if (runlinkGetAddressInfo(address, &moduleId, &moduleAddress, NULL)) {
-        cpuXYPrintf(30, 100, (char *)  &D_800AF4C8 /* "Module %d at %08x" */, moduleId, moduleAddress);
+        cpuXYPrintf(30, 100, (char *) &D_800AF4C8 /* "Module %d at %08x" */, moduleId, moduleAddress);
     }
     while (1) {} // Infinite loop; waiting for the player to reset the console?
 }
@@ -167,7 +167,7 @@ void diCpuLogMessage(const char *format, ...) {
     i = 0;
     if (var_v0[i] != 0) {
         var_a0 = sp20[i];
-loop_2:
+    loop_2:
         *var_a1 = var_a0;
         var_a0 = var_v0[1];
         var_a1 += 1;
@@ -198,13 +198,13 @@ void render_epc_lock_up_display(epcInfo *arg0);
 void diCpuTraceMallocFault(s32 epc, s32 size, u32 colourTag) {
     epcInfo epcinfo;
     _blkclr(&epcinfo, sizeof(epcInfo));
-    epcinfo.epc = epc & 0xFFFFFFFFFFFFFFFF; 
+    epcinfo.epc = epc & 0xFFFFFFFFFFFFFFFF;
     epcinfo.a0 = size;
     epcinfo.a1 = colourTag;
     epcinfo.cause = -1;
     render_epc_lock_up_display(&epcinfo);
     osWritebackDCacheAll();
-    while(1) {}
+    while (1) {}
 }
 
 s32 diCpuTraceGetFault(void) {
@@ -225,7 +225,6 @@ void diCpuTraceTick(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800684F0.s")
 
-
 void cpuXYPrintf(s32 x, s32 y, const char *format, ...) {
     va_list args;
     char s[255];
@@ -245,7 +244,7 @@ void cpuXYPrintf(s32 x, s32 y, const char *format, ...) {
             goto block_7;
         }
     } else {
-block_7:
+    block_7:
         func_800684F0(x, y, s);
     }
 }
@@ -267,17 +266,17 @@ void func_8006869C(void) {
     }
 }
 
-//File split?
+// File split?
 
-void __rmonSendFault(OSThread* thread) {
+void __rmonSendFault(OSThread *thread) {
     volatile float f UNUSED;
-    u8* tPtr;
+    u8 *tPtr;
     u32 sent = 0;
 
     /* touch fpu to ensure registers are saved to the context structure */
     f = 0.0f;
 
-    tPtr = (u8*)thread;
+    tPtr = (u8 *) thread;
     // sizeof(OSThread) in original, 0x230 in this.
     // TrapDanglingJump is __osRdbSend in the orginal
     while (sent < 0x230) {

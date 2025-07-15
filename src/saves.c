@@ -11,17 +11,12 @@
 // This is RARE's unique code
 #define COMPANY_CODE 0x3459
 
-//The size of 1 sector is 128 pages (16K bytes), and each page of 0~0x7f, 0x80~0xff, 0x100~0x17f... is considered to be 1 sector.
-//So basically, flash is written in sectors, and changing a single page needs to read a sector, modify the page, and write back the whole sector.
+// The size of 1 sector is 128 pages (16K bytes), and each page of 0~0x7f, 0x80~0xff, 0x100~0x17f... is considered to be
+// 1 sector. So basically, flash is written in sectors, and changing a single page needs to read a sector, modify the
+// page, and write back the whole sector.
 #define SECTOR_SIZE 128
 
-typedef enum Language {
-    LANGUAGE_0,
-    LANGUAGE_1,
-    LANGUAGE_2,
-    LANGUAGE_3,
-    LANGUAGE_JAPANESE
-} Language;
+typedef enum Language { LANGUAGE_0, LANGUAGE_1, LANGUAGE_2, LANGUAGE_3, LANGUAGE_JAPANESE } Language;
 
 UNUSED void rumbleProcessing(s32 arg0) {
     if ((arg0 != 0) && (D_800A3ECC == 0)) {
@@ -134,7 +129,8 @@ void rumbleTick(s32 updateRate) {
     if (D_800A3ECC != 0) {
         if (D_800A3EC4 != 0) {
             osPfsIsPlug(sControllerMesgQueue, &pfsBitPattern);
-            for (i = 0, controllerToCheck = 1, rumble = D_800FEC68; i < MAXCONTROLLERS; i++, controllerToCheck <<= 1, rumble++) {
+            for (i = 0, controllerToCheck = 1, rumble = D_800FEC68; i < MAXCONTROLLERS;
+                 i++, controllerToCheck <<= 1, rumble++) {
                 if (pfsBitPattern & controllerToCheck) {
                     if (nosMotorInit(sControllerMesgQueue, &pfs[i], i) != 0) {
                         rumble->state.state &= ~4;
@@ -147,82 +143,83 @@ void rumbleTick(s32 updateRate) {
             }
             D_800A3EC4 = 0;
         }
-        for (i = 0, controllerToCheck = 1, rumble = D_800FEC68; i < MAXCONTROLLERS; i++, controllerToCheck <<= 1, rumble++) {
+        for (i = 0, controllerToCheck = 1, rumble = D_800FEC68; i < MAXCONTROLLERS;
+             i++, controllerToCheck <<= 1, rumble++) {
             if (rumble->state.upper & 0x400) {
                 pfsStatus = 0;
                 switch (rumble->state.upper) {
-                case 1:
-                    rumble->rumbleTime -= updateRate;
-                    rumble->timer += updateRate;
-                    if (rumble->rumbleTime <= 0) {
-                        rumble->state.flag = 3;
-                        rumble->state.state = (rumble->state.state & ~0xF0) | 0x30;
-                    } else if (rumble->timer >= 0xF0) {
-                        rumble->timer = 60;
-                        rumble->state.state = (rumble->state.state & ~0xF0) | 0x20;
-                        rumble->state.flag = 3;
-                    } else {
-                        if (rumble->unk2 > 490.0f) {
-                            if (!(rumble->state.half_unsigned & 0x800)) {
-                                pfsStatus = nosMotorStart(&pfs[i]);
-                                rumble->state.state |= 8;
-                            }
-                        } else if (rumble->unk2 < D_800AD508) {
-                            if (rumble->state.half_unsigned & 0x800) {
-                                pfsStatus = nosMotorStop(&pfs[i]);
-                                rumble->state.state &= ~8;
-                            }
+                    case 1:
+                        rumble->rumbleTime -= updateRate;
+                        rumble->timer += updateRate;
+                        if (rumble->rumbleTime <= 0) {
+                            rumble->state.flag = 3;
+                            rumble->state.state = (rumble->state.state & ~0xF0) | 0x30;
+                        } else if (rumble->timer >= 0xF0) {
+                            rumble->timer = 60;
+                            rumble->state.state = (rumble->state.state & ~0xF0) | 0x20;
+                            rumble->state.flag = 3;
                         } else {
-                            if (rumble->unk4 >= 0x100) {
-                                rumble->unk4 -= 0x100;
+                            if (rumble->unk2 > 490.0f) {
                                 if (!(rumble->state.half_unsigned & 0x800)) {
                                     pfsStatus = nosMotorStart(&pfs[i]);
                                     rumble->state.state |= 8;
-                                    rumble->unk4 -= 0x100;
                                 }
-                            } else {
-                                s32 var_t6;
-                                var_t6 = rumble->unk4 + rumble->unk2;
+                            } else if (rumble->unk2 < D_800AD508) {
                                 if (rumble->state.half_unsigned & 0x800) {
                                     pfsStatus = nosMotorStop(&pfs[i]);
                                     rumble->state.state &= ~8;
-                                    var_t6 = rumble->unk4 + rumble->unk2;
                                 }
-                                rumble->unk4 = var_t6 + 4;
+                            } else {
+                                if (rumble->unk4 >= 0x100) {
+                                    rumble->unk4 -= 0x100;
+                                    if (!(rumble->state.half_unsigned & 0x800)) {
+                                        pfsStatus = nosMotorStart(&pfs[i]);
+                                        rumble->state.state |= 8;
+                                        rumble->unk4 -= 0x100;
+                                    }
+                                } else {
+                                    s32 var_t6;
+                                    var_t6 = rumble->unk4 + rumble->unk2;
+                                    if (rumble->state.half_unsigned & 0x800) {
+                                        pfsStatus = nosMotorStop(&pfs[i]);
+                                        rumble->state.state &= ~8;
+                                        var_t6 = rumble->unk4 + rumble->unk2;
+                                    }
+                                    rumble->unk4 = var_t6 + 4;
+                                }
                             }
                         }
-                    }
-                    break;
-                case 2:
-                    if (rumble->state.lower != 0) {
+                        break;
+                    case 2:
+                        if (rumble->state.lower != 0) {
+                            if (nosMotorInit(sControllerMesgQueue, &pfs[i], i) == 0) {
+                                nosMotorStop(&pfs[i]);
+                            }
+                            rumble->rumbleTime = 0;
+                            rumble->state.state &= ~8;
+                            rumble->state.flag = (s8) rumble->state.flag - 1;
+                        }
+                        rumble->timer -= updateRate;
+                        if (rumble->timer <= 0) {
+                            rumble->timer = 0;
+                            rumble->state.state &= ~0xF0;
+                        }
+                        break;
+                    case 3: {
+                        u8 temp_t2;
                         if (nosMotorInit(sControllerMesgQueue, &pfs[i], i) == 0) {
                             nosMotorStop(&pfs[i]);
                         }
+                        rumble->state.lower--;
+                        temp_t2 = rumble->state.state & ~8;
                         rumble->rumbleTime = 0;
-                        rumble->state.state &= ~8;
-                        rumble->state.flag = (s8) rumble->state.flag - 1;
-                    }
-                    rumble->timer -= updateRate;
-                    if (rumble->timer <= 0) {
                         rumble->timer = 0;
-                        rumble->state.state &= ~0xF0;
+                        rumble->state.state = temp_t2;
+                        if (rumble->state.lower == 0) {
+                            rumble->state.state = temp_t2 & 0xF;
+                        }
+                        break;
                     }
-                    break;
-                case 3: {
-                    u8 temp_t2;
-                    if (nosMotorInit(sControllerMesgQueue, &pfs[i], i) == 0) {
-                        nosMotorStop(&pfs[i]);
-                    }
-                    rumble->state.lower--;
-                    temp_t2 = rumble->state.state & ~8;
-                    rumble->rumbleTime = 0;
-                    rumble->timer = 0;
-                    rumble->state.state = temp_t2;
-                    if (rumble->state.lower == 0) {
-                        rumble->state.state = temp_t2 & 0xF;
-                    }
-                    break;
-                }
                 }
                 if (pfsStatus != 0) {
                     rumble->state.state &= ~4;
@@ -266,27 +263,27 @@ UNUSED void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packSaveGlobalFlagsEprom.s")
 
 void flashROMInit(void) {
-    osCreateMesgQueue(&cartEventQueue, (OSMesg*)&cartEventBuf, 1);
-    osSetEventMesg(OS_EVENT_CART, &cartEventQueue, (OSMesg)1);
-    osCreateMesgQueue(&flashEventQueue, (OSMesg*)&flashEventBuf, 1);
+    osCreateMesgQueue(&cartEventQueue, (OSMesg *) &cartEventBuf, 1);
+    osSetEventMesg(OS_EVENT_CART, &cartEventQueue, (OSMesg) 1);
+    osCreateMesgQueue(&flashEventQueue, (OSMesg *) &flashEventBuf, 1);
     osCartRomInit();
     osFlashInit();
 }
 
 void flashROMWrite(u32 pageNum, u32 *dramAddr) {
-    //Page 0x3fe and 0x3ff are reserved by Nintendo.  Please refrain from using the pages. 
+    // Page 0x3fe and 0x3ff are reserved by Nintendo.  Please refrain from using the pages.
     if (pageNum < 0x3FE) {
         osWritebackDCache(dramAddr, SECTOR_SIZE);
-        //Transfer data from RDRAM to the write buffer in 1M Flash 
+        // Transfer data from RDRAM to the write buffer in 1M Flash
         osFlashWriteBuffer(&flashMesgReqBlock, 0, dramAddr, &flashEventQueue);
         osRecvMesg(&flashEventQueue, NULL, OS_MESG_BLOCK);
-        //Transfer data from write buffer to each page of 1M Flash 
+        // Transfer data from write buffer to each page of 1M Flash
         osFlashWriteArray(pageNum);
     }
 }
 
 void flashROMRead(u32 pageNum, u32 *dramAddr) {
-    //Page 0x3fe and 0x3ff are reserved by Nintendo.  Please refrain from using the pages. 
+    // Page 0x3fe and 0x3ff are reserved by Nintendo.  Please refrain from using the pages.
     if (pageNum < 0x3FE) {
         osInvalDCache(dramAddr, SECTOR_SIZE);
         osFlashReadArray(&flashMesgReqBlock, 0, pageNum, dramAddr, 1, &flashEventQueue);
@@ -301,12 +298,12 @@ SIDeviceStatus packOpen(s32 controllerIndex) {
     s32 i;
 
     if (sControllerMesgQueue->validCount == 0) {
-        if (nosMotorInit(sControllerMesgQueue,  &pfs[controllerIndex], controllerIndex) == 0) {
+        if (nosMotorInit(sControllerMesgQueue, &pfs[controllerIndex], controllerIndex) == 0) {
             return RUMBLE_PAK;
         }
     }
 
-    //Couldn't get a for loop to match this
+    // Couldn't get a for loop to match this
     i = 0;
     while (sControllerMesgQueue->validCount != 0 && i < 10) {
         osRecvMesg(sControllerMesgQueue, &unusedMsg, OS_MESG_NOBLOCK);
@@ -314,18 +311,18 @@ SIDeviceStatus packOpen(s32 controllerIndex) {
     }
 
     for (i = 0; i <= 4; i++) {
-        ret = osPfsFreeBlocks( &pfs[controllerIndex], &bytes_not_used);
+        ret = osPfsFreeBlocks(&pfs[controllerIndex], &bytes_not_used);
         if (ret == PFS_ERR_INVALID) {
-            ret = osPfsInit(sControllerMesgQueue,  &pfs[controllerIndex], controllerIndex);
+            ret = osPfsInit(sControllerMesgQueue, &pfs[controllerIndex], controllerIndex);
         }
         if (ret == PFS_ERR_ID_FATAL) {
-            if (nosMotorInit(sControllerMesgQueue,  &pfs[controllerIndex], controllerIndex) == 0) {
+            if (nosMotorInit(sControllerMesgQueue, &pfs[controllerIndex], controllerIndex) == 0) {
                 return RUMBLE_PAK;
             }
         }
         if (ret == PFS_ERR_NEW_PACK) {
-            if ((osPfsInit(sControllerMesgQueue,  &pfs[controllerIndex], controllerIndex) == PFS_ERR_ID_FATAL)
-                && (nosMotorInit(sControllerMesgQueue,  &pfs[controllerIndex], controllerIndex) == 0)) {
+            if ((osPfsInit(sControllerMesgQueue, &pfs[controllerIndex], controllerIndex) == PFS_ERR_ID_FATAL) &&
+                (nosMotorInit(sControllerMesgQueue, &pfs[controllerIndex], controllerIndex) == 0)) {
                 return RUMBLE_PAK;
             }
             return CONTROLLER_PAK_CHANGED;
@@ -370,7 +367,6 @@ SIDeviceStatus packIsPresent(s32 controllerIndex) {
     return ret;
 }
 
-
 SIDeviceStatus packRepair(s32 controllerIndex) {
     s32 ret;
     s32 status = packOpen(controllerIndex);
@@ -393,7 +389,8 @@ SIDeviceStatus packRepair(s32 controllerIndex) {
 SIDeviceStatus packFormat(s32 controllerIndex) {
     s32 ret;
     s32 status = packOpen(controllerIndex);
-    if (status == CONTROLLER_PAK_GOOD || status == CONTROLLER_PAK_INCONSISTENT || status == CONTROLLER_PAK_WITH_BAD_ID) {
+    if (status == CONTROLLER_PAK_GOOD || status == CONTROLLER_PAK_INCONSISTENT ||
+        status == CONTROLLER_PAK_WITH_BAD_ID) {
         status = osPfsReFormat(&pfs[controllerIndex], sControllerMesgQueue, controllerIndex);
         if (status == 0) {
             ret = CONTROLLER_PAK_GOOD;
@@ -409,7 +406,8 @@ SIDeviceStatus packFormat(s32 controllerIndex) {
     return ret;
 }
 
-SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char **fileNames, char **fileExtensions, u32 *fileSizes, u8 *fileTypes) {
+SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char **fileNames, char **fileExtensions,
+                             u32 *fileSizes, u8 *fileTypes) {
     OSPfsState state;
     s32 ret;
     s32 maxNumOfFilesOnCpak;
@@ -436,21 +434,21 @@ SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char *
     } else {
         gameCode = NTSC_GAME_CODE;
     }
-    
+
     if (maxNumOfFilesToGet < maxNumOfFilesOnCpak) {
         maxNumOfFilesOnCpak = maxNumOfFilesToGet;
     }
-    
+
     if (sPackDirectory != NULL) {
         mmFree(sPackDirectory);
     }
-    
+
     files_used = maxNumOfFilesOnCpak * 24;
     sPackDirectory = mmAlloc(files_used, COLOUR_TAG_BLACK);
     _blkclr(sPackDirectory, files_used);
     temp_D_800DE440 = sPackDirectory;
-    
-    //TODO: There's probably an unidentified struct here
+
+    // TODO: There's probably an unidentified struct here
     for (i = 0; i < maxNumOfFilesOnCpak; i++) {
         fileNames[i] = (char *) temp_D_800DE440;
         temp_D_800DE440 += 0x12;
@@ -459,7 +457,7 @@ SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char *
         fileTypes[i] = -1;
         temp_D_800DE440 += 6;
     }
-    
+
     while (i < maxNumOfFilesToGet) {
         fileExtensions[i] = 0;
         fileNames[i] = 0;
@@ -467,29 +465,29 @@ SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char *
         fileTypes[i] = -1;
         i++;
     }
-    
+
     for (i = 0; i < maxNumOfFilesOnCpak; i++) {
         ret = osPfsFileState(&pfs[controllerIndex], i, &state);
         if (ret == PFS_ERR_INVALID) {
             fileNames[i] = 0;
             continue;
         }
-        
+
         if (ret != 0) {
             packClose(controllerIndex);
             return CONTROLLER_PAK_BAD_DATA;
         }
-        
-        font_codes_to_string((char *)&state.game_name, (char *)fileNames[i], PFS_FILE_NAME_LEN);
-        font_codes_to_string((char *)&state.ext_name, (char *)fileExtensions[i], PFS_FILE_EXT_LEN);
+
+        font_codes_to_string((char *) &state.game_name, (char *) fileNames[i], PFS_FILE_NAME_LEN);
+        font_codes_to_string((char *) &state.ext_name, (char *) fileExtensions[i], PFS_FILE_EXT_LEN);
         fileSizes[i] = state.file_size;
         fileTypes[i] = 1; // Unknown file type? Possibly from another game?
-        
+
         if ((state.game_code == gameCode) && (state.company_code == COMPANY_CODE)) {
             fileTypes[i] = func_8004DDC4(controllerIndex, i);
         }
     }
-    
+
     packClose(controllerIndex);
     return CONTROLLER_PAK_GOOD;
 }
@@ -548,7 +546,8 @@ SIDeviceStatus packDeleteFile(s32 controllerIndex, s32 fileNum) {
     ret = CONTROLLER_PAK_BAD_DATA;
 
     if (osPfsFileState(&pfs[controllerIndex], fileNum, &state) == 0) {
-        if (osPfsDeleteFile(&pfs[controllerIndex], state.company_code, state.game_code, (u8 *)&state.game_name, (u8 *)&state.ext_name) == 0) {
+        if (osPfsDeleteFile(&pfs[controllerIndex], state.company_code, state.game_code, (u8 *) &state.game_name,
+                            (u8 *) &state.ext_name) == 0) {
             ret = CONTROLLER_PAK_GOOD;
         }
     }
@@ -615,8 +614,8 @@ SIDeviceStatus packOpenFile(s32 controllerIndex, char *fileName, char *fileExt, 
         gameCode = NTSC_GAME_CODE;
     }
 
-
-    ret = osPfsFindFile(&pfs[controllerIndex], COMPANY_CODE, gameCode, (u8 *)fileNameAsFontCodes, (u8 *)fileExtAsFontCodes, fileNumber);
+    ret = osPfsFindFile(&pfs[controllerIndex], COMPANY_CODE, gameCode, (u8 *) fileNameAsFontCodes,
+                        (u8 *) fileExtAsFontCodes, fileNumber);
     if (ret == 0) {
         return CONTROLLER_PAK_GOOD;
     }
@@ -632,7 +631,7 @@ SIDeviceStatus packOpenFile(s32 controllerIndex, char *fileName, char *fileExt, 
     if (ret == PFS_ERR_INVALID) {
         return CONTROLLER_PAK_CHANGED;
     }
-    
+
     return CONTROLLER_PAK_BAD_DATA;
 }
 
@@ -658,7 +657,8 @@ SIDeviceStatus packReadFile(s32 controllerIndex, s32 fileNum, u8 *data, s32 data
     return CONTROLLER_PAK_BAD_DATA;
 }
 
-SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName, char *fileExt, u8 *dataToWrite, s32 fileSize) {
+SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName, char *fileExt, u8 *dataToWrite,
+                             s32 fileSize) {
     s32 temp;
     u8 fileNameAsFontCodes[PFS_FILE_NAME_LEN];
     UNUSED s32 temp2;
@@ -680,8 +680,8 @@ SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName
         bytesToSave = (fileSize - temp) + 0x100;
     }
 
-    string_to_font_codes(fileName, (char *)fileNameAsFontCodes, PFS_FILE_NAME_LEN);
-    string_to_font_codes(fileExt, (char *)fileExtAsFontCodes, PFS_FILE_EXT_LEN);
+    string_to_font_codes(fileName, (char *) fileNameAsFontCodes, PFS_FILE_NAME_LEN);
+    string_to_font_codes(fileExt, (char *) fileExtAsFontCodes, PFS_FILE_EXT_LEN);
 
     if (frontGetLanguage() == LANGUAGE_JAPANESE) {
         game_code = JPN_GAME_CODE;
@@ -700,7 +700,8 @@ SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName
         if (fileNumber != -1) {
             ret = CONTROLLER_PAK_BAD_DATA;
         } else {
-            temp = osPfsAllocateFile(&pfs[controllerIndex], COMPANY_CODE, game_code, fileNameAsFontCodes, fileExtAsFontCodes, bytesToSave, &file_number);
+            temp = osPfsAllocateFile(&pfs[controllerIndex], COMPANY_CODE, game_code, fileNameAsFontCodes,
+                                     fileExtAsFontCodes, bytesToSave, &file_number);
             if (temp == 0) {
                 ret = CONTROLLER_PAK_GOOD;
             } else if (temp == PFS_DATA_FULL || temp == PFS_DIR_FULL) {
@@ -721,8 +722,7 @@ SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName
             ret = CONTROLLER_PAK_INCONSISTENT;
         } else if (temp == PFS_ERR_ID_FATAL) {
             ret = CONTROLLER_PAK_WITH_BAD_ID;
-        }
-        else {
+        } else {
             ret = CONTROLLER_PAK_BAD_DATA;
         }
     }
@@ -742,7 +742,7 @@ SIDeviceStatus packFileSize(s32 controllerIndex, s32 fileNum, s32 *fileSize) {
     return CONTROLLER_PAK_BAD_DATA;
 }
 
-//Converts N64 Font codes used in controller pak file names, into C ASCII a coded string
+// Converts N64 Font codes used in controller pak file names, into C ASCII a coded string
 char *font_codes_to_string(char *inString, char *outString, s32 stringLength) {
     s32 index = *inString;
     char *ret = outString;
@@ -754,7 +754,7 @@ char *font_codes_to_string(char *inString, char *outString, s32 stringLength) {
             *outString = gN64FontCodes[index];
             outString++;
         } else {
-            //Replace invalid characters with a hyphen
+            // Replace invalid characters with a hyphen
             *outString = '-';
             outString++;
         }
@@ -764,18 +764,18 @@ char *font_codes_to_string(char *inString, char *outString, s32 stringLength) {
         index = *inString;
     }
 
-    //Pad any extra characters with NULL font code
+    // Pad any extra characters with NULL font code
     while (stringLength != 0) {
         *outString = 0;
         stringLength--;
         outString++;
     }
-    
+
     *outString = 0;
     return ret;
 }
 
-//Converts a C ASCII string into N64 Font codes for controller pak file names
+// Converts a C ASCII string into N64 Font codes for controller pak file names
 char *string_to_font_codes(char *inString, char *outString, s32 stringLength) {
     s32 i;
     char currentChar;
@@ -801,12 +801,12 @@ char *string_to_font_codes(char *inString, char *outString, s32 stringLength) {
         stringLength--;
         outString++;
     }
-    
+
     *outString = 0;
     return ret;
 }
 
-//Essentially the same as get_file_type in DKR
+// Essentially the same as get_file_type in DKR
 s32 func_8004DDC4(s32 controllerIndex, s32 fileNum) {
     s32 *data;
     UNUSED s32 pad;
@@ -814,7 +814,7 @@ s32 func_8004DDC4(s32 controllerIndex, s32 fileNum) {
 
     ret = 1;
     data = mmAlloc(0x100, COLOUR_TAG_BLACK);
-    if (packReadFile(controllerIndex, fileNum, (u8 *)data, 0x100) == CONTROLLER_PAK_GOOD) {
+    if (packReadFile(controllerIndex, fileNum, (u8 *) data, 0x100) == CONTROLLER_PAK_GOOD) {
         switch (*data) {
             case CHARFILETYPE:
                 ret = 0;

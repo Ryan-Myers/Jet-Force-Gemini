@@ -48,7 +48,7 @@ s32 objTvTimes(s32 timer) {
 
 /**
  * Returns the object at the current offset by ID.
-*/
+ */
 Object *objGetObject(s32 index) {
     if (index < 0 || index >= ObjListCount) {
         return 0;
@@ -212,7 +212,7 @@ s32 *objGetTable(s32 index) {
     if (index < 0 || index >= Fmax) {
         return Ftables;
     }
-    return (s32 *)&Ftables[Findex[index]];
+    return (s32 *) &Ftables[Findex[index]];
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objSetAnimGroup.s")

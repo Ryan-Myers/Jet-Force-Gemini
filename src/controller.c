@@ -1,7 +1,7 @@
 #include "common.h"
 
 UNUSED s32 D_800A39E0 = 0xFFFFFFFF;
-u16 joySecurity = 0xFFFF; //Used when anti-cheat/anti-tamper has failed.
+u16 joySecurity = 0xFFFF; // Used when anti-cheat/anti-tamper has failed.
 
 OSMesgQueue joyMessageQueue;
 OSMesg joyMessageBuf;
@@ -21,7 +21,7 @@ OSMesgQueue *joyMessageQ(void) {
 }
 
 #define CONTROLLER_MISSING -1
-#define CONTROLLER_EXISTS   0
+#define CONTROLLER_EXISTS 0
 
 void joyResetMap(void);
 
@@ -54,7 +54,9 @@ s32 joyInit(void) {
     }
 
     // Must be on one line to match
+    // clang-format off
     for (i = 0; i < MAXCONTROLLERS; i++) { enabled[i] = FALSE; }
+    // clang-format on
 
     return CONTROLLER_MISSING;
 }
@@ -67,7 +69,7 @@ s32 joyRead(s32 saveDataFlags, s32 updateRate) {
     s32 i;
 
     if (osRecvMesg(&joyMessageQueue, &unusedMsg, OS_MESG_NOBLOCK) == 0) {
-        //Back up old controller data
+        // Back up old controller data
         for (i = 0; i < MAXCONTROLLERS; i++) {
             sControllerPrevData[i] = sControllerCurrData[i];
         }
@@ -109,10 +111,10 @@ s32 joyRead(s32 saveDataFlags, s32 updateRate) {
             if ((saveDataFlags & 0x4000000)) {
                 packLoadGlobalFlagsEprom(&globalflags);
             }
-            if (saveDataFlags& 0x02000000) {
+            if (saveDataFlags & 0x02000000) {
                 packSaveGlobalFlagsEprom(&globalflags);
             }
-            //Reset all flags
+            // Reset all flags
             saveDataFlags = 0;
         }
         rumbleTick(updateRate);
@@ -124,9 +126,14 @@ s32 joyRead(s32 saveDataFlags, s32 updateRate) {
             sControllerCurrData[i].stick_x = 0;
             sControllerCurrData[i].stick_y = 0;
         }
-        //XOR the diff between the last read of the controller data with the current read to see what buttons have been pushed and released.
-        gControllerButtonsPressed[i]  = ((sControllerCurrData[i].button ^ sControllerPrevData[i].button) & sControllerCurrData[i].button) & joySecurity;
-        gControllerButtonsReleased[i] = ((sControllerCurrData[i].button ^ sControllerPrevData[i].button) & sControllerPrevData[i].button) & joySecurity;
+        // XOR the diff between the last read of the controller data with the current read to see what buttons have been
+        // pushed and released.
+        gControllerButtonsPressed[i] =
+            ((sControllerCurrData[i].button ^ sControllerPrevData[i].button) & sControllerCurrData[i].button) &
+            joySecurity;
+        gControllerButtonsReleased[i] =
+            ((sControllerCurrData[i].button ^ sControllerPrevData[i].button) & sControllerPrevData[i].button) &
+            joySecurity;
     }
     return saveDataFlags;
 }
@@ -198,8 +205,8 @@ s8 joyGetAbsY(s32 player) {
     return sControllerCurrData[sPlayerID[player]].stick_y;
 }
 
-#define JOYSTICK_DEADZONE 5 //was 8 in DKR
-#define JOYSTICK_MAX_RANGE 65 //was 70 in DKR
+#define JOYSTICK_DEADZONE 5   // was 8 in DKR
+#define JOYSTICK_MAX_RANGE 65 // was 70 in DKR
 s8 joyClamp(s8 stickMag) {
     if (stickMag < JOYSTICK_DEADZONE && stickMag > -JOYSTICK_DEADZONE) {
         return 0;

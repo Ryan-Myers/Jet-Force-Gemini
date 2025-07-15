@@ -23,14 +23,14 @@ void freeLights(void) {
 }
 
 #ifdef NON_MATCHING
-extern s32 D_800A1890; //gMaxLights
+extern s32 D_800A1890; // gMaxLights
 extern void *D_800A18A0;
 
 // Reasonably certain this 0x200 is the size of ObjectLightUnk70
 #define SIZE_0X200 sizeof(ObjectLightUnk70)
 
 void setupLights(s32 count, UNUSED s32 arg1, UNUSED s32 arg2) {
-    s32 i;    
+    s32 i;
     ObjectLight **buffer;
 
     freeLights();
@@ -54,10 +54,9 @@ extern f32 D_800AC360; // = 0.3000000119f
 void *trackLightAdd(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, s32 arg5, s32 arg6, s32 arg7);
 void func_80020D94(ObjectLight *arg0) {
     if (!(arg0->type & 0x40)) {
-        arg0->unk6C = trackLightAdd(arg0->pos.z, arg0->unk1C, arg0->unk20, arg0->unk24 * 1.25f, arg0->unk24 * D_800AC360, 
-                (s32) (arg0->unk40 * arg0->unk43) >> 8, 
-                (s32) (arg0->unk41 * arg0->unk43) >> 8, 
-                (s32) (arg0->unk42 * arg0->unk43) >> 8);
+        arg0->unk6C = trackLightAdd(arg0->pos.z, arg0->unk1C, arg0->unk20, arg0->unk24 * 1.25f,
+                                    arg0->unk24 * D_800AC360, (s32) (arg0->unk40 * arg0->unk43) >> 8,
+                                    (s32) (arg0->unk41 * arg0->unk43) >> 8, (s32) (arg0->unk42 * arg0->unk43) >> 8);
     } else {
         arg0->unk6C = NULL;
     }
@@ -123,7 +122,7 @@ UNUSED unk800DC950 **lightGetLights(s32 *arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021B9C.s")
 
 #ifdef NON_EQUIVALENT
-//Matching, but needs rodata migration for the jump table.
+// Matching, but needs rodata migration for the jump table.
 f32 lightDistanceCalc(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     f32 temp;
 
@@ -175,9 +174,9 @@ f32 lightDirectionCalc(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightSetObjectLight.s")
 
-void lightSetupLightSources(Object *obj) { 
+void lightSetupLightSources(Object *obj) {
     s32 i;
-    for(i = 0; i < obj->segment.header->unk25; i++) { 
+    for (i = 0; i < obj->segment.header->unk25; i++) {
         obj->unk74[i] = addObjectLight(obj, &obj->segment.header->unk48[i]);
     }
 }

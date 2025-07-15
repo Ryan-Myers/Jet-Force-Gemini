@@ -2,7 +2,7 @@
 
 // .data
 u32 *BaddyDataArray = NULL; // Effectively unused
-u32 *D_800A4334 = NULL; // Unknown type
+u32 *D_800A4334 = NULL;     // Unknown type
 
 // .bss
 void *D_800FF6B0;
@@ -74,7 +74,7 @@ void squadsPreInit(RomDefHeader *list, s32 listSize) {
     GlobalStartOfRomdefList = list;
     GlobalSizeOfRomdefList = listSize;
     header = list;
-    for (i = 0; i < listSize; ) {
+    for (i = 0; i < listSize;) {
         if (header->id == 0x61 || header->id == 5 || header->id == 0x4F) {
             runlinkDownloadCode(3);
             break;

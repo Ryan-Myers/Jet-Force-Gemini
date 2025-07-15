@@ -1,10 +1,6 @@
 #include "common.h"
 
-typedef enum WeatherType {
-    WEATHER_SNOW,
-    WEATHER_RAIN,
-    WEATHER_UNK
-} WeatherType;
+typedef enum WeatherType { WEATHER_SNOW, WEATHER_RAIN, WEATHER_UNK } WeatherType;
 enum ViewportCount {
     VIEWPORTS_COUNT_1_PLAYER,
     VIEWPORTS_COUNT_2_PLAYERS,
@@ -17,7 +13,7 @@ enum ViewportCount {
 typedef struct {
     s16 unk0;
     s16 unk2;
-    //s16 unk4;
+    // s16 unk4;
     s32 unk4;
 } unk80127BF8;
 extern unk80127BF8 D_80101568;
@@ -49,7 +45,6 @@ void setWeatherLimits(s16 arg0, s16 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005C7D0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005C858.s")
-
 
 void rainSetFog(void) {
     s32 a, b;

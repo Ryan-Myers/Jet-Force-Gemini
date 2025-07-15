@@ -13,7 +13,7 @@ extern u8 __ASSETS_LUT_START[], __ASSETS_LUT_END[];
  * Set up the peripheral interface message queues and scheduling.
  * This will send messages when DMA reads are finished.
  * After, allocate space and load the asset table into RAM.
-*/
+ */
 void piInit(void) {
     u32 assetTableSize;
     osCreateMesgQueue(&gPIMesgQueue, gPIMesgBuf, ARRAY_COUNT(gPIMesgBuf));
@@ -46,7 +46,7 @@ u32 *piRomLoad(u32 assetIndex) {
     if (out == 0) {
         return 0;
     }
-    romCopy((u32) (start + __ASSETS_LUT_END), (u32)out, size);
+    romCopy((u32) (start + __ASSETS_LUT_END), (u32) out, size);
     return out;
 }
 
@@ -72,7 +72,7 @@ UNUSED u8 *piRomLoadCompressed(u32 assetIndex, s32 extraMemory) {
     totalSpace = rzipUncompressSize(gzipHeaderRamPos) + extraMemory;
     mmFree(gzipHeaderRamPos);
     out = (u8 *) mmAlloc(totalSpace + extraMemory, COLOUR_TAG_GREY);
-    if (out == NULL){
+    if (out == NULL) {
         return NULL;
     }
     gzipHeaderRamPos = (out + totalSpace) - size;
@@ -148,7 +148,8 @@ void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes) {
         if (numBytes < numBytesToDMA) {
             numBytesToDMA = numBytes;
         }
-        osPiStartDma(&gAssetsDmaIoMesg, OS_MESG_PRI_NORMAL, OS_READ, romOffset, (u32 *) ramAddress, numBytesToDMA, &gDmaMesgQueue);
+        osPiStartDma(&gAssetsDmaIoMesg, OS_MESG_PRI_NORMAL, OS_READ, romOffset, (u32 *) ramAddress, numBytesToDMA,
+                     &gDmaMesgQueue);
         osRecvMesg(&gDmaMesgQueue, &dmaMesg, OS_MESG_BLOCK);
         numBytes -= numBytesToDMA;
         romOffset += numBytesToDMA;

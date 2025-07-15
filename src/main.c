@@ -2,10 +2,12 @@
 #include "sched.h"
 
 void mainThread(UNUSED void *unused) {
-    //Anti Piracy - This will zero out all RAM if this is a PAL console.
+    // Anti Piracy - This will zero out all RAM if this is a PAL console.
     if (osTvType == OS_TV_TYPE_PAL) {
         s32 i = 0;
-        while(1) { ((vu32 *)(RAM_END))[--i] = (u32)0; }
+        while (1) {
+            ((vu32 *) (RAM_END))[--i] = (u32) 0;
+        }
     }
     D_800A3B70 = osBootRamTest1_6105();
     D_800A3B74 = osBootRamTest2_6105();
@@ -20,11 +22,11 @@ void mainThread(UNUSED void *unused) {
             rumbleKill();
             amStop();
             osViBlack(TRUE);
-            __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_YIELD | SP_CLR_YIELDED | SP_CLR_TASKDONE | SP_CLR_RSPSIGNAL
-                            | SP_CLR_CPUSIGNAL | SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
-            osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH | DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR
-                            | DPC_CLR_CMD_CTR | DPC_CLR_CMD_CTR);
-            while (1){ } // Infinite loop
+            __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_YIELD | SP_CLR_YIELDED | SP_CLR_TASKDONE |
+                            SP_CLR_RSPSIGNAL | SP_CLR_CPUSIGNAL | SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+            osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH | DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR |
+                          DPC_CLR_CMD_CTR | DPC_CLR_CMD_CTR);
+            while (1) {} // Infinite loop
         }
         func_80044938();
         if (joyGetPressed(1) & L_TRIG) {
@@ -66,7 +68,7 @@ void mainInitGame(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800448B0.s")
 
-//main_game_loop in DKR
+// main_game_loop in DKR
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80044938.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainAddZBCheck.s")
@@ -229,14 +231,14 @@ s32 mainResetPressed(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047FC0.s")
 
-//Main debug menu
+// Main debug menu
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004809C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainResetRegion.s")
 
 void mainToggleDebug(void) {
-    //debugMenuEnable ^= 1;
+    // debugMenuEnable ^= 1;
 }
 
-//Draw debug menu Lower Right section
+// Draw debug menu Lower Right section
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80048B38.s")

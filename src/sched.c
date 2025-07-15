@@ -4,69 +4,68 @@
 /*
  * private typedefs and defines
  */
-#define UNK_MSG         99
-#define VIDEO_MSG       666
-#define RSP_DONE_MSG    667
-#define RDP_DONE_MSG    668
-#define PRE_NMI_MSG     669
+#define UNK_MSG 99
+#define VIDEO_MSG 666
+#define RSP_DONE_MSG 667
+#define RDP_DONE_MSG 668
+#define PRE_NMI_MSG 669
 
 /*
  * OSScTask state
  */
-#define OS_SC_DP                0x0001  /* set if still needs dp        */
-#define OS_SC_SP                0x0002  /* set if still needs sp        */
-#define OS_SC_YIELD             0x0010  /* set if yield requested       */
-#define OS_SC_YIELDED           0x0020  /* set if yield completed       */
+#define OS_SC_DP 0x0001      /* set if still needs dp        */
+#define OS_SC_SP 0x0002      /* set if still needs sp        */
+#define OS_SC_YIELD 0x0010   /* set if yield requested       */
+#define OS_SC_YIELDED 0x0020 /* set if yield completed       */
 
 /*
  * OSScTask->flags type identifier
  */
-#define OS_SC_XBUS      (OS_SC_SP | OS_SC_DP)
-#define OS_SC_DRAM      (OS_SC_SP | OS_SC_DP | OS_SC_DRAM_DLIST)
-#define OS_SC_DP_XBUS   (OS_SC_SP)
-#define OS_SC_DP_DRAM   (OS_SC_SP | OS_SC_DRAM_DLIST)
-#define OS_SC_SP_XBUS   (OS_SC_DP)
-#define OS_SC_SP_DRAM   (OS_SC_DP | OS_SC_DRAM_DLIST)
+#define OS_SC_XBUS (OS_SC_SP | OS_SC_DP)
+#define OS_SC_DRAM (OS_SC_SP | OS_SC_DP | OS_SC_DRAM_DLIST)
+#define OS_SC_DP_XBUS (OS_SC_SP)
+#define OS_SC_DP_DRAM (OS_SC_SP | OS_SC_DRAM_DLIST)
+#define OS_SC_SP_XBUS (OS_SC_DP)
+#define OS_SC_SP_DRAM (OS_SC_DP | OS_SC_DRAM_DLIST)
 
+static void __scMain(void *arg);
+void __scHandleRetrace(OSSched *s);
+static void __scHandleRSP(OSSched *s);
+static void __scHandleRDP(OSSched *s);
 
-static void     __scMain(void *arg);
-void     __scHandleRetrace(OSSched *s);
-static void     __scHandleRSP(OSSched *s);
-static void     __scHandleRDP(OSSched *s);
-
-static void     __scAppendList(OSSched *s, OSScTask *t);
-OSScTask        *__scTaskReady(OSScTask *t);
-static s32      __scTaskComplete(OSSched *s,OSScTask *t);
-static void     __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
-void	__scYield(OSSched *s);
+static void __scAppendList(OSSched *s, OSScTask *t);
+OSScTask *__scTaskReady(OSScTask *t);
+static s32 __scTaskComplete(OSSched *s, OSScTask *t);
+static void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
+void __scYield(OSSched *s);
 
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
 void func_80050670(OSSched *sc);
 
-extern OSViMode D_800AA460; //PAL
-extern OSViMode D_800AA4B0; //MPAL
-extern OSViMode D_800AA500; //NTSC
+extern OSViMode D_800AA460; // PAL
+extern OSViMode D_800AA4B0; // MPAL
+extern OSViMode D_800AA500; // NTSC
 
 extern OSTime D_800FF668;
-//OSTime D_800FF668; //gYieldTime
+// OSTime D_800FF668; //gYieldTime
 
 void osCreateScheduler(OSSched *sc, void *stack, OSPri priority, u8 mode, u8 numFields) {
-    sc->curRSPTask      = 0;
-    sc->curRDPTask      = 0;
-    sc->clientList      = 0;
-    sc->audioListHead   = 0;
-    sc->gfxListHead     = 0;
-    sc->audioListTail   = 0;
-    sc->gfxListTail     = 0;
-    sc->frameCount      = 0;
-    sc->unkTask         = 0;
-    sc->retraceMsg.type = OS_SC_RETRACE_MSG;  /* sent to apps */
-    sc->prenmiMsg.type  = OS_SC_PRE_NMI_MSG;
-    
+    sc->curRSPTask = 0;
+    sc->curRDPTask = 0;
+    sc->clientList = 0;
+    sc->audioListHead = 0;
+    sc->gfxListHead = 0;
+    sc->audioListTail = 0;
+    sc->gfxListTail = 0;
+    sc->frameCount = 0;
+    sc->unkTask = 0;
+    sc->retraceMsg.type = OS_SC_RETRACE_MSG; /* sent to apps */
+    sc->prenmiMsg.type = OS_SC_PRE_NMI_MSG;
+
     /*
      * Set up video manager, listen for Video, RSP, and RDP interrupts
      */
-    osCreateViManager(OS_PRIORITY_VIMGR);    
+    osCreateViManager(OS_PRIORITY_VIMGR);
     switch (mode) {
         case OS_VI_PAL_LPN1:
             osViSetMode(&D_800AA460);
@@ -81,17 +80,17 @@ void osCreateScheduler(OSSched *sc, void *stack, OSPri priority, u8 mode, u8 num
     osViBlack(TRUE);
     osCreateMesgQueue(&sc->interruptQ, sc->intBuf, OS_SC_MAX_MESGS);
     osCreateMesgQueue(&sc->cmdQ, sc->cmdMsgBuf, OS_SC_MAX_MESGS);
-    osSetEventMesg(OS_EVENT_SP, &sc->interruptQ, (OSMesg)RSP_DONE_MSG);
-    osSetEventMesg(OS_EVENT_DP, &sc->interruptQ, (OSMesg)RDP_DONE_MSG);
-    osSetEventMesg(OS_EVENT_PRENMI, &sc->interruptQ, (OSMesg)PRE_NMI_MSG);
+    osSetEventMesg(OS_EVENT_SP, &sc->interruptQ, (OSMesg) RSP_DONE_MSG);
+    osSetEventMesg(OS_EVENT_DP, &sc->interruptQ, (OSMesg) RDP_DONE_MSG);
+    osSetEventMesg(OS_EVENT_PRENMI, &sc->interruptQ, (OSMesg) PRE_NMI_MSG);
 
-    osViSetEvent(&sc->interruptQ, (OSMesg)VIDEO_MSG, numFields);
+    osViSetEvent(&sc->interruptQ, (OSMesg) VIDEO_MSG, numFields);
 
-    osCreateThread(&sc->thread, 5, __scMain, (void *)sc, stack, priority);
+    osCreateThread(&sc->thread, 5, __scMain, (void *) sc, stack, priority);
     osStartThread(&sc->thread);
 }
 
-void osScAddClient(OSSched *sc, OSScClient *c, OSMesgQueue *msgQ, u8 id){
+void osScAddClient(OSSched *sc, OSScClient *c, OSMesgQueue *msgQ, u8 id) {
     OSIntMask mask;
 
     mask = osSetIntMask(OS_IM_NONE);
@@ -100,26 +99,26 @@ void osScAddClient(OSSched *sc, OSScClient *c, OSMesgQueue *msgQ, u8 id){
     c->next = sc->clientList;
     c->id = id;
     sc->clientList = c;
-    
+
     osSetIntMask(mask);
 }
 
 void osScRemoveClient(OSSched *sc, OSScClient *c) {
-    OSScClient *client = sc->clientList; 
-    OSScClient *prev   = 0;
-    OSIntMask  mask;
+    OSScClient *client = sc->clientList;
+    OSScClient *prev = 0;
+    OSIntMask mask;
 
     mask = osSetIntMask(OS_IM_NONE);
-    
+
     while (client != 0) {
         if (client == c) {
-            if(prev)
+            if (prev)
                 prev->next = c->next;
             else
                 sc->clientList = c->next;
             break;
         }
-        prev   = client;
+        prev = client;
         client = client->next;
     }
 
@@ -142,7 +141,7 @@ UNUSED void osScGetAudioSPStats(f32 *arg0, f32 *arg1, f32 *arg2) {
 
 static void __scMain(void *arg) {
     OSMesg msg = NULL;
-    OSSched *sc = (OSSched *)arg;
+    OSSched *sc = (OSSched *) arg;
     OSScClient *client;
     s32 state = 0;
     OSScTask *sp = 0;
@@ -150,7 +149,7 @@ static void __scMain(void *arg) {
 
     while (1) {
 
-        osRecvMesg(&sc->interruptQ, (OSMesg *)&msg, OS_MESG_BLOCK);
+        osRecvMesg(&sc->interruptQ, (OSMesg *) &msg, OS_MESG_BLOCK);
 
         switch ((int) msg) {
             case (VIDEO_MSG):
@@ -171,11 +170,10 @@ static void __scMain(void *arg) {
 
             case (PRE_NMI_MSG):
                 /*
-                * notify audio and graphics threads to fade out
-                */
+                 * notify audio and graphics threads to fade out
+                 */
                 for (client = sc->clientList; client != 0; client = client->next) {
-                    osSendMesg(client->msgQ, (OSMesg) &sc->prenmiMsg,
-                                OS_MESG_NOBLOCK);
+                    osSendMesg(client->msgQ, (OSMesg) &sc->prenmiMsg, OS_MESG_NOBLOCK);
                 };
                 break;
 
@@ -208,40 +206,41 @@ void func_80050670(OSSched *sc) {
 }
 
 #ifdef NON_MATCHING
-//Needs RODATA migrated for the jump table to match
+// Needs RODATA migrated for the jump table to match
 char *osScGetTaskType(s32 taskID) {
     switch (taskID) {
-    case 1:
-        //"(Audio task)"
-        return &D_800AD510;
-    case 2:
-        //"(Game task)"
-        return &D_800AD520;
-    case 3:
-        //"(DI task)"
-        return &D_800AD52C;
-    case 4:
-        //"(DI benchmark test)"
-        return &D_800AD538;
-    case 5:
-        //"(Clone task)"
-        return &D_800AD550;
-    case 6:
-        //"(Refract task)"
-        return &D_800AD560;
-    case 7:
-        //"(Blur task)"
-        return &D_800AD570;
-    default:
-        //"(Unknown task type %d)"
-        return &D_800AD580;
+        case 1:
+            //"(Audio task)"
+            return &D_800AD510;
+        case 2:
+            //"(Game task)"
+            return &D_800AD520;
+        case 3:
+            //"(DI task)"
+            return &D_800AD52C;
+        case 4:
+            //"(DI benchmark test)"
+            return &D_800AD538;
+        case 5:
+            //"(Clone task)"
+            return &D_800AD550;
+        case 6:
+            //"(Refract task)"
+            return &D_800AD560;
+        case 7:
+            //"(Blur task)"
+            return &D_800AD570;
+        default:
+            //"(Unknown task type %d)"
+            return &D_800AD580;
     }
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/osScGetTaskType.s")
 #endif
 
-void func_800507A4(OSScTask *task) {}
+void func_800507A4(OSScTask *task) {
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800507AC.s")
 
@@ -395,7 +394,7 @@ Gfx *func_80050AA4(OSSched *sc,
 #endif
 
 #ifdef NON_MATCHING
-//Need to migrate bss in order to match this.
+// Need to migrate bss in order to match this.
 extern u64 D_800A4324;
 u64 gRetraceCounter64;
 
@@ -407,8 +406,8 @@ void __scHandleRetrace(OSSched *sc) {
     OSScTask *dp = 0;
     u8 set_curRSPTask_NULL = FALSE;
     u8 set_curRDPTask_NULL = FALSE;
-    Gfx *spGfx; //spCC
-    Gfx *dpGfx; //spC8
+    Gfx *spGfx; // spCC
+    Gfx *dpGfx; // spC8
     s32 spC4;
     s32 spC0;
     s32 spBC;
@@ -422,10 +421,10 @@ void __scHandleRetrace(OSSched *sc) {
     s32 sp9C;
     s32 sp98;
     OSScTask *unkTask2;
-    OSMesg intBuf[8]; //sp74
-    OSMesgQueue interruptQ; //sp5C
-    OSScTask *curTask; //sp58
-    Gfx *dlist; //sp54
+    OSMesg intBuf[8];       // sp74
+    OSMesgQueue interruptQ; // sp5C
+    OSScTask *curTask;      // sp58
+    Gfx *dlist;             // sp54
     s32 yPos;
     s32 pad;
 
@@ -442,8 +441,8 @@ void __scHandleRetrace(OSSched *sc) {
 
     if ((gCurRSPTaskCounter > 10) && (sc->curRSPTask)) {
         if (gCurRSPTaskIsSet) {
-            osScGetTaskType(sc->curRSPTask->taskID); //Returns a string containing the name of the task
-            func_800507A4(sc->curRSPTask); //Func is empty
+            osScGetTaskType(sc->curRSPTask->taskID); // Returns a string containing the name of the task
+            func_800507A4(sc->curRSPTask);           // Func is empty
             if (sc->curRSPTask->list.t.type == M_GFXTASK) {
                 spGfx = (Gfx *) func_80050AA4(sc, &spB4, &spA4, &spC4, &spB0, &spA0, &spC0);
             }
@@ -451,9 +450,8 @@ void __scHandleRetrace(OSSched *sc) {
         }
         gCurRSPTaskCounter = 0;
         set_curRSPTask_NULL = TRUE;
-        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 |
-            SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 | SP_CLR_SIG4 |
-            SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 | SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 |
+                        SP_CLR_SIG4 | SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
     } else if (sc->curRSPTask) {
         gCurRSPTaskIsSet = TRUE;
     }
@@ -463,8 +461,8 @@ void __scHandleRetrace(OSSched *sc) {
             osSendMesg(sc->curRDPTask->msgQ, &D_800A4308, OS_MESG_BLOCK);
         }
         if (gCurRDPTaskIsSet) {
-            osScGetTaskType(sc->curRDPTask->taskID); //Returns a string containing the name of the task
-            func_800507A4(sc->curRDPTask); //Func is empty
+            osScGetTaskType(sc->curRDPTask->taskID); // Returns a string containing the name of the task
+            func_800507A4(sc->curRDPTask);           // Func is empty
             if (sc->curRDPTask->list.t.type == M_GFXTASK) {
                 dpGfx = (Gfx *) func_80050AA4(sc, &spAC, &sp9C, &spBC, &spA8, &sp98, &unkTask);
             }
@@ -475,21 +473,20 @@ void __scHandleRetrace(OSSched *sc) {
         sc->frameCount = 0;
         gCurRDPTaskCounter = 0;
 
-        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 |
-            SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 | SP_CLR_SIG4 |
-            SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 | SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 |
+                        SP_CLR_SIG4 | SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
 
-        osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH |
-            DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR | DPC_CLR_CMD_CTR);
+        osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH | DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR |
+                      DPC_CLR_CMD_CTR);
     } else if (sc->curRDPTask) {
         gCurRDPTaskIsSet = TRUE;
     }
 
     if ((spGfx != NULL) || (dpGfx != NULL)) {
         osCreateMesgQueue(&interruptQ, intBuf, ARRAY_COUNT(intBuf));
-        osSetEventMesg(OS_EVENT_SP, &interruptQ, (OSMesg)RSP_DONE_MSG);
-        osSetEventMesg(OS_EVENT_DP, &interruptQ, (OSMesg)RDP_DONE_MSG);
-        osViSetEvent(&interruptQ, (OSMesg)VIDEO_MSG, 1);
+        osSetEventMesg(OS_EVENT_SP, &interruptQ, (OSMesg) RSP_DONE_MSG);
+        osSetEventMesg(OS_EVENT_DP, &interruptQ, (OSMesg) RDP_DONE_MSG);
+        osViSetEvent(&interruptQ, (OSMesg) VIDEO_MSG, 1);
         if (sc->curRSPTask != NULL) {
             curTask = sc->curRSPTask;
         } else {
@@ -546,11 +543,10 @@ void __scHandleRetrace(OSSched *sc) {
         //"Version %s" - "7.2"
         diPrintf(D_800AD84C, D_800AD7D0);
         diPrintfAll(&dlist);
-        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 |
-            SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 | SP_CLR_SIG4 |
-            SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
-        osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH |
-            DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR | DPC_CLR_CMD_CTR);
+        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_SIG0 | SP_CLR_SIG1 | SP_CLR_SIG2 | SP_CLR_SIG3 |
+                        SP_CLR_SIG4 | SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+        osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH | DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR |
+                      DPC_CLR_CMD_CTR);
         gDPFullSync(dlist++);
         gSPEndDisplayList(dlist++);
         osWritebackDCacheAll();
@@ -566,7 +562,7 @@ void __scHandleRetrace(OSSched *sc) {
         sc->curRDPTask = NULL;
     }
 
-    while (osRecvMesg(&sc->cmdQ, (OSMesg *)&rspTask, OS_MESG_NOBLOCK) != -1)
+    while (osRecvMesg(&sc->cmdQ, (OSMesg *) &rspTask, OS_MESG_NOBLOCK) != -1)
         __scAppendList(sc, rspTask);
 
     state = ((sc->curRSPTask == NULL) << 1) | (sc->curRDPTask == NULL);
@@ -574,9 +570,8 @@ void __scHandleRetrace(OSSched *sc) {
         __scExec(sc, sp, dp);
 
     gRetraceCounter64 = D_800A4324 + 1;
-    
-    
-    sc->frameCount+=1; // If you want to make the game 60FPS, change this to 2.
+
+    sc->frameCount += 1; // If you want to make the game 60FPS, change this to 2.
 
     if ((sc->unkTask) && (sc->frameCount >= 2)) {
         unkTask2 = sc->unkTask;
@@ -629,25 +624,24 @@ void __scHandleRSP(OSSched *sc) {
             }
         } else {
             t->state &= ~OS_SC_NEEDS_RSP;
-    /* BEGIN TODO: This just feels wrong, but it matches */
-            do{} while(0);
-        }
-        if ((t->flags & OS_SC_TYPE_MASK) != OS_SC_XBUS){}
-    /* END TODO */
+            /* BEGIN TODO: This just feels wrong, but it matches */
+            do { } while (0); }
+        if ((t->flags & OS_SC_TYPE_MASK) != OS_SC_XBUS) {}
+        /* END TODO */
     } else {
         t->state &= ~OS_SC_NEEDS_RSP;
         __scTaskComplete(sc, t);
     }
 
     state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
-    if ( (__scSchedule (sc, &sp, &dp, state)) != state)
+    if ((__scSchedule(sc, &sp, &dp, state)) != state)
         __scExec(sc, sp, dp);
 }
 
 void __scHandleRDP(OSSched *sc) {
-    OSScTask *t, *sp = 0, *dp = 0; 
+    OSScTask *t, *sp = 0, *dp = 0;
     s32 state;
-    
+
     t = sc->curRDPTask;
     sc->curRDPTask = 0;
 
@@ -656,17 +650,17 @@ void __scHandleRDP(OSSched *sc) {
     __scTaskComplete(sc, t);
 
     state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
-    if ( (__scSchedule(sc, &sp, &dp, state)) != state)
+    if ((__scSchedule(sc, &sp, &dp, state)) != state)
         __scExec(sc, sp, dp);
 }
 
 OSScTask *__scTaskReady(OSScTask *t) {
-    if (t) {    
+    if (t) {
         /*
          * If there is a pending swap bail out til later (next
          * retrace).
          */
-        if (osViGetCurrentFramebuffer() != osViGetNextFramebuffer()) {           
+        if (osViGetCurrentFramebuffer() != osViGetNextFramebuffer()) {
             return 0;
         }
 
@@ -712,14 +706,14 @@ void __scAppendList(OSSched *sc, OSScTask *t) {
     long type = t->list.t.type;
 
     if (type == M_AUDTASK) {
-        if(sc->audioListTail)
+        if (sc->audioListTail)
             sc->audioListTail->next = t;
         else
             sc->audioListHead = t;
 
         sc->audioListTail = t;
     } else {
-        if(sc->gfxListTail)
+        if (sc->gfxListTail)
             sc->gfxListTail->next = t;
         else
             sc->gfxListHead = t;
@@ -734,13 +728,13 @@ void __scAppendList(OSSched *sc, OSScTask *t) {
 void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
     if (sp) {
         if (sp->list.t.type == M_AUDTASK) {
-            osWritebackDCacheAll();  /* flush the cache */
-            //gRSPAudTaskFlushTime = osGetCount();
+            osWritebackDCacheAll(); /* flush the cache */
+            // gRSPAudTaskFlushTime = osGetCount();
         }
-        
+
         sp->state &= ~(OS_SC_YIELD | OS_SC_YIELDED);
         osSpTaskLoad(&sp->list);
-        osSpTaskStartGo(&sp->list); 
+        osSpTaskStartGo(&sp->list);
         gCurRSPTaskCounter = 0;
         gCurRDPTaskCounter = 0;
         sc->curRSPTask = sp;
@@ -761,19 +755,19 @@ void __scYield(OSSched *sc) {
         sc->curRSPTask->state |= OS_SC_YIELD;
         D_800FF668 = osGetTime();
         osSpTaskYield();
-    } 
+    }
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/__scYield.s")
 #endif
 
 #ifdef NON_MATCHING
-//Needs RODATA migrated for the jump table to match
-#define assert(EX) ((void)0)
+// Needs RODATA migrated for the jump table to match
+#define assert(EX) ((void) 0)
 /*
  * Schedules the tasks to be run on the RCP
  */
-s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP)  {
+s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
     s32 avail = availRCP;
     OSScTask *gfx = sc->gfxListHead;
     OSScTask *audio = sc->audioListHead;
@@ -805,72 +799,71 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP)  {
             osLogEvent(l, 522, 3, gfx, gfx->state, gfx->flags);
 #endif
             switch (gfx->flags & OS_SC_TYPE_MASK) {
-              case (OS_SC_XBUS):
-                  if (gfx->state & OS_SC_YIELDED) {
+                case (OS_SC_XBUS):
+                    if (gfx->state & OS_SC_YIELDED) {
 #ifdef SC_LOGGING
-                      osLogEvent(l, 518, 0);
+                        osLogEvent(l, 518, 0);
 #endif
-		      /* can hit this if RDP finishes at yield req */
-                      /* assert(gfx->state & OS_SC_DP); */
+                        /* can hit this if RDP finishes at yield req */
+                        /* assert(gfx->state & OS_SC_DP); */
 
-                      if (avail & OS_SC_SP) {   /* if SP is available */
+                        if (avail & OS_SC_SP) { /* if SP is available */
 #ifdef SC_LOGGING
-                      osLogEvent(l, 519, 0);
+                            osLogEvent(l, 519, 0);
 #endif
-                          *sp = gfx;
-                          avail &= ~OS_SC_SP;
+                            *sp = gfx;
+                            avail &= ~OS_SC_SP;
 
-                          if (gfx->state & OS_SC_DP) {  /* if it needs DP */
-                              *dp = gfx;
-                              avail &= ~OS_SC_DP;
+                            if (gfx->state & OS_SC_DP) { /* if it needs DP */
+                                *dp = gfx;
+                                avail &= ~OS_SC_DP;
 
-                              if ((avail & OS_SC_DP) == 0)
-                                  assert(sc->curRDPTask == gfx);
+                                if ((avail & OS_SC_DP) == 0) {
+                                    assert(sc->curRDPTask == gfx);
+                                }
+                            }
 
-                          }
+                            sc->gfxListHead = sc->gfxListHead->next;
+                            if (sc->gfxListHead == NULL)
+                                sc->gfxListTail = NULL;
+                        }
+                    } else {
+                        if (avail == (OS_SC_SP | OS_SC_DP)) {
+                            *sp = *dp = gfx;
+                            avail &= ~(OS_SC_SP | OS_SC_DP);
+                            sc->gfxListHead = sc->gfxListHead->next;
+                            if (sc->gfxListHead == NULL)
+                                sc->gfxListTail = NULL;
+                        }
+                    }
 
-                          sc->gfxListHead = sc->gfxListHead->next;
-                          if (sc->gfxListHead == NULL)
-                              sc->gfxListTail = NULL;
+                    break;
 
-                      }
-                  } else {
-                      if (avail == (OS_SC_SP | OS_SC_DP)) {
-                          *sp = *dp = gfx;
-                          avail &= ~(OS_SC_SP | OS_SC_DP);
-                          sc->gfxListHead = sc->gfxListHead->next;
-                          if (sc->gfxListHead == NULL)
-                              sc->gfxListTail = NULL;
-                      }
-                  }
+                case (OS_SC_DRAM):
+                case (OS_SC_DP_DRAM):
+                case (OS_SC_DP_XBUS):
+                    if (gfx->state & OS_SC_SP) { /* if needs SP */
+                        if (avail & OS_SC_SP) {  /* if SP is available */
+                            *sp = gfx;
+                            avail &= ~OS_SC_SP;
+                        }
+                    }
+                    // This is else if in libreultra, and it's the only difference
+                    if (gfx->state & OS_SC_DP) { /* if needs DP */
+                        if (avail & OS_SC_DP) {  /* if DP available */
+                            *dp = gfx;
+                            avail &= ~OS_SC_DP;
+                            sc->gfxListHead = sc->gfxListHead->next;
+                            if (sc->gfxListHead == NULL)
+                                sc->gfxListTail = NULL;
+                        }
+                    }
+                    break;
 
-                  break;
-
-              case (OS_SC_DRAM):
-              case (OS_SC_DP_DRAM):
-              case (OS_SC_DP_XBUS):
-                  if (gfx->state & OS_SC_SP) {  /* if needs SP */
-                      if (avail & OS_SC_SP) {   /* if SP is available */
-                          *sp = gfx;
-                          avail &= ~OS_SC_SP;
-                      }
-                  }
-                  //This is else if in libreultra, and it's the only difference
-                  if (gfx->state & OS_SC_DP) {   /* if needs DP */
-                      if (avail & OS_SC_DP) {        /* if DP available */
-                          *dp = gfx;
-                          avail &= ~OS_SC_DP;
-                          sc->gfxListHead = sc->gfxListHead->next;
-                          if (sc->gfxListHead == NULL)
-                              sc->gfxListTail = NULL;
-                      }
-                  }
-                  break;
-
-              case (OS_SC_SP_DRAM):
-              case (OS_SC_SP_XBUS):
-              default:
-                  break;
+                case (OS_SC_SP_DRAM):
+                case (OS_SC_SP_XBUS):
+                default:
+                    break;
             }
         }
     }

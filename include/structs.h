@@ -624,12 +624,6 @@ typedef struct LevelHeader {
     /* 0xC3 */ u8 BGColourTopB;
 } LevelHeader;
 
-/* Unknown size */
-typedef struct StackInfo {
-    unsigned int var[5];
-    unsigned int sp;
-} StackInfo;
-
 typedef struct SubMiscAssetObjectHeader24 {
     u8 unk0;
     u8 unk1;

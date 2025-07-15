@@ -24,6 +24,7 @@
 #include "initfx.h"
 #ifdef RAREDIFFS
 #include "src/memory.h"
+#include "macros.h"
 #endif
 // TODO: this comes from a header
 #ident "$Revision: 1.49 $"

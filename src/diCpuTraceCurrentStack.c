@@ -1,4 +1,4 @@
-#include "structs.h"
+#include "memory.h"
 
 #ifdef __sgi
 /**
@@ -13,7 +13,7 @@ StackInfo *diCpuTraceCurrentStack(void) {
  */
 StackInfo *diCpuTraceCurrentStack(void) {
     register StackInfo *sp;
-    asm volatile ("move %0, $sp\n": "=r"(sp));
+    asm volatile("move %0, $sp\n" : "=r"(sp));
     return sp;
 }
 #endif

@@ -1,6 +1,5 @@
 #include "common.h"
 
-
 #define SOUND_MASK_HEAP_COUNT 40
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/amInitAudioMap.s")
@@ -42,27 +41,28 @@ s32 amCalcSfxStereo(f32 x, f32 y, f32 z) {
     return ret;
 }
 
-void amCreateAudioPoint(u16 soundId, f32 x, f32 y, f32 z, u8 arg4, 
-    u8 arg5, u8 volume, u16 distance, u8 arg8, u8 pitch, u8 argA, u8 argB, SoundMask **soundMask);
+void amCreateAudioPoint(u16 soundId, f32 x, f32 y, f32 z, u8 arg4, u8 arg5, u8 volume, u16 distance, u8 arg8, u8 pitch,
+                        u8 argA, u8 argB, SoundMask **soundMask);
 
 /* Size: 0x0A bytes */
 typedef struct SoundData {
     u16 soundBite; // Audio file index.
-    u8 volume; // Multiplied by 256. 128 = 32768, max volume.
+    u8 volume;     // Multiplied by 256. 128 = 32768, max volume.
     u8 unk3;
     u8 pitch; // Fractional. 100 = 1.0f.
     u8 unk5;
     u16 distance; // Ingame units distance, same as any other.
     u8 unk8;
     u8 unk9;
-   } SoundData;
+} SoundData;
 extern SoundData *D_800F35F0;
 
 void amSndPlayXYZ(u16 soundId, f32 x, f32 y, f32 z, u8 arg4, SoundMask **soundMask) {
 
     if (soundMask == NULL || *soundMask == NULL) {
-        amCreateAudioPoint(D_800F35F0[soundId].soundBite, x, y, z, arg4, D_800F35F0[soundId].unk3, D_800F35F0[soundId].volume, 
-                           D_800F35F0[soundId].distance, 0, D_800F35F0[soundId].pitch, D_800F35F0[soundId].unk8, D_800F35F0[soundId].unk5, soundMask);
+        amCreateAudioPoint(D_800F35F0[soundId].soundBite, x, y, z, arg4, D_800F35F0[soundId].unk3,
+                           D_800F35F0[soundId].volume, D_800F35F0[soundId].distance, 0, D_800F35F0[soundId].pitch,
+                           D_800F35F0[soundId].unk8, D_800F35F0[soundId].unk5, soundMask);
     }
 }
 
@@ -78,7 +78,8 @@ void amSndSetPitchXYZ(SoundMask *soundMask, u8 pitch) {
     }
 }
 
-void amSndPlayDirectXYZ(u16 soundId, f32 x, f32 y, f32 z, u8 arg4, u8 volume, f32 pitch, u8 arg7, SoundMask **soundMask)  {
+void amSndPlayDirectXYZ(u16 soundId, f32 x, f32 y, f32 z, u8 arg4, u8 volume, f32 pitch, u8 arg7,
+                        SoundMask **soundMask) {
     amCreateAudioPoint(soundId, x, y, z, arg4, 100, volume, 15000, 0, pitch, 0x3F, 0, soundMask);
 }
 
@@ -90,9 +91,9 @@ void amSndSetXYZ(SoundMask *soundMask, f32 x, f32 y, f32 z) {
     }
 }
 
-extern SoundMask **D_800F35F4; //gSoundMaskHeapUsed
+extern SoundMask **D_800F35F4; // gSoundMaskHeapUsed
 
-void amSndStopXYZ(SoundMask* soundMask) {
+void amSndStopXYZ(SoundMask *soundMask) {
     s32 i;
 
     if (soundMask != NULL) {

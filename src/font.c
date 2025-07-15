@@ -2,10 +2,10 @@
 
 enum WindowFlags {
     DIALOGUE_BOX_UNUSED_01 = 0x0001,
-    DIALOGUE_BOX_VERTS     = 0x4000,
-    WINDOW_CLOSED    = 0x7FFF,
-    WINDOW_OPEN      = 0x8000,
-    DIALOGUE_BOX_UNK_02    = 0xBFFF,
+    DIALOGUE_BOX_VERTS = 0x4000,
+    WINDOW_CLOSED = 0x7FFF,
+    WINDOW_OPEN = 0x8000,
+    DIALOGUE_BOX_UNK_02 = 0xBFFF,
     DIALOGUE_BOX_UNUSED_02 = 0xFFFE
 };
 
@@ -90,7 +90,7 @@ void fontPrintWindowXY(Gfx **displayList, s32 windowId, s32 xpos, s32 ypos, char
     }
 }
 
-//render_text_string
+// render_text_string
 #ifdef NON_EQUIVALENT
 /**
  * Loops through a string, then draws each character onscreen.
@@ -169,12 +169,11 @@ void func_80070518(Gfx **dList, DialogueBoxBackground *box, char *text, Alignmen
     }
     gDPSetPrimColor((*dList)++, textureLry, 0, 255, 255, 255, box->opacity);
     gDPSetEnvColor((*dList)++, box->textColourR, box->textColourG, box->textColourB, box->textColourA);
-    //gDkrDmaDisplayList((*dList)++, OS_K0_TO_PHYSICAL(dDialogueBoxDrawModes[0]), 2);
-    //gDPPipeSync((*dList)++);
+    // gDkrDmaDisplayList((*dList)++, OS_K0_TO_PHYSICAL(dDialogueBoxDrawModes[0]), 2);
+    // gDPPipeSync((*dList)++);
     xpos += box->textOffsetX;
     ypos += box->textOffsetY;
-    for (charIndex = 0; (text[charIndex] != '\0') && (box->y2 >= ypos);
-            xpos += charSpace, charIndex++) {
+    for (charIndex = 0; (text[charIndex] != '\0') && (box->y2 >= ypos); xpos += charSpace, charIndex++) {
         curChar = text[charIndex];
         newData = FALSE;
         charSpace = 0;
@@ -216,8 +215,7 @@ void func_80070518(Gfx **dList, DialogueBoxBackground *box, char *text, Alignmen
                 textureT = fontData->letter[curChar].t;
                 xAlignmentDiff = fontData->letter[curChar].lrx;
                 yAlignmentDiff = fontData->letter[curChar].lry;
-                charSpace =
-                    (fontData->x == 0) ? (fontData->letter[curChar].ulx) : (fontData->x);
+                charSpace = (fontData->x == 0) ? (fontData->letter[curChar].ulx) : (fontData->x);
                 newData = TRUE;
             }
         }
@@ -236,7 +234,8 @@ void func_80070518(Gfx **dList, DialogueBoxBackground *box, char *text, Alignmen
                 textureT += -textureUly * 8;
                 textureUly = 0;
             }
-            gSPTextureRectangle((*dList)++, textureUlx, textureUly, textureLrx, newTempY, 0, textureS, textureT, 1 << 10, 1 << 10);
+            gSPTextureRectangle((*dList)++, textureUlx, textureUly, textureLrx, newTempY, 0, textureS, textureT,
+                                1 << 10, 1 << 10);
         }
         if (squash && charSpace) {
             charSpace--;
@@ -274,15 +273,15 @@ typedef struct FontData_JP {
 
 FontData_JP *dxTable;
 s32 fontStringWidth(char *text, s32 font, s32 convertString) {
-    FontCharDataAlt  *currentFontSpacing;
+    FontCharDataAlt *currentFontSpacing;
     FontData_JP *currentFont;
     s32 glyphIndex;
     s32 length;
     s32 retLength;
     char currentChar;
 
-    do {
-        currentChar = *input++;
+    // do {
+    //     currentChar = *input++;
 
     currentFont = (&dxTable)[font];
     currentFontSpacing = &Font[font];
@@ -301,7 +300,7 @@ s32 fontStringWidth(char *text, s32 font, s32 convertString) {
             }
         }
         text++;
-        retLength += length;   
+        retLength += length;
     } while (*text != '\0');
     return retLength;
 }
@@ -521,13 +520,13 @@ void fontStringAddNumber(char **outString, s32 number) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontWindowsDraw.s")
 
-//render_fill_rectangle
+// render_fill_rectangle
 #pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071564.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontWindowDraw.s")
 
 void fontStringAddNumber(char **outString, s32 number);
-//parse_string_with_number
+// parse_string_with_number
 void func_80071A0C(char *input, char *output, s32 number) {
     char currentChar;
 
