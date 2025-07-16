@@ -21,7 +21,7 @@ u64 gPadStack2[0x10]; // Not sure what this padding is
  */
 void boot(void) {
     osInitialize();
-    osCreateThread(&gThread1, 1, thread1_main, 0, &gThread1Stack[STACKSIZE(STACK_IDLE)], OS_PRIORITY_IDLE);
+    osCreateThread(&gThread1, 1, &thread1_main, 0, &gThread1Stack[STACKSIZE(STACK_IDLE)], OS_PRIORITY_IDLE);
     osStartThread(&gThread1);
 }
 
@@ -30,9 +30,9 @@ void boot(void) {
  * Reset the start and endpoint of the game thread stack, then set thread priority to zero, effectively
  * stopping this thread, as it's no longer needed.
  */
-void thread1_main(void *args) {
+void thread1_main(UNUSED void *unused) {
     diCpuTraceInit();
-    osCreateThread(&gThread3, 3, mainThread, 0, &gThread3Stack[STACKSIZE(STACK_GAME)], 10);
+    osCreateThread(&gThread3, 3, &mainThread, 0, &gThread3Stack[STACKSIZE(STACK_GAME)], 10);
     gThread3Stack[STACKSIZE(STACK_GAME)] = 0;
     gThread3Stack[0] = 0;
     osStartThread(&gThread3);
