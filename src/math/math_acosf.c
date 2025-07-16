@@ -3,17 +3,18 @@
 /**
  * Official Name: acosf
  */
-float acosf(float x) {
-    signed short signed_num;
-    unsigned short unsigned_num;
+f32 acosf(f32 value) {
+    s16 intval;
+    u16 uintval;
 
-    if (x >= 1.0f) {
-        signed_num = 0x7FFF;
-    } else if (x <= -1.0f) {
-        signed_num = -0x7FFF;
+    if (value >= 1) {
+        intval = 0x7FFF;
+    } else if (value <= -1) {
+        intval = -0x7FFF;
     } else {
-        signed_num = x * 0x7FFF;
+        intval = value * 0x7FFF;
     }
-    unsigned_num = acoss(signed_num);
-    return (unsigned_num * MATH_PI) / 0xFFFF;
+
+    uintval = acoss(intval);
+    return (uintval * MATH_PI) / 0xFFFF;
 }

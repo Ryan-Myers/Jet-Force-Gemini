@@ -1,37 +1,45 @@
+#include "common.h"
 #include "math.h"
 
-float atan2f(float y, float x) {
-    float z;
+/**
+ * Official Name: atan2f
+ */
+f32 atan2f(f32 x, f32 z) {
+    f32 result = 0;
 
-    z = 0.0f;
-    if (y == 0.0f) {
-        if (x >= 0.0f) {
-            z = 0.0f;
+    if (x == 0) {
+        if (z >= 0) {
+            result = 0;
         } else {
-            z = MATH_PI;
+            result = DTOR(180);
         }
-    } else if (x == 0.0f) {
-        if (y > 0.0f) {
-            z = (MATH_PI / 2);
+    } else if (z == 0) {
+        if (x > 0) {
+            result = DTOR(90);
         } else {
-            z = ((3 * MATH_PI) / 2);
+            result = DTOR(270);
         }
     } else {
-        float sqrt = sqrtf((y * y) + (x * x));
-        if (y > x) {
-            z = acosf(x / sqrt);
-            if (y < 0.0f) {
-                z = (2 * MATH_PI) - z;
+        f32 sqrt = sqrtf(x * x + z * z);
+
+        if (x > z) {
+            result = acosf(z / sqrt);
+
+            if (x < 0) {
+                result = DTOR(360) - result;
             }
         } else {
-            z = (MATH_PI / 2) - acosf(y / sqrt);
-            if (x < 0.0f) {
-                z = MATH_PI - z;
+            result = DTOR(90) - acosf(x / sqrt);
+
+            if (z < 0) {
+                result = DTOR(180) - result;
             }
-            if (z < 0.0f) {
-                z += (2 * MATH_PI);
+
+            if (result < 0) {
+                result += DTOR(360);
             }
         }
     }
-    return z;
+
+    return result;
 }
