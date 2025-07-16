@@ -349,7 +349,8 @@ segments:
       - [0xACFF0, rodata, explosion]
       - [0xAD1E0, rodata, charControl]
       - [0xAD500, rodata, models]
-      - [0xAD830, rodata, camera]
+      - [0xAD830, .rodata, boot]
+      - [0xAD860, rodata, camera]
       - [0xAD910, rodata, staticcamera]
       - [0xAD920, rodata, level]
       - [0xAD9B0, rodata, main]
@@ -412,7 +413,7 @@ segments:
       - { type: bss, vram: 0x800F75C0, name: explosion }
       - { type: bss, vram: 0x800F7860, name: charControl }
       - { type: bss, vram: 0x800F79D0, name: models }
-      - { type: bss, vram: 0x800F7B20, name: boot }
+      - { type: .bss, vram: 0x800F7B20, name: boot }
       - { type: .bss, vram: 0x800F9F90, name: hasm/entrypoint }
       - { type: bss, vram: 0x800FAF90, name: camera }
       - { type: bss, vram: 0x800FBB40, name: staticcamera }
