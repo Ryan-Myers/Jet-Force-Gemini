@@ -5,6 +5,7 @@
 #include "libultra_internal.h"
 #include "sched.h"
 #include "memory.h"
+#include "boot.h"
 
 void squadsPreInit(RomDefHeader *list, s32 listSize);
 s32 runlinkDownloadCode(s32);
@@ -144,7 +145,6 @@ void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2);
 void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2);
 void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2);
 void amStop(void);
-void bootCheckStack(void);
 void func_80044938(void);
 void func_80046070(s32 arg0);
 void mainChangeLevel(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);

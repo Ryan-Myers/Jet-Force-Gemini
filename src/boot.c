@@ -1,7 +1,6 @@
+#include "boot.h"
 #include "common.h"
 #include "stacks.h"
-
-void thread1_main(void *args);
 
 /************ .bss ************/
 

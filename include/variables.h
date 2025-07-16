@@ -41,14 +41,6 @@ extern s32 Fmax;
 extern s8 D_800A1208;
 extern f32 D_800F3A20;
 
-//boot.c
-
-extern OSThread D_800F9B30; //bootOSThread
-extern OSThread D_800F9D60; //mainOSThread
-extern u64 D_800F7B20[1]; //bootThreadStack
-extern u64 D_800F9B28[1]; //mainThreadStack
-extern u64 D_800F7B28[1];
-
 //diCpu.c
 extern OSThread diCpuOSThread;
 void diCpuThread(void *);
