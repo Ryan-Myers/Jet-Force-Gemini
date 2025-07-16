@@ -184,7 +184,7 @@ ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 ### Optimisation Overrides
 ####################### LIBULTRA #########################
 
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: OPT_FLAGS := -O2
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/%.c.o: OPT_FLAGS := -O2
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/%.c.o: OPT_FLAGS := -O3
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/mips1/%.c.o: OPT_FLAGS := -O2
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/%.c.o: OPT_FLAGS := -O1
@@ -203,7 +203,7 @@ ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/xldtob.c.o: OPT_FLAGS := -O3
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/xldtob.c.o: MIPSISET := -mips2
 
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/%.c.o: MIPSISET := -mips2
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/mips1/%.c.o: MIPSISET := -mips1
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: MIPSISET := -mips1
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/sc/sched.c.o: MIPSISET := -mips1
