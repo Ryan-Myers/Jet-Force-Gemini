@@ -81,7 +81,7 @@ void amTuneVoiceLimit(u8 voiceLimit) {
 
 void amTuneSetVolume(u8 volume);
 
-extern u8 D_800A0EFC;
+extern u8 D_800A0EFC; //gMusicBaseVolume?
 extern s32 gTuneFade;
 extern s32 D_800EA090;
 extern s32 D_800EA094;
@@ -166,7 +166,7 @@ void amAmbientResetFade(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAmbientGetSeqNo.s")
 
-extern s32 D_800A0F24;
+extern u32 D_800A0F24; //gTuneGlobalVol?
 extern u8 D_800A0F48;
 
 void amTuneSetVolume(u8 volume) {
@@ -180,7 +180,15 @@ void amTuneSetVolume(u8 volume) {
     D_800A0F48 = 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneSetGlobalVolume.s")
+void amTuneSetGlobalVolume(u32 volume) {
+    s32 vol;
+    if (volume > 0x100) {
+        volume = 0x100;
+    }
+    D_800A0F24 = volume;
+    vol = D_800A0F24 * D_800A0EFC;
+    n_alCSPSetVol(tuneSeqPlayer, vol);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneGetVolume.s")
 
