@@ -1395,6 +1395,7 @@ gCanPlayMusic = 0x800A0F04;
 gBlockMusicChange = 0x800A0F0C;
 audioPrevCount = 0x800A0F10;
 gAudioVolumeSetting = 0x800A0F3C;
+gBlockVoiceLimitChange = 0x800A0F44;
 nextFrameCount = 0x800A0F7C;
 NullTextureOffsets = 0x800A10C8;
 weaponPowerUpObjects = 0x800A1538;

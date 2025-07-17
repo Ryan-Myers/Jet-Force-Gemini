@@ -2,6 +2,7 @@
 #include "PR/n_libaudio.h"
 #include "PR/os_reg.h"
 
+void n_alCSPVoiceLimit(N_ALCSPlayer *seqp, u8 value);
 u32 gsSndpGetGlobalVolume(void); //sndp_get_global_volume
 void gsSndpSetMasterVolume(u8 channel, u16 volume); //sndp_set_group_volume
 extern u8 sfxRelativeVolume;
@@ -24,6 +25,7 @@ extern s32 audioPrevCount;
 extern s32 gMusicTempo;
 extern u32 gDynamicMusicChannelMask;
 extern N_ALCSPlayer *tuneSeqPlayer; // Official Name: tuneSeqPlayer
+extern u8 gBlockVoiceLimitChange;
 #define AUDIO_CHANNELS 16
 #define MUSIC_CHAN_MASK_NONE 0xFFFFFFFF
 
@@ -50,6 +52,11 @@ void amSetMuteMode(s32 behaviour) {
     gAudioVolumeSetting = behaviour;
 }
 
+/**
+ * Queue a new music sequence to play if not blocked.
+ * Stops any playing existing music beforehand.
+ * Official Name: amTunePlay
+ */
 void amTunePlay(u8 seqID) {
     if (gBlockMusicChange == FALSE) {
         if (gCanPlayMusic) {
@@ -61,10 +68,39 @@ void amTunePlay(u8 seqID) {
         gDynamicMusicChannelMask = MUSIC_CHAN_MASK_NONE;
     }
 }
+/**
+ * Update the background music voice limit if not prevented from doing so.
+ * Official Name: amTuneVoiceLimit
+ */
+void amTuneVoiceLimit(u8 voiceLimit) {
+    if (gBlockVoiceLimitChange == FALSE) {
+        n_alCSPVoiceLimit(tuneSeqPlayer, voiceLimit);
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneVoiceLimit.s")
+void amTuneSetVolume(u8 volume);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneSetFade.s")
+extern u8 D_800A0EFC;
+extern s32 D_800A0F14;
+extern s32 D_800EA090;
+extern s32 D_800EA094;
+
+void amTuneSetFade(f32 fade, u8 volume) {
+    if (volume > 0x7F) {
+        volume = 0x7F;
+    }
+    D_800EA090 = volume;
+    if (osTvType == OS_TV_TYPE_PAL) {
+        D_800A0F14 = fade * 50.0f;
+    } else {
+        D_800A0F14 = fade * 60.0f;
+    }
+    if (D_800A0F14 > 0) {
+        D_800EA094 = ((D_800A0EFC - volume) << 16) / D_800A0F14;
+    } else {
+        amTuneSetVolume(volume);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneResetFade.s")
 
