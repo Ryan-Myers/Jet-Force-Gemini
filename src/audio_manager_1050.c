@@ -68,6 +68,7 @@ void amTunePlay(u8 seqID) {
         gDynamicMusicChannelMask = MUSIC_CHAN_MASK_NONE;
     }
 }
+
 /**
  * Update the background music voice limit if not prevented from doing so.
  * Official Name: amTuneVoiceLimit
@@ -81,7 +82,7 @@ void amTuneVoiceLimit(u8 voiceLimit) {
 void amTuneSetVolume(u8 volume);
 
 extern u8 D_800A0EFC;
-extern s32 D_800A0F14;
+extern s32 gTuneFade;
 extern s32 D_800EA090;
 extern s32 D_800EA094;
 
@@ -91,22 +92,45 @@ void amTuneSetFade(f32 fade, u8 volume) {
     }
     D_800EA090 = volume;
     if (osTvType == OS_TV_TYPE_PAL) {
-        D_800A0F14 = fade * 50.0f;
+        gTuneFade = fade * 50.0f;
     } else {
-        D_800A0F14 = fade * 60.0f;
+        gTuneFade = fade * 60.0f;
     }
-    if (D_800A0F14 > 0) {
-        D_800EA094 = ((D_800A0EFC - volume) << 16) / D_800A0F14;
+    if (gTuneFade > 0) {
+        D_800EA094 = ((D_800A0EFC - volume) << 16) / gTuneFade;
     } else {
         amTuneSetVolume(volume);
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneResetFade.s")
+void amTuneResetFade(void) {
+    gTuneFade = 0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAmbientSetFade.s")
+extern s32 gAmbientFade;
+extern s32 D_800EA098;
+extern s32 D_800EA09C;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAmbientResetFade.s")
+void amAmbientSetFade(f32 fade, u8 volume) {
+    if (volume > 0x7F) {
+        volume = 0x7F;
+    }
+    D_800EA098 = volume;
+    if (osTvType == OS_TV_TYPE_PAL) {
+        gAmbientFade = fade * 50.0f;
+    } else {
+        gAmbientFade = fade * 60.0f;
+    }
+    if (gAmbientFade > 0) {
+        D_800EA09C = ((D_800A0EFC - volume) << 16) / gAmbientFade;
+    } else {
+        amTuneSetVolume(volume);
+    }
+}
+
+void amAmbientResetFade(void) {
+    gAmbientFade = 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAudioTick.s")
 
@@ -142,7 +166,19 @@ void amTuneSetFade(f32 fade, u8 volume) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAmbientGetSeqNo.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneSetVolume.s")
+extern s32 D_800A0F24;
+extern u8 D_800A0F48;
+
+void amTuneSetVolume(u8 volume) {
+    s32 vol;
+    if (volume > 0x7F) {
+        volume = 0x7F;
+    }
+    D_800A0EFC = volume;
+    vol = D_800A0F24 * D_800A0EFC;
+    n_alCSPSetVol(tuneSeqPlayer, vol);
+    D_800A0F48 = 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneSetGlobalVolume.s")
 
