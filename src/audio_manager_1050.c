@@ -1,8 +1,66 @@
 #include "common.h"
+#include "PR/n_libaudio.h"
+#include "PR/os_reg.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amSetMuteMode.s")
+u32 gsSndpGetGlobalVolume(void); //sndp_get_global_volume
+void gsSndpSetMasterVolume(u8 channel, u16 volume); //sndp_set_group_volume
+extern u8 sfxRelativeVolume;
+extern u8 gAudioVolumeSetting;
+extern N_ALCSPlayer *ambientSeqPlayer; // Official Name: ambientSeqPlayer
+enum AudioVolumeBehaviour {
+    VOLUME_NORMAL,
+    VOLUME_LOWER,
+    VOLUME_LOWER_AMBIENT,
+    VOLUME_UNK03,
+};
+#define AL_SNDP_GROUP_VOLUME_MAX 32767
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTunePlay.s")
+void amTuneStop(void);
+void music_sequence_start(u8 seqID, N_ALCSPlayer *seqPlayer);
+
+extern u8 gCanPlayMusic;
+extern s32 gBlockMusicChange;
+extern s32 audioPrevCount;
+extern s32 gMusicTempo;
+extern u32 gDynamicMusicChannelMask;
+extern N_ALCSPlayer *tuneSeqPlayer; // Official Name: tuneSeqPlayer
+#define AUDIO_CHANNELS 16
+#define MUSIC_CHAN_MASK_NONE 0xFFFFFFFF
+
+/**
+ * Changes the volume of each sound channel depending on what value is passed through.
+ * Official Name: amSetMuteMode
+ */
+void amSetMuteMode(s32 behaviour) {
+    switch (behaviour) {
+        case VOLUME_LOWER: // Mute most sound effects and half the volume of music.
+            gsSndpSetMasterVolume(0, 0);
+            gsSndpSetMasterVolume(1, AL_SNDP_GROUP_VOLUME_MAX);
+            n_alCSPSetVol(ambientSeqPlayer, 0);
+            break;
+        case VOLUME_LOWER_AMBIENT: // Mute the ambient channel, making course elements stop making noise.
+            gsSndpSetMasterVolume(0, 0);
+            break;
+        default: // Restore sound back to normal.
+            gsSndpSetMasterVolume(0, AL_SNDP_GROUP_VOLUME_MAX);
+            gsSndpSetMasterVolume(1, AL_SNDP_GROUP_VOLUME_MAX);
+            n_alCSPSetVol(ambientSeqPlayer, (s16) (gsSndpGetGlobalVolume() * sfxRelativeVolume));
+            break;
+    }
+    gAudioVolumeSetting = behaviour;
+}
+
+void amTunePlay(u8 seqID) {
+    if (gBlockMusicChange == FALSE) {
+        if (gCanPlayMusic) {
+            amTuneStop();
+            music_sequence_start(seqID, tuneSeqPlayer);
+        }
+        gMusicTempo = n_alCSPGetTempo(tuneSeqPlayer);
+        audioPrevCount = osGetCount();
+        gDynamicMusicChannelMask = MUSIC_CHAN_MASK_NONE;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneVoiceLimit.s")
 
@@ -106,7 +164,7 @@ u8 amSoundIsLooped(u16 soundID) {
     return ((u32) (1 + sfxBankPtr->bankArray[0]->instArray[0]->soundArray[soundID - 1]->envelope->decayTime) == 0);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000169C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/music_sequence_start.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000170C.s")
 
