@@ -1,30 +1,30 @@
 #include "common.h"
 #include "PR/n_libaudio.h"
 #include "PR/os_reg.h"
+#include "naudio/n_seqp.h"
+#include "naudio/n_sndp.h"
+#include "audio.h"
 
 void n_alCSPVoiceLimit(N_ALCSPlayer *seqp, u8 value);
 u32 gsSndpGetGlobalVolume(void); //sndp_get_global_volume
 void gsSndpSetMasterVolume(u8 channel, u16 volume); //sndp_set_group_volume
+void amSndPlay(u16 soundID, SoundHandle *handlePtr);
+void amAmbientSetVolume(u8 volume);
 extern u8 sfxRelativeVolume;
 extern u8 gAudioVolumeSetting;
-extern N_ALCSPlayer *ambientSeqPlayer; // Official Name: ambientSeqPlayer
-enum AudioVolumeBehaviour {
-    VOLUME_NORMAL,
-    VOLUME_LOWER,
-    VOLUME_LOWER_AMBIENT,
-    VOLUME_UNK03,
-};
+extern N_ALSeqPlayer *ambientSeqPlayer; // Official Name: ambientSeqPlayer
 #define AL_SNDP_GROUP_VOLUME_MAX 32767
 
 void amTuneStop(void);
-void music_sequence_start(u8 seqID, N_ALCSPlayer *seqPlayer);
+void music_sequence_start(u8 seqID, N_ALSeqPlayer *seqPlayer);
 
 extern u8 gCanPlayMusic;
 extern s32 gBlockMusicChange;
 extern s32 audioPrevCount;
 extern s32 gMusicTempo;
 extern u32 gDynamicMusicChannelMask;
-extern N_ALCSPlayer *tuneSeqPlayer; // Official Name: tuneSeqPlayer
+extern N_ALSeqPlayer *tuneSeqPlayer; // Official Name: tuneSeqPlayer
+extern N_ALSeqPlayer **tuneSeqPlayers; // Official Name: tuneSeqPlayers
 extern u8 gBlockVoiceLimitChange;
 #define AUDIO_CHANNELS 16
 #define MUSIC_CHAN_MASK_NONE 0xFFFFFFFF
@@ -132,7 +132,123 @@ void amAmbientResetFade(void) {
     gAmbientFade = 0;
 }
 
+void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
+void func_80001990(N_ALCSPlayer *arg0, u8 *arg1, ALCSeq *arg2);
+extern ALCSeq *tuneCSeqp;
+extern ALCSeq **tuneCSeqs;
+
+extern void *gMusicSequenceData;
+extern void *gJingleSequenceData;
+extern ALCSeq gJingleSequence;
+extern DelayedSound gDelayedSounds[8];
+extern OSMesgQueue animCtrlQueue;
+extern u8 D_800A0EF4;
+extern s32 gDelayedSoundsCount;
+extern u8 gMusicNextSeqID;
+extern u8 gJingleNextSeqID;
+extern u8 D_800A0F34;
+extern s32 D_800A0F40;
+extern s8 D_800A0F4C;
+extern s16 sMusicTempo; //sMusicTempo
+extern ALCSeq D_800EA2D8;
+extern s32 D_800EA3D4;
+extern OSMesgQueue animCtrlQueue;
+
+extern u32 D_800A0F24; //gTuneGlobalVol?
+extern u8 D_800A0F48;
+
+
+#ifdef NON_EQUIVALENT
+/**
+ * Run every frame, this handles the transitions in and out of music sequences.
+ * If there's something in the queue, then begin to play that.
+ * Additionally, it also handles the delayed audio queue, counting down and playing any sounds.
+ * Official Name: amAudioTick
+ */
+void amAudioTick(u8 updateRate) {
+    s32 i,j;
+    N_ALVoiceState *voiceState;
+    ALChanState *chanState;
+    OSMesg *unused;
+
+    if (osRecvMesg(&animCtrlQueue, &unused, OS_MESG_NOBLOCK) == 0) {
+        D_800EA3D4 = 1;
+    }
+
+    if (gTuneFade > 0 || D_800A0F40 != -1) {
+        gTuneFade -= updateRate;
+        if (gTuneFade < 0) {
+            gTuneFade = 0;
+        }
+        amTuneSetVolume((((D_800EA094 * gTuneFade) >> 16) + D_800EA090) & 0xFF);
+    }
+    if (gAmbientFade > 0) {
+        gAmbientFade -= updateRate;
+        if (gAmbientFade < 0) {
+            gAmbientFade = 0;
+        }
+        amAmbientSetVolume((((D_800EA09C * gAmbientFade) >> 16) + D_800EA098) & 0xFF);
+    }
+
+    if (gDelayedSoundsCount > 0) {
+        for (i = 0; i < gDelayedSoundsCount;) {
+            gDelayedSounds[i].timer -= updateRate;
+            if (gDelayedSounds[i].timer <= 0) {
+                j = i;
+                amSndPlay(gDelayedSounds[i].soundId, gDelayedSounds[i].handlePtr);
+
+                gDelayedSoundsCount -= 1;
+                while (j < gDelayedSoundsCount) {
+                    gDelayedSounds[i].soundId = gDelayedSounds[i + 1].soundId;
+                    gDelayedSounds[i].timer = gDelayedSounds[i + 1].timer;
+                    gDelayedSounds[i].handlePtr = gDelayedSounds[i + 1].handlePtr;
+                    j++;
+                }
+                j++;
+            } else {
+                i++;
+            }
+        }
+    }
+
+    if (D_800A0F34 != 0 || gMusicNextSeqID != 0) {
+        voiceState = tuneSeqPlayer->vAllocHead;
+        while (voiceState != NULL) { 
+            chanState = &tuneSeqPlayer->chanState[voiceState->channel];
+            if (chanState->usechanparams) {
+                __n_seqpReleaseVoice(tuneSeqPlayer, &voiceState->voice, chanState->releaseTime);
+            } else if (voiceState->sound != NULL) { 
+                if (voiceState->sound->envelope != NULL) {
+                    __n_seqpReleaseVoice(tuneSeqPlayer, &voiceState->voice, voiceState->sound->envelope->releaseTime);
+                }
+            }
+            voiceState = voiceState->next;
+        }
+        n_alSynRemovePlayer(&tuneSeqPlayer->node);
+        D_800A0EF4 ^= 1;
+        tuneSeqPlayer = (&tuneSeqPlayers)[D_800A0EF4];
+        n_alSynAddSeqPlayer(&tuneSeqPlayer->node);
+        tuneCSeqp = &tuneCSeqs[(D_800A0EF4 * 62)];
+    }
+
+    if (D_800A0F34 != 0) {
+        func_80001990(tuneSeqPlayer, &D_800A0F34, tuneCSeqp);
+    } else {
+        music_sequence_init(tuneSeqPlayer, &gMusicSequenceData, &gMusicNextSeqID, tuneCSeqp);
+    }
+
+    music_sequence_init(ambientSeqPlayer, &gJingleSequenceData, &gJingleNextSeqID, &gJingleSequence);
+
+    if (sMusicTempo == -1 && tuneSeqPlayer->target != NULL) {
+        sMusicTempo = (s16) (60000000 / n_alCSPGetTempo(tuneSeqPlayer));
+    }
+
+    D_800A0F48 = 0;
+    D_800A0F4C = 0;
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAudioTick.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amWaitForMidiSync.s")
 
@@ -166,9 +282,6 @@ void amAmbientResetFade(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAmbientGetSeqNo.s")
 
-extern u32 D_800A0F24; //gTuneGlobalVol?
-extern u8 D_800A0F48;
-
 void amTuneSetVolume(u8 volume) {
     s32 vol;
     if (volume > 0x7F) {
@@ -190,9 +303,18 @@ void amTuneSetGlobalVolume(u32 volume) {
     n_alCSPSetVol(tuneSeqPlayer, vol);
 }
 
+
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneGetVolume.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAmbientSetVolume.s")
+/**
+ * Set the volume for the jingle player.
+ * The jingle player scales with sfx volume rather than music volume.
+ * Official Name: amAmbientSetVolume
+ */
+void amAmbientSetVolume(u8 volume) {
+    sfxRelativeVolume = volume;
+    n_alCSPSetVol(ambientSeqPlayer, (s16) (gsSndpGetGlobalVolume() * sfxRelativeVolume));
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amAmbientSetPan.s")
 
@@ -246,8 +368,14 @@ u8 amSoundIsLooped(u16 soundID) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/music_sequence_start.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000170C.s")
+/**
+ * If the sequence player is currently inactive, start a new sequence with the current properties.
+ */
+void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/music_sequence_init.s")
 
+// Could be an alternate version of the above without the sequence
+void func_80001990(N_ALCSPlayer *arg0, u8 *arg1, ALCSeq *arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001990.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001B88.s")

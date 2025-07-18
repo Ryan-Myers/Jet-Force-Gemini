@@ -145,11 +145,7 @@ void alCSPNew(ALCSPlayer *seqp, ALSeqpConfig *c)
  *************************************************************/
 static ALMicroTime __CSPVoiceHandler(void *node)
 {
-#ifdef RAREDIFFS
-    ALCSPlayer_Custom *seqp = (ALCSPlayer_Custom *) node;
-#else
     ALCSPlayer      *seqp = (ALCSPlayer *) node;
-#endif
     ALEvent         evt;
     ALVoice         *voice;
     ALMicroTime     delta;
@@ -256,7 +252,7 @@ static ALMicroTime __CSPVoiceHandler(void *node)
         seqp->chanMask = 0xFFFF;
         for (chan = 0; chan < seqp->maxChannels; chan++)
         {
-            seqp->chanState[chan].fade = 0x7F;
+            seqp->chanState[chan].notemesgflags = 0x7F;
             seqp->chanState[chan].vol = seqp->chanState[chan].unk11;
         }
 #endif

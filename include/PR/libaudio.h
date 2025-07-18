@@ -693,26 +693,36 @@ typedef struct {
     u8                  priority;       /* priority for this chan           */
     u8                  vol;            /* current volume for this chan     */
     u8                  fxmix;          /* current fx mix for this chan     */
+    u8                  fxbus;
     u8                  sustain;        /* current sustain pedal state      */
-    f32                 pitchBend;      /* current pitch bend val in cents  */
+    u8 fadevolcurrent;
+    u8 fadevoltarget;
+    u8 fadevolinc;
+    u8 notemesgflags;
+    u8 unk11;
+    u8 unk12;
+    u8 unk13;
+    f32 pitchBend;      /* current pitch bend val in cents  */
+    ALMicroTime attackTime;
+    ALMicroTime decayTime;
+    ALMicroTime releaseTime;
+    u8 usechanparams;
+    u8 attackVolume;
+    u8 decayVolume;
+    s8 pitch;
+    u8 tremType;
+    u8 tremRate;
+    u8 tremDepth;
+    u8 tremDelay;
+    u8 vibType;
+    u8 vibRate;
+    u8 vibDepth;
+    u8 vibDelay;
+    u8 unk30;
+    u8 timeindex;
+    u8 instmajor;
 } ALChanState;
 
-#ifdef RAREDIFFS
-/* Can't just replace the original with this, because alCSPGetChlVol won't match. */
-typedef struct {
-    ALInstrument        *instrument;    /* instrument assigned to this chan */
-    s16                 bendRange;      /* pitch bend range in cents        */
-    ALFxId              fxId;           /* type of fx assigned to this chan */
-    ALPan               pan;            /* overall pan for this chan        */
-    u8                  priority;       /* priority for this chan           */
-    u8                  vol;            /* current volume for this chan     */
-    u8                  fxmix;          /* current fx mix for this chan     */
-    u8                  sustain;        /* current sustain pedal state      */
-    f32                 pitchBend;      /* current pitch bend val in cents  */
-    u8                  fade;
-    u8                  unk11;
-} ALChanState_Custom;
-#endif
 typedef struct ALSeq_s {
     u8          *base;                  /* ptr to start of sequence file   */
     u8          *trackStart;            /* ptr to first MIDI event         */
@@ -846,42 +856,6 @@ typedef struct {
     ALOscUpdate         updateOsc;
     ALOscStop           stopOsc;
 } ALCSPlayer;
-
-#ifdef RAREDIFFS
-/**
- * Same as above, but the chanState is the new custom one.
- * Size: 0x80 bytes */
-typedef struct {
-    /* 0x00 */ ALPlayer            node;           /* note: must be first in structure */
-    /* 0x14 */ ALSynth             *drvr;          /* reference to the client driver   */
-    /* 0x18 */ ALCSeq              *target;        /* current sequence                 */
-    /* 0x1C */ ALMicroTime         curTime;
-    /* 0x20 */ ALBank              *bank;          /* current ALBank                   */
-    /* 0x24 */ s32                 uspt;           /* microseconds per tick            */
-    /* 0x28 */ s32                 nextDelta;      /* microseconds to next callback    */
-    /* 0x2C */ s32                 state;
-    /* 0x30 */ u16                 chanMask;       /* active channels                  */
-    /* 0x32 */ s16                 vol;            /* overall sequence volume          */
-    /* 0x34 */ u8                  maxChannels;    /* number of MIDI channels          */
-    /* 0x35 */ u8                  debugFlags;     /* control which error get reported */
-    /* 0x36 */ u8                  unk36;
-    /* 0x37 */ u8                  unk37;
-    /* 0x38 */ ALEvent             nextEvent;
-    /* 0x48 */ ALEventQueue        evtq;
-    /* 0x5C */ ALMicroTime         frameTime;
-    /* 0x60 */ ALChanState_Custom  *chanState;     /* 16 channels for MIDI             */
-    /* 0x64 */ ALVoiceState        *vAllocHead;    /* list head for allocated voices   */
-    /* 0x68 */ ALVoiceState        *vAllocTail;    /* list tail for allocated voices   */
-    /* 0x6C */ ALVoiceState        *vFreeList;     /* list of free voice state structs */
-    /* 0x70 */ s8                  unk70;
-    /* 0x71 */ s8                  unk71;
-    /* 0x72 */ s8                  unk72;
-    /* 0x73 */ s8                  unk73;
-    /* 0x74 */ ALOscInit           initOsc;
-    /* 0x78 */ ALOscUpdate         updateOsc;
-    /* 0x7C */ ALOscStop           stopOsc;
-} ALCSPlayer_Custom;
-#endif
 
 /*
  * Sequence data representation routines

@@ -920,15 +920,9 @@ ALSound *__lookupSound(ALSeqPlayer *seqp, u8 key, u8 vel, u8 chan)
 #endif
 
 
-#ifdef RAREDIFFS
-#define _AlChanState ALChanState_Custom
-#else
-#define _AlChanState ALChanState
-#endif
-
 ALSound *__lookupSoundQuick(ALSeqPlayer *seqp, u8 key, u8 vel, u8 chan)
 {
-    ALInstrument *inst = ((_AlChanState*)seqp->chanState)[chan].instrument;
+    ALInstrument *inst = seqp->chanState[chan].instrument;
     s32 l = 1;
     s32 r = inst->soundCount;
     s32 i;
@@ -970,7 +964,7 @@ s16 __vsVol(ALVoiceState *vs, ALSeqPlayer *seqp)
 
     t1 = (vs->tremelo*vs->velocity*vs->envGain) >> 6;
     t2 = (vs->sound->sampleVolume*seqp->vol*
-          ((_AlChanState*)seqp->chanState)[vs->channel].vol) >> 14;
+          seqp->chanState[vs->channel].vol) >> 14;
     t1 *= t2;
     t1 >>= 15;
     
@@ -1001,7 +995,7 @@ ALPan __vsPan(ALVoiceState *vs, ALSeqPlayer *seqp)
 {
     s32 tmp;
 
-    tmp = ((_AlChanState*)seqp->chanState)[vs->channel].pan - AL_PAN_CENTER +
+    tmp = seqp->chanState[vs->channel].pan - AL_PAN_CENTER +
         vs->sound->samplePan;
     tmp = MAX(tmp, AL_PAN_LEFT);
     tmp = MIN(tmp, AL_PAN_RIGHT);
@@ -1169,11 +1163,11 @@ void __initFromBank(ALSeqPlayer *seqp, ALBank *b)
 */
 void __setInstChanState(ALSeqPlayer *seqp, ALInstrument *inst, s32 chan)
 {
-    ((_AlChanState*)seqp->chanState)[chan].instrument = inst;
-    ((_AlChanState*)seqp->chanState)[chan].pan = inst->pan;
-    ((_AlChanState*)seqp->chanState)[chan].vol = inst->volume;
-    ((_AlChanState*)seqp->chanState)[chan].priority = inst->priority;
-    ((_AlChanState*)seqp->chanState)[chan].bendRange = inst->bendRange;
+    seqp->chanState[chan].instrument = inst;
+    seqp->chanState[chan].pan = inst->pan;
+    seqp->chanState[chan].vol = inst->volume;
+    seqp->chanState[chan].priority = inst->priority;
+    seqp->chanState[chan].bendRange = inst->bendRange;
 }
 
 
@@ -1183,17 +1177,17 @@ void __setInstChanState(ALSeqPlayer *seqp, ALInstrument *inst, s32 chan)
 */
 void __resetPerfChanState(ALSeqPlayer *seqp, s32 chan) 
 {
-  ((_AlChanState*)seqp->chanState)[chan].fxId = AL_FX_NONE;
-  ((_AlChanState*)seqp->chanState)[chan].fxmix = AL_DEFAULT_FXMIX;
-  ((_AlChanState*)seqp->chanState)[chan].pan = AL_PAN_CENTER;
-  ((_AlChanState*)seqp->chanState)[chan].vol = AL_VOL_FULL;
+  seqp->chanState[chan].fxId = AL_FX_NONE;
+  seqp->chanState[chan].fxmix = AL_DEFAULT_FXMIX;
+  seqp->chanState[chan].pan = AL_PAN_CENTER;
+  seqp->chanState[chan].vol = AL_VOL_FULL;
 #ifdef RAREDIFFS
-  ((_AlChanState*)seqp->chanState)[chan].fade = AL_VOL_FULL;
+  seqp->chanState[chan].notemesgflags = AL_VOL_FULL;
 #endif
-  ((_AlChanState*)seqp->chanState)[chan].priority = AL_DEFAULT_PRIORITY;
-  ((_AlChanState*)seqp->chanState)[chan].sustain = 0;
-  ((_AlChanState*)seqp->chanState)[chan].bendRange = 200;
-  ((_AlChanState*)seqp->chanState)[chan].pitchBend = 1.0f;
+  seqp->chanState[chan].priority = AL_DEFAULT_PRIORITY;
+  seqp->chanState[chan].sustain = 0;
+  seqp->chanState[chan].bendRange = 200;
+  seqp->chanState[chan].pitchBend = 1.0f;
 }
 
 
@@ -1206,7 +1200,7 @@ void __initChanState(ALSeqPlayer *seqp)
     
     for (i = 0; i < seqp->maxChannels; i++)
     {
-        ((_AlChanState*)seqp->chanState)[i].instrument = 0;
+        seqp->chanState[i].instrument = 0;
 	__resetPerfChanState (seqp, i);
     }
 }
