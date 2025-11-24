@@ -175,7 +175,7 @@ UNUSED void diCpuReportWatchpoint(u32 address) {
     for (i = 0; i < 100; i++) {
         func_8006869C();
     }
-    cpuXYPrintf(30, 80, "Watchpoint exception at %x", address);
+    cpuXYPrintf(30, 80, "Watchpoint exception at %x\n", address);
     if (runlinkGetAddressInfo(address, &moduleId, &moduleAddress, NULL)) {
         cpuXYPrintf(30, 100, "Module %d at %08x", moduleId, moduleAddress);
     }
