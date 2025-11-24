@@ -268,7 +268,7 @@ segments:
       - [0x9D2E0, c, libultra/xprintf]
       - [0x9DFA0, hasm, libultra/setcompare]
       - [0x9DFB0, c, libultra/xlitob]
-      - [0x9E250, hasm, libultra/xldtob]
+      - [0x9E250, c, libultra/xldtob]
       - [0x9ED10, c, libultra/ldiv]
       # not really sure exact offsets for these...
       - [0x9EEA0, textbin, ucode_audio]
@@ -396,7 +396,7 @@ segments:
       - [0xB11E0, .rodata, libultra/devmgr]
       - [0xB1200, rodata, libultra/libm_vals]
       - [0xB1210, .rodata, libultra/xprintf]
-      - [0xB1310, rodata, libultra/xldtob]
+      - [0xB1310, .rodata, libultra/xldtob]
       # not really sure exact offsets for these...
       - { start: 0xB1370, type: databin, name: data_audio,       linker_section_order: .rodata }
       - { start: 0xB1630, type: databin, name: data_unk,         linker_section_order: .rodata }
