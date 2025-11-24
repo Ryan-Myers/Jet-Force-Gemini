@@ -7,13 +7,14 @@
 
 .section .bss
 
-glabel entrypointThreadStack
-.space 0x1000
-glabel entrypointThreadStackEnd
+.equ entrypointThreadStackSize, 0x1000
+dlabel entrypointThreadStack
+.space entrypointThreadStackSize
+.size entrypointThreadStack, entrypointThreadStackSize
 
 .section .text, "ax"
 
-leaf entrypoint
+glabel entrypoint
 lui        $t0, %hi(__BSS_SECTION_START)
 lui        $t1, %hi(__BSS_SECTION_SIZE)
 addiu      $t0, $t0, %lo(__BSS_SECTION_START)
@@ -25,14 +26,14 @@ sw         $zero, 0x4($t0)
 bnez       $t1, .clear_bytes
  addi      $t0, $t0, 0x8
 lui        $t2, %hi(boot)
-lui        $sp, %hi(entrypointThreadStackEnd)
+lui        $sp, %hi(entrypointThreadStack + entrypointThreadStackSize)
 addiu      $t2, $t2, %lo(boot)
 jr         $t2
- addiu     $sp, $sp, %lo(entrypointThreadStackEnd)
+ addiu     $sp, $sp, %lo(entrypointThreadStack + entrypointThreadStackSize)
 nop
 nop
 nop
 nop
 nop
 nop
-.end entrypoint
+endlabel entrypoint
