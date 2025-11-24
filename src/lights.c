@@ -55,7 +55,7 @@ void *trackLightAdd(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, s32 arg5, 
 void func_80020D94(ObjectLight *arg0) {
     if (!(arg0->type & 0x40)) {
         arg0->unk6C = trackLightAdd(arg0->pos.z, arg0->unk1C, arg0->unk20, arg0->unk24 * 1.25f,
-                                    arg0->unk24 * D_800AC360, (s32) (arg0->unk40 * arg0->unk43) >> 8,
+                                    arg0->unk24 * 0.3000000119f, (s32) (arg0->unk40 * arg0->unk43) >> 8,
                                     (s32) (arg0->unk41 * arg0->unk43) >> 8, (s32) (arg0->unk42 * arg0->unk43) >> 8);
     } else {
         arg0->unk6C = NULL;

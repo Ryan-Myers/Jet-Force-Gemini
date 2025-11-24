@@ -1,5 +1,17 @@
 #include "common.h"
 
+const char D_800ADD40[] = "Error: Texture no %x out of range on load. !!\n";
+const char D_800ADD70[] = "Restore to %x\n";
+const char D_800ADD80[] = "Restore1 to %x\n";
+const char D_800ADD90[] = "TEX Error: Palette memory overflow!!\n";
+const char D_800ADDB8[] = "TEX Error: TexTab overflow!!\n";
+const char D_800ADDD8[] = "texFreeTexture: NULL tex!!\n";
+const char D_800ADDF4[] = "TEX Error: Tryed to deallocate non-existent texture!!\n";
+const char D_800ADE2C[] = "SRPBUF overflow!!\n";
+const char D_800ADE40[] = "Error: Sprite table overflow!!\n";
+const char D_800ADE60[] = "texFreeSprite: NULL sprite!!\n";
+const char D_800ADE80[] = "TEXSPR Error: Tryed to deallocate non-existent sprite!!\n";
+
 enum TriangleBatchFlags {
     BATCH_FLAGS_NONE = 0,
     BATCH_FLAGS_BIT0 = (1 << 0),

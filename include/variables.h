@@ -51,9 +51,9 @@ extern OSMesg D_801031F8[8];
 extern OSMesgQueue D_80103218;
 extern s32 D_800A6E88;
 extern s32 D_800A6E8C;
-extern char D_800AF4EC[26];// = "Fault in thread %d   (%s)";
-extern char D_800AF508[9];// = "epc NULL";
-extern char D_800AF650[16];// = "free ram 		%08x";
+// extern char D_800AF4EC[26];// = "Fault in thread %d   (%s)";
+// extern char D_800AF508[9];// = "epc NULL";
+// extern char D_800AF650[16];// = "free ram 		%08x";
 extern s32 D_800A6EDC;
 
 //prnBorders.c
@@ -130,9 +130,9 @@ extern s16 mainGameWindowSizeY1;
 extern s16 mainGameWindowSizeX2;
 extern s16 mainGameWindowSizeY2;
 
-extern char D_800AD170[]; // = "%5d  %5d  %5d";
-extern char D_800AD180[]; // = "FREE %d";
-extern char D_800AD188[]; // = "%d K";
+// extern char D_800AD170[]; // = "%5d  %5d  %5d";
+// extern char D_800AD180[]; // = "FREE %d";
+// extern char D_800AD188[]; // = "%d K";
 
 typedef struct UnkD_800FE217 {
     s8 ZBCheck;
@@ -206,22 +206,22 @@ extern s32 otherZbuf;
 //dicpu.c
 //These two string are the file name and extensions 
 //for what looks like debug data that gets written to a controller pak
-extern char D_800AF400[];// = "CORE";
-extern char D_800AF408[];// = "";
-extern char D_800AF40C[];// = 
-// "%08x:%08x
-// MEMORY REGION %d
-// MOD OFFSET
-// SIZE
-// ADDRESS
-// Texture %d
-// Module %d   %d
-// %08x %d
-// Module %d at %08x
-// %1x %d lines logged
-// Page %d/%d"
-extern char D_800AF4AC[];// = "Watchpoint exception at %x";
-extern char D_800AF4C8[]; // = "Module %d at %08x";
+// extern char D_800AF400[];// = "CORE";
+// extern char D_800AF408[];// = "";
+// extern char D_800AF40C[];// = 
+// // "%08x:%08x
+// // MEMORY REGION %d
+// // MOD OFFSET
+// // SIZE
+// // ADDRESS
+// // Texture %d
+// // Module %d   %d
+// // %08x %d
+// // Module %d at %08x
+// // %1x %d lines logged
+// // Page %d/%d"
+// extern char D_800AF4AC[];// = "Watchpoint exception at %x";
+// extern char D_800AF4C8[]; // = "Module %d at %08x";
 
 //lights.c
 extern s32 D_800A1890; //gMaxLights

@@ -1,5 +1,7 @@
 #include "common.h"
 
+const char D_800AFDB0[] = "fragment killed squaddie\n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/hit/hitInit.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/hit/hitReset.s")

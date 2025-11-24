@@ -5,6 +5,43 @@
 
 extern OSThread *__osGetActiveQueue(void);
 
+const char D_800AF300[] = "7.2";
+const char D_800AF304[] = "interrupt";
+const char D_800AF310[] = "TLB modify";
+const char D_800AF31C[] = "TLB load or fetch";
+const char D_800AF330[] = "TLB store";
+const char D_800AF33C[] = "addr load or fetch";
+const char D_800AF350[] = "addr store";
+const char D_800AF35C[] = "bus error fetch";
+const char D_800AF36C[] = "bus error reference";
+const char D_800AF380[] = "syscall";
+const char D_800AF388[] = "breakpoint";
+const char D_800AF394[] = "reserved instruction";
+const char D_800AF3AC[] = "co-pro unusable";
+const char D_800AF3BC[] = "overflow";
+const char D_800AF3C8[] = "trap";
+const char D_800AF3D0[] = "virtual coherency";
+const char D_800AF3E4[] = "floating point";
+const char D_800AF3F4[] = ">fault< ";
+const char D_800AF400[] = "CORE";
+const char D_800AF408[] = "";
+const char D_800AF40C[] = "%08x:%08x";
+const char D_800AF418[] = "MEMORY REGION %d";
+const char D_800AF42C[] = "MOD";
+const char D_800AF430[] = "OFFSET";
+const char D_800AF438[] = "SIZE";
+const char D_800AF440[] = "ADDRESS";
+const char D_800AF448[] = "Texture %d";
+const char D_800AF454[] = "Module %d";
+const char D_800AF460[] = "%d";
+const char D_800AF464[] = "%08x";
+const char D_800AF46C[] = "%d";
+const char D_800AF470[] = "%08x";
+const char D_800AF478[] = "Module %d at %08x";
+const char D_800AF48C[] = "%1x";
+const char D_800AF490[] = "%d lines logged";
+const char D_800AF4A0[] = "Page %d/%d";
+
 /**
  * Start the exception program counter thread.
  */
@@ -138,12 +175,56 @@ UNUSED void diCpuReportWatchpoint(u32 address) {
     for (i = 0; i < 100; i++) {
         func_8006869C();
     }
-    cpuXYPrintf(30, 80, (char *) &D_800AF4AC /* "Watchpoint exception at %x" */, address);
+    cpuXYPrintf(30, 80, "Watchpoint exception at %x", address);
     if (runlinkGetAddressInfo(address, &moduleId, &moduleAddress, NULL)) {
-        cpuXYPrintf(30, 100, (char *) &D_800AF4C8 /* "Module %d at %08x" */, moduleId, moduleAddress);
+        cpuXYPrintf(30, 100, "Module %d at %08x", moduleId, moduleAddress);
     }
     while (1) {} // Infinite loop; waiting for the player to reset the console?
 }
+
+const char D_800AF4DC[] = "%04d: %04d: %s";
+const char D_800AF4EC[] = "Fault in thread %d   (%s)";
+const char D_800AF508[] = "epc NULL";
+const char D_800AF514[] = "epc %d,%x,%s";
+const char D_800AF524[] = "epc %08x,?,?,?";
+const char D_800AF534[] = "ra   NULL";
+const char D_800AF540[] = "ra   %d,%x,%s";
+const char D_800AF550[] = "ra   %08x,?,?,?";
+const char D_800AF560[] = " cause\t\tmmAlloc(%d,%8x)\n";
+const char D_800AF57C[] = "%s exception";
+const char D_800AF58C[] = "cause\t\t\t%08x";
+const char D_800AF59C[] = "crashed %s %s";
+const char D_800AF5AC[] = "crashed %s type %d";
+const char D_800AF5C0[] = "crashed %s unknown";
+const char D_800AF5D4[] = "error %s %s";
+const char D_800AF5E0[] = "error %s type %d";
+const char D_800AF5F4[] = "error %s unknown";
+const char D_800AF608[] = "aborted %s %s";
+const char D_800AF618[] = "aborted %s type %d";
+const char D_800AF62C[] = "aborted %s unknown";
+const char D_800AF640[] = "badvaddr\t%08x";
+const char D_800AF650[] = "free ram\t\t%08x";
+const char D_800AF660[] = "at 0x%08x v0 0x%08x";
+const char D_800AF674[] = "v1 0x%08x a0 0x%08x";
+const char D_800AF688[] = "a1 0x%08x a2 0x%08x";
+const char D_800AF69C[] = "a3 0x%08x t0 0x%08x";
+const char D_800AF6B0[] = "t1 0x%08x t2 0x%08x";
+const char D_800AF6C4[] = "t3 0x%08x t4 0x%08x";
+const char D_800AF6D8[] = "t5 0x%08x t6 0x%08x";
+const char D_800AF6EC[] = "t7 0x%08x s0 0x%08x";
+const char D_800AF700[] = "s1 0x%08x s2 0x%08x";
+const char D_800AF714[] = "s3 0x%08x s4 0x%08x";
+const char D_800AF728[] = "s5 0x%08x s6 0x%08x";
+const char D_800AF73C[] = "s7 0x%08x t8 0x%08x";
+const char D_800AF750[] = "t9 0x%08x gp 0x%08x";
+const char D_800AF764[] = "sp 0x%08x s8 0x%08x";
+const char D_800AF778[] = "sr 0x%08x";
+const char D_800AF784[] = "Level is\t\t\t%s";
+const char D_800AF794[] = "Position is\t%.1f, %.1f, %.1f";
+const char D_800AF7B4[] = "Track polygon buffer overflow";
+const char D_800AF7D4[] = "Track edge buffer overflow";
+const char D_800AF7F0[] = "Object polygon buffer overflow";
+const char D_800AF810[] = "Object edge buffer overflow";
 
 #ifdef NON_EQUIVALENT
 extern s32 D_800A6E90;

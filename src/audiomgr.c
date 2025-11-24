@@ -1,5 +1,9 @@
 #include "common.h"
 
+const char D_800AAA80[] = "audio: ai out of samples\n";
+const char D_800AAA9C[] = "OH DEAR - No audio DMA buffers left\n";
+const char D_800AAAC4[] = "Dma not done\n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/amCreateAudioMgr.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/__amMain.s")

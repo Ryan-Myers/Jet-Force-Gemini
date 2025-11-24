@@ -1,6 +1,84 @@
 #include "common.h"
 #include "sched.h"
 
+const char D_800ACDB0[] = "1.1723";
+const char D_800ACDB8[] = "19/08/99 15:26";
+const char D_800ACDC8[] = "jpegg";
+const char D_800ACDD0[] = "null";
+const char D_800ACDD8[] = "setting up";
+const char D_800ACDE4[] = "freeing";
+const char D_800ACDEC[] = "processing";
+const char D_800ACDF8[] = "exploding";
+const char D_800ACE04[] = "WARNING: couldn't find 'ra=0x666' in function %d\n";
+const char D_800ACE38[] = "main/main.c";
+const char D_800ACE44[] = "main/main.c";
+const char D_800ACE50[] = "main/main.c";
+const char D_800ACE5C[] = "main/main.c";
+const char D_800ACE68[] = "main/main.c";
+const char D_800ACE74[] = "main/main.c";
+const char D_800ACE80[] = "Change: L %d, R %d >> L %d, R %d  (%d)\n";
+const char D_800ACEA8[] = "SYNC\n";
+const char D_800ACEB0[] = "Char Flag %d\n";
+const char D_800ACEC0[] = "Char Flag %d\n";
+const char D_800ACED0[] = "Saving Game %d\n";
+const char D_800ACEE0[] = "Canyon";
+const char D_800ACEE8[] = "Asteroid";
+const char D_800ACEF4[] = "Mizar";
+const char D_800ACEFC[] = "Ichor";
+const char D_800ACF04[] = "Alien Cave";
+const char D_800ACF10[] = "Swamp";
+const char D_800ACF18[] = "Sekhmet Battleship";
+const char D_800ACF2C[] = "Dune";
+const char D_800ACF34[] = "SS Anubis";
+const char D_800ACF40[] = "Spawn Ship";
+const char D_800ACF4C[] = "Goldwood Forest";
+const char D_800ACF5C[] = "Goldwood Quarry";
+const char D_800ACF6C[] = "Spacestation";
+const char D_800ACF7C[] = "Water ruin";
+const char D_800ACF88[] = "Walkway";
+const char D_800ACF90[] = "Multi";
+const char D_800ACF98[] = "Old";
+const char D_800ACF9C[] = "Baddy Test";
+const char D_800ACFA8[] = "Canyon Mine";
+const char D_800ACFB4[] = "Sub-Worlds";
+const char D_800ACFC0[] = "GIRL";
+const char D_800ACFC8[] = "BOY";
+const char D_800ACFCC[] = "DOG";
+const char D_800ACFD0[] = "GIRL HOVERSHIP";
+const char D_800ACFE0[] = "POWERGIRL";
+const char D_800ACFEC[] = "POWERBOY";
+const char D_800ACFF8[] = "POWERDOG";
+const char D_800AD004[] = "ANT HOVERSHIP";
+const char D_800AD014[] = "CHEATS OFF";
+const char D_800AD020[] = "CHEATS ON";
+const char D_800AD02C[] = "GOLDWOOD Area 1";
+const char D_800AD03C[] = "SS ANUBIS Maze";
+const char D_800AD04C[] = "SS ANUBIS Floyd";
+const char D_800AD05C[] = "CERULEAN Colony";
+const char D_800AD06C[] = "ICHOR Military Base";
+const char D_800AD080[] = "MIZARS PALACE";
+const char D_800AD090[] = "WALKWAY Sequence";
+const char D_800AD0A4[] = "ALIEN CAVES";
+const char D_800AD0B0[] = "WATER RUIN";
+const char D_800AD0BC[] = "PISTOL";
+const char D_800AD0C4[] = "HOMING MISSILE";
+const char D_800AD0D4[] = "MACHINE GUN";
+const char D_800AD0E0[] = "SHOT GUN";
+const char D_800AD0EC[] = "SHRINK BEAM";
+const char D_800AD0F8[] = "ROCKET";
+const char D_800AD100[] = "FLAMETHROWER";
+const char D_800AD110[] = "GRENADE";
+const char D_800AD118[] = "SHIRUKEN";
+const char D_800AD124[] = "FISH FOOD";
+const char D_800AD130[] = "PROXIMITY MINE";
+const char D_800AD140[] = "TIMED MINE";
+const char D_800AD14C[] = "REMOTE MINE";
+const char D_800AD158[] = "FLARE";
+const char D_800AD160[] = "CLUSTER BOMB";
+// const char D_800AD170[] = "%5d  %5d  %5d\n";
+// const char D_800AD180[] = "FREE %d";
+// const char D_800AD188[] = "%d K";
+
 void mainThread(UNUSED void *unused) {
     // Anti Piracy - This will zero out all RAM if this is a PAL console.
     if (osTvType == OS_TV_TYPE_PAL) {

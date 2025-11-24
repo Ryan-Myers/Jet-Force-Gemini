@@ -1,5 +1,8 @@
 #include "common.h"
 
+const char D_800AFB30[] = "Before Level Number %d (%d)\n";
+const char D_800AFB50[] = "After  Level Number %d\n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/anim/func_800767A0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/anim/func_800767C4.s")

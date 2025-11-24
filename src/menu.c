@@ -40,6 +40,8 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/loadFrontEndList.s")
 
+const char D_800ADF40[] = "loadFrontEndItem() - Item no %d out of range 0-%d\n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/loadFrontEndItem.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setupFrontEndList.s")

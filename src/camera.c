@@ -20,6 +20,12 @@
 #define CAMERA_MAX_FOV 90.0f
 #define CAMERA_SCALE 1.0f
 
+const char D_800ACC60[] = "Camera Error: Illegal mode!\n";
+const char D_800ACC80[] = "Illegal CAMERA number %d\n";
+const char D_800ACC9C[] = "%f\n";
+const char D_800ACCA0[] = "\nCam do 2D sprite called with NULL pointer!";
+const char D_800ACCCC[] = "CAM Error!! Convlist overflow.\n";
+
 #if 0
 extern s32 D_B0000578;
 extern s32 D_800FB0F4; //gActiveCameraID;

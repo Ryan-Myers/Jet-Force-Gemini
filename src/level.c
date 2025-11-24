@@ -1,5 +1,9 @@
 #include "common.h"
 
+const char D_800ACD20[] = "LOADLEVEL Error: Level out of range\n";
+const char D_800ACD48[] = "levelGetRegionFlags: Ran out of levelRegionFlag structures!!\n";
+const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
+
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetCounts.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelNGetType.s")

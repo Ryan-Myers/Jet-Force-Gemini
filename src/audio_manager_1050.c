@@ -5,6 +5,12 @@
 #include "naudio/n_sndp.h"
 #include "audio.h"
 
+const char D_800AA950[] = "WARNING: Sync arrived before wait - music will be out of sync with sequence\n";
+const char D_800AA9A0[] = "amSndPlay: Illegal sound effects table index\n";
+const char D_800AA9D0[] = "amSndPlayDirect: Somebody tried to play illegal sound %d\n";
+const char D_800AAA0C[] = "Invalid midi sequence index\n";
+const char D_800AAA2C[] = "amTuneRestart:Jump failed - not previously pushed onto seq player %x\n";
+
 void n_alCSPVoiceLimit(N_ALCSPlayer *seqp, u8 value);
 u32 gsSndpGetGlobalVolume(void); //sndp_get_global_volume
 void gsSndpSetMasterVolume(u8 channel, u16 volume); //sndp_set_group_volume

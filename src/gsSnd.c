@@ -99,8 +99,7 @@ void gsSndpStop(ALSoundState *queue) {
         alEvent.msg.sndpevent.soundState->flags &= ~AL_SNDP_PITCH_EVT;
         n_alEvtqPostEvent(&D_800A9F7C->evtq, &alEvent, 0);
     } else {
-        osSyncPrintf((char *) &D_800B002C);
-        // osSyncPrintf("WARNING: Attempt to stop NULL sound aborted\n");
+        osSyncPrintf("WARNING: Attempt to stop NULL sound aborted\n");
     }
 }
 
@@ -154,8 +153,7 @@ void gsSndpSetParam(s32 soundMask, s16 type, u32 volume) {
     if (soundMask != NULL) {
         n_alEvtqPostEvent(&D_800A9F7C->evtq, (ALEvent *) &sndEvt, 0);
     } else {
-        osSyncPrintf((char *) &D_800B005C);
-        // osSyncPrintf("WARNING: Attempt to modify NULL sound aborted\n");
+        osSyncPrintf("WARNING: Attempt to modify NULL sound aborted\n");
     }
 }
 

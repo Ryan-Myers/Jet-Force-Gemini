@@ -1,5 +1,7 @@
 #include "common.h"
 
+const char D_800AAAE0[] = "OUT OF AUDIO POINTS\n";
+
 #define SOUND_MASK_HEAP_COUNT 40
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/amInitAudioMap.s")

@@ -18,7 +18,7 @@ options:
   build_path: build
   asset_path: assets
   section_order: [".text", ".data", ".rodata", ".bss"]
-  migrate_rodata_to_functions: False
+  migrate_rodata_to_functions: True
   hasm_in_src_path: True
 segments:
   - name: header
@@ -210,7 +210,7 @@ segments:
       - [0x99600, c, libultra/vimgr]
       - [0x99910, c, libultra/visetmode]
       - [0x99980, c, libultra/visetevent]
-      - [0x999F0, hasm, libultra/osSetIntMask]
+      - [0x999F0, hasm, libultra/setintmask]
       - [0x99A90, c, libultra/sptask]
       - [0x99D50, c, libultra/sptaskyielded]
       - [0x99DD0, c, libultra/vigetcurrframebuf]
@@ -308,7 +308,7 @@ segments:
       - [0xA7A80, data, diCpu]
       - [0xA7D40, data, fx]
       - [0xA83F0, data, font]
-      - [0xA8530, data, pimgr]
+      - [0xA8530, data, libultra/pimgr]
       - [0xA8560, .data, rzip]
       - [0xA8570, data, subtitles]
       - [0xA8580, .data, hasm/gen_anim_data] # Has a jump table that's data, and not rodata. Splat likes to warn about this.
@@ -317,86 +317,86 @@ segments:
       - [0xA8B50, .data, hasm/math_data_tables]
       - [0xAAB60, data, osBootRamTest]
       - [0xAAB70, data, gsSnd]
-      - [0xAAB90, data, n_csplayer]
-      - [0xAAD90, data, n_sl]
-      - [0xAADA0, data, n_drvrNew]
-      - [0xAADE0, data, n_env]
+      - [0xAAB90, data, libultra/n_csplayer]
+      - [0xAAD90, data, libultra/n_sl]
+      - [0xAADA0, data, libultra/n_drvrNew]
+      - [0xAADE0, data, libultra/n_env]
       - [0xAAEE0, .data, math/math_arc]
-      - [0xAAFF0, data, aisetnextbuf]
-      - [0xAB000, data, initialize]
-      - [0xAB010, data, libultra_controller]
-      - [0xAB020, data, siacs]
-      - [0xAB030, data, cartrominit]
-      - [0xAB040, data, vimgr]
+      - [0xAAFF0, data, libultra/aisetnextbuf]
+      - [0xAB000, data, libultra/initialize]
+      - [0xAB010, data, libultra/controller]
+      - [0xAB020, data, libultra/siacs]
+      - [0xAB030, data, libultra/cartrominit]
+      - [0xAB040, data, libultra/vimgr]
       - [0xAB060, data, gameVi2]
-      - [0xAB420, data, piacs]
-      - [0xAB430, data, createmesgqueue]
-      - [0xAB440, data, thread]
-      - [0xAB450, data, vi]
-      - [0xAB4C0, data, timerintr]
-      - [0xAB4D0, data, xprintf]
-      - [0xAB520, data, xlitob]
-      - [0xAB550, rodata, audio_manager_1050]
-      - [0xAB680, rodata, audiomgr]
-      - [0xAB6E0, rodata, audio_manager_36D0]
-      - [0xAB700, rodata, audio_manager_4C50]
-      - [0xAB750, rodata, objects]
-      - [0xAC9F0, rodata, track]
-      - [0xACF50, rodata, shadows]
-      - [0xACF60, rodata, lights]
-      - [0xACF80, rodata, camlight]
-      - [0xACFA0, rodata, spranim]
-      - [0xACFF0, rodata, explosion]
-      - [0xAD1E0, rodata, charControl]
-      - [0xAD500, rodata, models]
+      - [0xAB420, data, libultra/piacs]
+      - [0xAB430, data, libultra/createmesgqueue]
+      - [0xAB440, data, libultra/thread]
+      - [0xAB450, data, libultra/vi]
+      - [0xAB4C0, data, libultra/timerintr]
+      - [0xAB4D0, data, libultra/xprintf]
+      - [0xAB520, data, libultra/xlitob]
+      - [0xAB550, .rodata, audio_manager_1050]
+      - [0xAB680, .rodata, audiomgr]
+      - [0xAB6E0, .rodata, audio_manager_36D0]
+      - [0xAB700, .rodata, audio_manager_4C50]
+      - [0xAB750, .rodata, objects]
+      - [0xAC9F0, .rodata, track]
+      - [0xACF50, .rodata, shadows]
+      - [0xACF60, .rodata, lights]
+      - [0xACF80, .rodata, camlight]
+      - [0xACFA0, .rodata, spranim]
+      - [0xACFF0, .rodata, explosion]
+      - [0xAD1E0, .rodata, charControl]
+      - [0xAD500, .rodata, models]
       - [0xAD830, .rodata, boot]
-      - [0xAD860, rodata, camera]
-      - [0xAD910, rodata, staticcamera]
-      - [0xAD920, rodata, level]
-      - [0xAD9B0, rodata, main]
+      - [0xAD860, .rodata, camera]
+      - [0xAD910, .rodata, staticcamera]
+      - [0xAD920, .rodata, level]
+      - [0xAD9B0, .rodata, main]
       - [0xADD90, .rodata, hasm/math_util]
       - [0xADDC0, .rodata, memory]
-      - [0xADF40, rodata, saves]
-      - [0xAE110, rodata, sched]
-      - [0xAE490, rodata, squads]
-      - [0xAE890, rodata, runLink]
-      - [0xAE900, rodata, gameVi]
-      - [0xAE940, rodata, textures]
-      - [0xAEB00, rodata, screen]
-      - [0xAEB20, rodata, menu]
-      - [0xAED80, rodata, weather]
-      - [0xAED90, rodata, particles]
-      - [0xAF000, rodata, diprint]
-      - [0xAF270, rodata, diRcpTrace]
-      - [0xAF2C0, rodata, diRcp]
-      - [0xAFF00, rodata, diCpu]
-      - [0xB0430, rodata, fx]
-      - [0xB05C0, rodata, font]
+      - [0xADF40, .rodata, saves]
+      - [0xAE110, .rodata, sched]
+      - [0xAE490, .rodata, squads]
+      - [0xAE890, .rodata, runLink]
+      - [0xAE900, .rodata, gameVi]
+      - [0xAE940, .rodata, textures]
+      - [0xAEB00, .rodata, screen]
+      - [0xAEB20, .rodata, menu]
+      - [0xAED80, .rodata, weather]
+      - [0xAED90, .rodata, particles]
+      - [0xAF000, .rodata, diprint]
+      - [0xAF270, .rodata, diRcpTrace]
+      - [0xAF2C0, .rodata, diRcp]
+      - [0xAFF00, .rodata, diCpu]
+      - [0xB0430, .rodata, fx]
+      - [0xB05C0, .rodata, font]
       - [0xB05E0, .rodata, hasm/inflate]
       - [0xB06D0, .rodata, libultra/exceptasm]
-      - [0xB0720, rodata, perspective]
-      - [0xB0730, rodata, anim]
-      - [0xB09B0, rodata, hit]
-      - [0xB0B80, rodata, gsSnd]
-      - [0xB0CD0, rodata, n_csplayer]
-      - [0xB0FD0, rodata, n_synthesizer]
-      - [0xB0FE0, rodata, libultra/cents2ratio]
-      - [0xB0FF0, rodata, n_drvrNew]
-      - [0xB1010, rodata, n_synsetfxparam]
-      - [0xB1020, rodata, n_reverb]
-      - [0xB1050, rodata, n_env]
+      - [0xB0720, .rodata, libultra/perspective]
+      - [0xB0730, .rodata, anim]
+      - [0xB09B0, .rodata, hit]
+      - [0xB0B80, .rodata, gsSnd]
+      - [0xB0CD0, .rodata, libultra/n_csplayer]
+      - [0xB0FD0, .rodata, libultra/n_synthesizer]
+      - [0xB0FE0, .rodata, libultra/cents2ratio]
+      - [0xB0FF0, .rodata, libultra/n_drvrNew]
+      - [0xB1010, .rodata, libultra/n_synsetfxparam]
+      - [0xB1020, .rodata, libultra/n_reverb]
+      - [0xB1050, .rodata, libultra/n_env]
       - [0xB10A0, .rodata, math/math_atan]
-      - [0xB10C0, rodata, n_auxbus]
-      - [0xB10D0, rodata, n_alLPFilter]
+      - [0xB10C0, .rodata, libultra/n_auxbus]
+      - [0xB10D0, .rodata, libultra/n_alLPFilter]
       - [0xB10E0, .rodata, math/math_acosf]
-      - [0xB10F0, rodata, libultra/n_resample]
-      - [0xB1100, rodata, sinf]
-      - [0xB1150, rodata, llcvt]
-      - [0xB1160, rodata, setintmask]
-      - [0xB11E0, rodata, devmgr]
-      - [0xB1200, rodata, libm_vals]
-      - [0xB1210, rodata, xprintf]
-      - [0xB1310, rodata, xldtob]
+      - [0xB10F0, .rodata, libultra/n_resample]
+      - [0xB1100, .rodata, libultra/sinf]
+      - [0xB1150, .rodata, libultra/llcvt]
+      - [0xB1160, .rodata, libultra/setintmask]
+      - [0xB11E0, .rodata, libultra/devmgr]
+      - [0xB1200, rodata, libultra/libm_vals]
+      - [0xB1210, .rodata, libultra/xprintf]
+      - [0xB1310, .rodata, libultra/xldtob]
       # not really sure exact offsets for these...
       - { start: 0xB1370, type: databin, name: data_audio,       linker_section_order: .rodata }
       - { start: 0xB1630, type: databin, name: data_unk,         linker_section_order: .rodata }
@@ -439,28 +439,28 @@ segments:
       - { type: bss, vram: 0x80102F90, name: diCpu }
       - { type: bss, vram: 0x80103440, name: fx }
       - { type: bss, vram: 0x80104870, name: font }
-      - { type: bss, vram: 0x80104DE0, name: pimgr }
+      - { type: bss, vram: 0x80104DE0, name: libultra/pimgr }
       - { type: .bss, vram: 0x80105220, name: rzip }
       - { type: bss, vram: 0x80105230, name: subtitles }
       - { type: bss, vram: 0x80105280, name: anim }
       - { type: bss, vram: 0x801054B0, name: hit }
       - { type: .bss, vram: 0x80105B20, name: fmvInit }
-      - { type: bss, vram: 0x80105B70, name: flashinit }
+      - { type: bss, vram: 0x80105B70, name: libultra/flashinit }
       - { type: bss, vram: 0x80105C30, name: gsSnd }
-      - { type: bss, vram: 0x80105CA0, name: n_csplayer }
-      - { type: bss, vram: 0x80105CE0, name: alsurround }
-      - { type: bss, vram: 0x80105CF0, name: n_event }
-      - { type: bss, vram: 0x80105D00, name: initialize }
-      - { type: bss, vram: 0x80105D10, name: seteventmesg }
-      - { type: bss, vram: 0x80105D90, name: libultra_controller }
-      - { type: bss, vram: 0x80105E20, name: pfsisplug }
-      - { type: bss, vram: 0x80105E60, name: siacs }
-      - { type: bss, vram: 0x80105E80, name: cartrominit }
-      - { type: bss, vram: 0x80105F00, name: vimgr }
-      - { type: bss, vram: 0x80106220, name: sptask }
-      - { type: bss, vram: 0x80106260, name: piacs }
+      - { type: bss, vram: 0x80105CA0, name: libultra/n_csplayer }
+      - { type: bss, vram: 0x80105CE0, name: libultra/alsurround }
+      - { type: bss, vram: 0x80105CF0, name: libultra/n_event }
+      - { type: bss, vram: 0x80105D00, name: libultra/initialize }
+      - { type: bss, vram: 0x80105D10, name: libultra/seteventmesg }
+      - { type: bss, vram: 0x80105D90, name: libultra/controller }
+      - { type: bss, vram: 0x80105E20, name: libultra/pfsisplug }
+      - { type: bss, vram: 0x80105E60, name: libultra/siacs }
+      - { type: bss, vram: 0x80105E80, name: libultra/cartrominit }
+      - { type: bss, vram: 0x80105F00, name: libultra/vimgr }
+      - { type: bss, vram: 0x80106220, name: libultra/sptask }
+      - { type: bss, vram: 0x80106260, name: libultra/piacs }
       - { type: .bss, vram: 0x80106280, name: libultra/exceptasm }
-      - { type: bss, vram: 0x80106430, name: timerintr }
+      - { type: bss, vram: 0x80106430, name: libultra/timerintr }
 
   - name: assets
     type: bin

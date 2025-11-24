@@ -1,5 +1,10 @@
 #include "common.h"
 
+const char D_800AD890[] = "CRITICAL ERROR: objSetupObject() returned NULL\n";
+const char D_800AD8C0[] = "GFDS:%d ???\n";
+const char D_800AD8D0[] = "**** WARNING: Duplicate squadron ID:%d ****\n";
+const char D_800AD900[] = "WARNING:Can't lock to node, no nodes\n";
+
 // .data
 u32 *BaddyDataArray = NULL; // Effectively unused
 u32 *D_800A4334 = NULL;     // Unknown type

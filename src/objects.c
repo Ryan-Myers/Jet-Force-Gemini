@@ -1,6 +1,23 @@
 #include "common.h"
 #include "math.h"
 
+const char D_800AAB50[] = "Objects out of ram(1) !!\n";
+const char D_800AAB6C[] = "Char %d, Disguise %d\n";
+const char D_800AAB84[] = "Found Boss Control At %d,%d,%d,%08x\n";
+const char D_800AABAC[] = "ObjSetupObject(1) Memory fail!!\n";
+const char D_800AABD0[] = "ObjSetupObject(2) Memory fail!!\n";
+const char D_800AABF4[] = "ObjSetupObject(5) Memory fail!!\n";
+const char D_800AAC18[] = "ObjSetupObject(6) Memory fail!!\n";
+const char D_800AAC3C[] = "ObjSetupObject(3) Memory fail!!\n";
+const char D_800AAC60[] = "ObjList Overflow %d!!!\n";
+const char D_800AAC78[] = "NoAddObjList Overflow %d!!!\n";
+const char D_800AAC98[] = "ObjSetupObject(4) Memory fail!!\n";
+const char D_800AACBC[] = "objSetupObject: clone shadow set up failed\n";
+const char D_800AACE8[] = "objSetupObject: clone blob shadow set up failed\n";
+const char D_800AAD1C[] = "objSetupChild: memory fail\n";
+const char D_800AAD38[] = "stable\n";
+const char D_800AAD40[] = "WARNING:%s (%x) already registered its dependancy with %s (%x)!\n";
+
 void resetVars(void) {
     D_800F3860 = 1;
     D_800F386C = 0;

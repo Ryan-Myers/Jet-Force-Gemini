@@ -36,7 +36,7 @@ UNUSED void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
         rumblePak = &D_800FEC68[controllerNum];
         if (rumblePak->state.upper != 2) {
             rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
-            rumblePak->unk2 = ((arg1 * arg1) * D_800AD4FC);
+            rumblePak->unk2 = ((arg1 * arg1) * 0.1000000015f);
             rumblePak->unk4 = rumblePak->unk2;
             rumblePak->rumbleTime = (arg2 * 60.0f);
         }
@@ -68,7 +68,7 @@ void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
         controllerNum = joyGetController(controllerIndex);
         rumblePak = &D_800FEC6A[controllerNum];
         if (arg1 != 0) {
-            rumblePak->state.half = ((arg1 * arg1) * D_800AD500);
+            rumblePak->state.half = ((arg1 * arg1) * 0.1000000015f);
         }
         rumblePak = &D_800FEC68[controllerNum];
         if (rumblePak->state.upper != 2 && arg2 != 0.0f) {
@@ -87,7 +87,7 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
         controllerNum = joyGetController(controllerIndex);
         rumblePak = &D_800FEC68[controllerNum];
         if (arg1 != 0) {
-            arg1 = ((arg1 * arg1) * D_800AD504);
+            arg1 = ((arg1 * arg1) * 0.1000000015f);
             if (rumblePak->unk2 < arg1) {
                 rumblePak->unk2 = arg1;
             }

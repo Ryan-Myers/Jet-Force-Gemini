@@ -52,7 +52,25 @@ void *memset(void *s, int c, size_t n) {
     return s;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diprint/_itoa.s")
+const char _itoa_lower_digits[] = "0123456789abcdefghijklmnopqrstuvwxyz";
+const char _itoa_upper_digits[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+/**
+ * Standard C Library function that converts integers to strings.
+ * Exact match to glibc 1.09 version.
+ */
+char *_itoa(unsigned long long int n, char *buflim, unsigned int base, int upper_case) {
+    /* Base-36 digits for numbers. */
+    const char *alphabet = upper_case ? _itoa_upper_digits : _itoa_lower_digits;
+    register char *bp = buflim;
+
+    while (n > 0) {
+        *(--bp) = alphabet[n % base];
+        n /= base;
+    }
+
+    return bp;
+}
 
 void sprintfSetSpacingCodes(s32 arg0) {
     D_800A6D40 = arg0;
@@ -64,6 +82,10 @@ UNUSED int sprintf(char *s, const char *fmt, ...) {
     vsprintf(s, fmt, args);
     va_end(args);
 }
+
+const char D_800AE450[] = "";
+const char D_800AE454[] = "(null)";
+const char D_800AE45C[] = "(nil)";
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diprint/vsprintf.s")
 
@@ -79,6 +101,7 @@ s32 diPrintf(const char *format, ...) {
     s32 written;
     va_start(args, format);
     if ((D_800A6D44 - D_80101640) > 0x800) {
+        stubbed_printf("*** diPrintf Error *** ---> Out of string space. (Print less text!)\n");
         return -1;
     }
     sprintfSetSpacingCodes(1);
@@ -149,7 +172,7 @@ void diPrintfSetXY(u16 x, u16 y) {
     RENDER_PRINTF_CMD_SET_POSITION(x, y)
 }
 
-// Same as func_800B653C in DKR
+// Same as debug_text_parse in DKR
 #pragma GLOBAL_ASM("asm/nonmatchings/diprint/func_80065CB4.s")
 
 void func_800660D4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry) {
@@ -163,7 +186,7 @@ void func_800660D4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry) {
     }
 }
 
-// Same as func_800B69FC in DKR
+// Same as debug_text_character in DKR
 // Loads a font texture and returns the width of the character given.
 s32 func_80066174(Gfx **dList, s32 asciiVal) {
     s32 fontCharWidth;
@@ -210,6 +233,7 @@ s32 func_80066174(Gfx **dList, s32 asciiVal) {
     return fontCharWidth;
 }
 
+// debug_text_bounds in DKR
 void func_800665C8(void) {
     if (D_80101F70 <= 320) {
         D_80101F5C = 16;
@@ -227,11 +251,13 @@ void func_800665C8(void) {
     }
 }
 
+// debug_text_origin in DKR
 void func_80066658(void) {
     D_80101F4C = D_80101F5C;
     D_80101F4E = D_80101F64;
 }
 
+// debug_text_newline in DKR
 void func_8006667C(void) {
     D_80101F4C = D_80101F5C;
     D_80101F4E += 11;
