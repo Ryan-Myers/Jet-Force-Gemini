@@ -73,7 +73,7 @@ EXPORT(__osCauseTable_pt)
 
 .data
 
-#if 1
+#if BUILD_VERSION >= VERSION_J || JFGDIFFS
 EXPORT(__osHwIntTable)
     .word 0, 0
     .word 0, 0
@@ -460,7 +460,14 @@ savecontext:
      */
     la      t0, __OSGlobalIntMask
     lw      t0, 0(t0)
-#if 0
+#if JFGDIFFS
+    xor     t0, t0, ~0 /* not except not using not */
+    andi    t0, t0, SR_IMASK
+    or      t1, t1, t0
+    and     k1, k1, ~SR_IMASK
+    or      k1, k1, t1
+    sw      k1, THREAD_SR(k0)
+#else
     xor     t2, t0, ~0 /* not except not using not */
     andi    t2, t2, SR_IMASK
     or      ta0, t1, t2
@@ -471,13 +478,6 @@ savecontext:
     and     t1, t1, t0
     and     k1, k1, ~SR_IMASK
     or      k1, k1, t1
-#else
-    xor     t0, t0, ~0 /* not except not using not */
-    andi    t0, t0, SR_IMASK
-    or      t1, t1, t0
-    and     k1, k1, ~SR_IMASK
-    or      k1, k1, t1
-    sw      k1, THREAD_SR(k0)
 #endif
 savercp:
 
@@ -508,6 +508,7 @@ endrcp:
     CFC1(   t0, fcr31)
     NOP
     sw      t0, THREAD_FPCSR(k0)
+#if JFGDIFFS
     sdc1    $f0, THREAD_FP0(k0)
     sdc1    $f1, THREAD_FP1(k0)
     sdc1    $f2, THREAD_FP2(k0)
@@ -540,6 +541,24 @@ endrcp:
     sdc1    $f29, THREAD_FP29(k0)
     sdc1    $f30, THREAD_FP30(k0)
     sdc1    $f31, THREAD_FP31(k0)
+#else
+    sdc1    $f0, THREAD_FP0(k0)
+    sdc1    $f2, THREAD_FP2(k0)
+    sdc1    $f4, THREAD_FP4(k0)
+    sdc1    $f6, THREAD_FP6(k0)
+    sdc1    $f8, THREAD_FP8(k0)
+    sdc1    $f10, THREAD_FP10(k0)
+    sdc1    $f12, THREAD_FP12(k0)
+    sdc1    $f14, THREAD_FP14(k0)
+    sdc1    $f16, THREAD_FP16(k0)
+    sdc1    $f18, THREAD_FP18(k0)
+    sdc1    $f20, THREAD_FP20(k0)
+    sdc1    $f22, THREAD_FP22(k0)
+    sdc1    $f24, THREAD_FP24(k0)
+    sdc1    $f26, THREAD_FP26(k0)
+    sdc1    $f28, THREAD_FP28(k0)
+    sdc1    $f30, THREAD_FP30(k0)
+#endif
 1:
     /*
      * Determine the cause of the exception or interrupt and
@@ -638,7 +657,7 @@ counter:
  *  Signalled by the N64 Disk Drive
  */
 cart:
-#if 1
+#if BUILD_VERSION >= VERSION_J || JFGDIFFS
     /* Mask out interrupt */
     and     s0, s0, ~CAUSE_IP4
     /* Load cart callback set by __osSetHWIntrRoutine */
@@ -678,9 +697,7 @@ cart:
 
     /* Set up a stack and run the callback */
     jalr    t2
-#if BUILD_VERSION >= VERSION_H
     li      a0, MESG(OS_EVENT_CART)
-#endif
 
     beqz    v0, 1f
     /* Redispatch immediately if the callback returned nonzero */
@@ -724,10 +741,10 @@ rcp:
     /* Mask out SP interrupt */
     andi    s1, s1, (MI_INTR_SI | MI_INTR_AI | MI_INTR_VI | MI_INTR_PI | MI_INTR_DP)
     lw      ta0, PHYS_TO_K1(SP_STATUS_REG)
-#if 0
-    li      t1, (SP_CLR_INTR | SP_CLR_SIG3)
-#else
+#if JFGDIFFS
     li      t1, SP_CLR_INTR
+#else
+    li      t1, (SP_CLR_INTR | SP_CLR_SIG3)
 #endif
 
     /* Clear interrupt and signal 3 */
@@ -826,7 +843,7 @@ pi:
     li      t1, PI_STATUS_CLR_INTR
     sw      t1, PHYS_TO_K1(PI_STATUS_REG)
 
-#if 1
+#if BUILD_VERSION >= VERSION_J || JFGDIFFS
     /* Load pi callback */
     la      t1, __osPiIntTable
     lw      t2, (t1)
@@ -935,7 +952,9 @@ sw1:
     /* Mask out interrupt and continue */
     and     s0, s0, ~CAUSE_SW1
     b       next_interrupt
+#if JFGDIFFS
     nop
+#endif
 
 handle_break:
     /* Set last thread as having hit a break exception */
@@ -1118,6 +1137,7 @@ LEAF(__osEnqueueAndYield)
     beqz    k1, 1f
     cfc1    k1, fcr31
     sw      k1, THREAD_FPCSR(a1)
+#if JFGDIFFS
     sdc1    $f20, THREAD_FP20(a1)
     sdc1    $f21, THREAD_FP21(a1)
     sdc1    $f22, THREAD_FP22(a1)
@@ -1130,6 +1150,14 @@ LEAF(__osEnqueueAndYield)
     sdc1    $f29, THREAD_FP29(a1)
     sdc1    $f30, THREAD_FP30(a1)
     sdc1    $f31, THREAD_FP31(a1)
+#else
+    sdc1    $f20, THREAD_FP20(a1)
+    sdc1    $f22, THREAD_FP22(a1)
+    sdc1    $f24, THREAD_FP24(a1)
+    sdc1    $f26, THREAD_FP26(a1)
+    sdc1    $f28, THREAD_FP28(a1)
+    sdc1    $f30, THREAD_FP30(a1)
+#endif
 1:
     lw      k1, THREAD_SR(a1)
     andi    t1, k1, SR_IMASK
@@ -1318,6 +1346,7 @@ __osDispatchThreadSave:
 
     lw      k1, THREAD_FPCSR(k0)
     CTC1(   k1, fcr31)
+#if JFGDIFFS
     ldc1    $f0, THREAD_FP0(k0)
     ldc1    $f1, THREAD_FP1(k0)
     ldc1    $f2, THREAD_FP2(k0)
@@ -1350,6 +1379,24 @@ __osDispatchThreadSave:
     ldc1    $f29, THREAD_FP29(k0)
     ldc1    $f30, THREAD_FP30(k0)
     ldc1    $f31, THREAD_FP31(k0)
+#else
+    ldc1    $f0, THREAD_FP0(k0)
+    ldc1    $f2, THREAD_FP2(k0)
+    ldc1    $f4, THREAD_FP4(k0)
+    ldc1    $f6, THREAD_FP6(k0)
+    ldc1    $f8, THREAD_FP8(k0)
+    ldc1    $f10, THREAD_FP10(k0)
+    ldc1    $f12, THREAD_FP12(k0)
+    ldc1    $f14, THREAD_FP14(k0)
+    ldc1    $f16, THREAD_FP16(k0)
+    ldc1    $f18, THREAD_FP18(k0)
+    ldc1    $f20, THREAD_FP20(k0)
+    ldc1    $f22, THREAD_FP22(k0)
+    ldc1    $f24, THREAD_FP24(k0)
+    ldc1    $f26, THREAD_FP26(k0)
+    ldc1    $f28, THREAD_FP28(k0)
+    ldc1    $f30, THREAD_FP30(k0)
+#endif
 
 1:
     /*
