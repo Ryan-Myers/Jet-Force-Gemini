@@ -78,8 +78,8 @@ extern "C" {
  *	SIM (SI Manager)
  *
  */
-#ifdef RAREDIFFS
-#define OS_PIM_STACKSIZE	256
+#ifdef JFGDIFFS
+#define OS_PIM_STACKSIZE	256+128
 #define OS_VIM_STACKSIZE	256
 #else
 #define OS_PIM_STACKSIZE	4096

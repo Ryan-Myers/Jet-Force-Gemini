@@ -1,1 +1,1 @@
-python3 tools/asm-differ/diff.py "$@"
+.venv/bin/python3 tools/asm-differ/diff.py "$@"

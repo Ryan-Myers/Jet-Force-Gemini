@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/include/*",
+                "${workspaceFolder}/libultra/*",
+                "${workspaceFolder}/include/PR/*"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu89",
+            "intelliSenseMode": "linux-gcc-x86"
+        }
+    ],
+    "version": 4
+}

@@ -1,0 +1,31 @@
+{
+    "C_Cpp.default.defines": [
+        "BUILD_VERSION=6",
+        "REGION=us",
+        "VERSION=kiosk",
+        "_FINAL_ROM",
+        "NDEBUG",
+        "TARGET_N64",
+        "F3DDKR_GBI",
+        "VERSION_us_v77",
+        "NON_MATCHING",
+        "AVOID_UB",
+        "ANTI_TAMPER",
+        "_MIPS_SZLONG=32",
+        "_LANGUAGE_C",
+        "CIC_ID=6103",
+        "RAREDIFFS",
+        "JFGDIFFS"
+    ],
+    "files.associations": {
+        "*.c": "c",
+        "*.h": "c",
+        "cstdint": "c",
+        "optional": "c",
+        "ranges": "c",
+        "regex": "c",
+        "ratio": "c",
+        "random": "c",
+        "chrono": "c"
+    }
+}
