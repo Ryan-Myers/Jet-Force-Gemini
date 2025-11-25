@@ -48,6 +48,40 @@
 #define THREAD_BADVADDR  292
 #define THREAD_RCP       296
 #define THREAD_FPCSR     300
+#ifdef JFGDIFFS
+#define THREAD_FP0       304
+#define THREAD_FP1       312
+#define THREAD_FP2       320
+#define THREAD_FP3       328
+#define THREAD_FP4       336
+#define THREAD_FP5       344
+#define THREAD_FP6       352
+#define THREAD_FP7       360
+#define THREAD_FP8       368
+#define THREAD_FP9       376
+#define THREAD_FP10      384
+#define THREAD_FP11      392
+#define THREAD_FP12      400
+#define THREAD_FP13      408
+#define THREAD_FP14      416
+#define THREAD_FP15      424
+#define THREAD_FP16      432
+#define THREAD_FP17      440
+#define THREAD_FP18      448
+#define THREAD_FP19      456
+#define THREAD_FP20      464
+#define THREAD_FP21      472
+#define THREAD_FP22      480
+#define THREAD_FP23      488
+#define THREAD_FP24      496
+#define THREAD_FP25      504
+#define THREAD_FP26      512
+#define THREAD_FP27      520
+#define THREAD_FP28      528
+#define THREAD_FP29      536
+#define THREAD_FP30      544
+#define THREAD_FP31      552
+#else
 #define THREAD_FP0       304
 #define THREAD_FP2       312
 #define THREAD_FP4       320
@@ -64,5 +98,6 @@
 #define THREAD_FP26      408
 #define THREAD_FP28      416
 #define THREAD_FP30      424
+#endif
 
 #endif

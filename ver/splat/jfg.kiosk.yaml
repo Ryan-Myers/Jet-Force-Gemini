@@ -98,7 +98,7 @@ segments:
       - [0x751F0, c, ../libultra/src/io/leointerrupt]
       - [0x75200, hasm, hasm/gen_anim_data]
       - [0x761D0, asm, hasm/conv_mult_matrix]
-      - [0x763A0, hasm, libultra/exceptasm]
+      - [0x763A0, hasm, ../libultra/src/os/exceptasm]
       - [0x76D50, c, libultra/createthread]
       - [0x76E40, c, libultra/perspective]
       - [0x76FC0, c, refractOutputAssembler] # Could be hasm as it uses bnel which isn't mips1
@@ -318,7 +318,7 @@ segments:
       - [0xA8560, .data, rzip]
       - [0xA8570, data, subtitles]
       - [0xA8580, .data, hasm/gen_anim_data] # Has a jump table that's data, and not rodata. Splat likes to warn about this.
-      - [0xA8A40, .data, libultra/exceptasm]
+      - [0xA8A40, .data, ../libultra/src/os/exceptasm]
       - [0xA8A70, data, anim]
       - [0xA8B50, .data, hasm/math_data_tables]
       - [0xAAB60, data, osBootRamTest]
@@ -379,7 +379,7 @@ segments:
       - [0xB0430, .rodata, fx]
       - [0xB05C0, .rodata, font]
       - [0xB05E0, .rodata, hasm/inflate]
-      - [0xB06D0, .rodata, libultra/exceptasm]
+      - [0xB06D0, .rodata, ../libultra/src/os/exceptasm]
       - [0xB0720, .rodata, libultra/perspective]
       - [0xB0730, .rodata, anim]
       - [0xB09B0, .rodata, hit]
@@ -465,7 +465,7 @@ segments:
       - { type: bss, vram: 0x80105F00, name: libultra/vimgr }
       - { type: bss, vram: 0x80106220, name: libultra/sptask }
       - { type: bss, vram: 0x80106260, name: libultra/piacs }
-      - { type: .bss, vram: 0x80106280, name: libultra/exceptasm }
+      - { type: .bss, vram: 0x80106280, name: ../libultra/src/debug/kdebugserver }
       - { type: bss, vram: 0x80106430, name: libultra/timerintr }
 
   - name: assets

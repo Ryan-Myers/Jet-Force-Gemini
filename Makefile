@@ -107,6 +107,7 @@ endif
 AS       = $(CROSS)as
 LD       = $(CROSS)ld
 OBJCOPY  = $(CROSS)objcopy
+STRIP    = $(CROSS)strip
 VENV     = .venv
 PYTHON   = $(VENV)/bin/python3
 GCC      = gcc
@@ -187,6 +188,9 @@ ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/%.c.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/xldtob.c.o: OPT_FLAGS := -O3
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/xldtob.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/%.s.o: OPT_FLAGS := -O2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/%.s.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/exceptasm.s.o: MIPSISET := -mips3 -32
 
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/%.c.o: OPT_FLAGS := -O3
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/mips1/%.c.o: OPT_FLAGS := -O2
@@ -346,6 +350,15 @@ $(BUILD_DIR)/%.c.o: %.c
 # 	$(call print,Compiling mips3:,$<,$@)
 # 	@$(CC) -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
 # 	$(V)$(PYTHON) $(TOOLS_DIR)/patchmips3.py $@ || rm $@
+
+# libultra asm files - Compile with the ido compiler
+$(BUILD_DIR)/$(LIBULTRA_DIR)/%.s.o: $(LIBULTRA_DIR)/%.s
+	$(call print,Assembling Libultra:,$<,$@)
+	$(V)$(CC) -c $(CFLAGS) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+	$(V)$(STRIP) --strip-unneeded $@
+	@if [ "$(MIPSISET)" = "-mips3 -32" ]; then \
+		$(PYTHON) $(TOOLS_DIR)/patchmips3.py $@ || rm $@; \
+	fi
 
 $(BUILD_DIR)/%.s.o: %.s
 	$(call print,Assembling:,$<,$@)
