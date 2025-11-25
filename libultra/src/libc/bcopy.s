@@ -227,6 +227,4 @@ glabel bcopy
 /* CAC98 800CA098 24C6FFFC */  addiu      $a2, $a2, -0x4
 /* CAC9C 800CA09C 1000FFF8 */  b          .L800CA080
 /* CACA0 800CA0A0 ACA20000 */   sw        $v0, 0x0($a1)
-/* CACA4 800CA0A4 00000000 */  nop
-/* CACA8 800CA0A8 00000000 */  nop
-/* CACAC 800CA0AC 00000000 */  nop
+endlabel bcopy

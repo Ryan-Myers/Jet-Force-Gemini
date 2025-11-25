@@ -56,4 +56,4 @@ glabel bzero
 .L800D0574:
 /* D1174 800D0574 03E00008 */  jr         $ra
 /* D1178 800D0578 00000000 */   nop
-/* D117C 800D057C 00000000 */  nop
+endlabel bzero

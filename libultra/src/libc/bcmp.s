@@ -91,4 +91,4 @@ glabel bcmp
 .L800CE164:
 /* CED64 800CE164 03E00008 */  jr         $ra
 /* CED68 800CE168 24020001 */   addiu     $v0, $zero, 0x1
-/* CED6C 800CE16C 00000000 */  nop
+endlabel bcmp
