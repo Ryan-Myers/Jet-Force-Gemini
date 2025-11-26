@@ -1,68 +1,99 @@
 #!/usr/bin/env python3
 
-import argparse, os, subprocess, sys
-from pathlib import Path
+import argparse
+import os
+import sys
+import subprocess
+import tempfile
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
-root_dir = script_dir + "/../"
+root_dir = os.path.abspath(os.path.join(script_dir, ".."))
 src_dir = root_dir + "src/"
-lib_dir = root_dir + "libultra/"
 
+# Project-specific
+CPP_FLAGS = [
+    "-Iinclude",
+    "-Iinclude/libc",
+    "-Iinclude/PR",
+    "-Iinclude/sys",
+    "-Iassets",
+    "-Isrc",
+    "-Ilibultra",
+    "-Ilibultra/src/gu",
+    "-Ilibultra/src/libc",
+    "-Ilibultra/src/io",
+    "-Ilibultra/src/sc",
+    "-Ilibultra/src/audio",
+    "-Ilibultra/src/os",
+    "-D_LANGUAGE_C",
+    "-DF3DDKR_GBI",
+    "-D_MIPS_SZLONG=32",
+    "-DBUILD_VERSION=4",
+    "-DTARGET_N64",
+    "-D_FINALROM",
+    "-DNDEBUG",
+    "-DVERSION_us_v77",
+    "-DANTI_TAMPER",
+    "-D BUILD_VERSION_STRING=\"2.0G\"",
+    "-DM2CTX",
+    "-D__sgi",
+    "-DCIC_ID=6103",
+    "-U__GNUC__",
+]
 
-def get_c_dir(dirname):
-    for root, dirs, files in os.walk(src_dir):
-        for directory in dirs:
-            if directory == dirname:
-                return os.path.join(root, directory)
-    for root, dirs, files in os.walk(lib_dir):
-        for directory in dirs:
-            if directory == dirname:
-                return os.path.join(root, directory)
-
-
-def get_c_file(directory):
-    for root, dirs, files in os.walk(directory):
-        for file in files:
-            if file.endswith(".c") and "data" not in file:
-                return file
-
-
-def import_c_file(in_file):
+def import_c_file(in_file) -> str:
     in_file = os.path.relpath(in_file, root_dir)
-    cpp_command = ["gcc", "-E", "-P", "-Iinclude", "-I.", "-Iassets", "-Isrc", "-undef", "-D__sgi", "-D_LANGUAGE_C", "-D_MIPS_SZLONG=32"
-                   "-DNON_MATCHING", "-D_Static_assert(x, y)=", "-D__attribute__(x)=", in_file]
+
+    cpp_command = ["gcc", "-E", "-P", "-dD", *CPP_FLAGS, in_file]
+
+    with tempfile.NamedTemporaryFile(suffix=".c") as tmp:
+        stock_macros = subprocess.check_output(["gcc", "-E", "-P", "-dM", tmp.name], cwd=root_dir, encoding="utf-8")
+
     try:
-        return subprocess.check_output(cpp_command, cwd=root_dir, encoding="utf-8")
+        out_text = subprocess.check_output(cpp_command, cwd=root_dir, encoding="utf-8")
     except subprocess.CalledProcessError:
         print(
             "Failed to preprocess input file, when running command:\n"
-            + cpp_command,
+            + " ".join(cpp_command),
             file=sys.stderr,
-        )
+            )
         sys.exit(1)
 
+    if not out_text:
+        print("Output is empty - aborting")
+        sys.exit(1)
+
+    defines = {}
+    source_lines = []
+    for line in out_text.splitlines(keepends=True):
+        if line.startswith("#define"):
+            sym = line.split()[1].split("(")[0]
+            defines[sym] = line
+        elif line.startswith("#undef"):
+            sym = line.split()[1]
+            if sym in defines:
+                del defines[sym]
+        else:
+            source_lines.append(line)
+
+    for line in stock_macros.strip().splitlines():
+        sym = line.split()[1].split("(")[0]
+        if sym in defines:
+            del defines[sym]
+
+    return "".join(defines.values()) + "".join(source_lines)
 
 def main():
-    parser = argparse.ArgumentParser(usage="./m2ctx.py path/to/file.c",
-                                     description="Creates a ctx.c file for mips2c. "
-                                     "Output will be saved as oot/ctx.c")
-    parser.add_argument('filepath', help="path of c file to be processed")
+    parser = argparse.ArgumentParser(
+        description="""Create a context file which can be used for m2c / decomp.me"""
+    )
+    parser.add_argument(
+        "c_file",
+        help="""File from which to create context""",
+    )
     args = parser.parse_args()
 
-    if args.filepath:
-        c_file_path = args.filepath
-        print("Using file: {}".format(c_file_path))
-    else:
-        this_dir = Path.cwd()
-        c_dir_path = get_c_dir(this_dir.name)
-        if c_dir_path is None:
-            sys.exit(
-                "Cannot find appropriate c file dir. In argumentless mode, run this script from the c file's corresponding asm dir.")
-        c_file = get_c_file(c_dir_path)
-        c_file_path = os.path.join(c_dir_path, c_file)
-        print("Using file: {}".format(c_file_path))
-
-    output = import_c_file(c_file_path)
+    output = import_c_file(args.c_file)
 
     with open(os.path.join(root_dir, "ctx.c"), "w", encoding="UTF-8") as f:
         f.write(output)
