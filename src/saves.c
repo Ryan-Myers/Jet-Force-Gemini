@@ -445,7 +445,7 @@ SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char *
 
     files_used = maxNumOfFilesOnCpak * 24;
     sPackDirectory = mmAlloc(files_used, COLOUR_TAG_BLACK);
-    _blkclr(sPackDirectory, files_used);
+    bzero(sPackDirectory, files_used);
     temp_D_800DE440 = sPackDirectory;
 
     // TODO: There's probably an unidentified struct here

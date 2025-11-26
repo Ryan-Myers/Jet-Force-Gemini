@@ -28,7 +28,7 @@ OSPiHandle* osFlashInit(void) {
     __osFlashHandler.domain = PI_DOMAIN2;
     __osFlashHandler.speed = 0;
 
-    _blkclr(&__osFlashHandler.transferInfo, sizeof(__OSTranxInfo));
+    bzero(&__osFlashHandler.transferInfo, sizeof(__OSTranxInfo));
 
     osEPiLinkHandle(&__osFlashHandler);
     osFlashReadId(&flash_type, &flash_maker);

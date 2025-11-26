@@ -278,7 +278,7 @@ void render_epc_lock_up_display(epcInfo *arg0);
 
 void diCpuTraceMallocFault(s32 epc, s32 size, u32 colourTag) {
     epcInfo epcinfo;
-    _blkclr(&epcinfo, sizeof(epcInfo));
+    bzero(&epcinfo, sizeof(epcInfo));
     epcinfo.epc = epc & 0xFFFFFFFFFFFFFFFF;
     epcinfo.a0 = size;
     epcinfo.a1 = colourTag;

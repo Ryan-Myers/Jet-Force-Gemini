@@ -79,7 +79,7 @@ void huft_build(u32 *b, u32 n, u32 s, u16 *d, u16 *e, huft **t, s32 *m) {
     u32 z;                   /* number of entries in current table */
 
     /* Generate counts for each bit length */
-    _blkclr(c, sizeof(c));
+    bzero(c, sizeof(c));
     p = b;
     i = n;
     do {
