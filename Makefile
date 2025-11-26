@@ -43,7 +43,7 @@ SRC_DIR   = src
 MATH_DIR  = $(SRC_DIR)/math
 OLD_LIBULTRA_DIR = $(SRC_DIR)/libultra
 LIBULTRA_DIR = libultra
-ASM_DIRS  = asm asm/data asm/nonmatchings asm/data/libultra asm/hasm asm/libultra
+ASM_DIRS  = asm asm/data asm/nonmatchings asm/data/libultra asm/hasm asm/libultra asm/libultra/src/flash
 HASM_DIRS = $(SRC_DIR)/hasm $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc $(OLD_LIBULTRA_DIR)
 LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src $(LIBULTRA_DIR)/src/audio $(LIBULTRA_DIR)/src/audio/mips1 
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io
@@ -193,7 +193,7 @@ $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/perspective.c.o: MIPSISET := -mips1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/%.s.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/%.s.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/exceptasm.s.o: MIPSISET := -mips3 -32
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/flash/flashreinit.c.o: MIPSISET := -mips1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/flash/%.c.o: MIPSISET := -mips1
 
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/%.c.o: OPT_FLAGS := -O3
 # $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/mips1/%.c.o: OPT_FLAGS := -O2

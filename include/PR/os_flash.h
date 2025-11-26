@@ -37,10 +37,15 @@ extern "C" {
 #define FLASH_VERSION_MX_B_AND_D    0x00c2001d
 #define FLASH_VERSION_MEI           0x003200f1
 
+#ifdef JFGDIFFS
+#define OLD_FLASH   0x40
+#define NEW_FLASH   0x80
+#else
 /* OLD_FLASH is MX_PROTO_A, MX_A and MX_C */
 #define OLD_FLASH   0
 /* NEW_FLASH is MX_B_AND_D and MATSUSHITA flash */
 #define NEW_FLASH   1
+#endif
 
 #define FLASH_STATUS_ERASE_BUSY     2
 #define FLASH_STATUS_ERASE_OK       0
