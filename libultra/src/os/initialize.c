@@ -15,7 +15,11 @@ extern OSPiHandle __Dom1SpeedParam;
 extern OSPiHandle __Dom2SpeedParam;
 
 OSTime osClockRate = OS_CLOCK_RATE;
+#ifdef RAREDIFFS
+extern s32 osViClock;
+#else
 s32 osViClock = VI_NTSC_CLOCK;
+#endif
 u32 __osShutdown = 0;
 u32 __OSGlobalIntMask = OS_IM_ALL;
 #ifdef _FINALROM

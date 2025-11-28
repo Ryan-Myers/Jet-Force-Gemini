@@ -1243,6 +1243,7 @@ __ll_to_f = 0x800940DC;
 __ull_to_d = 0x800940F4;
 __ull_to_f = 0x80094128;
 osInitialize = 0x80094160;
+createSpeedParam = 0x800943C8;
 osSetThreadPri = 0x80094440;
 osSetEventMesg = 0x80094520;
 osContInit = 0x80094590;
@@ -1373,7 +1374,29 @@ __osResetGlobalIntMask = 0x8009C320;
 __osEPiRawWriteIo = 0x8009C380;
 __osEPiRawReadIo = 0x8009C4E0;
 __osSetGlobalIntMask = 0x8009C640;
+
+osViModePalLpn1 = 0x800AA460;
+osViModeMpalLpn1 = 0x800AA4B0;
+osViModeNtscLpn1 = 0x800AA500;
+
+osViModeNtscLan1 = 0x800AA550;
+osViModeNtscHpn1 = 0x800AA5A0;
+osViModeNtscHaf1 = 0x800AA5F0;
+
+osViModeMpalLan1 = 0x800AA640;
+osViModeMpalHpn1 = 0x800AA690;
+osViModeMpalHaf1 = 0x800AA6E0;
+
+osViModePalLan1 = 0x800AA730;
+osViModePalHpn1 = 0x800AA780;
+osViModePalHaf1 = 0x800AA7D0;
+
+vi_static0 = 0x800AA850;
+vi_static1 = 0x800AA880;
+__osViCurr = 0x800AA8B0;
+__osViNext = 0x800AA8B4;
 __osActiveQueue = 0x800AA83C;
+osViClock = 0x800AA8B8;
 osYieldThread = 0x8009C690;
 _Putfld = 0x8009C6E0;
 _Printf = 0x8009CD50;
@@ -1891,9 +1914,11 @@ ldigs = 0x800AA920; // type:asciz
 udigs = 0x800AA934; // type:asciz
 
 __osThreadSave = 0x80106280;
+__osThreadTail = 0x800AA830;
 __osRunQueue = 0x800AA838;
 __osIntOffTable = 0x800AFAD0;
 __osIntTable = 0x800AFAF0; // size:0x24
+osClockRate = 0x800AA400; // type:u64
 __osShutdown = 0x800AA408;
 __OSGlobalIntMask = 0x800AA40C;
 __osFaultedThread = 0x800AA844;

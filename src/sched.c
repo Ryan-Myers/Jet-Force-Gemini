@@ -42,9 +42,9 @@ void __scYield(OSSched *s);
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
 void func_80050670(OSSched *sc);
 
-extern OSViMode D_800AA460; // PAL
-extern OSViMode D_800AA4B0; // MPAL
-extern OSViMode D_800AA500; // NTSC
+extern OSViMode osViModePalLpn1; // PAL
+extern OSViMode osViModeMpalLpn1; // MPAL
+extern OSViMode osViModeNtscLpn1; // NTSC
 
 extern OSTime D_800FF668;
 // OSTime D_800FF668; //gYieldTime
@@ -68,13 +68,13 @@ void osCreateScheduler(OSSched *sc, void *stack, OSPri priority, u8 mode, u8 num
     osCreateViManager(OS_PRIORITY_VIMGR);
     switch (mode) {
         case OS_VI_PAL_LPN1:
-            osViSetMode(&D_800AA460);
+            osViSetMode(&osViModePalLpn1);
             break;
         case OS_VI_MPAL_LPN1:
-            osViSetMode(&D_800AA4B0);
+            osViSetMode(&osViModeMpalLpn1);
             break;
         default:
-            osViSetMode(&D_800AA500);
+            osViSetMode(&osViModeNtscLpn1);
             break;
     }
     osViBlack(TRUE);

@@ -953,7 +953,7 @@ sw1:
     and     s0, s0, ~CAUSE_SW1
     b       next_interrupt
 #if JFGDIFFS
-    nop
+    NOP
 #endif
 
 handle_break:
