@@ -1,7 +1,6 @@
 #include "PR/os_internal.h"
 #include "PR/rcp.h"
 #include "PRinternal/piint.h"
-#include "PR/os_internal_exception.h"
 
 void __osDevMgrMain(void* args) {
     OSIoMesg* mb;
@@ -43,7 +42,6 @@ void __osDevMgrMain(void* args) {
 
         readblock1:
             osRecvMesg(dm->evtQueue, &em, OS_MESG_BLOCK);
-#ifndef RAREDIFFS
             info = &mb->piHandle->transferInfo;
             blockInfo = &info->block[info->blockNum];
 
@@ -61,7 +59,7 @@ void __osDevMgrMain(void* args) {
                 IO_WRITE(PI_STATUS_REG, PI_CLR_INTR);
                 __osSetGlobalIntMask(OS_IM_PI | SR_IBIT4);
             }
-#endif
+
             osSendMesg(mb->hdr.retQueue, mb, OS_MESG_NOBLOCK);
 
             if (messageSend == 1 && mb->piHandle->transferInfo.block[0].errStatus == LEO_ERROR_GOOD) {

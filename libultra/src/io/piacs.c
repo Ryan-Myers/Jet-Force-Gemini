@@ -4,8 +4,14 @@
 
 #define PI_Q_BUF_LEN 1
 u32 __osPiAccessQueueEnabled = 0;
+#ifdef JFGDIFFS
+// Order swapped
+OSMesgQueue __osPiAccessQueue ALIGNED(0x8);
+static OSMesg piAccessBuf[PI_Q_BUF_LEN];
+#else
 static OSMesg piAccessBuf[PI_Q_BUF_LEN];
 OSMesgQueue __osPiAccessQueue ALIGNED(0x8);
+#endif
 
 void __osPiCreateAccessQueue(void) {
     __osPiAccessQueueEnabled = 1;

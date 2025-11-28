@@ -5,12 +5,8 @@
 #ident "$Revision: 1.17 $"
 
 s32 __osEPiRawStartDma(OSPiHandle* pihandle, s32 direction, u32 devAddr, void* dramAddr, u32 size) {
-#ifdef RAREDIFFS
-    register u32 stat;
-#else
     u32 stat;
     u32 domain;
-#endif
 
 #ifdef _DEBUG
     if ((direction != OS_READ) && (direction != OS_WRITE)) {
@@ -39,11 +35,7 @@ s32 __osEPiRawStartDma(OSPiHandle* pihandle, s32 direction, u32 devAddr, void* d
     }
 #endif
 
-#ifdef RAREDIFFS
-    WAIT_ON_IOBUSY(stat);
-#else
     EPI_SYNC(pihandle, stat, domain);
-#endif
     IO_WRITE(PI_DRAM_ADDR_REG, osVirtualToPhysical(dramAddr));
     IO_WRITE(PI_CART_ADDR_REG, K1_TO_PHYS(pihandle->baseAddress | devAddr));
 
