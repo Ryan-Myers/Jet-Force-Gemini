@@ -30,12 +30,23 @@ void osCreateThread(OSThread* t, OSId id, void (*entry)(void*), void* arg, void*
     t->context.sp = (s64)(s32)sp - 16;
     t->context.ra = (s64)(s32)__osCleanupThread;
     mask = OS_IM_ALL;
+#ifdef JFGDIFFS
+    t->context.sr = (SR_FR | (SR_IMASK | SR_IE)) | SR_EXL;
+#else
     t->context.sr = (mask & (SR_IMASK | SR_IE)) | SR_EXL;
+#endif
     t->context.rcp = (mask & RCP_IMASK) >> RCP_IMASKSHIFT;
     t->context.fpcsr = FPCSR_FS | FPCSR_EV | FPCSR_RM_RN;
     t->fp = 0;
     t->state = OS_STATE_STOPPED;
     t->flags = 0;
+
+#ifdef JFGDIFFS
+    if (id < 0) {
+        t->id = -id;
+        t->context.sr &= ~SR_FR;
+    }
+#endif
 
 #if BUILD_VERSION >= VERSION_K
 #ifndef _FINALROM
