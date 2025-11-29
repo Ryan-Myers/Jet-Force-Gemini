@@ -23,7 +23,6 @@ CPP_FLAGS = [
     "-Ilibultra/src/libc",
     "-Ilibultra/src/io",
     "-Ilibultra/src/sc",
-    "-Ilibultra/src/audio",
     "-Ilibultra/src/os",
     "-D_LANGUAGE_C",
     "-DF3DDKR_GBI",

@@ -45,7 +45,7 @@ OLD_LIBULTRA_DIR = $(SRC_DIR)/libultra
 LIBULTRA_DIR = libultra
 ASM_DIRS  = asm asm/data asm/nonmatchings asm/data/libultra asm/hasm asm/libultra asm/libultra/src/flash
 HASM_DIRS = $(SRC_DIR)/hasm $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc $(OLD_LIBULTRA_DIR)
-LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src $(LIBULTRA_DIR)/src/audio $(LIBULTRA_DIR)/src/audio/mips1 
+LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/sc $(LIBULTRA_DIR)/src/flash
 
@@ -143,7 +143,7 @@ ASM_DEFINES = $(foreach d,$(DEFINES),$(if $(findstring =,$(d)),--defsym $(d),)) 
 
 INCLUDE_CFLAGS  = -I . -I include -I include/libc  -I include/PR -I include/sys -I $(BIN_DIRS) -I $(SRC_DIR) -I $(LIBULTRA_DIR)
 INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/gu -I $(LIBULTRA_DIR)/src/libc -I $(LIBULTRA_DIR)/src/io  -I $(LIBULTRA_DIR)/src/sc 
-INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/audio -I $(LIBULTRA_DIR)/src/os
+INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/os
 
 ASFLAGS        = -march=vr4300 -32 -G0 $(ASM_DEFINES) $(INCLUDE_CFLAGS)
 OBJCOPYFLAGS   = -O binary
@@ -218,24 +218,13 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: MIPSISET := -mips1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/flash/%.c.o: MIPSISET := -mips1
-
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/initialize.c.o: OPT_FLAGS := -O2 -g3
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/initialize.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/initialize.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
-
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/cartrominit.c.o: OPT_FLAGS := -O2 -g3
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/cartrominit.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/cartrominit.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
-
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/%.c.o: OPT_FLAGS := -O3
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/mips1/%.c.o: OPT_FLAGS := -O2
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/%.c.o: OPT_FLAGS := -O1
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: OPT_FLAGS := -O1
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: OPT_FLAGS := -O2
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: OPT_FLAGS := -O2
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/xprintf.c.o : OPT_FLAGS := -O3
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/env.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: MIPSISET := -mips3 -32
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ll.c.o: OPT_FLAGS := -O1
@@ -262,18 +251,6 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/exceptasm.s.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/exceptasm.s.o: MIPSISET := -mips3 -32
 
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/%.c.o: MIPSISET := -mips2
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/mips1/%.c.o: MIPSISET := -mips1
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: MIPSISET := -mips1
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/sc/sched.c.o: MIPSISET := -mips1
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: MIPSISET := -mips1
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/env.c.o: MIPSISET := -mips1
-
-# $(BUILD_DIR)/src/libultra/cents2ratio.c.o: OPT_FLAGS := -g
-# $(BUILD_DIR)/src/libultra/cents2ratio.c.o: MIPSISET := -mips2
-
-
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/cents2ratio.c.o: OPT_FLAGS := -g
-# $(BUILD_DIR)/$(LIBULTRA_DIR)/src/audio/cents2ratio.c.o: MIPSISET := -mips2
 
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: MIPSISET := -mips2
