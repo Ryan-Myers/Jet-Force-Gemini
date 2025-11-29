@@ -185,18 +185,18 @@ ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 ### Optimisation Overrides
 ####################### LIBULTRA #########################
 
-$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/%.c.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/perspective.c.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/perspective.c.o: MIPSISET := -mips1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/%.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/%.c.o: MIPSISET := -mips2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/createthread.c.o: MIPSISET := -mips1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/createthread.c.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/destroythread.c.o: LIBULTRA_VERSION_DEFINE := -D__GNUC__ # Not sure why but this file needs __GNUC__ defined to match properly
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/flash/%.c.o: MIPSISET := -mips1
+
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/gu/sinf.c.o: OPT_FLAGS := -O2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/gu/sinf.c.o: MIPSISET := -mips2
+
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/%.c.o: MIPSISET := -mips2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/%.c.o: OPT_FLAGS := -O2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: MIPSISET := -mips1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: MIPSISET := -mips1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/cartrominit.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/piacs.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pigetcmdq.c.o: OPT_FLAGS := -O2 -g3
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pidma.c.o: OPT_FLAGS := -O2 -g3
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pirawdma.c.o: OPT_FLAGS := -O2 -g3
@@ -206,39 +206,35 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epiread.c.o: OPT_FLAGS := -O2 -g3
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epidma.c.o: OPT_FLAGS := -O2 -g3
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epilinkhandle.c.o: OPT_FLAGS := -O2 -g3
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawread.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawread.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawwrite.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawwrite.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawdma.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawdma.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: MIPSISET := -mips1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/piacs.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/piacs.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: MIPSISET := -mips1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/flash/%.c.o: MIPSISET := -mips1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/initialize.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/initialize.c.o: MIPSISET := -mips2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/initialize.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/cartrominit.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/cartrominit.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/cartrominit.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/xprintf.c.o : OPT_FLAGS := -O3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawwrite.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawread.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawdma.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
+
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/%.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ll.c.o: MIPSISET := -mips3 -32
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: MIPSISET := -mips3 -32
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ll.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ll.c.o: MIPSISET := -mips3 -32
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ldiv.c.o: OPT_FLAGS := -O3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ldiv.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/xldtob.c.o: OPT_FLAGS := -O3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/xldtob.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/xlitob.c.o: OPT_FLAGS := -O3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/xlitob.c.o: MIPSISET := -mips2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/gu/sinf.c.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/gu/sinf.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/xprintf.c.o : OPT_FLAGS := -O3
+
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/%.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/%.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/createthread.c.o: OPT_FLAGS := -O2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/initialize.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/createthread.c.o: MIPSISET := -mips1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/initialize.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/destroythread.c.o: LIBULTRA_VERSION_DEFINE := -D__GNUC__ # Not sure why but this file needs __GNUC__ defined to match properly
 
 # Libultra assembly files
 $(BUILD_DIR)/$(LIBULTRA_DIR)/%.s.o: OPT_FLAGS := -O2
@@ -252,6 +248,7 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/unmaptlball.s.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/exceptasm.s.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/exceptasm.s.o: MIPSISET := -mips3 -32
 
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/%.c.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/%.c.o: MIPSISET := -mips2
 
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: OPT_FLAGS := -g
