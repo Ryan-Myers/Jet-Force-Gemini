@@ -15,11 +15,7 @@ s32 __osEPiRawWriteIo(OSPiHandle* pihandle, u32 devAddr, u32 data) {
     }
 #endif
 
-#ifdef RAREDIFFS
-    WAIT_ON_IOBUSY(stat);
-#else
     EPI_SYNC(pihandle, stat, domain);
-#endif
     IO_WRITE(pihandle->baseAddress | devAddr, data);
 
     return 0;
