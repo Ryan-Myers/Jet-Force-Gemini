@@ -1,6 +1,6 @@
 #include "common.h"
 
-void *mmAlloc(s32 size, u32 colourTag);
+MemoryPoolSlot *mmAlloc(s32 size, u32 colourTag);
 s32 piRomLoadSection(u32 assetIndex, u32 address, s32 assetOffset, s32 size);
 s32 inflate_block(void);
 void _blkclr(void *, size_t);

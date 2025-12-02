@@ -111,21 +111,23 @@ MemoryPoolSlot *mempool_init(MemoryPoolSlot *slots, s32 poolSize, s32 numSlots) 
     return gMemoryPools[poolCount].slots;
 }
 
-void *mmAlloc(s32 size, u32 colourTag) {
+MemoryPoolSlot *mmAlloc(s32 size, u32 colourTag) {
+#ifdef JFGDIFFS
     UNUSED s32 pad;
     s32 moduleId;
     s32 moduleAddress;
     u32 newColourTag;
     volatile s32 address = 0x666;
     newColourTag = colourTag;
-    if (mmColourTagUnk1 != COLOUR_TAG_WHITE) {
+    if ((u32) mmColourTagUnk1 != COLOUR_TAG_WHITE) {
         newColourTag = mmColourTagUnk1 | 0xFF000000;
-    } else if (mmColourTagUnk2 != COLOUR_TAG_WHITE) {
+    } else if ((u32) mmColourTagUnk2 != COLOUR_TAG_WHITE) {
         newColourTag = mmColourTagUnk2 | 0xFE000000;
     } else {
         runlinkGetAddressInfo(address - 8, &moduleId, &moduleAddress, NULL);
         newColourTag = (moduleId << 24) | moduleAddress;
     }
+#endif
     return mempool_slot_find(POOL_MAIN, size, newColourTag);
 }
 
@@ -137,9 +139,9 @@ void mmAlloc2(s32 size, u32 colourTag) {
     u32 newColourTag;
     volatile s32 address = 0x666;
     newColourTag = colourTag;
-    if (mmColourTagUnk1 != COLOUR_TAG_WHITE) {
+    if ((u32) mmColourTagUnk1 != COLOUR_TAG_WHITE) {
         newColourTag = mmColourTagUnk1 | 0xFF000000;
-    } else if (mmColourTagUnk2 != COLOUR_TAG_WHITE) {
+    } else if ((u32) mmColourTagUnk2 != COLOUR_TAG_WHITE) {
         newColourTag = mmColourTagUnk2 | 0xFE000000;
     } else {
         runlinkGetAddressInfo(address - 8, &moduleId, &moduleAddress, NULL);
@@ -542,6 +544,11 @@ u8 *mmAlign4(u8 *address) {
     return address;
 }
 
+/**
+ * Prints out the status of each memory pool slot.
+ * Will mark based on what flags the slot has.
+ * Official name: mmSlotPrint
+ */
 void mmSlotPrint(void) {
     s32 i;
     s32 skip;

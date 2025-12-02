@@ -113,7 +113,7 @@ s32 mempool_slot_assign(MemoryPools poolIndex, s32 slotIndex, s32 size, s32 slot
 void mempool_free_addr(u8 *address);
 MemoryPoolSlot *mempool_slot_find(MemoryPools poolIndex, s32 size, u32 colourTag);
 void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag);
-void *mmAlloc(s32 size, u32 colourTag);
+MemoryPoolSlot *mmAlloc(s32 size, u32 colourTag);
 void mmAlloc2(s32 size, u32 colourTag);
 s32 mmGetDelay(void);
 void mmSlotPrint(void);
