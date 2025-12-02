@@ -1083,6 +1083,7 @@ gsSndpGetState = 0x8008628C;
 func_800862B4 = 0x800862B4;
 ad_sndp_play = 0x800862BC;
 gsSndpStop = 0x800865A4;
+sndp_stop_with_flags = 0x80086624;
 gsSndpStopAll = 0x800866E0;
 gsSndpStopAllRetrigger = 0x80086708;
 gsSndpStopAllLooped = 0x80086730;
@@ -1959,12 +1960,17 @@ __osFlashHandler = 0x80105BB0;
 __osFlashMsg = 0x80105B80;
 __osFlashMessageQ = 0x80105B98;
 __osFlashMsgBuf = 0x80105C24;
+gSoundPlayer = 0x80105C30;
+gSoundGroupVolume = 0x80105C94;
 __osFlashID = 0x80105B70; // type:u32 size:0x10
 
 
 gIntDisFlag = 0x800A3E40;
 gSineTable = 0x800A7F50; // type:s16
 gArcTanTable = 0x800A9758; // type:s16
+gSoundStateLists = 0x800A9F70; // size:0xC
+gSoundPlayerPtr = 0x800A9F7C;
+globalVolume = 0x800A9F80; // type:u32
 
 gzip_border = 0x800AF9E0; // type:s8
 gzip_cplens = 0x800AF9F4; // type:s16

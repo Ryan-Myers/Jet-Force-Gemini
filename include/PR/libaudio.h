@@ -602,19 +602,19 @@ typedef struct {
 typedef struct ALSoundState {
     /* 0x00 */ struct ALSoundState *next;
     /* 0x04 */ struct ALSoundState *prev;
-    /* 0x08 */ struct ALSoundState *unk8;
+    /* 0x08 */ ALSound *sound;
     /* 0x0C */ ALVoice     voice;
-    /* 0x28 */ ALSound     *sound;         /* sound referenced here */
-    /* 0x2C */ s16         priority;
-    /* 0x30 */ f32         pitch;          /* current playback pitch                    */
-    /* 0x34 */ s32         state;          /* play state for this sound                 */
-    /* 0x38 */ s16         vol;            /* volume - combined with volume from bank   */
-    /* 0x3A */ ALPan       pan;            /* pan - 0 = left, 127 = right               */
-    /* 0x3C */ u8          fxMix;          /* wet/dry mix - 0 = dry, 127 = wet          */
-    /* 0x3C */ u8 pad3C[2];
-    /* 0x3E */ u8 unk3E;
-    /* 0x3F */ u8 pad3F[0x4];
+    /* 0x28 */ f32 slideMult;
+    /* 0x2C */ f32 pitch;
+    /* 0x30 */ struct ALSoundState **userHandle;
+    /* 0x34 */ s16 volume;
+    /* 0x36 */ u8 priority;
+    /* 0x38 */ s32 retries;
+    /* 0x3C */ ALPan pan;
+    /* 0x3D */ u8 fxmix;
+    /* 0x3E */ u8 pad3E[0x5];
     /* 0x43 */ u8 flags;
+    /* 0x44 */ u8 state;
 } ALSoundState;
 
 typedef struct {
