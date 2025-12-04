@@ -12,29 +12,6 @@
 #include "threadasm.h"
 #include "PR/os_version.h"
 
-.rdata
-
-D_800AD190:
-    .float -0.56
-D_800AD194:
-    .float 1.44
-D_800AD198:
-    .float -1.44
-D_800AD19C:
-    .float 0.56
-D_800AD1A0:
-    .float 1.12
-D_800AD1A4:
-    .float -2.44
-D_800AD1A8:
-    .float 1.88
-D_800AD1AC:
-    .float -0.56
-D_800AD1B0:
-    .float -0.56
-D_800AD1B4:
-    .float 0.56
-
 .data
 
 EXPORT(gIntDisFlag)
@@ -913,25 +890,25 @@ END(pointListRPY)
 
 LEAF(splinePos)
 lwc1       ft3, 0x10(sp)
-lwc1       fv0, D_800AD190
-mul.s      ft3f, ft3, ft3
-lwc1       fv0f, D_800AD194
-lwc1       fv1, D_800AD198
 mtc1       a2, ft4
-mul.s      fv0, fa0
-lwc1       fv1f, D_800AD19C
 mtc1       a3, ft5
-lwc1       ft0, D_800AD1A0
-lwc1       ft0f, D_800AD1A4
+li.s       fv0, -0.56
+li.s       fv0f, 1.44
+li.s       fv1, -1.44
+li.s       fv1f, 0.56
+li.s       ft0, 1.12
+li.s       ft0f, -2.44
+li.s       ft1, 1.88
+li.s       ft1f, -0.56
+li.s       ft2, -0.56
+li.s       ft2f, 0.56
+mul.s      ft3f, ft3, ft3
+mul.s      fv0, fa0
 mul.s      fv0f, fv0f, fa1
-lwc1       ft1, D_800AD1A8
-lwc1       ft1f, D_800AD1AC
-lwc1       ft2, D_800AD1B0
 mul.s      fv1, ft4
-lwc1       ft2f, D_800AD1B4
-add.s      fv0, fv0f
 mul.s      fv1f, ft5
 mul.s      ft0, fa0
+add.s      fv0, fv0f
 add.s      fv1, fv1f
 add.s      fv0, fv1
 mul.s      ft0f, fa1
