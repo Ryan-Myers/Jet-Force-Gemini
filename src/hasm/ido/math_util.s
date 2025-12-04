@@ -5,12 +5,6 @@
 #include "PR/R4300.h"
 #include "sys/asm.h"
 #include "sys/regdef.h"
-#include "PR/os.h"
-#include "PR/rcp.h"
-#include "PR/rdb.h"
-#include "exceptasm.h"
-#include "threadasm.h"
-#include "PR/os_version.h"
 
 .data
 
