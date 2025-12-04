@@ -797,7 +797,9 @@ XLEAF(mathSinInterp)
     .L80049960:
     jr         ra
 END(mathCosInterp)
-/* .size mathSinInterp, . - mathSinInterp */
+#ifdef MODERN_CC
+.size mathSinInterp, . - mathSinInterp
+#endif
 
 LEAF(mathCos)
     addiu      a0, 0x4000
@@ -820,7 +822,9 @@ XLEAF(mathSin)
     .L800499A4:
     jr         ra
 END(mathCos)
-/* .size mathSin, . - mathSin */
+#ifdef MODERN_CC
+.size mathSin, . - mathSin
+#endif
 
 LEAF(mathBreakPoint)
     break      7
@@ -1181,7 +1185,9 @@ XLEAF(Sinf)
     .L80049F7C:
     jr         ra
 END(Cosf)
-/* .size Sinf, . - Sinf */
+#ifdef MODERN_CC
+.size Sinf, . - Sinf
+#endif
 
 LEAF(Arctanf)
     .set noreorder
@@ -1192,10 +1198,9 @@ LEAF(Arctanf)
     c.lt.s     fa0, fv0
     c.eq.s     fa1, fv0
     bc1t       .L8004A078
-    .set noreorder
     NOP
-    c.lt.s     fa0, fv0
     .set noreorder
+    c.lt.s     fa0, fv0
     .L80049FA8:
     bc1tl      .L80049FCC
     c.lt.s     fa1, fv0
@@ -1218,7 +1223,6 @@ LEAF(Arctanf)
     mov.s      fa1, fa0f
     neg.s      fa1, fa1
     .L80049FF0:
-    .set noreorder
     li         v0, 0x8000
     .L80049FF4:
     c.lt.s     fa0, fa1
@@ -1227,23 +1231,21 @@ LEAF(Arctanf)
     div.s      ft3, fa1, fa0
     div.s      ft3, fa0, fa1
     li.s       fv0f, 2048.0
-    .set noreorder
     la         t0, gArcTanTable
     mul.s      ft3, fv0f
     cvt.w.s    ft3
     mfc1       t1, ft3
     NOP
+    .set noreorder
     andi       t1, 0xFFE
     add        t0, t1
     lh         t0, 0x0(t0)
     addu       v0, t0
-    .set noreorder
     jr         ra
     andi       v0, 0xFFFF
     div.s      ft3, fa1, fa0
     .L8004A040:
     li.s       fv0f, 2048.0
-    .set noreorder
     la         t0, gArcTanTable
     addiu      v0, 0x4000
     mul.s      ft3, fv0f
@@ -1257,8 +1259,9 @@ LEAF(Arctanf)
     andi       v0, 0xFFFF
     .L8004A078:
     jr         ra
-.set reorder
 END(Arctanf)
+
+.set reorder
 
 /**
 s16 mathDiffAngle(s16 angle1, s16 angle2) {
