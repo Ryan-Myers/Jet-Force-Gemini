@@ -1190,68 +1190,57 @@ END(Cosf)
 #endif
 
 LEAF(Arctanf)
-    .set noreorder
     mtc1       zero, fv0
     li         v0, 0
     c.eq.s     fa0, fv0
-    bc1fl      .L80049FA8
-    c.lt.s     fa0, fv0
+    bc1f       .L80049FA8
     c.eq.s     fa1, fv0
     bc1t       .L8004A078
-    NOP
-    .set noreorder
-    c.lt.s     fa0, fv0
     .L80049FA8:
-    bc1tl      .L80049FCC
+    c.lt.s     fa0, fv0
+    bc1t       .L80049FCC
     c.lt.s     fa1, fv0
-    c.lt.s     fa1, fv0
-    bc1fl      .L80049FF8
-    c.lt.s     fa0, fa1
+    bc1f       .L80049FF8
     neg.s      fa1
-    j          .L80049FDC
     li         v0, 0x4000
-    c.lt.s     fa1, fv0
+    j          .L80049FDC
     .L80049FCC:
+    c.lt.s     fa1, fv0
     neg.s      fa0
-    bc1tl      .L80049FF0
-    neg.s      fa1
+    bc1t       .L80049FF0
     li         v0, 0xC000
     .L80049FDC:
     mov.s      fa0f, fa0
     mov.s      fa0, fa1
-    b          .L80049FF4
     mov.s      fa1, fa0f
-    neg.s      fa1, fa1
+    b          .L80049FF4
     .L80049FF0:
+    neg.s      fa1
     li         v0, 0x8000
     .L80049FF4:
-    c.lt.s     fa0, fa1
     .L80049FF8:
-    bc1fl      .L8004A040
-    div.s      ft3, fa1, fa0
+    c.lt.s     fa0, fa1
+    bc1f      .L8004A040
     div.s      ft3, fa0, fa1
     li.s       fv0f, 2048.0
     la         t0, gArcTanTable
     mul.s      ft3, fv0f
     cvt.w.s    ft3
     mfc1       t1, ft3
-    NOP
-    .set noreorder
     andi       t1, 0xFFE
     add        t0, t1
     lh         t0, 0x0(t0)
     addu       v0, t0
-    jr         ra
     andi       v0, 0xFFFF
-    div.s      ft3, fa1, fa0
+    jr         ra
     .L8004A040:
+    div.s      ft3, fa1, fa0
     li.s       fv0f, 2048.0
     la         t0, gArcTanTable
     addiu      v0, 0x4000
     mul.s      ft3, fv0f
     cvt.w.s    ft3
     mfc1       t1, ft3
-    NOP
     andi       t1, 0xFFE
     add        t0, t1
     lh         t0, 0x0(t0)
