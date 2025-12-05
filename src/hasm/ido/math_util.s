@@ -46,7 +46,7 @@ LEAF(enableInterrupts)
     NOP
     .L80048E4C:
     jr         ra
-    END(enableInterrupts)
+END(enableInterrupts)
 
 LEAF(setIntDisFlag)
     sb         a0, gIntDisFlag
@@ -261,8 +261,8 @@ LEAF(mathMtxF2L)
 END(mathMtxF2L)
 
 LEAF(mathSeed)
-sw         a0, rngSeed
-jr         ra
+    sw         a0, rngSeed
+    jr         ra
 END(mathSeed)
 
 LEAF(mathRnd)
