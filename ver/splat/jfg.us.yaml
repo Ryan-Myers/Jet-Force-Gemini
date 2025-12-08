@@ -2,25 +2,30 @@ name: Jet Force Gemini (North America)
 sha1: 493ced9008dbe932d6e91179b68e8630cf23a023
 options:
   basename: jfg.us
-  target_path: baserom.us.z64
-  base_path: .
+  target_path: baseroms/baserom.us.z64
+  base_path: ../../
   compiler: IDO
   find_file_boundaries: True
   header_encoding: ASCII
   platform: n64
-  undefined_funcs_auto_path: undefined_funcs_auto.us.txt
-  undefined_syms_auto_path: undefined_syms_auto.us.txt
-  symbol_addrs_path: symbol_addrs.us.txt
+  undefined_funcs_auto_path: ver/symbols/undefined_funcs_auto.us.txt
+  undefined_syms_auto_path: ver/symbols/undefined_syms_auto.us.txt
+  symbol_addrs_path: ver/symbols/symbol_addrs.us.txt
+  symbol_name_format: $VRAM_$ROM
+  ld_script_path: ver/jfg.us.ld
   asm_path: asm_us
   src_path: src_us
   build_path: build_us
-  #extensions_path: tools/splat_ext
-  #mips_abi_float_regs: o32
+  asset_path: assets_us
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  asm_function_alt_macro: alabel
+  asm_end_label: endlabel
+  asm_emit_size_directive: False
   section_order: [".text", ".data", ".rodata", ".bss"]
-  auto_all_sections: [".data", ".rodata", ".bss"]
-  symbol_name_format: $VRAM_$ROM
-  #libultra_symbols: True
-  #hardware_regs: True
+  migrate_rodata_to_functions: False
+  hasm_in_src_path: True
 segments:
   - name: header
     type: header
