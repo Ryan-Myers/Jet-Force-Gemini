@@ -108,40 +108,66 @@ END(mathMtxXFMF)
  * This function multiplies the input vector by the upper-left 3×3 portion of the matrix mf,
  * ignoring the translation component. It is used for transforming directions, such as normals,
  * rather than points.
- * Official name: mathMtxFastXFMF
- * void mathMtxFastXFMF(MtxF *mf, Vec3f *in, Vec3f *out);
+ * Official Name: mathMtxFastXFMF
+ * Arguments:
+ *   a0 = pointer to 4x4 matrix (float[4][4])
+ *   a1 = pointer to input direction vector (float[3])
+ *   a2 = pointer to output direction vector (float[3])
  */
 LEAF(mathMtxFastXFMF)
-    lwc1       ft0, 0x0(a1)
-    lwc1       ft1, 0x4(a1)
-    lwc1       ft3, 0x0(a0)
-    lwc1       fa0, 0x10(a0)
-    mul.s      ft3, ft0, ft3
-    lwc1       ft2, 0x8(a1)
-    lwc1       fa1, 0x20(a0)
-    mul.s      fa0, ft1, fa0
+    /* Load input vector components */
+    lwc1       ft0, 0x0(a1)     /* x component */
+    lwc1       ft1, 0x4(a1)     /* y component */
+    lwc1       ft2, 0x8(a1)     /* z component */
+
+    /* Load first column from matrix */
+    lwc1       ft3, 0x0(a0)     /* mf[0][0] */
+    lwc1       fa0, 0x10(a0)    /* mf[1][0] */
+    lwc1       fa1, 0x20(a0)    /* mf[2][0] */
+
+    /* Calculate result.x */
+    mul.s      ft3, ft0, ft3    /* mf[0][0] * x */
+    mul.s      fa0, ft1, fa0    /* mf[1][0] * y */
+    mul.s      fa1, ft2, fa1    /* mf[2][0] * z */
+
     add.s      fa0, ft3, fa0
-    mul.s      fa1, ft2, fa1
-    lwc1       ft3, 0x4(a0)
-    mul.s      ft3, ft0, ft3
     add.s      ft4, fa0, fa1
-    lwc1       fa0, 0x14(a0)
-    lwc1       fa1, 0x24(a0)
-    mul.s      fa0, ft1, fa0
+    
+    /* Load second column from matrix */
+    lwc1       ft3, 0x4(a0)     /* mf[0][1] */
+    lwc1       fa0, 0x14(a0)    /* mf[1][1] */
+    lwc1       fa1, 0x24(a0)    /* mf[2][1] */
+
+    /* Store result.x */
     swc1       ft4, 0x0(a2)
-    mul.s      fa1, ft2, fa1
+
+    /* Calculate result.y */
+    mul.s      ft3, ft0, ft3    /* mf[0][1] * x */
+    mul.s      fa0, ft1, fa0    /* mf[1][1] * y */
+    mul.s      fa1, ft2, fa1    /* mf[2][1] * z */
+
     add.s      fa0, ft3, fa0
-    lwc1       ft3, 0x8(a0)
     add.s      ft4, fa0, fa1
-    mul.s      ft3, ft0, ft3
-    lwc1       fa0, 0x18(a0)
-    lwc1       fa1, 0x28(a0)
+
+    /* Load third column from matrix */
+    lwc1       ft3, 0x8(a0)     /* mf[0][2] */
+    lwc1       fa0, 0x18(a0)    /* mf[1][2] */
+    lwc1       fa1, 0x28(a0)    /* mf[2][2] */
+
+    /* Store result.y */
     swc1       ft4, 0x4(a2)
-    mul.s      fa0, ft1, fa0
+
+    /* Calculate result.z */
+    mul.s      ft3, ft0, ft3    /* mf[0][2] * x */
+    mul.s      fa0, ft1, fa0    /* mf[1][2] * y */
+    mul.s      fa1, ft2, fa1    /* mf[2][2] * z */
+
     add.s      fa0, ft3, fa0
-    mul.s      fa1, ft2, fa1
     add.s      fa1, fa0, fa1
+
+    /* Store result.z */
     swc1       fa1, 0x8(a2)
+    
     jr         ra
 END(mathMtxFastXFMF)
 
@@ -339,38 +365,69 @@ LEAF(mathRnd)
     jr         ra
 END(mathRnd)
 
-/* Does t6 even do anything? */
+/* Official Name: fastShortReflection
+ * Reflects a vector across a given normal.
+ * Fixed-point notes:
+ *   - Inputs are 16-bit signed fixed-point values.
+ *   - Dot product is accumulated in 32-bit, then shifted right by 12 to rescale.
+ *   - Multiplication by N components is then shifted right by 13, giving final scale.
+ * Arguments:
+ *   a0 = pointer to vector struct containing:
+ *        - input incident vector [x, y, z] at offsets 0x0, 0x2, 0x4
+ *        - output reflected vector will be stored at offsets 0x6, 0x8, 0xA
+ *   a1 = pointer to surface normal vector [nx, ny, nz] at offsets 0x0, 0x2, 0x4
+ */
 LEAF(fastShortReflection)
-    lh         t0, 0x0(a0)
-    lh         t1, 0x2(a0)
-    lh         t2, 0x4(a0)
-    lh         t3, 0x0(a1)
-    lh         t4, 0x2(a1)
-    lh         t5, 0x4(a1)
-    mult       t0, t3
-    mflo       t6
-    mult       t1, t4
-    mflo       t7
-    add        t6, t7
-    mult       t2, t5
-    mflo       t8
-    add        t6, t8
-    sra        t6, 12
-    mult       t6, t3
-    mflo       t3
-    sra        t3, 13
-    sub        t3, t0
-    sh         t3, 0x6(a0)
-    mult       t6, t4
-    mflo       t4
-    sra        t4, 13
-    sub        t4, t1
-    mult       t6, t5
-    sh         t4, 0x8(a0)
-    mflo       t5
-    sra        t5, 13
-    sub        t5, t0
-    sh         t5, 0xA(a0)
+    /* Load incident vector components (16-bit signed) */
+    lh         t0, 0x0(a0)              /* incident.x */
+    lh         t1, 0x2(a0)              /* incident.y */
+    lh         t2, 0x4(a0)              /* incident.z */
+    
+    /* Load normal vector components (16-bit signed) */
+    lh         t3, 0x0(a1)              /* normal.x */
+    lh         t4, 0x2(a1)              /* normal.y */
+    lh         t5, 0x4(a1)              /* normal.z */
+    
+    /* Calculate dot product: dot = (incident.x * normal.x) + (incident.y * normal.y) + (incident.z * normal.z) */
+    mult       t0, t3                   /* incident.x * normal.x */
+    mflo       t6                       /* dot = result */
+    
+    mult       t1, t4                   /* incident.y * normal.y */
+    mflo       t7                       /* temp = result */
+    add        t6, t7                   /* dot += temp */
+    
+    mult       t2, t5                   /* incident.z * normal.z */
+    mflo       t8                       /* temp = result */
+    add        t6, t8                   /* dot += temp */
+    
+    /* Scale down accumulated dot product (fixed-point normalization) */
+    sra        t6, 12                   /* dot >>= 12 */
+    
+    /* Calculate reflected.x = (dot * normal.x >> 13) - incident.x */
+    mult       t6, t3                   /* (dot * normal.x) */
+    mflo       t3                       /* scaled_normal_x = result */
+    sra        t3, 13                   /* scaled_normal_x >>= 13 */
+    sub        t3, t3, t0               /* reflected.x = scaled_normal_x - incident.x */
+    sh         t3, 0x6(a0)              /* Store reflected.x */
+    
+    /* Calculate reflected.y = (dot * normal.y >> 13) - incident.y */
+    mult       t6, t4                   /* (dot * normal.y) */
+    mflo       t4                       /* scaled_normal_y = result */
+    sra        t4, 13                   /* scaled_normal_y >>= 13 */
+    sub        t4, t4, t1               /* reflected.y = scaled_normal_y - incident.y */
+    sh         t4, 0x8(a0)              /* Store reflected.y */
+    
+    /* Calculate reflected.z = (dot * normal.z >> 13) - incident.z */
+    mult       t6, t5                   /* (dot * normal.z) */
+    mflo       t5                       /* scaled_normal_z = result */
+    sra        t5, 13                   /* scaled_normal_z >>= 13 */
+#ifdef AVOID_UB
+    sub        t5, t5, t2               /* reflected.z = scaled_normal_z - incident.z */
+#else
+    sub        t5, t5, t0               /* !@bug: should subtract incident.z (t2), not incident.x (t0) */
+#endif
+    sh         t5, 0xA(a0)              /* Store reflected.z */
+    
     jr         ra
 END(fastShortReflection)
 
