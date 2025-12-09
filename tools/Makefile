@@ -3,6 +3,7 @@ CFLAGS := -I . -Wall -Wextra -Wno-unused-parameter -pedantic -std=c99 -O2 -s
 LDFLAGS := -lm
 PROGRAMS := n64crc
 
+PLATFORM := $(shell uname -m)
 UNAME_S := $(shell uname -s)
 
 # MacOS has a slightly different name for grep, so check to see if it needs to be used.
@@ -21,16 +22,18 @@ else ifeq ($(UNAME_S),Linux)
 endif
 
 RECOMP_DIR := ido-recomp/$(DETECTED_OS)
+OBJDIFF_DIR := objdiff/
 
 default: all
 
 n64crc_SOURCES := n64crc.c
 
-all: $(PROGRAMS) recomp
+all: $(PROGRAMS) recomp objdiff
 
 clean:
 	$(RM) -Rf $(PROGRAMS)
 	$(RM) -rf $(RECOMP_DIR)
+	$(RM) -rf $(OBJDIFF_DIR)
 
 distclean: clean
 
@@ -43,5 +46,13 @@ recomp:
 	mkdir -p $(RECOMP_DIR)
 	tar xf ido-5.3-recomp-${DETECTED_OS}.tar.gz -C $(RECOMP_DIR)
 	$(RM) ido-5.3-recomp-${DETECTED_OS}.tar.gz
+
+objdiff:
+	@echo "Fetching Objdiff..."
+	mkdir -p $(OBJDIFF_DIR)
+	wget -O $(OBJDIFF_DIR)/objdiff https://github.com/encounter/objdiff/releases/download/v3.4.5/objdiff-${DETECTED_OS}-${PLATFORM}
+	wget -O $(OBJDIFF_DIR)/objdiff-cli https://github.com/encounter/objdiff/releases/download/v3.4.5/objdiff-cli-${DETECTED_OS}-${PLATFORM}
+	chmod +x $(OBJDIFF_DIR)/objdiff-cli
+	chmod +x $(OBJDIFF_DIR)/objdiff
 
 .PHONY: all clean distclean default

@@ -73,3 +73,5 @@ tools/n64crc
 !tools/build
 m2cfiles/
 tools/ido-recomp
+tools/objdiff
+objdiff.json
