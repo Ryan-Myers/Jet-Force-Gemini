@@ -13,43 +13,27 @@ void func_800767A0(s32 *arg0) {
     D_801054A0 = 0x80;
 }
 
-#if 0
-extern u8 *D_8010549C;
-extern u32 D_801054A0;
 
-s32 func_800767C4(s32 arg0) {
-    s32 var_v1;
-    u32 temp_t2;
-    u32 var_a0;
-    u32 var_v0;
-    u8 *temp_t8;
-    u8 *var_a1;
+s32 func_800767C4(u32 arg0) {
+    s32 ret;
 
-    var_v1 = 0;
+    ret = 0;
     if (arg0 != 0) {
-        var_a1 = D_8010549C;
-        var_a0 = 1 << (arg0 + 0x1F);
+        arg0 = 1 << (arg0 + 0x1F);
         do {
-            var_v0 = D_801054A0;
-            temp_t8 = var_a1 + 1;
-            temp_t2 = var_a0 >> 1;
             if (D_801054A0 == 0) {
-                D_8010549C = var_a1 + 1;
+                D_8010549C++;
                 D_801054A0 = 0x80;
-                var_a1 = temp_t8;
             }
-            if (*var_a1 & D_801054A0) {
-                var_v1 |= var_a0;
+            if (*D_8010549C & D_801054A0) {
+                ret |= arg0;
             }
-            var_a0 = temp_t2;
-            D_801054A0 = D_801054A0 >> 1;
-        } while (temp_t2 != 0);
+            arg0 >>= 1;
+            D_801054A0 >>= 1;
+        } while (arg0 != 0);
     }
-    return var_v1;
+    return ret;
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_800767C4.s")
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076840.s")
 
