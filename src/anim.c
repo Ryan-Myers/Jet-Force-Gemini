@@ -13,7 +13,6 @@ void func_800767A0(s32 *arg0) {
     D_801054A0 = 0x80;
 }
 
-
 s32 func_800767C4(u32 arg0) {
     s32 ret;
 
@@ -35,7 +34,31 @@ s32 func_800767C4(u32 arg0) {
     return ret;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/anim/func_80076840.s")
+s32 func_80076840(u32 arg0) {
+    u32 temp_v0;
+    s32 ret;
+
+    ret = 0;
+    if (arg0 != 0) {
+        temp_v0 = 0xFFFFFFFF << (arg0 - 1);
+        arg0 = 1 << (arg0 - 1);
+        do {
+            if (D_801054A0 == 0) {
+                D_8010549C++;
+                D_801054A0 = 0x80;
+            }
+            if (*D_8010549C & D_801054A0) {
+                ret |= arg0;
+            }
+            arg0 >>= 1;
+            D_801054A0 >>= 1;
+        } while (arg0 != 0);
+        if (ret & temp_v0) {
+            ret |= temp_v0;
+        }
+    }
+    return ret;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/anim/func_800768D4.s")
 
