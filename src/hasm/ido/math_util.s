@@ -809,6 +809,7 @@ END(mathOneFloatPY)
  *   sign = (cross >= 0) ? 1 : 0
  */
 LEAF(mathXZInTri)
+    /* Load pointC from stack and extract all vertex coordinates */
     lw         t6, 0x10(sp)             /* t6 = pointC */
     move       v0, zero                 /* v0 = 0 (default: point outside) */
     .set noreorder
@@ -819,6 +820,9 @@ LEAF(mathXZInTri)
     lh         t4, 0x0(t6)              /* t4 = C.x */
     lh         t5, 0x4(t6)              /* t5 = C.z */
     .set reorder
+    /* -----------------------------------------
+     * Edge A->B: cross = (x - A.x) * (B.z - A.z) - (B.x - A.x) * (z - A.z)
+     * ----------------------------------------- */
     sub        t6, t3, t1               /* t6 = B.z - A.z */
     sub        t7, a0, t0               /* t7 = x - A.x */
     MULS       (t7, t6, t7)             /* t7 = (B.z - A.z) * (x - A.x) */
@@ -828,9 +832,12 @@ LEAF(mathXZInTri)
     sub        t7, t8                   /* t7 = cross product for edge A->B */
     ori        a3, zero, 1              /* a3 = 1 (assume positive) */
     bgez       t7, .edge_ab_positive
-    move       a3, zero
+    move       a3, zero                 /* a3 = 0 (cross was negative) */
 
 .edge_ab_positive:
+    /* -----------------------------------------
+     * Edge B->C: cross = (x - B.x) * (C.z - B.z) - (C.x - B.x) * (z - B.z)
+     * ----------------------------------------- */
     sub        t6, t5, t3               /* t6 = C.z - B.z */
     sub        t7, a0, t2               /* t7 = x - B.x */
     MULS       (t7, t6, t7)             /* t7 = (C.z - B.z) * (x - B.x) */
@@ -840,10 +847,15 @@ LEAF(mathXZInTri)
     sub        t7, t8                   /* t7 = cross product for edge B->C */
     ori        a2, zero, 1              /* a2 = 1 (assume positive) */
     bgez       t7, .edge_bc_positive
-    move       a2, zero
+    move       a2, zero                 /* a2 = 0 (cross was negative) */
 
 .edge_bc_positive:
+    /* If sign of edge A->B != sign of edge B->C, point is outside */
     bne        a3, a2, .point_outside
+
+    /* -----------------------------------------
+     * Edge C->A: cross = (x - C.x) * (A.z - C.z) - (A.x - C.x) * (z - C.z)
+     * ----------------------------------------- */
     sub        t6, t1, t5               /* t6 = A.z - C.z */
     sub        t7, a0, t4               /* t7 = x - C.x */
     MULS       (t7, t6, t7)             /* t7 = (A.z - C.z) * (x - C.x) */
@@ -853,9 +865,10 @@ LEAF(mathXZInTri)
     sub        t7, t8                   /* t7 = cross product for edge C->A */
     ori        a1, zero, 1              /* a1 = 1 (assume positive) */
     bgez       t7, .edge_ca_positive
-    move       a1, zero
+    move       a1, zero                 /* a1 = 0 (cross was negative) */
 
 .edge_ca_positive:
+    /* If sign of edge C->A != sign of edge B->C, point is outside */
     bne        a2, a1, .point_outside
     ori        v0, zero, 1              /* All signs match: point is inside */
 
