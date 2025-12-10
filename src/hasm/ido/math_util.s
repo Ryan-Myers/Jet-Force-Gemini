@@ -5,6 +5,7 @@
 #include "PR/R4300.h"
 #include "sys/asm.h"
 #include "sys/regdef.h"
+#include "asm_macros.h"
 
 .data
 
@@ -796,47 +797,45 @@ LEAF(mathXZInTri)
     .set reorder
     sub        t6, t3, t1
     sub        t7, a0, t0
-    mult       t6, t7
+    MULS       (t7, t6, t7)
     sub        t8, t2, t0
     sub        t9, a1, t1
-    ori        a3, zero, 1
-    mflo       t7
-    mult       t8, t9
-    mflo       t8
+    MULS       (t8, t8, t9)
     sub        t7, t8
+    ori        a3, zero, 1
     bgez       t7, .L8004980C
     move       a3, zero
-    .L8004980C:
+
+.L8004980C:
     sub        t6, t5, t3
     sub        t7, a0, t2
-    mult       t6, t7
+    MULS       (t7, t6, t7)
     sub        t8, t4, t2
     sub        t9, a1, t3
-    ori        a2, zero, 1
-    mflo       t7
-    mult       t8, t9
-    mflo       t8
+    MULS       (t8, t8, t9)
     sub        t7, t8
+    ori        a2, zero, 1
     bgez       t7, .L80049844
     move       a2, zero
-    .L80049844:
+
+.L80049844:
     bne        a3, a2, .L80049894
     sub        t6, t1, t5
     sub        t7, a0, t4
-    mult       t6, t7
+    MULS       (t7, t6, t7)
     sub        t8, t0, t4
     sub        t9, a1, t5
+    MULS       (t8, t8, t9)
+    sub        t7, t8
     ori        a1, zero, 1
-    mflo       t7
-    mult       t8, t9
-    mflo       t8
-    sub        t7, t7, t8
     bgez       t7, .L80049888
     move       a1, zero
-    .L80049888:
+
+.L80049888:
     bne        a2, a1, .L80049894
     ori        v0, zero, 1
-    .L80049894:
+
+.L80049894:
     jr         ra
 END(mathXZInTri)
 
