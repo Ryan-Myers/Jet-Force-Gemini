@@ -784,58 +784,82 @@ LEAF(mathOneFloatPY)
     jr         ra
 END(mathOneFloatPY)
 
+/**
+ * Tests if a 2D point (x, z) lies inside a triangle defined by three vertices.
+ *
+ * Official Name: mathXZInTri
+ *
+ * Uses the cross-product sign test: for each edge of the triangle, compute
+ * the cross product of (point - vertex) × (next_vertex - vertex). If all
+ * three cross products have the same sign (all positive or all negative),
+ * the point is inside the triangle.
+ *
+ * Arguments:
+ *   a0 = x coordinate of test point
+ *   a1 = z coordinate of test point
+ *   a2 = pointer to Vec3s pointA (uses x at offset 0x0, z at offset 0x4)
+ *   a3 = pointer to Vec3s pointB (uses x at offset 0x0, z at offset 0x4)
+ *   sp+0x10 = pointer to Vec3s pointC (uses x at offset 0x0, z at offset 0x4)
+ *
+ * Returns:
+ *   v0 = 1 if point is inside triangle, 0 otherwise
+ *
+ * Note: The cross product for edge A->B is computed as:
+ *   cross = (x - A.x) * (B.z - A.z) - (B.x - A.x) * (z - A.z)
+ *   sign = (cross >= 0) ? 1 : 0
+ */
 LEAF(mathXZInTri)
-    lw         t6, 0x10(sp)
-    move       v0, zero
+    lw         t6, 0x10(sp)             /* t6 = pointC */
+    move       v0, zero                 /* v0 = 0 (default: point outside) */
     .set noreorder
-    lh         t0, 0x0(a2)
-    lh         t1, 0x4(a2)
-    lh         t2, 0x0(a3)
-    lh         t3, 0x4(a3)
-    lh         t4, 0x0(t6)
-    lh         t5, 0x4(t6)
+    lh         t0, 0x0(a2)              /* t0 = A.x */
+    lh         t1, 0x4(a2)              /* t1 = A.z */
+    lh         t2, 0x0(a3)              /* t2 = B.x */
+    lh         t3, 0x4(a3)              /* t3 = B.z */
+    lh         t4, 0x0(t6)              /* t4 = C.x */
+    lh         t5, 0x4(t6)              /* t5 = C.z */
     .set reorder
-    sub        t6, t3, t1
-    sub        t7, a0, t0
-    MULS       (t7, t6, t7)
-    sub        t8, t2, t0
-    sub        t9, a1, t1
-    MULS       (t8, t8, t9)
-    sub        t7, t8
-    ori        a3, zero, 1
-    bgez       t7, .L8004980C
+    sub        t6, t3, t1               /* t6 = B.z - A.z */
+    sub        t7, a0, t0               /* t7 = x - A.x */
+    MULS       (t7, t6, t7)             /* t7 = (B.z - A.z) * (x - A.x) */
+    sub        t8, t2, t0               /* t8 = B.x - A.x */
+    sub        t9, a1, t1               /* t9 = z - A.z */
+    MULS       (t8, t8, t9)             /* t8 (B.x - A.x) * (z - A.z) */
+    sub        t7, t8                   /* t7 = cross product for edge A->B */
+    ori        a3, zero, 1              /* a3 = 1 (assume positive) */
+    bgez       t7, .edge_ab_positive
     move       a3, zero
 
-.L8004980C:
-    sub        t6, t5, t3
-    sub        t7, a0, t2
-    MULS       (t7, t6, t7)
-    sub        t8, t4, t2
-    sub        t9, a1, t3
-    MULS       (t8, t8, t9)
-    sub        t7, t8
-    ori        a2, zero, 1
-    bgez       t7, .L80049844
+.edge_ab_positive:
+    sub        t6, t5, t3               /* t6 = C.z - B.z */
+    sub        t7, a0, t2               /* t7 = x - B.x */
+    MULS       (t7, t6, t7)             /* t7 = (C.z - B.z) * (x - B.x) */
+    sub        t8, t4, t2               /* t8 = C.x - B.x */
+    sub        t9, a1, t3               /* t9 = z - B.z */
+    MULS       (t8, t8, t9)             /* t8 = (C.x - B.x) * (z - B.z) */    
+    sub        t7, t8                   /* t7 = cross product for edge B->C */
+    ori        a2, zero, 1              /* a2 = 1 (assume positive) */
+    bgez       t7, .edge_bc_positive
     move       a2, zero
 
-.L80049844:
-    bne        a3, a2, .L80049894
-    sub        t6, t1, t5
-    sub        t7, a0, t4
-    MULS       (t7, t6, t7)
-    sub        t8, t0, t4
-    sub        t9, a1, t5
-    MULS       (t8, t8, t9)
-    sub        t7, t8
-    ori        a1, zero, 1
-    bgez       t7, .L80049888
+.edge_bc_positive:
+    bne        a3, a2, .point_outside
+    sub        t6, t1, t5               /* t6 = A.z - C.z */
+    sub        t7, a0, t4               /* t7 = x - C.x */
+    MULS       (t7, t6, t7)             /* t7 = (A.z - C.z) * (x - C.x) */
+    sub        t8, t0, t4               /* t8 = A.x - C.x */
+    sub        t9, a1, t5               /* t9 = z - C.z */
+    MULS       (t8, t8, t9)             /* t8 = (A.x - C.x) * (z - C.z) */    
+    sub        t7, t8                   /* t7 = cross product for edge C->A */
+    ori        a1, zero, 1              /* a1 = 1 (assume positive) */
+    bgez       t7, .edge_ca_positive
     move       a1, zero
 
-.L80049888:
-    bne        a2, a1, .L80049894
-    ori        v0, zero, 1
+.edge_ca_positive:
+    bne        a2, a1, .point_outside
+    ori        v0, zero, 1              /* All signs match: point is inside */
 
-.L80049894:
+.point_outside:
     jr         ra
 END(mathXZInTri)
 
