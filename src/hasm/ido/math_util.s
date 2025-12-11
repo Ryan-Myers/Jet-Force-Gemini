@@ -814,85 +814,189 @@ LEAF(mathRSMtx)
     jr         ra
 END(mathRSMtx)
 
+/**
+ * Rotates a 3D floating-point vector by Euler angles in RPY (Roll-Pitch-Yaw) order.
+ *
+ * Official Name: mathOneFloatRPY
+ *
+ * The rotation is applied in the order: Yaw (Z) -> Pitch (Y) -> Roll (X)
+ * Each rotation is a 2D rotation in the corresponding plane.
+ *
+ * Arguments:
+ *   a0 = pointer to Vec3s rotation angles:
+ *          0x00: s16 roll  (rotation around X axis)
+ *          0x02: s16 pitch (rotation around Y axis)
+ *          0x04: s16 yaw   (rotation around Z axis)
+ *   a1 = pointer to Vec3f vector (in/out):
+ *          0x00: f32 x
+ *          0x04: f32 y
+ *          0x08: f32 z
+ *
+ * Math:
+ *   First apply yaw (Z rotation):
+ *     x1 = x * cos(yaw) - y * sin(yaw)
+ *     y1 = y * cos(yaw) + x * sin(yaw)
+ *   Then apply pitch (Y rotation):
+ *     y2 = y1 * cos(pitch) - z * sin(pitch)
+ *     z1  = z * cos(pitch) + y1 * sin(pitch)
+ *   Finally apply roll (X rotation):
+ *     x2 = x1 * cos(roll) + z1 * sin(roll)
+ *     z2 = z1 * cos(roll) - x1 * sin(roll)
+ */
 LEAF(mathOneFloatRPY)
     addiu      sp, sp, -0x8
     sd         ra, 0x0(sp)
-    lwc1       ft0, 0x0(a1)
-    lwc1       ft1, 0x4(a1)
-    lwc1       ft2, 0x8(a1)
-    move       a2, a0
-    lh         a0, 0x4(a2)
-    jal        Sinf
-    mul.s      ft3, ft0, fv0
-    mul.s      fa0, ft1, fv0
-    jal        Cosf
-    mul.s      ft0, fv0
-    lh         a0, 0x2(a2)
-    mul.s      ft1, fv0
-    sub.s      ft0, fa0
-    add.s      ft1, ft3
-    jal        Sinf
-    mul.s      ft3, ft1, fv0
-    mul.s      fa0, ft2, fv0
-    jal        Cosf
-    mul.s      ft1, fv0
-    lh         a0, 0x0(a2)
-    mul.s      ft2, fv0
-    sub.s      ft1, fa0
-    add.s      ft2, ft3
-    jal        Sinf
-    mul.s      ft3, ft0, fv0
-    mul.s      fa0, ft2, fv0
-    jal        Cosf
-    mul.s      ft0, fv0
-    swc1       ft1, 0x4(a1)
-    mul.s      ft2, fv0
-    add.s      ft0, fa0
-    sub.s      ft2, ft3
-    swc1       ft0, 0x0(a1)
-    swc1       ft2, 0x8(a1)
+    move       a2, a0                   /* a2 = rotation angles pointer */
+
+    /* Load input vector components */
+    lwc1       ft0, 0x0(a1)             /* ft0 = x */
+    lwc1       ft1, 0x4(a1)             /* ft1 = y */
+    lwc1       ft2, 0x8(a1)             /* ft2 = z */
+
+    /* -----------------------------------------
+     * Apply yaw rotation (around Z axis)
+     * x1 = x*cos - y*sin
+     * y1 = y*cos + x*sin
+     * ----------------------------------------- */
+    lh         a0, 0x4(a2)              /* a0 = yaw angle */
+    jal        Sinf                     /* fv0 = sin(yaw) */
+    mul.s      ft3, ft0, fv0            /* ft3 = x * sin(yaw) */
+    mul.s      fa0, ft1, fv0            /* fa0 = y * sin(yaw) */
+    jal        Cosf                     /* fv0 = cos(yaw) */
+    mul.s      ft0, ft0, fv0            /* ft0 = x * cos(yaw) */
+    sub.s      ft0, ft0, fa0            /* ft0 = x1 = x*cos - y*sin */
+    mul.s      ft1, ft1, fv0            /* ft1 = y * cos(yaw) */
+    add.s      ft1, ft1, ft3            /* ft1 = y1 = y*cos + x*sin */
+
+    /* -----------------------------------------
+     * Apply pitch rotation (around Y axis)
+     * y2 = y1*cos - z*sin
+     * z1 = z*cos + y1*sin
+     * ----------------------------------------- */
+    lh         a0, 0x2(a2)              /* a0 = pitch angle */
+    jal        Sinf                     /* fv0 = sin(pitch) */
+    mul.s      ft3, ft1, fv0            /* ft3 = y1 * sin(pitch) */
+    mul.s      fa0, ft2, fv0            /* fa0 = z * sin(pitch) */
+    jal        Cosf                     /* fv0 = cos(pitch) */
+    mul.s      ft1, ft1, fv0            /* ft1 = y1 * cos(pitch) */
+    sub.s      ft1, ft1, fa0            /* ft1 = y2 = y1*cos - z*sin */
+    mul.s      ft2, ft2, fv0            /* ft2 = z * cos(pitch) */
+    add.s      ft2, ft2, ft3            /* ft2 = z1 = z*cos + y1*sin */
+
+    /* -----------------------------------------
+     * Apply roll rotation (around X axis)
+     * x2 = x1*cos + z1*sin
+     * z2 = z1*cos - x1*sin
+     * ----------------------------------------- */
+    lh         a0, 0x0(a2)              /* a0 = roll angle */
+    jal        Sinf                     /* fv0 = sin(roll) */
+    mul.s      ft3, ft0, fv0            /* ft3 = x1 * sin(roll) */
+    mul.s      fa0, ft2, fv0            /* fa0 = z1 * sin(roll) */
+    jal        Cosf                     /* fv0 = cos(roll) */
+    mul.s      ft0, ft0, fv0            /* ft0 = x1 * cos(roll) */
+    add.s      ft0, ft0, fa0            /* ft0 = x2 = x1*cos + z1*sin */
+    mul.s      ft2, ft2, fv0            /* ft2 = z1 * cos(roll) */
+    sub.s      ft2, ft2, ft3            /* ft2 = z2 = z1*cos - x1*sin */
+
+    /* Store rotated vector */
+    swc1       ft0, 0x0(a1)             /* store x2 */
+    swc1       ft1, 0x4(a1)             /* store y2 */
+    swc1       ft2, 0x8(a1)             /* store z2 */
+
     ld         ra, 0x0(sp)
     addiu      sp, sp, 0x8
     jr         ra
 END(mathOneFloatRPY)
 
+/**
+ * Rotates a 3D floating-point vector by Euler angles in YPR (Yaw-Pitch-Roll) order.
+ *
+ * Official Name: mathOneFloatYPR
+ *
+ * The rotation is applied in the order: Roll (X) -> Pitch (Y) -> Yaw (Z)
+ * This is the reverse application order compared to vec3f_rotate (RPY).
+ *
+ * Arguments:
+ *   a0 = pointer to Vec3s rotation angles:
+ *          0x00: s16 roll  (rotation around X axis)
+ *          0x02: s16 pitch (rotation around Y axis)
+ *          0x04: s16 yaw   (rotation around Z axis)
+ *   a1 = pointer to Vec3f vector (in/out):
+ *          0x00: f32 x
+ *          0x04: f32 y
+ *          0x08: f32 z
+ *
+ * Math:
+ *   First apply roll (X rotation):
+ *     x1 = x * cos(roll) + z * sin(roll)
+ *     z1 = z * cos(roll) - x * sin(roll)
+ *   Then apply pitch (Y rotation):
+ *     y1 = y * cos(pitch) - z1 * sin(pitch)
+ *     z2 = z1 * cos(pitch) + y * sin(pitch)
+ *   Finally apply yaw (Z rotation):
+ *     x2 = x1 * cos(yaw) - y1 * sin(yaw)
+ *     y2 = y1 * cos(yaw) + x1 * sin(yaw)
+ */
 LEAF(mathOneFloatYPR)
     addiu      sp, sp, -0x8
     sd         ra, 0x0(sp)
-    lwc1       ft0, 0x0(a1)
-    lwc1       ft1, 0x4(a1)
-    lwc1       ft2, 0x8(a1)
-    move       a2, a0
-    lh         a0, 0x0(a2)
-    jal        Sinf
-    mul.s      ft3, ft0, fv0
-    mul.s      fa0, ft2, fv0
-    jal        Cosf
-    mul.s      ft0, fv0
-    lh         a0, 0x2(a2)
-    mul.s      ft2, fv0
-    add.s      ft0, fa0
-    sub.s      ft2, ft3
-    jal        Sinf
-    mul.s      ft3, ft1, fv0
-    mul.s      fa0, ft2, fv0
-    jal        Cosf
-    mul.s      ft1, fv0
-    lh         a0, 0x4(a2)
-    mul.s      ft2, fv0
-    sub.s      ft1, fa0
-    add.s      ft2, ft3
-    jal        Sinf
-    mul.s      ft3, ft0, fv0
-    mul.s      fa0, ft1, fv0
-    jal        Cosf
-    mul.s      ft0, fv0
-    swc1       ft2, 0x8(a1)
-    mul.s      ft1, fv0
-    sub.s      ft0, fa0
-    add.s      ft1, ft3
-    swc1       ft0, 0x0(a1)
-    swc1       ft1, 0x4(a1)
+    move       a2, a0                   /* a2 = rotation angles pointer */
+
+    /* Load input vector components */
+    lwc1       ft0, 0x0(a1)             /* ft0 = x */
+    lwc1       ft1, 0x4(a1)             /* ft1 = y */
+    lwc1       ft2, 0x8(a1)             /* ft2 = z */
+
+    /* -----------------------------------------
+     * Apply roll rotation (around X axis)
+     * x1 = x*cos + z*sin
+     * z1 = z*cos - x*sin
+     * ----------------------------------------- */
+    lh         a0, 0x0(a2)              /* a0 = roll angle */
+    jal        Sinf                     /* fv0 = sin(roll) */
+    mul.s      ft3, ft0, fv0            /* ft3 = x * sin(roll) */
+    mul.s      fa0, ft2, fv0            /* fa0 = z * sin(roll) */
+    jal        Cosf                     /* fv0 = cos(roll) */
+    mul.s      ft0, fv0                 /* ft0 = x * cos(roll) */
+    add.s      ft0, fa0                 /* ft0 = x1 = x*cos + z*sin */
+    mul.s      ft2, fv0                 /* ft2 = z * cos(roll) */
+    sub.s      ft2, ft3                 /* ft2 = z1 = z*cos - x*sin */
+
+    /* -----------------------------------------
+     * Apply pitch rotation (around Y axis)
+     * y1 = y*cos - z1*sin
+     * z2 = z1*cos + y*sin
+     * ----------------------------------------- */
+    lh         a0, 0x2(a2)              /* a0 = pitch angle */
+    jal        Sinf                     /* fv0 = sin(pitch) */
+    mul.s      ft3, ft1, fv0            /* ft3 = y * sin(pitch) */
+    mul.s      fa0, ft2, fv0            /* fa0 = z1 * sin(pitch) */
+    jal        Cosf                     /* fv0 = cos(pitch) */
+    mul.s      ft1, fv0                 /* ft1 = y * cos(pitch) */
+    sub.s      ft1, fa0                 /* ft1 = y1 = y*cos - z1*sin */
+    mul.s      ft2, fv0                 /* ft2 = z1 * cos(pitch) */
+    add.s      ft2, ft3                 /* ft2 = z2 = z1*cos + y*sin */
+
+    /* -----------------------------------------
+     * Apply yaw rotation (around Z axis)
+     * x2 = x1*cos - y1*sin
+     * y2 = y1*cos + x1*sin
+     * ----------------------------------------- */
+    lh         a0, 0x4(a2)              /* a0 = yaw angle */
+    jal        Sinf                     /* fv0 = sin(yaw) */
+    mul.s      ft3, ft0, fv0            /* ft3 = x1 * sin(yaw) */
+    mul.s      fa0, ft1, fv0            /* fa0 = y1 * sin(yaw) */
+    jal        Cosf                     /* fv0 = cos(yaw) */
+    mul.s      ft0, fv0                 /* ft0 = x1 * cos(yaw) */
+    sub.s      ft0, fa0                 /* ft0 = x2 = x1*cos - y1*sin */
+    mul.s      ft1, fv0                 /* ft1 = y1 * cos(yaw) */
+    add.s      ft1, ft3                 /* ft1 = y2 = y1*cos + x1*sin */
+
+    /* Store rotated vector */
+    swc1       ft0, 0x0(a1)             /* store x2 */
+    swc1       ft1, 0x4(a1)             /* store y2 */
+    swc1       ft2, 0x8(a1)             /* store z2 */
+
     ld         ra, 0x0(sp)
     addiu      sp, sp, 0x8
     jr         ra
