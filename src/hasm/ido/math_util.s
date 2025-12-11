@@ -1002,25 +1002,72 @@ LEAF(mathOneFloatYPR)
     jr         ra
 END(mathOneFloatYPR)
 
+/**
+ * Rotates a 3D floating-point vector by Pitch and Yaw angles only.
+ *
+ * Official Name: mathOneFloatPY
+ *
+ * This is a simplified rotation function that only uses the Z input component
+ * to generate a direction vector based on pitch and yaw angles. The input X and Y
+ * components are ignored.
+ *
+ * Arguments:
+ *   a0 = pointer to Vec3s rotation angles:
+ *          0x00: s16 roll  (rotation around X axis) - used for final X/Z split
+ *          0x02: s16 pitch (rotation around Y axis) - controls Y component
+ *          0x04: s16 yaw   (unused in this function)
+ *   a1 = pointer to Vec3f vector (in/out):
+ *          0x00: f32 x (output only)
+ *          0x04: f32 y (output only)
+ *          0x08: f32 z (input: magnitude, output: transformed z)
+ *
+ * Math:
+ *   First apply pitch (Y rotation) to get Y component:
+ *     y = -(z * sin(pitch))
+ *     z1 = z * cos(pitch)
+ *   Then apply roll to split z1 into X and Z:
+ *     x = z1 * sin(roll)
+ *     z2 = z1 * cos(roll)
+ *
+ * This effectively converts a Z-magnitude into a direction vector based on
+ * pitch and roll angles, useful for aiming or facing direction calculations.
+ */
 LEAF(mathOneFloatPY)
     addiu      sp, sp, -0x8
     sd         ra, 0x0(sp)
-    move       a2, a0
-    lwc1       ft2, 0x8(a1)
-    lh         a0, 0x2(a2)
-    jal        Sinf
-    mul.s      ft1, ft2, fv0
-    jal        Cosf
-    neg.s      ft1
-    mul.s      ft2, fv0
-    lh         a0, 0x0(a2)
-    jal        Sinf
-    mul.s      ft0, ft2, fv0
-    jal        Cosf
-    mul.s      ft2, fv0
-    swc1       ft0, 0x0(a1)
-    swc1       ft1, 0x4(a1)
-    swc1       ft2, 0x8(a1)
+    move       a2, a0                   /* a2 = rotation angles pointer */
+
+    /* Load input Z component (used as magnitude) */
+    lwc1       ft2, 0x8(a1)             /* ft2 = z (input magnitude) */
+
+    /* -----------------------------------------
+     * Apply pitch rotation (around Y axis)
+     * y = -z * sin(pitch)
+     * z1 = z * cos(pitch)
+     * ----------------------------------------- */
+    lh         a0, 0x2(a2)              /* a0 = pitch angle */
+    jal        Sinf                     /* fv0 = sin(pitch) */
+    mul.s      ft1, ft2, fv0            /* ft1 = z * sin(pitch) */
+    jal        Cosf                     /* fv0 = cos(pitch) */
+    neg.s      ft1                      /* ft1 = y = -z * sin(pitch) */
+    mul.s      ft2, fv0                 /* ft2 = z1 = z * cos(pitch) */
+
+    /* -----------------------------------------
+     * Apply roll rotation to split z1 into X and Z
+     * x = z1 * sin(roll)
+     * z2 = z1 * cos(roll)
+     * ----------------------------------------- */
+    lh         a0, 0x0(a2)              /* a0 = roll angle */
+    jal        Sinf                     /* fv0 = sin(roll) */
+    mul.s      ft0, ft2, fv0            /* ft0 = x = z1 * sin(roll) */
+    jal        Cosf                     /* fv0 = cos(roll) */
+    mul.s      ft2, fv0                 /* ft2 = z2 = z1 * cos(roll) */
+
+    /* Store output direction vector */
+    swc1       ft0, 0x0(a1)             /* store x */
+    swc1       ft1, 0x4(a1)             /* store y */
+    swc1       ft2, 0x8(a1)             /* store z */
+
     ld         ra, 0x0(sp)
     addiu      sp, sp, 0x8
     jr         ra
