@@ -266,7 +266,9 @@ segments:
       - [0xB07B0, rodata]
       - [0xB0810, rodata]
       - [0xB0F50, rodata]
-      - { start: 0xB1750, type: bss, vram: 0x800B0B50 }
+      - { type: bss, vram: 0x800B0B50, name: main_bss_start }
+      - { type: .bss, vram: 0x800F94D0, name: hasm/entrypoint }
+      - { type: bss, vram: 0x800FA4D0, name: camera_bss_start } # camera bss start
 
   - name: assets
     type: bin
