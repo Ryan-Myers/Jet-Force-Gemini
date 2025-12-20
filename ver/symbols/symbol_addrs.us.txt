@@ -149,7 +149,6 @@ debugInputCode = 0x800a339c;
 vi = 0x800a9eb0;
 osScedStack = 0x800fd748;
 osSched = 0x800fb440;
-TLB_REFILL = 0x80000000;
 __osCurrentHandle = 0x800a6f90;
 buttonPress0 = 0x800fb0f0;
 buttonPress1 = 0x800fb0f8;

@@ -43,7 +43,7 @@ ROM_OFFSETS = {
         'base_addr': 0x80000450,      # Base address for main code section
         'data_base': 0x800A0EF0,      # Base address for data section (tuneSeqPlayer)
         'bss_base': 0x800B16B0,       # Base address for BSS section (gMusicSequenceData)
-        'num_symbols': 2360,          # Number of symbols (from name table size)
+        'num_symbols': 2359,          # Number of symbols (from name table size)
     },
     'us': {
         'addr_table': 0x1ED0270,      # Address offset table
@@ -52,7 +52,7 @@ ROM_OFFSETS = {
         'base_addr': 0x80000450,      # Base address for main code section
         'data_base': 0x800A0AA0,      # Base address for data section (tuneSeqPlayer)
         'bss_base': 0x800B1260,       # Base address for BSS section (gMusicSequenceData)
-        'num_symbols': 2372,          # Number of symbols (from name table size)
+        'num_symbols': 2371,          # Number of symbols (from name table size)
     }
 }
 
@@ -132,6 +132,7 @@ def extract_symbols(rom_data: bytes, version: str = 'kiosk',
     num_symbols = offsets['num_symbols']
     
     symbols = []
+    seen = set()  # Track (address, name) pairs to deduplicate
     
     for i in range(num_symbols):
         # Read raw address value from the address table
@@ -151,6 +152,12 @@ def extract_symbols(rom_data: bytes, version: str = 'kiosk',
         
         # Read the symbol name
         name = read_null_terminated_string(rom_data, symbol_names + name_offset)
+        
+        # Deduplicate - skip if we've seen this exact (address, name) pair
+        key = (address, name)
+        if key in seen:
+            continue
+        seen.add(key)
         
         symbols.append((address, name, section, offset_in_section))
     
