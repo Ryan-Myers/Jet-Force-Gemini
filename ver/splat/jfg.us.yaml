@@ -83,6 +83,7 @@ segments:
       - [0x74270, asm]
       - [0x74A70, asm]
       - [0x74A80, asm]
+      - [0x765D0, asm]
       - [0x766C0, asm]
       - [0x76C20, asm]
       - [0x7A7D0, asm]
@@ -170,6 +171,7 @@ segments:
       - [0x9A190, asm]
       - [0x9A540, asm]
       - [0x9A550, asm]
+      - [0x9A860, asm]
       - [0x9A940, asm]
       - [0x9A980, asm]
       - [0x9AA50, asm]
@@ -213,6 +215,7 @@ segments:
       # - [0x9FF10, hasm]
       # - [0xA0350, data]
       - [0xA16A0, data]
+      - [0xAABB0, rodata]
       - { start: 0xB1750, type: bss, vram: 0x800B0B50 }
 
   - name: assets
