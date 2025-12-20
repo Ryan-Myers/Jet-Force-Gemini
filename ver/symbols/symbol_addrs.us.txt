@@ -88,7 +88,6 @@ spSetZ = 0x80091268;
 MusFxBankNumberOfEffects = 0x80099d30;
 __osTimerList = 0x8009dd60;
 gzip_data_0000 = 0x800a0680;
-player_bss_003C = 0x800a06ec;
 osClockRate = 0x800a34c4;
 __osThreadTail = 0x800a3d00;
 __osPiDevMgr = 0x800a6f70;
@@ -257,6 +256,7 @@ RDPTaskTally = 0x800a38c4;
 audioBuffer = 0x800f1ad0;
 currentAudio = 0x800a06cc;
 audioSamples = 0x800f1ac8;
+D_800A0F48 = 0x800A06B4;
 
 amSetMuteMode = 0x80000450;
 gsSndpSetMasterVolume = 0x80086430;
