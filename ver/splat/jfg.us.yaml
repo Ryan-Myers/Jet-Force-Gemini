@@ -221,7 +221,16 @@ segments:
       - [0xA0350, data]
       - { start: 0xB1750, type: bss, vram: 0x800B0B50 }
 
-  - type: bin
+  - name: assets
+    type: bin
     start: 0xB1750
-    follows_vram: main
+
+  - name: symbolsTable_symbol_names
+    type: bin
+    start: 0x1FED550
+
+  - name: padding
+    type: bin
+    start: 0x1FF6820
+
   - [0x2000000]
