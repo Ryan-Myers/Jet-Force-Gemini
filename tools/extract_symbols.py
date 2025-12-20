@@ -21,7 +21,7 @@ Usage:
 
 Options:
     --output, -o      Output file (default: stdout)
-    --format, -f      Output format: 'map', 'names', 'c_header', 'linker', 'sections'
+    --format, -f      Output format: 'map', 'names', 'linker', 'sections'
     --version, -v     ROM version: 'kiosk' (default) or 'us'
     --section, -s     Filter by section number (e.g., 0 for main code)
     --main-only       Only output main code section (section 0)
@@ -184,27 +184,6 @@ def format_symbols_names(symbols: list) -> str:
     """Format symbols as names only (one per line)."""
     return '\n'.join(name for _, name, _, _ in symbols)
 
-
-def format_symbols_c_header(symbols: list) -> str:
-    """Format symbols as C header with extern declarations."""
-    lines = []
-    lines.append("/* Auto-generated symbol declarations */")
-    lines.append("#ifndef SYMBOLS_H")
-    lines.append("#define SYMBOLS_H")
-    lines.append("")
-    
-    for address, name, section, offset in symbols:
-        if address is not None:
-            lines.append(f"extern void {name}(void); /* 0x{address:08X} */")
-        else:
-            lines.append(f"extern void {name}(void); /* section {section:03X} + 0x{offset:05X} */")
-    
-    lines.append("")
-    lines.append("#endif /* SYMBOLS_H */")
-    
-    return '\n'.join(lines)
-
-
 def format_symbols_linker(symbols: list) -> str:
     """Format symbols as linker script entries."""
     lines = []
@@ -218,16 +197,33 @@ def format_symbols_linker(symbols: list) -> str:
 
 
 def format_symbols_sections(symbols: list) -> str:
-    """Format symbols grouped by section."""
+    """Format symbols grouped by section, sorted by address order."""
     from collections import defaultdict
     
     sections = defaultdict(list)
     for address, name, section, offset in symbols:
         sections[section].append((address, name, offset))
     
+    # Define section order: main code first, then data, BSS, then dynamic modules sorted by ID
+    def section_sort_key(sec):
+        if sec == SECTION_MAIN_CODE:
+            return (0, 0)  # First
+        elif sec == SECTION_DATA_1:
+            return (1, 0)  # Second (data)
+        elif sec == SECTION_DATA_2:
+            return (1, 1)  # Third (data)
+        elif sec == SECTION_BSS:
+            return (2, 0)  # Fourth (BSS)
+        else:
+            return (3, sec)  # Dynamic modules, sorted by section ID
+    
     lines = []
-    for section in sorted(sections.keys()):
+    for section in sorted(sections.keys(), key=section_sort_key):
         syms = sections[section]
+        
+        # Sort symbols within section by offset
+        syms.sort(key=lambda x: x[2])  # Sort by offset (third element)
+        
         if section == SECTION_MAIN_CODE:
             section_name = "Main Code"
         elif section == SECTION_DATA_1:
@@ -237,7 +233,7 @@ def format_symbols_sections(symbols: list) -> str:
         elif section == SECTION_BSS:
             section_name = "BSS"
         else:
-            section_name = f"Module {section:03X}"
+            section_name = f"Module {section}"
         
         lines.append(f"\n=== Section 0x{section:03X}: {section_name} ({len(syms)} symbols) ===")
         
@@ -273,7 +269,7 @@ def main():
     parser.add_argument('rom_file', help='Path to the ROM file')
     parser.add_argument('-o', '--output', help='Output file (default: stdout)')
     parser.add_argument('-f', '--format', 
-                        choices=['map', 'names', 'c_header', 'linker', 'sections'],
+                        choices=['map', 'names', 'linker', 'sections'],
                         default='map',
                         help='Output format (default: map)')
     parser.add_argument('-v', '--version',
@@ -327,7 +323,6 @@ def main():
     formatters = {
         'map': format_symbols_map,
         'names': format_symbols_names,
-        'c_header': format_symbols_c_header,
         'linker': format_symbols_linker,
         'sections': format_symbols_sections,
     }
