@@ -25,7 +25,7 @@ options:
   asm_emit_size_directive: False
   section_order: [".text", ".data", ".rodata", ".bss"]
   migrate_rodata_to_functions: False
-  hasm_in_src_path: True
+  hasm_in_src_path: False
 segments:
   - name: header
     type: header
@@ -35,20 +35,13 @@ segments:
     type: bin
     start: 0x40
 
-  - name: entry
+  - name: main
     type: code
     start: 0x1000
     vram: 0x80000400
-    subsegments:
-      - [0x1000, hasm, entrypoint]
-
-  - name: main
-    type: code
-    start: 0x1050
-    vram: 0x80000450
-    follows_vram: entry
     bss_size: 0x54E50
     subsegments:
+      - [0x1000, hasm, entrypoint]
       - [0x1050, asm]
       - [0x2610, asm]
       - [0x3430, asm]
@@ -214,16 +207,37 @@ segments:
       - [0x9D9C0, asm]
       - [0x9E480, asm]
       - [0x9E610, bin] # - [0x9E610, hasm] - This seems to call a func func_840010E0 which breaks things.
-      - [0x9E760, data]
-      - [0x9FE50, hasm]
-      - [0x9FED0, data]
-      - [0x9FF10, hasm]
-      - [0xA0350, data]
+      # - [0x9E760, data]
+      # - [0x9FE50, hasm]
+      # - [0x9FED0, data]
+      # - [0x9FF10, hasm]
+      # - [0xA0350, data]
+      - [0xA16A0, data]
       - { start: 0xB1750, type: bss, vram: 0x800B0B50 }
 
   - name: assets
     type: bin
     start: 0xB1750
+
+  - name: overlaydata #?
+    type: bin
+    start: 0xB1880
+
+  - name: runlinks_section1
+    type: bin
+    start: 0x1ECF220
+
+  - name: runlinks_section2
+    type: bin
+    start: 0x1ED0270
+
+  - name: runlinks_section3
+    type: bin
+    start: 0x1ED2780
+
+  - name: symbolsTable_offsets
+    type: bin
+    start: 0x1FEB040
 
   - name: symbolsTable_symbol_names
     type: bin

@@ -37,17 +37,27 @@ define print
 endef
 
 # Directories
-BIN_DIRS  = assets
-BUILD_DIR = build
-SRC_DIR   = src
+ifeq ($(VERSION),kiosk)
+	BIN_DIRS  = assets
+	BUILD_DIR = build
+	SRC_DIR   = src
+	ASM_DIR   = asm
+else
+	BIN_DIRS  = assets_us
+	BUILD_DIR = build_us
+	SRC_DIR   = src_us
+	ASM_DIR   = asm_us
+endif
+
 MATH_DIR  = $(SRC_DIR)/math
 OLD_LIBULTRA_DIR = $(SRC_DIR)/libultra
 LIBULTRA_DIR = libultra
-ASM_DIRS  = asm asm/data asm/nonmatchings asm/data/libultra asm/hasm asm/libultra asm/libultra/src/flash
+ASM_DIRS  = $(ASM_DIR) $(ASM_DIR)/data $(ASM_DIR)/nonmatchings $(ASM_DIR)/data/libultra $(ASM_DIR)/hasm $(ASM_DIR)/libultra $(ASM_DIR)/libultra/src/flash
 HASM_DIRS = $(SRC_DIR)/hasm $(SRC_DIR)/hasm/ido $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc $(OLD_LIBULTRA_DIR)
 LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/sc $(LIBULTRA_DIR)/src/flash
+
 
 # Files requiring pre/post-processing
 GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) $(LIBULTRA_DIR) </dev/null 2>/dev/null)
