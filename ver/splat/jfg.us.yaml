@@ -25,7 +25,7 @@ options:
   asm_emit_size_directive: False
   section_order: [".text", ".data", ".rodata", ".bss"]
   migrate_rodata_to_functions: False
-  hasm_in_src_path: False
+  hasm_in_src_path: True
 segments:
   - name: header
     type: header
@@ -41,7 +41,7 @@ segments:
     vram: 0x80000400
     bss_size: 0x54E50
     subsegments:
-      - [0x1000, hasm, entrypoint]
+      - [0x1000, hasm, hasm/entrypoint]
       - [0x1050, asm, audio_manager_1050] # audio in DKR
       - [0x2610, asm]
       - [0x3430, asm]
@@ -59,9 +59,10 @@ segments:
       - [0x432D0, asm]
       - [0x44350, asm]
       - [0x45750, asm]
-      - [0x49700, hasm, math_util]
-      - [0x4A2B0, hasm, math_util2]
-      - [0x4A9C0, asm]
+      - [0x49700, hasm, hasm/ido/math_util]
+      - [auto, hasm, hasm/ido/math_data_tables]
+      - [0x4A9C0, asm, hasm/math_matrix]
+      - [0x4AFD0, asm, memory]
       - [0x4DED0, asm]
       - [0x4E340, asm]
       - [0x4E610, asm]
@@ -217,6 +218,10 @@ segments:
       - [0xA1260, data, audio_manager_1050]
       - [0xA12C0, data]
       - [0xA16A0, data]
+      - [0xA3FE0, .data, hasm/ido/math_util]
+      - [0xA3FF0, data]
+      - [0xA8190, .data, hasm/ido/math_data_tables]
+      - [0xAA1A0, data]
       - [0xAABB0, rodata, audio_manager_1050]
       - [0xAC120, rodata]
       - [0xAC680, rodata]
@@ -226,6 +231,8 @@ segments:
       - [0xACF50, rodata]
       - [0xAD030, rodata]
       - [0xAD0D0, rodata]
+      - [0xAD230, .rodata, hasm/ido/math_util]
+      - [0xAD260, rodata]
       - [0xAD550, rodata]
       - [0xAD8D0, rodata]
       - [0xADCD0, rodata]
