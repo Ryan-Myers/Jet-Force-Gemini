@@ -50,8 +50,8 @@ ROM_OFFSETS = {
         'name_offsets': 0x1FEB040,    # Symbol name offset table
         'symbol_names': 0x1FED550,    # Symbol names data
         'base_addr': 0x80000450,      # Base address for main code section
-        'data_base': 0x800A0AA0,      # Base address for data section (tuneSeqPlayer)
-        'bss_base': 0x800B1260,       # Base address for BSS section (gMusicSequenceData)
+        'data_base': 0x800A0660,      # Base address for data section (tuneSeqPlayer)
+        'bss_base': 0x800B0B50,       # Base address for BSS section (gMusicSequenceData)
         'num_symbols': 2371,          # Number of symbols (from name table size)
     }
 }
