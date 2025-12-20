@@ -2688,4 +2688,4 @@
   +0x00000  __osRdbSend
 
 === Section 0xFFC: Module 4092 (1 symbols) ===
-  +0x00300  osTvType
+  80000300  osTvType
