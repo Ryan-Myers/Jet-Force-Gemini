@@ -178,13 +178,21 @@ segments:
       - [0x99950, asm, libultra_c/src/io/visetmode] #
       - [0x999C0, asm, libultra_c/src/io/viblack] #
       - [0x99A30, asm, libultra_c/src/io/visetevent] #
-      - [0x99AA0, asm, libultra_c/src/os/setintmask]
-      - [0x99E00, asm, libultra_c/src/io/sptaskyielded]
-      - [0x99FB0, asm, libultra_c/src/io/sptaskyield]
-      - [0x9A190, asm, libultra_c/src/io/viswapbuf]
-      - [0x9A540, asm, libultra_c/src/os/getactivequeue]
-      - [0x9A550, asm, libultra_c/src/libc/bcopy]
-      - [0x9A860, asm, libultra_c/src/io/piacs]
+      - [0x99AA0, asm, libultra_c/src/os/setintmask] #
+      - [0x99B40, asm, libultra_c/src/io/sptask] #
+      - [0x99E00, asm, libultra_c/src/io/sptaskyielded] #
+      - [0x99E80, asm, libultra_c/src/io/vigetcurrframebuf] #
+      - [0x99EC0, asm, libultra_c/src/io/vigetnextframebuf] #
+      - [0x99F00, asm, libultra_c/src/io/dpsetnextbuf] #
+      - [0x99FB0, asm, libultra_c/src/io/sptaskyield] #
+      - [0x99FD0, asm, libultra_c/src/io/visetspecial] #
+      - [0x9A190, asm, libultra_c/src/io/viswapbuf] #
+      - [0x9A1E0, asm, libultra_c/src/libc/ll] #
+      - [0x9A4A0, asm, libultra_c/src/libc/string] #
+      - [0x9A540, asm, libultra_c/src/os/getactivequeue] #
+      - [0x9A550, asm, libultra_c/src/libc/bcopy] #
+      - [0x9A860, asm, libultra_c/src/io/piacs] #
+      - [0x9A920, asm, libultra_c/src/os/getthreadpri] #
       - [0x9A940, asm, libultra_c/src/os/interrupt]
       - [0x9A980, asm, libultra_c/src/io/pirawdma]
       - [0x9AA50, asm, libultra_c/src/io/epirawdma]

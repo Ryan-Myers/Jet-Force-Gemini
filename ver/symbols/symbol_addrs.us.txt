@@ -1274,7 +1274,6 @@ __osPiCreateAccessQueue = 0x80099C60;
 __osPiGetAccess = 0x80099CB0;
 __osPiRelAccess = 0x80099CF4;
 osGetThreadPri = 0x80099D20;
-MusFxBankNumberOfEffects = 0x80099d30;
 __osDisableInt = 0x80099D40;
 __osRestoreInt = 0x80099D60;
 __osPiRawStartDma = 0x80099D80;
