@@ -193,21 +193,31 @@ segments:
       - [0x9A550, asm, libultra_c/src/libc/bcopy] #
       - [0x9A860, asm, libultra_c/src/io/piacs] #
       - [0x9A920, asm, libultra_c/src/os/getthreadpri] #
-      - [0x9A940, asm, libultra_c/src/os/interrupt]
-      - [0x9A980, asm, libultra_c/src/io/pirawdma]
-      - [0x9AA50, asm, libultra_c/src/io/epirawdma]
-      - [0x9B180, asm, libultra_c/src/io/epilinkhandle]
-      - [0x9B1D0, asm, libultra_c/src/io/epiwrite]
-      - [0x9B220, asm, libultra_c/src/io/epiread]
-      - [0x9B270, asm, libultra_c/src/io/epidma]
-      - [0x9B310, asm, libultra_c/src/libc/syncprintf]
-      - [0x9B370, asm, libultra_c/src/io/siacs]
-      - [0x9B4E0, asm, libultra_c/src/io/crc]
-      - [0x9B780, asm, libultra_c/src/io/vi]
-      - [0x9B8D0, asm, libultra_c/src/io/ai]
-      - [0x9B9C0, asm, libultra_c/src/os/jammesg]
-      - [0x9BB40, asm, libultra_c/src/os/setsr]
-      - [0x9BB60, asm, libultra_c/src/os/setfpccsr]
+      - [0x9A940, asm, libultra_c/src/os/interrupt] #
+      - [0x9A980, asm, libultra_c/src/io/pirawdma] #
+      - [0x9AA50, asm, libultra_c/src/io/epirawdma] #
+      - [0x9AC30, asm, libultra_c/src/io/devmgr] #
+      - [0x9B040, asm, libultra_c/src/os/thread] #
+      - [0x9B080, asm, libultra_c/src/os/destroythread] #
+      - [0x9B180, asm, libultra_c/src/io/epilinkhandle] #
+      - [0x9B1D0, asm, libultra_c/src/io/epiwrite] #
+      - [0x9B220, asm, libultra_c/src/io/epiread] #
+      - [0x9B270, asm, libultra_c/src/io/epidma] #
+      - [0x9B310, asm, libultra_c/src/libc/syncprintf] #
+      - [0x9B370, asm, libultra_c/src/io/siacs] #
+      - [0x9B430, asm, libultra_c/src/io/sirawdma] #
+      - [0x9B4E0, asm, libultra_c/src/io/crc] #
+      - [0x9B660, asm, libultra_c/src/libc/bcmp] #
+      - [0x9B780, asm, libultra_c/src/io/vi] #
+      - [0x9B8D0, asm, libultra_c/src/io/ai] #
+      - [0x9B900, asm, libultra_c/src/os/probetlb] #
+      - [0x9B9C0, asm, libultra_c/src/os/jammesg] #
+      - [0x9BB10, asm, libultra_c/src/io/pigetcmdq] #
+      - [0x9BB40, asm, libultra_c/src/os/setsr] #
+      - [0x9BB50, asm, libultra_c/src/os/getsr] #
+      - [0x9BB60, asm, libultra_c/src/os/setfpccsr] #
+      - [0x9BB70, asm, libultra_c/src/io/sirawread] #
+      - [0x9BBC0, asm, libultra_c/src/io/sirawwrite] #
       - [0x9BC10, asm, libultra_c/src/os/unmaptlball]
       - [0x9BC60, asm, libultra_c/src/os/maptlbrdb]
       - [0x9BCC0, asm, libultra_c/src/os/getcause]
