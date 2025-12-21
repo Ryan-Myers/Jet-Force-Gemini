@@ -1180,6 +1180,7 @@ osPfsReFormat = 0x800944E0;
 osPfsNumFiles = 0x80094820;
 osPfsFileState = 0x80094950;
 osPfsFindFile = 0x80094B30;
+__osPfsGetNextPage = 0x80094D00;
 osPfsReadWriteFile = 0x80094DD8;
 osPfsAllocateFile = 0x80095160;
 __osPfsDeclearPage = 0x80095494;
