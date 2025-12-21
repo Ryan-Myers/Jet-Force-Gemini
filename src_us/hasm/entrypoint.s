@@ -15,9 +15,9 @@ dlabel entrypointThreadStack
 
 glabel entrypoint
 lui        $t0, %hi(__BSS_SECTION_START)
-lui        $t1, (0x54E50 >> 16)
+lui        $t1, %hi(__BSS_SECTION_SIZE)
 addiu      $t0, $t0, %lo(__BSS_SECTION_START)
-ori        $t1, $t1, (0x54E50 & 0xFFFF)
+ori        $t1, $t1, %lo(__BSS_SECTION_SIZE)
 .clear_bytes:
 addi       $t1, $t1, -0x8
 sw         $zero, 0x0($t0)
