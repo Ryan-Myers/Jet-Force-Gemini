@@ -51,12 +51,26 @@ endif
 
 MATH_DIR  = $(SRC_DIR)/math
 OLD_LIBULTRA_DIR = $(SRC_DIR)/libultra
-LIBULTRA_DIR = libultra
+LIBULTRA_DIR = $(SRC_DIR)/libultra_c
 ASM_DIRS  = $(ASM_DIR) $(ASM_DIR)/data $(ASM_DIR)/nonmatchings $(ASM_DIR)/data/libultra $(ASM_DIR)/hasm $(ASM_DIR)/libultra $(ASM_DIR)/libultra/src/flash
 HASM_DIRS = $(SRC_DIR)/hasm $(SRC_DIR)/hasm/ido $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc $(OLD_LIBULTRA_DIR)
 LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/sc $(LIBULTRA_DIR)/src/flash
+
+
+ifeq ($(VERSION),us)
+	ASM_DIRS += $(ASM_DIR)/math
+	ASM_DIRS += $(ASM_DIR)/libultra_c $(ASM_DIR)/libultra_c/src/flash
+	ASM_DIRS += $(ASM_DIR)/libultra_c $(ASM_DIR)/libultra_c/src
+	ASM_DIRS += $(ASM_DIR)/libultra_c/src/debug $(ASM_DIR)/libultra_c/src/gu $(ASM_DIR)/libultra_c/src/io
+	ASM_DIRS += $(ASM_DIR)/libultra_c/src/libc $(ASM_DIR)/libultra_c/src/os $(ASM_DIR)/libultra_c/src/sc $(ASM_DIR)/libultra_c/src/flash
+	LIBULTRA_SRC_DIRS += $(ASM_DIR)/libultra_c $(ASM_DIR)/libultra_c/src
+	LIBULTRA_SRC_DIRS += $(ASM_DIR)/libultra_c/src/debug $(ASM_DIR)/libultra_c/src/gu $(ASM_DIR)/libultra_c/src/io
+	LIBULTRA_SRC_DIRS += $(ASM_DIR)/libultra_c/src/libc $(ASM_DIR)/libultra_c/src/os $(ASM_DIR)/libultra_c/src/sc $(ASM_DIR)/libultra_c/src/flash
+endif
+
+$(info $$LIBULTRA_SRC_DIRS is [${LIBULTRA_SRC_DIRS}])
 
 
 # Files requiring pre/post-processing
