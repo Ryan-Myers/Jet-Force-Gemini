@@ -70,9 +70,6 @@ ifeq ($(VERSION),us)
 	LIBULTRA_SRC_DIRS += $(ASM_DIR)/libultra_c/src/libc $(ASM_DIR)/libultra_c/src/os $(ASM_DIR)/libultra_c/src/sc $(ASM_DIR)/libultra_c/src/flash
 endif
 
-$(info $$LIBULTRA_SRC_DIRS is [${LIBULTRA_SRC_DIRS}])
-
-
 # Files requiring pre/post-processing
 GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) $(LIBULTRA_DIR) </dev/null 2>/dev/null)
 GLOBAL_ASM_O_FILES := $(foreach file,$(GLOBAL_ASM_C_FILES),$(BUILD_DIR)/$(file).o)
