@@ -127,126 +127,124 @@ segments:
       - [0x93430, asm, libultra/n_alLPFilter]
       - [0x93850, asm, math/math_acosf]
       - [0x93930, asm, libultra/n_resample]
-      - [0x93DE0, asm, libultra_c/src/io/pfsisplug] #
-      - [0x940E0, asm, libultra_c/src/io/motor] #
-      - [0x944F0, asm, libultra_c/src/io/pfsfreeblocks] #
-      - [0x94690, asm, libultra_c/src/io/pfsinit] #
-      - [0x94730, asm, libultra_c/src/io/pfschecker] #
-      - [0x950E0, asm, libultra_c/src/io/pfsreformat] #
-      - [0x95420, asm, libultra_c/src/io/pfsnumfiles] #
-      - [0x95550, asm, libultra_c/src/io/pfsfilestate] #
-      - [0x95730, asm, libultra_c/src/io/pfssearchfile] #
-      - [0x95900, asm, libultra_c/src/io/pfsreadwritefile] #
-      - [0x95D60, asm, libultra_c/src/io/pfsallocatefile] #
-      - [0x961E0, asm, libultra_c/src/io/pfsselectbank] #
-      - [0x96260, asm, libultra_c/src/io/contramread] #
-      - [0x96490, asm, libultra_c/src/io/contpfs] #
-      - [0x97030, asm, libultra_c/src/io/pfsgetstatus] #
-      - [0x97270, asm, libultra_c/src/io/contramwrite] #
-      - [0x974C0, asm, libultra_c/src/os/getcount] #
+      - [0x93DE0, asm, libultra_c/src/io/pfsisplug]
+      - [0x940E0, asm, libultra_c/src/io/motor]
+      - [0x944F0, asm, libultra_c/src/io/pfsfreeblocks]
+      - [0x94690, asm, libultra_c/src/io/pfsinit]
+      - [0x94730, asm, libultra_c/src/io/pfschecker]
+      - [0x950E0, asm, libultra_c/src/io/pfsreformat]
+      - [0x95420, asm, libultra_c/src/io/pfsnumfiles]
+      - [0x95550, asm, libultra_c/src/io/pfsfilestate]
+      - [0x95730, asm, libultra_c/src/io/pfssearchfile]
+      - [0x95900, asm, libultra_c/src/io/pfsreadwritefile]
+      - [0x95D60, asm, libultra_c/src/io/pfsallocatefile]
+      - [0x961E0, asm, libultra_c/src/io/pfsselectbank]
+      - [0x96260, asm, libultra_c/src/io/contramread]
+      - [0x96490, asm, libultra_c/src/io/contpfs]
+      - [0x97030, asm, libultra_c/src/io/pfsgetstatus]
+      - [0x97270, asm, libultra_c/src/io/contramwrite]
+      - [0x974C0, asm, libultra_c/src/os/getcount]
       - [0x974D0, pad, pad974D0] #0x40 bytes of zeroes, could be parameters.s from libultra, but that's 0x60 bytes. Same as DKR.
-      - [0x97510, asm, libultra_c/src/os/recvmesg] #
-      - [0x97650, asm, libultra_c/src/io/aisetfreq] #
-      - [0x977B0, asm, libultra_c/src/os/createmesgqueue] #
-      - [0x977E0, asm, libultra_c/src/os/startthread] #
-      - [0x97930, asm, libultra_c/src/os/stopthread] #
-      - [0x979F0, asm, libultra_c/src/os/aisetnextbuf] #
-      - [0x97AA0, asm, libultra_c/src/os/virtualtophysical] #
-      - [0x97B20, asm, libultra_c/src/os/sendmesg] #
-      - [0x97C70, asm, libultra_c/src/io/aigetlen] #
-      - [0x97C80, asm, libultra_c/src/io/pidma] #
-      - [0x97D40, asm, libultra_c/src/gu/sqrtf] #
-      - [0x97D50, asm, libultra_c/src/gu/sinf] #
-      - [0x97F10, asm, libultra_c/src/libc/llcvt] #
-      - [0x98120, asm, libultra_c/src/os/initialize] #
-      - [0x98400, asm, libultra_c/src/os/setthreadpri] #
-      - [0x984E0, asm, libultra_c/src/os/seteventmesg] #
-      - [0x98550, asm, libultra_c/src/io/controller] #
-      - [0x98910, asm, libultra_c/src/io/contreaddata] #
-      - [0x98B70, asm, libultra_c/src/os/settime] #
-      - [0x98BA0, asm, libultra_c/src/os/gettime] #
-      - [0x98C30, asm, libultra_c/src/io/spsetstat] #
-      - [0x98C40, asm, libultra_c/src/io/dpsetstat] #
-      - [0x98C50, asm, libultra_c/src/os/writebackdcache] #
-      - [0x98CD0, asm, libultra_c/src/os/invalicache] #
-      - [0x98D50, asm, libultra_c/src/io/cartrominit] #
-      - [0x98EB0, asm, libultra_c/src/os/invaldcache] #
-      - [0x98F60, asm, libultra_c/src/libc/bzero] #
-      - [0x99000, asm, libultra_c/src/io/pfsdeletefile] #
-      - [0x99610, asm, libultra_c/src/os/writebackdcacheall] #
-      - [0x99640, asm, libultra_c/src/io/vimgr] #
-      - [0x99950, asm, libultra_c/src/io/visetmode] #
-      - [0x999C0, asm, libultra_c/src/io/viblack] #
-      - [0x99A30, asm, libultra_c/src/io/visetevent] #
-      - [0x99AA0, asm, libultra_c/src/os/setintmask] #
-      - [0x99B40, asm, libultra_c/src/io/sptask] #
-      - [0x99E00, asm, libultra_c/src/io/sptaskyielded] #
-      - [0x99E80, asm, libultra_c/src/io/vigetcurrframebuf] #
-      - [0x99EC0, asm, libultra_c/src/io/vigetnextframebuf] #
-      - [0x99F00, asm, libultra_c/src/io/dpsetnextbuf] #
-      - [0x99FB0, asm, libultra_c/src/io/sptaskyield] #
-      - [0x99FD0, asm, libultra_c/src/io/visetspecial] #
-      - [0x9A190, asm, libultra_c/src/io/viswapbuf] #
-      - [0x9A1E0, asm, libultra_c/src/libc/ll] #
-      - [0x9A4A0, asm, libultra_c/src/libc/string] #
-      - [0x9A540, asm, libultra_c/src/os/getactivequeue] #
-      - [0x9A550, asm, libultra_c/src/libc/bcopy] #
-      - [0x9A860, asm, libultra_c/src/io/piacs] #
-      - [0x9A920, asm, libultra_c/src/os/getthreadpri] #
-      - [0x9A940, asm, libultra_c/src/os/interrupt] #
-      - [0x9A980, asm, libultra_c/src/io/pirawdma] #
-      - [0x9AA50, asm, libultra_c/src/io/epirawdma] #
-      - [0x9AC30, asm, libultra_c/src/io/devmgr] #
-      - [0x9B040, asm, libultra_c/src/os/thread] #
-      - [0x9B080, asm, libultra_c/src/os/destroythread] #
-      - [0x9B180, asm, libultra_c/src/io/epilinkhandle] #
-      - [0x9B1D0, asm, libultra_c/src/io/epiwrite] #
-      - [0x9B220, asm, libultra_c/src/io/epiread] #
-      - [0x9B270, asm, libultra_c/src/io/epidma] #
-      - [0x9B310, asm, libultra_c/src/libc/syncprintf] #
-      - [0x9B370, asm, libultra_c/src/io/siacs] #
-      - [0x9B430, asm, libultra_c/src/io/sirawdma] #
-      - [0x9B4E0, asm, libultra_c/src/io/crc] #
-      - [0x9B660, asm, libultra_c/src/libc/bcmp] #
-      - [0x9B780, asm, libultra_c/src/io/vi] #
-      - [0x9B8D0, asm, libultra_c/src/io/ai] #
-      - [0x9B900, asm, libultra_c/src/os/probetlb] #
-      - [0x9B9C0, asm, libultra_c/src/os/jammesg] #
-      - [0x9BB10, asm, libultra_c/src/io/pigetcmdq] #
-      - [0x9BB40, asm, libultra_c/src/os/setsr] #
-      - [0x9BB50, asm, libultra_c/src/os/getsr] #
-      - [0x9BB60, asm, libultra_c/src/os/setfpccsr] #
-      - [0x9BB70, asm, libultra_c/src/io/sirawread] #
-      - [0x9BBC0, asm, libultra_c/src/io/sirawwrite] #
-      - [0x9BC10, asm, libultra_c/src/os/unmaptlball] #
-      - [0x9BC60, asm, libultra_c/src/os/maptlbrdb] #
-      - [0x9BCC0, asm, libultra_c/src/os/getcause] #
-      - [0x9BCD0, asm, libultra_c/src/os/settimer] #
-      - [0x9BDB0, asm, libultra_c/src/os/timerintr] #
-      - [0x9C1B0, asm, libultra_c/src/io/vigetcurrcontext] #
-      - [0x9C1C0, asm, libultra_c/src/io/viswapcontext] #
-      - [0x9C520, asm, libultra_c/src/io/spsetpc] #
-      - [0x9C560, asm, libultra_c/src/io/sprawdma] #
-      - [0x9C5F0, asm, libultra_c/src/io/sp] #
-      - [0x9C620, asm, libultra_c/src/io/spgetstat] #
-      - [0x9C630, asm, libultra_c/src/io/dp] #
-      - [0x9C660, asm, libultra_c/src/os/resetglobalintmask] #
-      - [0x9C6C0, asm, libultra_c/src/io/epirawwrite] #
-      - [0x9C820, asm, libultra_c/src/io/epirawread] #
-      - [0x9C980, asm, libultra_c/src/os/setglobalintmask] #
-      - [0x9C9D0, asm, libultra_c/src/os/yieldthread] #
-      - [0x9CA20, asm, libultra_c/src/libc/xprintf] #
-      - [0x9D6E0, asm, libultra_c/src/io/si] #
-      - [0x9D710, asm, libultra_c/src/os/setcompare] #
-      - [0x9D720, asm, libultra_c/src/libc/xlitob] #
-      - [0x9D9C0, asm, libultra_c/src/libc/xldtob] #
-      - [0x9E480, asm, libultra_c/src/libc/ldiv] #
-      - [0x9E610, bin] # - [0x9E610, hasm] - This seems to call a func func_840010E0 which breaks things.
-      # - [0x9E760, data]
-      # - [0x9FE50, hasm]
-      # - [0x9FED0, data]
-      # - [0x9FF10, hasm]
-      # - [0xA0350, data]
+      - [0x97510, asm, libultra_c/src/os/recvmesg]
+      - [0x97650, asm, libultra_c/src/io/aisetfreq]
+      - [0x977B0, asm, libultra_c/src/os/createmesgqueue]
+      - [0x977E0, asm, libultra_c/src/os/startthread]
+      - [0x97930, asm, libultra_c/src/os/stopthread]
+      - [0x979F0, asm, libultra_c/src/os/aisetnextbuf]
+      - [0x97AA0, asm, libultra_c/src/os/virtualtophysical]
+      - [0x97B20, asm, libultra_c/src/os/sendmesg]
+      - [0x97C70, asm, libultra_c/src/io/aigetlen]
+      - [0x97C80, asm, libultra_c/src/io/pidma]
+      - [0x97D40, asm, libultra_c/src/gu/sqrtf]
+      - [0x97D50, asm, libultra_c/src/gu/sinf]
+      - [0x97F10, asm, libultra_c/src/libc/llcvt]
+      - [0x98120, asm, libultra_c/src/os/initialize]
+      - [0x98400, asm, libultra_c/src/os/setthreadpri]
+      - [0x984E0, asm, libultra_c/src/os/seteventmesg]
+      - [0x98550, asm, libultra_c/src/io/controller]
+      - [0x98910, asm, libultra_c/src/io/contreaddata]
+      - [0x98B70, asm, libultra_c/src/os/settime]
+      - [0x98BA0, asm, libultra_c/src/os/gettime]
+      - [0x98C30, asm, libultra_c/src/io/spsetstat]
+      - [0x98C40, asm, libultra_c/src/io/dpsetstat]
+      - [0x98C50, asm, libultra_c/src/os/writebackdcache]
+      - [0x98CD0, asm, libultra_c/src/os/invalicache]
+      - [0x98D50, asm, libultra_c/src/io/cartrominit]
+      - [0x98EB0, asm, libultra_c/src/os/invaldcache]
+      - [0x98F60, asm, libultra_c/src/libc/bzero]
+      - [0x99000, asm, libultra_c/src/io/pfsdeletefile]
+      - [0x99610, asm, libultra_c/src/os/writebackdcacheall]
+      - [0x99640, asm, libultra_c/src/io/vimgr]
+      - [0x99950, asm, libultra_c/src/io/visetmode]
+      - [0x999C0, asm, libultra_c/src/io/viblack]
+      - [0x99A30, asm, libultra_c/src/io/visetevent]
+      - [0x99AA0, asm, libultra_c/src/os/setintmask]
+      - [0x99B40, asm, libultra_c/src/io/sptask]
+      - [0x99E00, asm, libultra_c/src/io/sptaskyielded]
+      - [0x99E80, asm, libultra_c/src/io/vigetcurrframebuf]
+      - [0x99EC0, asm, libultra_c/src/io/vigetnextframebuf]
+      - [0x99F00, asm, libultra_c/src/io/dpsetnextbuf]
+      - [0x99FB0, asm, libultra_c/src/io/sptaskyield]
+      - [0x99FD0, asm, libultra_c/src/io/visetspecial]
+      - [0x9A190, asm, libultra_c/src/io/viswapbuf]
+      - [0x9A1E0, asm, libultra_c/src/libc/ll]
+      - [0x9A4A0, asm, libultra_c/src/libc/string]
+      - [0x9A540, asm, libultra_c/src/os/getactivequeue]
+      - [0x9A550, asm, libultra_c/src/libc/bcopy]
+      - [0x9A860, asm, libultra_c/src/io/piacs]
+      - [0x9A920, asm, libultra_c/src/os/getthreadpri]
+      - [0x9A940, asm, libultra_c/src/os/interrupt]
+      - [0x9A980, asm, libultra_c/src/io/pirawdma]
+      - [0x9AA50, asm, libultra_c/src/io/epirawdma]
+      - [0x9AC30, asm, libultra_c/src/io/devmgr]
+      - [0x9B040, asm, libultra_c/src/os/thread]
+      - [0x9B080, asm, libultra_c/src/os/destroythread]
+      - [0x9B180, asm, libultra_c/src/io/epilinkhandle]
+      - [0x9B1D0, asm, libultra_c/src/io/epiwrite]
+      - [0x9B220, asm, libultra_c/src/io/epiread]
+      - [0x9B270, asm, libultra_c/src/io/epidma]
+      - [0x9B310, asm, libultra_c/src/libc/syncprintf]
+      - [0x9B370, asm, libultra_c/src/io/siacs]
+      - [0x9B430, asm, libultra_c/src/io/sirawdma]
+      - [0x9B4E0, asm, libultra_c/src/io/crc]
+      - [0x9B660, asm, libultra_c/src/libc/bcmp]
+      - [0x9B780, asm, libultra_c/src/io/vi]
+      - [0x9B8D0, asm, libultra_c/src/io/ai]
+      - [0x9B900, asm, libultra_c/src/os/probetlb]
+      - [0x9B9C0, asm, libultra_c/src/os/jammesg]
+      - [0x9BB10, asm, libultra_c/src/io/pigetcmdq]
+      - [0x9BB40, asm, libultra_c/src/os/setsr]
+      - [0x9BB50, asm, libultra_c/src/os/getsr]
+      - [0x9BB60, asm, libultra_c/src/os/setfpccsr]
+      - [0x9BB70, asm, libultra_c/src/io/sirawread]
+      - [0x9BBC0, asm, libultra_c/src/io/sirawwrite]
+      - [0x9BC10, asm, libultra_c/src/os/unmaptlball]
+      - [0x9BC60, asm, libultra_c/src/os/maptlbrdb]
+      - [0x9BCC0, asm, libultra_c/src/os/getcause]
+      - [0x9BCD0, asm, libultra_c/src/os/settimer]
+      - [0x9BDB0, asm, libultra_c/src/os/timerintr]
+      - [0x9C1B0, asm, libultra_c/src/io/vigetcurrcontext]
+      - [0x9C1C0, asm, libultra_c/src/io/viswapcontext]
+      - [0x9C520, asm, libultra_c/src/io/spsetpc]
+      - [0x9C560, asm, libultra_c/src/io/sprawdma]
+      - [0x9C5F0, asm, libultra_c/src/io/sp]
+      - [0x9C620, asm, libultra_c/src/io/spgetstat]
+      - [0x9C630, asm, libultra_c/src/io/dp]
+      - [0x9C660, asm, libultra_c/src/os/resetglobalintmask]
+      - [0x9C6C0, asm, libultra_c/src/io/epirawwrite]
+      - [0x9C820, asm, libultra_c/src/io/epirawread]
+      - [0x9C980, asm, libultra_c/src/os/setglobalintmask]
+      - [0x9C9D0, asm, libultra_c/src/os/yieldthread]
+      - [0x9CA20, asm, libultra_c/src/libc/xprintf]
+      - [0x9D6E0, asm, libultra_c/src/io/si]
+      - [0x9D710, asm, libultra_c/src/os/setcompare]
+      - [0x9D720, asm, libultra_c/src/libc/xlitob]
+      - [0x9D9C0, asm, libultra_c/src/libc/xldtob]
+      - [0x9E480, asm, libultra_c/src/libc/ldiv]
+      # not really sure exact offsets for these...
+      - [0x9E610, textbin, ucode_audio]
+      - [0x9FE50, textbin, ucode_boot]
+      - [0x9FFD0, textbin, ucode_f3ddkr_dram]
       - [0xA1260, data, audio_manager_1050]
       - [0xA12C0, data]
       - [0xA16A0, data]
@@ -295,9 +293,11 @@ segments:
       - [0xB0600, rodata]
       - [0xB06A0, rodata]
       - [0xB06B0, rodata]
-      - [0xB07B0, rodata]
-      - [0xB0810, rodata]
-      - [0xB0F50, rodata]
+      - [0xB07B0, rodata] #, libultra_c/src/libc/xldtob]
+      # not really sure exact offsets for these...
+      - { start: 0xB0810, type: databin, name: data_audio,       linker_section_order: .rodata }
+      - { start: 0xB0AD0, type: databin, name: data_unk,         linker_section_order: .rodata }
+      - { start: 0xB0F50, type: databin, name: data_f3ddkr_dram, linker_section_order: .rodata }
       - { type: bss, vram: 0x800B0B50, name: main_bss_start }
       - { type: .bss, vram: 0x800F94D0, name: hasm/entrypoint }
       - { type: bss, vram: 0x800FA4D0, name: camera_bss_start } # camera bss start
