@@ -146,30 +146,38 @@ segments:
       - [0x974C0, asm, libultra_c/src/os/getcount] #
       - [0x974D0, pad, pad974D0] #0x40 bytes of zeroes, could be parameters.s from libultra, but that's 0x60 bytes. Same as DKR.
       - [0x97510, asm, libultra_c/src/os/recvmesg] #
-      - [0x97650, asm, libultra_c/src/io/aisetfreq]
-      - [0x977E0, asm, libultra_c/src/os/startthread]
-      - [0x97AA0, asm, libultra_c/src/os/virtualtophysical]
-      - [0x97B20, asm, libultra_c/src/os/sendmesg]
-      - [0x97C70, asm, libultra_c/src/io/aigetlen]
-      - [0x97C80, asm, libultra_c/src/io/pidma]
-      - [0x97D50, asm, libultra_c/src/gu/sinf]
-      - [0x98120, asm, libultra_c/src/os/initialize]
-      - [0x98550, asm, libultra_c/src/io/controller]
-      - [0x98910, asm, libultra_c/src/io/contreaddata]
-      - [0x98B70, asm, libultra_c/src/os/settime]
-      - [0x98BA0, asm, libultra_c/src/os/gettime]
-      - [0x98C30, asm, libultra_c/src/io/spsetstat]
-      - [0x98C40, asm, libultra_c/src/io/dpsetstat]
-      - [0x98C50, asm, libultra_c/src/os/writebackdcache]
-      - [0x98CD0, asm, libultra_c/src/os/invalicache]
-      - [0x98D50, asm, libultra_c/src/io/cartrominit]
-      - [0x98EB0, asm, libultra_c/src/os/invaldcache]
-      - [0x98F60, asm, libultra_c/src/libc/bzero]
-      - [0x99000, asm, libultra_c/src/io/pfsdeletefile]
-      - [0x99610, asm, libultra_c/src/os/writebackdcacheall]
-      - [0x99640, asm, libultra_c/src/io/vimgr]
-      - [0x99950, asm, libultra_c/src/io/visetmode]
-      - [0x999C0, asm, libultra_c/src/io/viblack]
+      - [0x97650, asm, libultra_c/src/io/aisetfreq] #
+      - [0x977B0, asm, libultra_c/src/os/createmesgqueue] #
+      - [0x977E0, asm, libultra_c/src/os/startthread] #
+      - [0x97930, asm, libultra_c/src/os/stopthread] #
+      - [0x979F0, asm, libultra_c/src/os/aisetnextbuf] #
+      - [0x97AA0, asm, libultra_c/src/os/virtualtophysical] #
+      - [0x97B20, asm, libultra_c/src/os/sendmesg] #
+      - [0x97C70, asm, libultra_c/src/io/aigetlen] #
+      - [0x97C80, asm, libultra_c/src/io/pidma] #
+      - [0x97D40, asm, libultra_c/src/gu/sqrtf] #
+      - [0x97D50, asm, libultra_c/src/gu/sinf] #
+      - [0x97F10, asm, libultra_c/src/libc/llcvt] #
+      - [0x98120, asm, libultra_c/src/os/initialize] #
+      - [0x98400, asm, libultra_c/src/os/setthreadpri] #
+      - [0x984E0, asm, libultra_c/src/os/seteventmesg] #
+      - [0x98550, asm, libultra_c/src/io/controller] #
+      - [0x98910, asm, libultra_c/src/io/contreaddata] #
+      - [0x98B70, asm, libultra_c/src/os/settime] #
+      - [0x98BA0, asm, libultra_c/src/os/gettime] #
+      - [0x98C30, asm, libultra_c/src/io/spsetstat] #
+      - [0x98C40, asm, libultra_c/src/io/dpsetstat] #
+      - [0x98C50, asm, libultra_c/src/os/writebackdcache] #
+      - [0x98CD0, asm, libultra_c/src/os/invalicache] #
+      - [0x98D50, asm, libultra_c/src/io/cartrominit] #
+      - [0x98EB0, asm, libultra_c/src/os/invaldcache] #
+      - [0x98F60, asm, libultra_c/src/libc/bzero] #
+      - [0x99000, asm, libultra_c/src/io/pfsdeletefile] #
+      - [0x99610, asm, libultra_c/src/os/writebackdcacheall] #
+      - [0x99640, asm, libultra_c/src/io/vimgr] #
+      - [0x99950, asm, libultra_c/src/io/visetmode] #
+      - [0x999C0, asm, libultra_c/src/io/viblack] #
+      - [0x99A30, asm, libultra_c/src/io/visetevent] #
       - [0x99AA0, asm, libultra_c/src/os/setintmask]
       - [0x99E00, asm, libultra_c/src/io/sptaskyielded]
       - [0x99FB0, asm, libultra_c/src/io/sptaskyield]
