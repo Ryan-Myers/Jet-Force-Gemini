@@ -106,7 +106,6 @@ segments:
       - [0x7ADF0, c, hit]
       - [0x84A40, c, fmvInit]
       - [0x84AA0, c, ../libultra/src/flash/flashreinit]
-      - [0x84AA0, c, ../libultra/src/flash/flashreinit]
       - [0x84AF0, c, ../libultra/src/flash/flashinit]
       - [0x84BE0, c, ../libultra/src/flash/flashreadstatus]
       - [0x84C70, c, ../libultra/src/flash/flashreadid]
