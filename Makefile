@@ -60,7 +60,8 @@ LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_
 
 
 ifeq ($(VERSION),us)
-	ASM_DIRS += $(ASM_DIR)/math
+	ASM_DIRS += $(ASM_DIR)/math $(ASM_DIR)/data/math
+	ASM_DIRS += $(ASM_DIR)/data/libultra_c/src/libc $(ASM_DIR)/data/libultra_c/src/os $(ASM_DIR)/data/libultra_c/src/gu
 	ASM_DIRS += $(ASM_DIR)/libultra_c $(ASM_DIR)/libultra_c/src/flash
 	ASM_DIRS += $(ASM_DIR)/libultra_c $(ASM_DIR)/libultra_c/src
 	ASM_DIRS += $(ASM_DIR)/libultra_c/src/debug $(ASM_DIR)/libultra_c/src/gu $(ASM_DIR)/libultra_c/src/io
