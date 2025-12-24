@@ -286,6 +286,8 @@ segments:
       - [0xA16A0, data]
       - [0xA3FE0, .data, hasm/ido/math_util]
       - [0xA3FF0, data]
+      - [0xA6F80, data, diprint]
+      - [0xA70B0, data]
       - [0xA8190, .data, hasm/ido/math_data_tables]
       - [0xAA1A0, data]
       - [0xAABB0, rodata, audio_manager_1050]
@@ -356,6 +358,8 @@ segments:
       - { type: bss, vram: 0x800B0B50, name: main_bss_start }
       - { type: .bss, vram: 0x800F94D0, name: hasm/entrypoint }
       - { type: bss, vram: 0x800FA4D0, name: camera_bss_start } # camera bss start
+      - { type: bss, vram: 0x80100960, name: diprint }
+      - { type: bss, vram: 0x801012A0, name: diRcpTrace_start } # diRcpTrace bss start
 
   - name: assets
     type: bin
