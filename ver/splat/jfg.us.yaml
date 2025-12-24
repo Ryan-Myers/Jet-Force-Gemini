@@ -121,6 +121,7 @@ segments:
       - [0x8A560, asm, libultra/n_cspsetpan]
       - [0x8A5D0, asm] # n_alCSPGetState
       - [0x8A5F0, asm, libultra/n_cseq]
+      - [0x8AFC0, asm, libultra/n_cspsetseq]
       - [0x8B010, asm, libultra/n_cspplay]
       - [0x8B050, asm, libultra/n_cspstop]
       - [0x8B090, asm, libultra/n_cspmessage] # This may be a custom Rare file.
@@ -128,6 +129,7 @@ segments:
       - [0x8B200, asm, libultra/slHeap] # Bit weird, but it looks like this is a split of 
       - [0x8B2B0, asm, libultra/sl] # these two files which are combined in later versions?
       - [0x8B330, asm, libultra/n_synthesizer]
+      - [0x8BE00, asm, libultra/cents2ratio]
       - [0x8BEA0, asm, libultra/alsurround] # This may be a custom Rare file.
       - [0x8C0B0, asm, libultra/n_event]
       - [0x8C860, asm, libultra/n_synallocvoice]
@@ -355,6 +357,10 @@ segments:
   - name: runlinks_section3
     type: bin
     start: 0x1ED2780
+
+  - name: runlinks_section4
+    type: bin
+    start: 0x1ED3B20
 
   - name: symbolsTable_offsets
     type: bin
