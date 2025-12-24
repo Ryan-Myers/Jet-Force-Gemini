@@ -122,19 +122,31 @@ segments:
       - [0x8A5D0, asm] # n_alCSPGetState
       - [0x8A5F0, asm, libultra/n_cseq]
       - [0x8B010, asm, libultra/n_cspplay]
-      - [0x8B200, asm, libultra/slHeap]
-      - [0x8B2B0, asm, libultra/sl]
+      - [0x8B050, asm, libultra/n_cspstop]
+      - [0x8B090, asm, libultra/n_cspmessage] # This may be a custom Rare file.
+      - [0x8B140, asm, libultra/n_sl]
+      - [0x8B200, asm, libultra/slHeap] # Bit weird, but it looks like this is a split of 
+      - [0x8B2B0, asm, libultra/sl] # these two files which are combined in later versions?
       - [0x8B330, asm, libultra/n_synthesizer]
-      - [0x8BEA0, asm, libultra/alsurround]
+      - [0x8BEA0, asm, libultra/alsurround] # This may be a custom Rare file.
       - [0x8C0B0, asm, libultra/n_event]
+      - [0x8C860, asm, libultra/n_synallocvoice]
       - [0x8CB70, asm, libultra/n_synsetvol]
       - [0x8CC40, asm, libultra/n_synstartvoiceparam]
       - [0x8CD70, asm, libultra/n_synsetpan]
-      - [0x8D100, asm, libultra/n_alcspchan]
+      - [0x8CE20, asm, libultra/n_synsetpitch]
+      - [0x8CED0, asm, libultra/n_synsetfxmix]
+      - [0x8CF80, asm, libultra/n_synstopvoice]
+      - [0x8D020, asm, libultra/n_synfreevoice]
+      - [0x8D100, asm, libultra/n_alcspchan] # This may be a custom Rare file.
       - [0x8D340, asm, libultra/n_seqplayer]
-      - [0x8E4A0, asm, libultra/n_alsynsetlpffreq]
+      - [0x8E4A0, asm, libultra/n_alsynsetlpffreq] # This may be a custom Rare file.
+      - [0x8E550, asm, libultra/n_alsynsetlpfgain] # This may be a custom Rare file.
+      - [0x8E600, asm, libultra/n_drvrNew]
       - [0x8F310, asm, libultra/n_syngetfxref]
+      - [0x8F400, asm, libultra/n_synsetfxparam]
       - [0x8F500, asm, libultra/n_alsynsetdistort]
+      - [0x8F5B0, asm, libultra/n_cseqnextdelta]
       - [0x8F690, asm, libultra/n_syndelete]
       - [0x8F6B0, asm, libultra/n_synallocfx]
       - [0x8F740, asm, libultra/n_reverb]
@@ -145,9 +157,10 @@ segments:
       - [0x92080, asm, libultra/n_auxbus]
       - [0x92570, asm, libultra/n_mainbus]
       - [0x928E0, asm, libultra/n_load]
-      - [0x93430, asm, libultra/n_alLPFilter]
+      - [0x93430, asm, libultra/n_alLPFilter] # This may be a custom Rare file.
       - [0x93850, asm, math/math_acosf]
       - [0x93930, asm, libultra/n_resample]
+      - [0x93BD0, asm, math/math_arc]
       - [0x93DE0, asm, libultra_c/src/io/pfsisplug]
       - [0x940E0, asm, libultra_c/src/io/motor]
       - [0x944F0, asm, libultra_c/src/io/pfsfreeblocks]
