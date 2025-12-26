@@ -355,7 +355,19 @@ segments:
       - { start: 0xB0810, type: databin, name: data_audio,       linker_section_order: .rodata }
       - { start: 0xB0AD0, type: databin, name: data_unk,         linker_section_order: .rodata }
       - { start: 0xB0F50, type: databin, name: data_f3ddkr_dram, linker_section_order: .rodata }
-      - { type: bss, vram: 0x800B0B50, name: main_bss_start }
+      - { type: bss, vram: 0x800B0B50, name: audio_manager_1050 }
+      - { type: bss, vram: 0x800E97A0, name: audiomgr }
+      - { type: bss, vram: 0x800F29F0, name: audio_manager_36D0 }
+      - { type: bss, vram: 0x800F2B10, name: audio_manager_4C50 }
+      - { type: bss, vram: 0x800F2C60, name: objects }
+      - { type: bss, vram: 0x800F2F70, name: track }
+      - { type: bss, vram: 0x800F33D0, name: shadows }
+      - { type: bss, vram: 0x800F5B20, name: lights }
+      - { type: bss, vram: 0x800F5B50, name: camlight }
+      - { type: bss, vram: 0x800F6B00, name: explosion }
+      - { type: bss, vram: 0x800F6DA0, name: charControl }
+      - { type: bss, vram: 0x800F6F10, name: models }
+      - { type: bss, vram: 0x800F7060, name: boot }
       - { type: .bss, vram: 0x800F94D0, name: hasm/entrypoint }
       - { type: bss, vram: 0x800FA4D0, name: camera_bss_start } # camera bss start
       - { type: bss, vram: 0x80100960, name: diprint }

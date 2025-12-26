@@ -1569,7 +1569,6 @@ playerlist = 0x800F2D0C;
 PlayerActorCount = 0x800f2d10;
 animplayerlist = 0x800F2D18;
 swpolygons = 0x800F2D58;
-__additional_scanline = 0x800f2f98;
 nohitsflag = 0x800F2F9C;
 globflags = 0x800F2FA0;
 skyframe = 0x800F2FA4;
