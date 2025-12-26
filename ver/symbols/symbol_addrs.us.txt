@@ -1641,7 +1641,6 @@ refractWhichBuffer = 0x800FD830;
 HeapBlocks = 0x800fd840;
 FreeRAM = 0x800FDD90;
 heap_mem_free = 0x800fdd98;
-RAM_End = 0x800fdda8;
 rumblepak_mesgq = 0x800fddb0;
 rumblepakDat = 0x800fddb8;
 rumbleStructArray = 0x800fdf58;

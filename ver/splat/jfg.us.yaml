@@ -369,7 +369,26 @@ segments:
       - { type: bss, vram: 0x800F6F10, name: models }
       - { type: bss, vram: 0x800F7060, name: boot }
       - { type: .bss, vram: 0x800F94D0, name: hasm/entrypoint }
-      - { type: bss, vram: 0x800FA4D0, name: camera_bss_start } # camera bss start
+      - { type: bss, vram: 0x800FA4D0, name: camera }
+      - { type: bss, vram: 0x800FB080, name: staticcamera }
+      - { type: bss, vram: 0x800FB090, name: controller }
+      - { type: bss, vram: 0x800FB110, name: level }
+      - { type: bss, vram: 0x800FB400, name: main }
+      - { type: bss, vram: 0x800FD820, name: refractOutputAssembler }
+      - { type: bss, vram: 0x800FD840, name: memory }
+      - { type: bss, vram: 0x800FDDB0, name: saves }
+      - { type: bss, vram: 0x800FDFE0, name: pi }
+      - { type: bss, vram: 0x800FE080, name: rcpFast3d }
+      - { type: bss, vram: 0x800FE950, name: sched }
+      - { type: bss, vram: 0x800FE9A0, name: squads }
+      - { type: bss, vram: 0x800FEAA0, name: runLink }
+      - { type: bss, vram: 0x800FEB60, name: gameVi }
+      - { type: bss, vram: 0x800FECE0, name: textures }
+      - { type: bss, vram: 0x800FED50, name: globals } # Could be menu? So many variables in here are referenced in several files.
+      - { type: bss, vram: 0x80100840, name: weather }
+      - { type: bss, vram: 0x801008E0, name: particles }
+      # - { type: bss, vram: , name:  }
+      # - { type: bss, vram: , name:  }
       - { type: bss, vram: 0x80100960, name: diprint }
       - { type: bss, vram: 0x801012A0, name: diRcpTrace_start } # diRcpTrace bss start
 
