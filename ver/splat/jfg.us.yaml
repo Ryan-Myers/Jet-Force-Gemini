@@ -400,22 +400,23 @@ segments:
       - { type: bss, vram: 0x801047E0, name: hit }
       - { type: bss, vram: 0x80104E50, name: fmvInit }
       - { type: bss, vram: 0x80104EA0, name: libultra_c/src/flash/flashinit }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
-      # - { type: bss, vram: , name:  }
+      - { type: bss, vram: 0x80104F60, name: gsSnd }
+      - { type: bss, vram: 0x80104FD0, name: libultra/n_csplayer }
+      - { type: bss, vram: 0x80105010, name: libultra/alsurround }
+      - { type: bss, vram: 0x80105020, name: libultra/n_event }
+      - { type: bss, vram: 0x80105030, name: libultra_c/src/io/pfsisplug }
+      - { type: bss, vram: 0x80105070, name: libultra_c/src/io/motor }
+      - { type: bss, vram: 0x80105170, name: libultra_c/src/io/contpfs }
+      - { type: bss, vram: 0x80105270, name: libultra_c/src/os/initialize }
+      - { type: bss, vram: 0x80105280, name: libultra_c/src/os/seteventmesg }
+      - { type: bss, vram: 0x80105300, name: libultra_c/src/io/controller }
+      - { type: bss, vram: 0x80105390, name: libultra_c/src/io/cartrominit }
+      - { type: bss, vram: 0x80105410, name: libultra_c/src/io/vimgr }
+      - { type: bss, vram: 0x80105730, name: libultra_c/src/io/sptask }
+      - { type: bss, vram: 0x80105770, name: libultra_c/src/io/piacs }
+      - { type: bss, vram: 0x80105790, name: libultra_c/src/debug/kdebugserver }
+      - { type: bss, vram: 0x80105940, name: libultra_c/src/io/siacs }
+      - { type: bss, vram: 0x80105980, name: libultra_c/src/os/timerintr }
 
   - name: assets
     type: bin
