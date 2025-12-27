@@ -90,7 +90,7 @@ segments:
       - [0x69040, asm, diCpuTraceCurrentStack]
       - [0x69050, asm, fx]
       - [0x707F0, asm, font]
-      - [0x72F30, asm, libultra_c/src/io/pimgr]
+      - [0x72F30, c, ../libultra/src/io/pimgr]
       - [0x730A0, asm, rzip]
       - [0x737F0, asm, hasm/inflate]
       - [0x74270, asm, subtitles]
@@ -317,7 +317,7 @@ segments:
       - [0xA70C0, data, diCpu]
       - [0xA7380, data, fx]
       - [0xA7A30, data, font]
-      - [0xA7B70, data, libultra_c/src/io/pimgr]
+      - [0xA7B70, .data, ../libultra/src/io/pimgr]
       - [0xA7BA0, data, rzip]
       - [0xA7BB0, data, subtitles]
       - [0xA7BC0, data, hasm/gen_anim_data] # Has a jump table that's data, and not rodata. Splat likes to warn about this.
@@ -448,7 +448,7 @@ segments:
       - { type: bss, vram: 0x801022B0, name: diCpu }
       - { type: bss, vram: 0x80102760, name: fx }
       - { type: bss, vram: 0x80103BA0, name: font }
-      - { type: bss, vram: 0x80104110, name: libultra_c/src/io/pimgr }
+      - { type: .bss, vram: 0x80104110, name: ../libultra/src/io/pimgr }
       - { type: bss, vram: 0x80104550, name: rzip }
       - { type: bss, vram: 0x80104560, name: subtitles }
       - { type: bss, vram: 0x801045B0, name: anim }
