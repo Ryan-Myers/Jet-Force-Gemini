@@ -1056,6 +1056,7 @@ n_alCSPGetTempo = 0x800865F0;
 n_alCSPNew = 0x80086640;
 __n_CSPPostNextSeqEvent = 0x800897B0;
 n_alCSPVoiceLimit = 0x80089844;
+func_80089BF4 = 0x80089854;
 n_alCSPSetChlVol = 0x80089860;
 n_alCSPSetTempo = 0x800898D0;
 n_alCSPSetChlPan = 0x80089960;
