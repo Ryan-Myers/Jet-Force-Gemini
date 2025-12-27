@@ -14,10 +14,10 @@ import subprocess
 from pathlib import Path
 
 
-def extract_symbols(input_file: str) -> list[tuple[str, str]]:
+def extract_symbols(input_file: str) -> list[tuple[str, str, str]]:
     """
     Extract dlabel symbols and their addresses from an asm file.
-    Returns list of (address, symbol_name) tuples.
+    Returns list of (address, symbol_name, rom) tuples.
     """
     symbols = []
     
@@ -37,15 +37,21 @@ def extract_symbols(input_file: str) -> list[tuple[str, str]]:
         # Format: /* 800B0B50 */ or /* AE4A0 800AD8A0 */
         if current_symbol:
             # Try format with ROM and VRAM: /* AE4A0 800AD8A0 */
-            addr_match = re.search(r'/\*\s*[0-9A-Fa-f]+\s+([0-9A-Fa-f]+)\s*\*/', line)
+            addr_match = re.search(r'/\*\s*([0-9A-Fa-f]+)\s+([0-9A-Fa-f]+)\s*\*/', line)
+            if not addr_match:
+                # Try format with just VRAM: /* AE4A0 800B0B50 00000000 */
+                addr_match = re.search(r'/\*\s*([0-9A-Fa-f]+)\s+([0-9A-Fa-f]+)\s*[0-9A-Fa-f]+\s*\*/', line)
             if not addr_match:
                 # Try format with just VRAM: /* 800B0B50 */
                 addr_match = re.search(r'/\*\s*([0-9A-Fa-f]{8})\s*\*/', line)
             
             if addr_match:
-                address = addr_match.group(1)
-                symbols.append((address, current_symbol))
+                rom = addr_match.group(1)
+                address = addr_match.group(2)
+                symbols.append((address, current_symbol, rom))
                 current_symbol = None
+            else:
+                print(f"Could not find address symbol {current_symbol}: {line.strip()}")
     
     return symbols
 
@@ -107,39 +113,40 @@ def main():
     
     # Find usages for each symbol
     results = []
-    for address, symbol in symbols:
+    for address, symbol, rom in symbols:
         usages = find_symbol_usages(symbol, args.search_dir)
         if usages:
             for usage_file in usages:
-                results.append((address, symbol, usage_file))
+                results.append((address, symbol, rom, usage_file))
         else:
-            results.append((address, symbol, "(not found)"))
+            results.append((address, symbol, rom, "(not found)"))
     
     # Output table
     if args.markdown:
-        print("| Address | Symbol | File |")
-        print("|---------|--------|------|")
-        for address, symbol, file in results:
-            print(f"| 0x{address} | {symbol} | {file} |")
+        print("| Address | ROM | Symbol | File |")
+        print("|---------|-----|--------|------|")
+        for address, symbol, rom, file in results:
+            print(f"| 0x{address} | {rom} | {symbol} | {file} |")
     else:
         # Calculate column widths
         addr_width = max(len("Address"), max(len(f"0x{r[0]}") for r in results))
+        rom_width = max(len("ROM"), max(len(r[2]) for r in results))
         sym_width = max(len("Symbol"), max(len(r[1]) for r in results))
-        file_width = max(len("File"), max(len(r[2]) for r in results))
+        file_width = max(len("File"), max(len(r[3]) for r in results))
         
         # Print header
-        header = f"{'Address':<{addr_width}}  {'Symbol':<{sym_width}}  {'File':<{file_width}}"
+        header = f"{'Address':<{addr_width}}  {'ROM':<{rom_width}}  {'Symbol':<{sym_width}}  {'File':<{file_width}}"
         print(header)
         print("-" * len(header))
         
         # Print rows
-        for address, symbol, file in results:
-            print(f"0x{address:<{addr_width-2}}  {symbol:<{sym_width}}  {file:<{file_width}}")
+        for address, symbol, rom, file in results:
+            print(f"0x{address:<{addr_width-2}}  {rom:<{rom_width}}  {symbol:<{sym_width}}  {file:<{file_width}}")
     
     # Summary
     print()
-    found_count = sum(1 for r in results if r[2] != "(not found)")
-    not_found = sum(1 for r in results if r[2] == "(not found)")
+    found_count = sum(1 for r in results if r[3] != "(not found)")
+    not_found = sum(1 for r in results if r[3] == "(not found)")
     print(f"Summary: {found_count} usages found, {not_found} symbols not referenced")
     
     return 0

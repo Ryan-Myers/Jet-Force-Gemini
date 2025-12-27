@@ -282,12 +282,47 @@ segments:
       - [0x9FE50, textbin, ucode_boot]
       - [0x9FFD0, textbin, ucode_f3ddkr_dram]
       - [0xA1260, data, audio_manager_1050]
-      - [0xA12C0, data]
-      - [0xA16A0, data]
+      - [0xA12C0, data, audiomgr]
+      - [0xA1400, data, audio_manager_36D0]
+      - [0xA1420, data, objects]
+      - [0xA18D0, data, track]
+      - [0xA1A80, data, shadows]
+      - [0xA1C00, data, lights]
+      - [0xA1C20, data, camlight]
+      - [0xA1D20, data, spranim]
+      - [0xA1DB0, data, explosion]
+      - [0xA1DC0, data, charControl]
+      - [0xA3AC0, data, models]
+      - [0xA3AD0, data, camera]
+      - [0xA3D90, data, controller]
+      - [0xA3DA0, data, level]
+      - [0xA3DD0, data, main]
       - [0xA3FE0, .data, hasm/ido/math_util]
-      - [0xA3FF0, data]
+      - [0xA3FF0, data, memory]
+      - [0xA4000, data, saves]
+      - [0xA4130, data, pi] # new data symbol not in kiosk. Kiosk has no pi data.
+      - [0xA4140, data, prnBorder]
+      - [0xA41B0, data, rcpFast3d]
+      - [0xA44B0, data, sched]
+      - [0xA44E0, data, squads]
+      - [0xA44F0, data, runLink]
+      - [0xA4500, data, gameVi]
+      - [0xA4790, data, textures]
+      - [0xA5B20, data, screen]
+      - [0xA5BB0, data, menu] # so many variables in here are referenced in several files.
+      - [0xA6540, data, weather]
+      - [0xA6960, data, particles]
       - [0xA6F80, data, diprint]
-      - [0xA70B0, data]
+      - [0xA70B0, data, diRcpTrace]
+      - [0xA70C0, data, diCpu]
+      - [0xA7380, data, fx]
+      - [0xA7A30, data, font]
+      - [0xA7B70, data, libultra_c/src/io/pimgr]
+      - [0xA7BA0, data, rzip]
+      - [0xA7BB0, data, subtitles]
+      - [0xA7BC0, data, hasm/gen_anim_data] # Has a jump table that's data, and not rodata. Splat likes to warn about this.
+      - [0xA8080, data, libultra_c/src/os/exceptasm]
+      - [0xA80B0, data, anim]
       - [0xA8190, .data, hasm/ido/math_data_tables]
       - [0xAA1A0, data, gsSnd]
       - [0xAA1C0, data]
@@ -385,7 +420,7 @@ segments:
       - { type: bss, vram: 0x800FEAA0, name: runLink }
       - { type: bss, vram: 0x800FEB60, name: gameVi }
       - { type: bss, vram: 0x800FECE0, name: textures }
-      - { type: bss, vram: 0x800FED50, name: globals } # Could be menu? So many variables in here are referenced in several files.
+      - { type: bss, vram: 0x800FED50, name: menu }
       - { type: bss, vram: 0x80100840, name: weather }
       - { type: bss, vram: 0x801008E0, name: particles }
       - { type: bss, vram: 0x80100960, name: diprint }
@@ -393,7 +428,7 @@ segments:
       - { type: bss, vram: 0x801022B0, name: diCpu }
       - { type: bss, vram: 0x80102760, name: fx }
       - { type: bss, vram: 0x80103BA0, name: font }
-      - { type: bss, vram: 0x80104110, name: pimgr }
+      - { type: bss, vram: 0x80104110, name: libultra_c/src/io/pimgr }
       - { type: bss, vram: 0x80104550, name: rzip }
       - { type: bss, vram: 0x80104560, name: subtitles }
       - { type: bss, vram: 0x801045B0, name: anim }

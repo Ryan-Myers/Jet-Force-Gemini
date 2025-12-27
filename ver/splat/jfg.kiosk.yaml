@@ -290,6 +290,8 @@ segments:
       - [0xA2610, data, spranim]
       - [0xA2640, data, explosion]
       - [0xA2650, data, charControl]
+      - [0xA4310, data, models]
+      - [0xA4320, data, camera]
       - [0xA45E0, .data, controller]
       - [0xA45F0, data, level]
       - [0xA4620, data, main]
@@ -304,8 +306,7 @@ segments:
       - [0xA4F50, data, gameVi]
       - [0xA5160, data, textures]
       - [0xA64F0, data, screen]
-      - [0xA6580, data, globals] # so many variables in here are referenced in several files.
-      - [0xA6650, data, menu]
+      - [0xA6580, data, menu] # so many variables in here are referenced in several files.
       - [0xA6F00, data, weather]
       - [0xA7320, data, particles]
       - [0xA7940, data, diprint]
@@ -435,7 +436,7 @@ segments:
       - { type: bss, vram: 0x800FF780, name: runLink }
       - { type: bss, vram: 0x800FF840, name: gameVi }
       - { type: bss, vram: 0x800FF9C0, name: textures }
-      - { type: bss, vram: 0x800FFA30, name: globals } # so many variables in here are referenced in several files.
+      - { type: bss, vram: 0x800FFA30, name: menu } # so many variables in here are referenced in several files.
       - { type: bss, vram: 0x80101520, name: weather }
       - { type: bss, vram: 0x801015C0, name: particles }
       - { type: bss, vram: 0x80101640, name: diprint }
