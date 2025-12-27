@@ -163,7 +163,7 @@ segments:
       - [0x93850, asm, math/math_acosf]
       - [0x93930, c, libultra/n_resample]
       - [0x93BD0, asm, math/math_arc]
-      - [0x93DE0, asm, libultra_c/src/io/pfsisplug]
+      - [0x93DE0, c, ../libultra/src/io/pfsisplug]
       - [0x940E0, asm, libultra_c/src/io/motor]
       - [0x944F0, asm, libultra_c/src/io/pfsfreeblocks]
       - [0x94690, asm, libultra_c/src/io/pfsinit]
@@ -459,7 +459,7 @@ segments:
       - { type: bss, vram: 0x80104FD0, name: libultra/n_csplayer }
       - { type: bss, vram: 0x80105010, name: libultra/alsurround }
       - { type: bss, vram: 0x80105020, name: libultra/n_event }
-      - { type: bss, vram: 0x80105030, name: libultra_c/src/io/pfsisplug }
+      - { type: .bss, vram: 0x80105030, name: ../libultra/src/io/pfsisplug }
       - { type: bss, vram: 0x80105070, name: libultra_c/src/io/motor }
       - { type: bss, vram: 0x80105170, name: libultra_c/src/io/contpfs }
       - { type: bss, vram: 0x80105270, name: libultra_c/src/os/initialize }
