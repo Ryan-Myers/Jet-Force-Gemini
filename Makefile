@@ -247,7 +247,8 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawread.c.o: LIBULTRA_VERSION_DEFINE := -
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawdma.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
 
 ifeq ($(VERSION),us)
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pfsisplug.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
 endif
 
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/%.c.o: MIPSISET := -mips2
