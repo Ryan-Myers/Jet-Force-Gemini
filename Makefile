@@ -249,6 +249,7 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawdma.c.o: LIBULTRA_VERSION_DEFINE := -D
 ifeq ($(VERSION),us)
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: OPT_FLAGS := -O2 -g3
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/leointerrupt.c.o: OPT_FLAGS := -O1
 endif
 
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/%.c.o: MIPSISET := -mips2

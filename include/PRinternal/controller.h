@@ -55,7 +55,7 @@ typedef struct
     /* 0x1 */ u8 txsize;
     /* 0x2 */ u8 rxsize;
     /* 0x3 */ u8 cmd;
-#if BUILD_VERSION >= VERSION_J && !defined(RAREDIFFS)
+#if BUILD_VERSION >= VERSION_J && !defined(VERSION_kiosk)
     /* 0x4 */ u8 addrh;
     /* 0x5 */ u8 addrl;
 #else
