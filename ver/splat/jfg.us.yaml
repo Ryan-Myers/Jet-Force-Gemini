@@ -176,9 +176,9 @@ segments:
       - [0x95D60, c, ../libultra/src/io/pfsallocatefile]
       - [0x961E0, c, ../libultra/src/io/pfsselectbank]
       - [0x96260, c, ../libultra/src/io/contramread]
-      - [0x96490, asm, libultra_c/src/io/contpfs]
-      - [0x97030, asm, libultra_c/src/io/pfsgetstatus]
-      - [0x97270, asm, libultra_c/src/io/contramwrite]
+      - [0x96490, c, ../libultra/src/io/contpfs]
+      - [0x97030, c, ../libultra/src/io/pfsgetstatus]
+      - [0x97270, c, ../libultra/src/io/contramwrite]
       - [0x974C0, asm, libultra_c/src/os/getcount]
       - [0x974D0, pad, pad974D0] #0x40 bytes of zeroes, could be parameters.s from libultra, but that's 0x60 bytes. Same as DKR.
       - [0x97510, asm, libultra_c/src/os/recvmesg]
@@ -332,7 +332,7 @@ segments:
       - [0xAA420, data, libultra/n_env]
       - [0xAA520, data, math/math_arc]
       - [0xAA630, .data, ../libultra/src/io/contramread]
-      - [0xAA640, data, libultra_c/src/io/contpfs]
+      - [0xAA640, .data, ../libultra/src/io/contpfs]
       - [0xAA650, data, libultra_c/src/os/aisetnextbuf]
       - [0xAA660, data, libultra_c/src/os/initialize]
       - [0xAA670, data, libultra_c/src/io/controller]
@@ -461,7 +461,7 @@ segments:
       - { type: bss, vram: 0x80105020, name: libultra/n_event }
       - { type: .bss, vram: 0x80105030, name: ../libultra/src/io/pfsisplug }
       - { type: .bss, vram: 0x80105070, name: ../libultra/src/io/motor }
-      - { type: bss, vram: 0x80105170, name: libultra_c/src/io/contpfs }
+      - { type: .bss, vram: 0x80105170, name: ../libultra/src/io/contpfs }
       - { type: bss, vram: 0x80105270, name: libultra_c/src/os/initialize }
       - { type: bss, vram: 0x80105280, name: libultra_c/src/os/seteventmesg }
       - { type: bss, vram: 0x80105300, name: libultra_c/src/io/controller }
