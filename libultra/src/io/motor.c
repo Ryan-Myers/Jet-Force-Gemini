@@ -4,7 +4,33 @@
 #include "PRinternal/controller.h"
 #include "PRinternal/siint.h"
 
+#ifdef VERSION_kiosk
+#define OS_MOTOR_STOP nosMotorStop
+#define OS_MOTOR_START nosMotorStart
+#define OS_MOTOR_INIT  nosMotorInit
+#else
+#define OS_MOTOR_STOP osMotorStop
+#define OS_MOTOR_START osMotorStart
+#define OS_MOTOR_INIT  osMotorInit
+#endif
+
 #if BUILD_VERSION >= VERSION_J
+
+#ifdef JFGDIFFS
+s32 __osMotorAccess(OSPfs *, s32);
+
+#define MOTOR_START		1
+#define MOTOR_STOP		0
+
+s32 osMotorStop(OSPfs *pfs) {
+    return __osMotorAccess(pfs, MOTOR_STOP);
+}
+
+s32 osMotorStart(OSPfs *pfs) {
+    return __osMotorAccess(pfs, MOTOR_START);
+}
+#endif
+
 static OSPifRam __MotorDataBuf[MAXCONTROLLERS];
 
 #define READFORMAT(ptr) ((__OSContRamReadFormat*)(ptr))
@@ -143,7 +169,7 @@ u8 _motorstartbuf[32] ALIGNED(0x8);
 u32 __osMotorinitialized[MAXCONTROLLERS] = {0, 0, 0, 0};
 #endif
 
-s32 nosMotorStop(OSPfs *pfs) {
+s32 OS_MOTOR_STOP(OSPfs *pfs) {
     int i;
     s32 ret;
     u8 *ptr;
@@ -187,7 +213,7 @@ s32 nosMotorStop(OSPfs *pfs) {
     return ret;
 }
 
-s32 nosMotorStart(OSPfs *pfs) {
+s32 OS_MOTOR_START(OSPfs *pfs) {
 
     int i;
     s32 ret;
@@ -266,7 +292,7 @@ static void _MakeMotorData(int channel, u16 address, u8 *buffer, OSPifRam *mdata
     ptr[0] = CONT_CMD_END;
 }
 
-s32 nosMotorInit(OSMesgQueue* mq, OSPfs* pfs, int channel) {
+s32 OS_MOTOR_INIT(OSMesgQueue* mq, OSPfs* pfs, int channel) {
     int i;
     s32 ret;
     u8 temp[32];

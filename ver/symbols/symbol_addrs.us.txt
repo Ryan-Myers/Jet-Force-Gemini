@@ -1170,6 +1170,7 @@ __osPfsGetInitData = 0x8009342C;
 osMotorStop = 0x800934E0;
 osMotorStart = 0x80093500;
 __osMotorAccess = 0x80093520;
+__osMakeMotorData = 0x80093688;
 osMotorInit = 0x80093790;
 osPfsFreeBlocks = 0x800938F0;
 osPfsInit = 0x80093A90;
