@@ -179,10 +179,10 @@ segments:
       - [0x96490, c, ../libultra/src/io/contpfs]
       - [0x97030, c, ../libultra/src/io/pfsgetstatus]
       - [0x97270, c, ../libultra/src/io/contramwrite]
-      - [0x974C0, asm, libultra_c/src/os/getcount]
+      - [0x974C0, hasm, ../libultra/src/os/getcount]
       - [0x974D0, pad, pad974D0] #0x40 bytes of zeroes, could be parameters.s from libultra, but that's 0x60 bytes. Same as DKR.
-      - [0x97510, asm, libultra_c/src/os/recvmesg]
-      - [0x97650, asm, libultra_c/src/io/aisetfreq]
+      - [0x97510, c, ../libultra/src/os/recvmesg]
+      - [0x97650, c, ../libultra/src/io/aisetfreq]
       - [0x977B0, asm, libultra_c/src/os/createmesgqueue]
       - [0x977E0, asm, libultra_c/src/os/startthread]
       - [0x97930, asm, libultra_c/src/os/stopthread]
