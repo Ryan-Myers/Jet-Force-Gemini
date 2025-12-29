@@ -3,7 +3,9 @@
 const char D_800AC5E0[] = "charAnimSoundTick: Illegal soundtype\n";
 const char D_800AC608[] = "The maximum number of camera objects has been exceeded.\n";
 const char D_800AC644[] = "Cannot delete camera object, it is not in list.\n";
+#ifdef VERSION_kiosk
 const char D_800AC678[] = "grenade\n";
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/charSpeak.s")
 

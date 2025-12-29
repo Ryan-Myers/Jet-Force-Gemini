@@ -7,14 +7,14 @@ def generate_objdiff_config():
     units = []
     
     # Add src/*.c files
-    src_dir = Path("src")
+    src_dir = Path("src_us")
     for c_file in sorted(src_dir.rglob("*.c")):
         rel_path = c_file.relative_to(".")
         name = str(rel_path.with_suffix(""))
         units.append({
             "name": name,
-            "target_path": f"expected/build/{rel_path}.o",
-            "base_path": f"build/{rel_path}.o"
+            "target_path": f"expected/build_us/{rel_path}.o",
+            "base_path": f"build_us/{rel_path}.o"
         })
     
     # Add libultra/*.c files
@@ -24,8 +24,8 @@ def generate_objdiff_config():
         name = str(rel_path.with_suffix(""))
         units.append({
             "name": name,
-            "target_path": f"expected/build/{rel_path}.o",
-            "base_path": f"build/{rel_path}.o"
+            "target_path": f"expected/build_us/{rel_path}.o",
+            "base_path": f"build_us/{rel_path}.o"
         })
     
     config = {
@@ -34,7 +34,7 @@ def generate_objdiff_config():
         "build_target": False,
         "build_base": True,
         "watch_patterns": ["*.c", "*.h", "*.s", "*.S", "*.inc"],
-        "ignore_patterns": ["build/**/*", "expected/**/*"],
+        "ignore_patterns": ["build_us/**/*", "expected/**/*"],
         "units": units
     }
     
