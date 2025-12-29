@@ -28,6 +28,7 @@ extern u8 sfxRelativeVolume;
 extern u8 gAudioVolumeSetting;
 extern N_ALSeqPlayer *ambientSeqPlayer; // Official Name: ambientSeqPlayer
 #define AL_SNDP_GROUP_VOLUME_MAX 32767
+void music_sequence_init(u8 seqID, N_ALSeqPlayer *seqPlayer); // Could be different in kiosk
 
 void amTuneStop(void);
 void music_sequence_start(u8 seqID, N_ALSeqPlayer *seqPlayer);
@@ -71,25 +72,30 @@ void amSetMuteMode(s32 behaviour) {
  * Stops any playing existing music beforehand.
  * Official Name: amTunePlay
  */
-#ifdef VERSION_kiosk
+extern u32 *seqLen;
 void amTunePlay(u8 seqID) {
+#ifdef VERSION_kiosk
     if (gBlockMusicChange == FALSE) {
         if (gCanPlayMusic) {
             amTuneStop();
-#ifdef VERSION_kiosk
             music_sequence_start(seqID, tuneSeqPlayer);
-#else
-            music_sequence_init(seqID, tuneSeqPlayer);
-#endif
         }
         gMusicTempo = n_alCSPGetTempo(tuneSeqPlayer);
         audioPrevCount = osGetCount();
         gDynamicMusicChannelMask = MUSIC_CHAN_MASK_NONE;
     }
-}
 #else
-#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/amTunePlay.s")
+    if (gBlockMusicChange == FALSE && seqLen[seqID] <= 0x8000) {
+        if (gCanPlayMusic) {
+            amTuneStop();
+            music_sequence_init(seqID, tuneSeqPlayer);
+        }
+        gMusicTempo = n_alCSPGetTempo(tuneSeqPlayer);
+        audioPrevCount = osGetCount();
+        gDynamicMusicChannelMask = MUSIC_CHAN_MASK_NONE;
+    }
 #endif
+}
 
 /**
  * Update the background music voice limit if not prevented from doing so.
@@ -125,7 +131,6 @@ void amTuneSetFade(f32 fade, u8 volume) {
     }
 }
 
-
 #ifdef VERSION_us
 #pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/amTuneSetFadeScaled.s")
 #endif
@@ -159,7 +164,7 @@ void amAmbientResetFade(void) {
     gAmbientFade = 0;
 }
 
-void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
+//void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
 void func_80001990(N_ALCSPlayer *arg0, u8 *arg1, ALCSeq *arg2);
 extern ALCSeq *tuneCSeqp;
 extern ALCSeq **tuneCSeqs;
@@ -400,7 +405,7 @@ u8 amSoundIsLooped(u16 soundID) {
 /**
  * If the sequence player is currently inactive, start a new sequence with the current properties.
  */
-void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
+// void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
 #pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/music_sequence_init.s")
 
 // Could be an alternate version of the above without the sequence
