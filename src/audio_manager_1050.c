@@ -384,7 +384,7 @@ void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *
 void func_80001990(N_ALCSPlayer *arg0, u8 *arg1, ALCSeq *arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001990.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001B88.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/stop_ALSeqp.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneSetReverbOnOff.s")
 

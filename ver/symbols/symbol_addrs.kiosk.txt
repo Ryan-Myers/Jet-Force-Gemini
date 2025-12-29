@@ -91,6 +91,7 @@ amGetSfxSettings = 0x800015E4;
 amSoundIsLooped = 0x80001628;
 music_sequence_init = 0x8000170C;
 music_sequence_start = 0x8000169C;
+stop_ALSeqp = 0x80001B88;
 amTuneSetReverbOnOff = 0x80001C54;
 forcelink = 0x80001C5C;
 scalevol = 0x80001C8C;

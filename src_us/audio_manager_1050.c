@@ -1,5 +1,19 @@
 #include "common.h"
 
+#ifdef VERSION_us
+const char D_800A9FB0[] = "No I'm not playing MIDI sequence %d, its over 32K\n";
+#endif
+const char D_800AA950[] = "WARNING: Sync arrived before wait - music will be out of sync with sequence\n";
+#ifdef VERSION_us
+const char D_800AA034[] = "I'm not playing any ditty over 4K nowadays (%d)\n";
+#endif
+const char D_800AA9A0[] = "amSndPlay: Illegal sound effects table index\n";
+const char D_800AA9D0[] = "amSndPlayDirect: Somebody tried to play illegal sound %d\n";
+const char D_800AAA0C[] = "Invalid midi sequence index\n";
+#ifdef VERSION_kiosk
+const char D_800AAA2C[] = "amTuneRestart:Jump failed - not previously pushed onto seq player %x\n";
+#endif
+
 #pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/amSetMuteMode.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/amTunePlay.s")
@@ -82,9 +96,9 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/amSoundIsLooped.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/func_8000160C_220C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/music_sequence_init.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/func_8000167C_227C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/func_80001990.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/stop_ALSeqp.s")
 
@@ -93,5 +107,3 @@
 #pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/forcelink.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/scalevol.s")
-
-#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/D_800A9FB0_AABB0.s")
