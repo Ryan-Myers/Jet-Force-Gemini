@@ -39,7 +39,10 @@ def firstDiffMain():
 
     args = parser.parse_args()
 
-    buildFolder = Path("build_us")
+    if args.version == "kiosk":
+        buildFolder = Path("build")
+    else:
+        buildFolder = Path(f"build_{args.version}")
 
     BUILTROM = buildFolder / f"jfg.{args.version}.z64"
     BUILTMAP = buildFolder / f"jfg.{args.version}.map"
