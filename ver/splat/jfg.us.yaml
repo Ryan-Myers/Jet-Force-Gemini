@@ -198,17 +198,17 @@ segments:
       - [0x98400, c, ../libultra/src/os/setthreadpri]
       - [0x984E0, c, ../libultra/src/os/seteventmesg]
       - [0x98550, c, ../libultra/src/io/controller]
-      - [0x98910, asm, libultra_c/src/io/contreaddata]
-      - [0x98B70, asm, libultra_c/src/os/settime]
-      - [0x98BA0, asm, libultra_c/src/os/gettime]
-      - [0x98C30, asm, libultra_c/src/io/spsetstat]
-      - [0x98C40, asm, libultra_c/src/io/dpsetstat]
+      - [0x98910, c, ../libultra/src/io/contreaddata]
+      - [0x98B70, c, ../libultra/src/os/settime]
+      - [0x98BA0, c, ../libultra/src/os/gettime]
+      - [0x98C30, c, ../libultra/src/io/spsetstat]
+      - [0x98C40, c, ../libultra/src/io/dpsetstat]
       - [0x98C50, hasm, ../libultra/src/os/writebackdcache]
       - [0x98CD0, hasm, ../libultra/src/os/invalicache]
-      - [0x98D50, asm, libultra_c/src/io/cartrominit]
-      - [0x98EB0, asm, libultra_c/src/os/invaldcache]
+      - [0x98D50, c, ../libultra/src/io/cartrominit]
+      - [0x98EB0, hasm, ../libultra/src/os/invaldcache]
       - [0x98F60, hasm, ../libultra/src/libc/bzero]
-      - [0x99000, asm, libultra_c/src/io/pfsdeletefile]
+      - [0x99000, c, ../libultra/src/io/pfsdeletefile]
       - [0x99610, asm, libultra_c/src/os/writebackdcacheall]
       - [0x99640, asm, libultra_c/src/io/vimgr]
       - [0x99950, asm, libultra_c/src/io/visetmode]
@@ -337,7 +337,7 @@ segments:
       - [0xAA650, .data, ../libultra/src/io/aisetnextbuf]
       - [0xAA660, .data, ../libultra/src/os/initialize]
       - [0xAA670, .data, ../libultra/src/io/controller]
-      - [0xAA680, data, libultra_c/src/io/cartrominit]
+      - [0xAA680, .data, ../libultra/src/io/cartrominit]
       - [0xAA690, data, libultra_c/src/io/vimgr]
       - [0xAA6B0, data, libultra/vitbl]
       - [0xAAA70, data, libultra_c/src/io/piacs]
@@ -466,7 +466,7 @@ segments:
       - { type: .bss, vram: 0x80105270, name: ../libultra/src/os/initialize }
       - { type: .bss, vram: 0x80105280, name: ../libultra/src/os/seteventmesg }
       - { type: .bss, vram: 0x80105300, name: ../libultra/src/io/controller }
-      - { type: bss, vram: 0x80105390, name: libultra_c/src/io/cartrominit }
+      - { type: .bss, vram: 0x80105390, name: ../libultra/src/io/cartrominit }
       - { type: bss, vram: 0x80105410, name: libultra_c/src/io/vimgr }
       - { type: bss, vram: 0x80105730, name: libultra_c/src/io/sptask }
       - { type: bss, vram: 0x80105770, name: libultra_c/src/io/piacs }
