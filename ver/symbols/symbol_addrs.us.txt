@@ -1362,6 +1362,7 @@ D_800EA09C = 0x800E9530;
 gAmbientFade = 0x800A0684;
 gMusicTempo = 0x800E94F8;
 nextFrameCount = 0x800A06EC;
+D_800A1094 = 0x800A0804;
 NullTextureOffsets = 0x800A0838;
 weaponPowerUpObjects = 0x800A0CB0;
 beamScrollFlag = 0x800A0CE0;

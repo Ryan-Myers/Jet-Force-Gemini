@@ -99,7 +99,12 @@ void amSndStopXYZ(SoundMask *soundMask) {
     s32 i;
 
     if (soundMask != NULL) {
-        for (i = 0; i < SOUND_MASK_HEAP_COUNT; i++) {
+#ifdef VERSION_kiosk
+        for (i = 0; i < SOUND_MASK_HEAP_COUNT; i++)
+#else
+        for (i = 0; i < D_800A0800_A1400; i++)
+#endif
+        {
             if (soundMask == D_800F35F4[i]) {
                 func_80003E24(i);
                 break;
