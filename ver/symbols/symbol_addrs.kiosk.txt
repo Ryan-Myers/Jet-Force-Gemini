@@ -1150,7 +1150,6 @@ alHeapDBAlloc = 0x8008BD24;
 alLink = 0x8008BDB0;
 func_8008BDDC = 0x8008BDDC;
 alUnlink = 0x8008BDE4;
-func_8008BE1C = 0x8008BE1C;
 n_alSynNew = 0x8008BE30;
 n_alAudioFrame = 0x8008C410;
 __n_allocParam = 0x8008C634;
