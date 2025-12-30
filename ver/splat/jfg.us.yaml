@@ -218,30 +218,30 @@ segments:
       - [0x99B40, c, ../libultra/src/io/sptask]
       - [0x99E00, c, ../libultra/src/io/sptaskyielded]
       - [0x99E80, c, ../libultra/src/io/vigetcurrframebuf]
-      - [0x99EC0, asm, libultra_c/src/io/vigetnextframebuf]
-      - [0x99F00, asm, libultra_c/src/io/dpsetnextbuf]
-      - [0x99FB0, asm, libultra_c/src/io/sptaskyield]
-      - [0x99FD0, asm, libultra_c/src/io/visetspecial]
-      - [0x9A190, asm, libultra_c/src/io/viswapbuf]
+      - [0x99EC0, c, ../libultra/src/io/vigetnextframebuf]
+      - [0x99F00, c, ../libultra/src/io/dpsetnextbuf]
+      - [0x99FB0, c, ../libultra/src/io/sptaskyield]
+      - [0x99FD0, c, ../libultra/src/io/visetspecial]
+      - [0x9A190, c, ../libultra/src/io/viswapbuf]
       - [0x9A1E0, asm, libultra_c/src/libc/ll]
       - [0x9A4A0, asm, libultra_c/src/libc/string]
       - [0x9A540, asm, libultra_c/src/os/getactivequeue]
       - [0x9A550, asm, libultra_c/src/libc/bcopy]
-      - [0x9A860, asm, libultra_c/src/io/piacs]
+      - [0x9A860, c, ../libultra/src/io/piacs]
       - [0x9A920, asm, libultra_c/src/os/getthreadpri]
       - [0x9A940, asm, libultra_c/src/os/interrupt]
-      - [0x9A980, asm, libultra_c/src/io/pirawdma]
-      - [0x9AA50, asm, libultra_c/src/io/epirawdma]
+      - [0x9A980, c, ../libultra/src/io/pirawdma]
+      - [0x9AA50, c, ../libultra/src/io/epirawdma]
       - [0x9AC30, c, ../libultra/src/io/devmgr]
       - [auto, hasm, ../libultra/src/gu/libm_vals]
       - [0x9B040, asm, libultra_c/src/os/thread]
       - [0x9B080, asm, libultra_c/src/os/destroythread]
-      - [0x9B180, asm, libultra_c/src/io/epilinkhandle]
-      - [0x9B1D0, asm, libultra_c/src/io/epiwrite]
-      - [0x9B220, asm, libultra_c/src/io/epiread]
-      - [0x9B270, asm, libultra_c/src/io/epidma]
+      - [0x9B180, c, ../libultra/src/io/epilinkhandle]
+      - [0x9B1D0, c, ../libultra/src/io/epiwrite]
+      - [0x9B220, c, ../libultra/src/io/epiread]
+      - [0x9B270, c, ../libultra/src/io/epidma]
       - [0x9B310, asm, libultra_c/src/libc/syncprintf]
-      - [0x9B370, asm, libultra_c/src/io/siacs]
+      - [0x9B370, c, ../libultra/src/io/siacs]
       - [0x9B430, asm, libultra_c/src/io/sirawdma]
       - [0x9B4E0, asm, libultra_c/src/io/crc]
       - [0x9B660, asm, libultra_c/src/libc/bcmp]
@@ -340,9 +340,9 @@ segments:
       - [0xAA680, .data, ../libultra/src/io/cartrominit]
       - [0xAA690, .data, ../libultra/src/io/vimgr]
       - [0xAA6B0, data, libultra/vitbl]
-      - [0xAAA70, data, libultra_c/src/io/piacs]
+      - [0xAAA70, .data, ../libultra/src/io/piacs]
       - [0xAAA80, data, libultra_c/src/os/thread]
-      - [0xAAAA0, data, libultra_c/src/io/siacs]
+      - [0xAAAA0, .data, ../libultra/src/io/siacs]
       - [0xAAAB0, data, libultra_c/src/io/vi]
       - [0xAAB20, data, libultra_c/src/os/timerintr]
       - [0xAAB30, .data, ../libultra/src/libc/xprintf]
@@ -469,10 +469,10 @@ segments:
       - { type: .bss, vram: 0x80105390, name: ../libultra/src/io/cartrominit }
       - { type: .bss, vram: 0x80105410, name: ../libultra/src/io/vimgr }
       - { type: .bss, vram: 0x80105730, name: ../libultra/src/io/sptask }
-      - { type: bss, vram: 0x80105770, name: libultra_c/src/io/piacs }
+      - { type: .bss, vram: 0x80105770, name: ../libultra/src/io/piacs }
       - { type: bss, vram: 0x80105790, name: libultra_c/src/debug/kdebugserver }
-      - { type: bss, vram: 0x80105940, name: libultra_c/src/io/siacs }
-      - { type: bss, vram: 0x80105980, name: libultra_c/src/os/timerintr }
+      - { type: .bss, vram: 0x80105940, name: ../libultra/src/io/siacs }
+      - { type: bss, vram: 0x80105960, name: libultra_c/src/os/timerintr }
 
   - name: assets
     type: bin
