@@ -1,5 +1,7 @@
 #include "common.h"
 
+const char D_800AAAE0[] = "OUT OF AUDIO POINTS\n";
+
 #pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/amInitAudioMap.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/amAmbientPause.s")
@@ -30,14 +32,12 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/amSndSetEcho.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/func_8000380C_440C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/func_80003AC0.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/func_80003994_4594.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/func_80003C44.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/func_80003B14_4714.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/func_80003DC4.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/func_80003B74_4774.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/func_80003E24.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/amSndGetXYZVolume.s")
-
-#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_36D0/D_800AA160_AAD60.s")
