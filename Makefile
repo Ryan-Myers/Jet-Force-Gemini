@@ -282,17 +282,16 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/crc.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/crc.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vi.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/ai.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pigetcmdq.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sirawread.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sirawwrite.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vigetcurrcontext.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/viswapcontext.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/viswapcontext.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/spsetpc.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sprawdma.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sp.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/dp.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/spgetstat.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawwrite.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawread.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/si.c.o: OPT_FLAGS := -O1
 endif
 
