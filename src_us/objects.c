@@ -1,5 +1,24 @@
 #include "common.h"
 
+const char D_800AAB50[] = "Objects out of ram(1) !!\n";
+const char D_800AAB6C[] = "Char %d, Disguise %d\n";
+const char D_800AAB84[] = "Found Boss Control At %d,%d,%d,%08x\n";
+const char D_800AABAC[] = "ObjSetupObject(1) Memory fail!!\n";
+const char D_800AABD0[] = "ObjSetupObject(2) Memory fail!!\n";
+const char D_800AABF4[] = "ObjSetupObject(5) Memory fail!!\n";
+const char D_800AAC18[] = "ObjSetupObject(6) Memory fail!!\n";
+const char D_800AAC3C[] = "ObjSetupObject(3) Memory fail!!\n";
+const char D_800AAC60[] = "ObjList Overflow %d!!!\n";
+const char D_800AAC78[] = "NoAddObjList Overflow %d!!!\n";
+const char D_800AAC98[] = "ObjSetupObject(4) Memory fail!!\n";
+const char D_800AACBC[] = "objSetupObject: clone shadow set up failed\n";
+const char D_800AACE8[] = "objSetupObject: clone blob shadow set up failed\n";
+const char D_800AAD1C[] = "objSetupChild: memory fail\n";
+#ifdef VERSION_kiosk
+const char D_800AAD38[] = "stable\n";
+#endif
+const char D_800AAD40[] = "WARNING:%s (%x) already registered its dependancy with %s (%x)!\n";
+
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/resetVars.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objFreeAll.s")
@@ -93,9 +112,9 @@ void objObjectsPauseTick(void) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objMakeGunMtx.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000BE5C_CA5C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000BDCC.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000C0B8_CCB8.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000C028.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objDrawPlayerEffects.s")
 
@@ -103,19 +122,48 @@ void objObjectsPauseTick(void) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objClearFlashes.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000C9F4_D5F4.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000C964.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objPrintModelObject.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objPrintObject.s")
 
+#ifdef NON_EQUIVALENT
+void objDoPlayerTumble(Object *this) {
+    UNUSED s32 unused1;
+    Object_Racer *sp_20;
+    f32 sp_1c;
+    f32 tmp_f0;
+    if (this->behaviorId == 1) {
+        sp_20 = this->racer;
+        this->segment.trans.y_rotation += sp_20->y_rotation_offset;
+        this->segment.trans.x_rotation += sp_20->x_rotation_offset;
+        this->segment.trans.z_rotation += sp_20->z_rotation_offset;
+        sp_1c = Cosf(sp_20->z_rotation_offset);
+        tmp_f0 = Cosf(sp_20->x_rotation_offset - sp_20->unk146) * sp_1c;
+        tmp_f0 = ((tmp_f0 < 0.0f) ? 0.0f : tmp_f0 * tmp_f0);
+        tmp_f0 = ((1.0f - tmp_f0)) * 24.0f + sp_20->unk64;
+        this->segment.trans.y_position += tmp_f0;
+        D_800F3A20 = tmp_f0;
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objDoPlayerTumble.s")
+#endif
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objUndoPlayerTumble.s")
+void objUndoPlayerTumble(Object *obj) {
+    if (obj->behaviorId == 1) {
+        Object_Racer *racer = obj->racer;
+        obj->segment.trans.y_rotation -= racer->y_rotation_offset;
+        obj->segment.trans.x_rotation -= racer->x_rotation_offset;
+        obj->segment.trans.z_rotation -= racer->z_rotation_offset;
+        obj->segment.trans.y_position -= D_800F3A20;
+    }
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000DD78_E978.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000DCE8.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000DDAC_E9AC.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000DD1C.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objScrollTexture.s")
 
@@ -131,23 +179,44 @@ void objObjectsPauseTick(void) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objGetPlayerNo.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/setObjectViewNormal.s")
+void setObjectViewNormal(f32 x, f32 y, f32 z) {
+    f32 vecLength = sqrtf((x * x) + (y * y) + (z * z));
+    f32 normalizedLength;
+    if (vecLength != 0.0f) {
+        normalizedLength = -8192.0f / vecLength;
+        x *= normalizedLength;
+        y *= normalizedLength;
+        z *= normalizedLength;
+    }
+    gEnvmapPos.x = x;
+    gEnvmapPos.y = y;
+    gEnvmapPos.z = z;
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objGetTable.s")
+/**
+ * Returns a pointer to the asset in the misc. section. If index is out of range, then this
+ * function just returns the pointer to Ftables.
+ */
+s32 *objGetTable(s32 index) {
+    if (index < 0 || index >= Fmax) {
+        return Ftables;
+    }
+    return (s32 *) &Ftables[Findex[index]];
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objSetAnimGroup.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000E680_F280.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000E5F0.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objSetup.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000F978_10578.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000F8E8.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000FBF0_107F0.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000FB60.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_800104C0_110C0.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80010430.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_800110E4_11CE4.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80011200.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objAnimDframe.s")
 
@@ -163,18 +232,36 @@ void objObjectsPauseTick(void) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objRemoveDependancy.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_800119B8_125B8.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80011AD4.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objCutCameraActive.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/GetRange.s")
+f32 GetRange(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
+    f32 temp_f0;
+    f32 temp_f16;
+    f32 temp_f2;
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/GetRangeSquared.s")
+    temp_f0 = arg0 - arg3;
+    temp_f2 = arg1 - arg4;
+    temp_f16 = arg2 - arg5;
+    return sqrtf((temp_f0 * temp_f0) + (temp_f2 * temp_f2) + (temp_f16 * temp_f16));
+}
+
+f32 GetRangeSquared(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
+    f32 temp_f16;
+    f32 temp_f18;
+    f32 temp_f2;
+
+    temp_f2 = arg0 - arg3;
+    temp_f16 = arg1 - arg4;
+    temp_f18 = arg2 - arg5;
+    return (temp_f2 * temp_f2) + (temp_f16 * temp_f16) + (temp_f18 * temp_f18);
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objAddMine.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objDeleteMine.s")
 
+#ifdef VERSION_us
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80011E74_12A74.s")
-
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/D_800AA1D0_AADD0.s")
+#endif
