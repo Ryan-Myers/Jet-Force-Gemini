@@ -263,8 +263,13 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/spsetstat.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/dpsetstat.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pfsdeletefile.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pfsdeletefile.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/visetmode.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/viblack.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/visetevent.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sptask.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sptaskyielded.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vigetcurrframebuf.c.o: OPT_FLAGS := -O1
 endif
 
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/%.c.o: MIPSISET := -mips2

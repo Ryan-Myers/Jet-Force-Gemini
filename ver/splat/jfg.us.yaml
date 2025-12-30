@@ -211,13 +211,13 @@ segments:
       - [0x99000, c, ../libultra/src/io/pfsdeletefile]
       - [0x99610, hasm, ../libultra/src/os/writebackdcacheall]
       - [0x99640, c, ../libultra/src/io/vimgr]
-      - [0x99950, asm, libultra_c/src/io/visetmode]
-      - [0x999C0, asm, libultra_c/src/io/viblack]
-      - [0x99A30, asm, libultra_c/src/io/visetevent]
+      - [0x99950, c, ../libultra/src/io/visetmode]
+      - [0x999C0, c, ../libultra/src/io/viblack]
+      - [0x99A30, c, ../libultra/src/io/visetevent]
       - [0x99AA0, hasm, ../libultra/src/os/setintmask]
-      - [0x99B40, asm, libultra_c/src/io/sptask]
-      - [0x99E00, asm, libultra_c/src/io/sptaskyielded]
-      - [0x99E80, asm, libultra_c/src/io/vigetcurrframebuf]
+      - [0x99B40, c, ../libultra/src/io/sptask]
+      - [0x99E00, c, ../libultra/src/io/sptaskyielded]
+      - [0x99E80, c, ../libultra/src/io/vigetcurrframebuf]
       - [0x99EC0, asm, libultra_c/src/io/vigetnextframebuf]
       - [0x99F00, asm, libultra_c/src/io/dpsetnextbuf]
       - [0x99FB0, asm, libultra_c/src/io/sptaskyield]
@@ -468,7 +468,7 @@ segments:
       - { type: .bss, vram: 0x80105300, name: ../libultra/src/io/controller }
       - { type: .bss, vram: 0x80105390, name: ../libultra/src/io/cartrominit }
       - { type: .bss, vram: 0x80105410, name: ../libultra/src/io/vimgr }
-      - { type: bss, vram: 0x80105730, name: libultra_c/src/io/sptask }
+      - { type: .bss, vram: 0x80105730, name: ../libultra/src/io/sptask }
       - { type: bss, vram: 0x80105770, name: libultra_c/src/io/piacs }
       - { type: bss, vram: 0x80105790, name: libultra_c/src/debug/kdebugserver }
       - { type: bss, vram: 0x80105940, name: libultra_c/src/io/siacs }
