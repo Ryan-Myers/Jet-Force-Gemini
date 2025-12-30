@@ -257,6 +257,7 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aisetfreq.c.o: LIBULTRA_VERSION_DEFINE := -D
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aisetnextbuf.c.o: OPT_FLAGS := -O1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aisetnextbuf.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aigetlen.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/controller.c.o: OPT_FLAGS := -O1
 endif
 
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/%.c.o: MIPSISET := -mips2
