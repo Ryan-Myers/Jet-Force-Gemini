@@ -119,7 +119,7 @@ segments:
       - [0x8A460, c, libultra/n_synremoveplayer]
       - [0x8A4D0, c, libultra/n_cspsettempo]
       - [0x8A560, c, libultra/n_cspsetpan]
-      - [0x8A5D0, c] # n_alCSPGetState
+      - [0x8A5D0, c, libultra/n_cspgetstate]
       - [0x8A5F0, c, libultra/n_cseq]
       - [0x8AFC0, c, libultra/n_cspsetseq]
       - [0x8B010, c, libultra/n_cspplay]
@@ -183,8 +183,8 @@ segments:
       - [0x974D0, pad, pad974D0] #0x40 bytes of zeroes, could be parameters.s from libultra, but that's 0x60 bytes. Same as DKR.
       - [0x97510, c, ../libultra/src/os/recvmesg]
       - [0x97650, c, ../libultra/src/io/aisetfreq]
-      - [0x977B0, asm, libultra_c/src/os/createmesgqueue]
-      - [0x977E0, asm, libultra_c/src/os/startthread]
+      - [0x977B0, c, ../libultra/src/os/createmesgqueue]
+      - [0x977E0, c, ../libultra/src/os/startthread]
       - [0x97930, asm, libultra_c/src/os/stopthread]
       - [0x979F0, asm, libultra_c/src/os/aisetnextbuf]
       - [0x97AA0, asm, libultra_c/src/os/virtualtophysical]
