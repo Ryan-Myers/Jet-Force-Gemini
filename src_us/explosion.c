@@ -1,5 +1,7 @@
 #include "common.h"
 
+const char D_800AC3F0[] = "explosion %d out of range\n";
+
 #pragma GLOBAL_ASM("asm_us/nonmatchings/explosion/explosionStart.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/explosion/objExplosionSetupTriggers.s")
@@ -28,12 +30,10 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/explosion/explosionBlastHit.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/explosion/func_8002A7D8_2B3D8.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/explosion/func_8002A7DC.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/explosion/func_8002A954_2B554.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/explosion/func_8002A958.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/explosion/func_8002AA7C_2B67C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/explosion/func_8002AA30.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/explosion/func_8002AC3C_2B83C.s")
-
-#pragma GLOBAL_ASM("asm_us/nonmatchings/explosion/D_800ABB20_AC720.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/explosion/func_8002ABA4.s")
