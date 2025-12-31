@@ -4,23 +4,23 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackDraw.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_800127A4_133A4.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80012564.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_800129AC_135AC.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001276C.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/initSky.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackSkySet.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80012BAC_137AC.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001296C.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80013454_14054.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80013214.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_800136B8_142B8.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80013478.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackGetSky.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80013820_14420.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_800135E0.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackAddTextureScroll.s")
 
@@ -38,19 +38,19 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackLightMove.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001400C_14C0C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80013DCC.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackUpdateLighting.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001436C_14F6C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001412C.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001448C_1508C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001424C.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80014EBC_15ABC.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80014B6C.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80015228_15E28.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_800150A4.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80015444_16044.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_800152C0.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackGetBlock.s")
 
@@ -60,33 +60,33 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackBlockDim.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_800158BC_164BC.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80015738.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80015B3C_1673C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_800159B8.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80015E3C_16A3C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80015CB8.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80015ED8_16AD8.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80015D54.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackGetIntersect.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackGetPlayerIntersect.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80017094_17C94.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80016EA0.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80017794_18394.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_800175A0.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackCylinderIntersect.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackSphereIntersect.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_800184B4_190B4.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_800182C0.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackNearestIntersection.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackClip3D.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80019518_1A118.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_80019324.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackPolyHeight.s")
 
@@ -96,7 +96,7 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackCylinderHeights.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001AB84_1B784.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001A990.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackGetNearestPoly.s")
 
@@ -108,24 +108,180 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackMakeAbsolute.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001B8E0_1C4E0.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001B6D8.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackSetFog.s")
+// In this struct, data is rightshifted 16 bytes, so make the smooth transition more precise.
+typedef struct EnvironmentFog {
+    /* 0x00 */ s32 r;
+    /* 0x04 */ s32 g;
+    /* 0x08 */ s32 b;
+    /* 0x0C */ s32 near;
+    /* 0x10 */ s32 far;
+} EnvironmentFog;
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackGetFog.s")
+typedef struct EnvironmentFogCompact {
+    /* 0x30 */ u8 r;
+    /* 0x31 */ u8 g;
+    /* 0x32 */ u8 b;
+    /* 0x33 */ s8 unk33;
+    /* 0x34 */ s16 near;
+    /* 0x36 */ s16 far;
+} EnvironmentFogCompact;
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackSetFogOff.s")
+/* Size: 0x40 bytes */
+typedef struct FogData {
+    EnvironmentFog fog; // Current fog properties. What you'll actually see ingame.
+    /* 0x14 */ s32 unk14;
+    /* 0x18 */ s32 unk18;
+    /* 0x20 */ EnvironmentFog
+        addFog; // Fog override. This will apply over the current fog to give a smooth transition effect.
+    EnvironmentFogCompact intendedFog; // Fog properties the game will try to be if the switch timer is 0.
+    /* 0x38 */ s32 switchTimer;
+    /* 0x3C */ Object *fogChanger;
+} FogData;
+extern FogData D_800F3D20[4];
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001BE04_1CA04.s")
+void trackSetFog(s32 fogIdx, s16 near, s16 far, s16 arg3, u8 red, u8 green, u8 blue, s8 arg7) {
+    s32 tempNear;
+    FogData *fogData;
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001BF9C_1CB9C.s")
+    fogData = &D_800F3D20[fogIdx];
+
+    if (far < near) {
+        tempNear = near;
+        near = far;
+        far = tempNear;
+    }
+
+    if (far > 1023) {
+        far = 1023;
+    }
+    if (near >= far - 5) {
+        near = far - 5;
+    }
+
+    fogData->addFog.near = 0;
+    fogData->addFog.far = 0;
+    fogData->addFog.r = 0;
+    fogData->addFog.g = 0;
+    fogData->addFog.b = 0;
+    fogData->fog.r = red << 16;
+    fogData->fog.g = green << 16;
+    fogData->fog.b = blue << 16;
+    fogData->fog.near = near << 16;
+    fogData->fog.far = far << 16;
+    fogData->unk14 = near << 16;
+    fogData->unk18 = arg3 << 16;
+    fogData->intendedFog.unk33 = arg7;
+    fogData->intendedFog.near = near;
+    fogData->intendedFog.far = far;
+    fogData->switchTimer = 0;
+    fogData->fogChanger = NULL;
+    fogData->intendedFog.r = red;
+    fogData->intendedFog.g = green;
+    fogData->intendedFog.b = blue;
+}
+void trackGetFog(s32 playerID, s16 *near, s16 *far, s16 *unk18, u8 *r, u8 *g, u8 *b, s8 *unk33) {
+    FogData *fogData;
+
+    if (runlinkIsModuleLoaded(39) != 0) {
+        TrapDanglingJump(near, far, r, g, b);
+        *unk18 = 0;
+        *unk33 = 0;
+    } else if (runlinkIsModuleLoaded(23) != 0) {
+        TrapDanglingJump(near, far, r, g, b);
+        *unk18 = 0;
+        *unk33 = 0;
+    } else {
+        fogData = &D_800F3D20[playerID];
+        *near = fogData->fog.near >> 16;
+        *far = fogData->fog.far >> 16;
+        *unk18 = fogData->unk18 >> 16;
+        *r = fogData->fog.r >> 16;
+        *g = fogData->fog.g >> 16;
+        *b = fogData->fog.b >> 16;
+        *unk33 = fogData->intendedFog.unk33 & 0x7F;
+    }
+    if (runlinkIsModuleLoaded(29) != 0) {
+        TrapDanglingJump(r, g, b, near, far, unk33);
+    }
+}
+
+void trackSetFogOff(s32 playerID) {
+    D_800F3D20[playerID].addFog.near = 0;
+    D_800F3D20[playerID].addFog.far = 0;
+    D_800F3D20[playerID].addFog.r = 0;
+    D_800F3D20[playerID].addFog.g = 0;
+    D_800F3D20[playerID].addFog.b = 0;
+    D_800F3D20[playerID].fog.near = 1018 << 16;
+    D_800F3D20[playerID].fog.far = 1023 << 16;
+    D_800F3D20[playerID].intendedFog.r = D_800F3D20[playerID].fog.r >> 16;
+    D_800F3D20[playerID].intendedFog.g = D_800F3D20[playerID].fog.g >> 16;
+    D_800F3D20[playerID].intendedFog.b = D_800F3D20[playerID].fog.b >> 16;
+    D_800F3D20[playerID].intendedFog.near = 1018;
+    D_800F3D20[playerID].intendedFog.far = 1023;
+    D_800F3D20[playerID].switchTimer = 0;
+    D_800F3D20[playerID].fogChanger = NULL;
+}
+
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001BBFC.s")
+
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001BD94.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackChangeFog.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/trackFadeFog.s")
+void trackFadeFog(s32 fogIdx, s32 red, s32 green, s32 blue, s32 near, s32 far, f32 timer) {
+    s32 temp;
+    s32 switchTimer;
+    FogData *fogData;
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001C650_1D250.s")
+    fogData = &D_800F3D20[fogIdx];
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001C758_1D358.s")
+    if (osTvType == OS_TV_TYPE_PAL) {
+        switchTimer = (timer * 50.0f);
+    } else {
+        switchTimer = (timer * 60.0f);
+    }
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001C778_1D378.s")
+    if (far < near) {
+        temp = near;
+        near = far;
+        far = temp;
+    }
+
+    if (far > 1023) {
+        far = 1023;
+    }
+    if (near >= far - 5) {
+        near = far - 5;
+    }
+
+    fogData->intendedFog.r = red;
+    fogData->intendedFog.g = green;
+    fogData->intendedFog.b = blue;
+    fogData->intendedFog.near = near;
+    fogData->intendedFog.far = far;
+
+    if (switchTimer > 0) {
+        fogData->switchTimer = switchTimer;
+        fogData->addFog.r = ((red << 16) - fogData->fog.r) / switchTimer;
+        fogData->addFog.g = ((green << 16) - fogData->fog.g) / switchTimer;
+        fogData->addFog.b = ((blue << 16) - fogData->fog.b) / switchTimer;
+        fogData->addFog.near = ((near << 16) - fogData->fog.near) / switchTimer;
+        fogData->addFog.far = ((far << 16) - fogData->fog.far) / switchTimer;
+    } else {
+        fogData->switchTimer = 0;
+        fogData->fog.r = red << 16;
+        fogData->fog.g = green << 16;
+        fogData->fog.b = blue << 16;
+        fogData->fog.near = near << 16;
+        fogData->fog.far = far << 16;
+    }
+    fogData->fogChanger = NULL;
+}
+
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001C448.s")
+
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001C550.s")
+
+#pragma GLOBAL_ASM("asm_us/nonmatchings/track/func_8001C570.s")
