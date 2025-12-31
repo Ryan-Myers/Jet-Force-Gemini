@@ -1,28 +1,42 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003B870_3C470.s")
+const char D_800AC900[] = "Error: Model no. out of range on load. !!\n";
+const char D_800AC92C[] = "TEXTURE ERROR!!\n%d,%d\n";
+const char D_800AC944[] = "Error: Model table overflow!!\n";
+const char D_800AC964[] = "CREATE LOD MODEL :: null model pointer!";
+const char D_800AC98C[] = "WARNING :: createModelInstance called with NULL pointer\n";
+const char D_800AC9C8[] = "MODELS Error: Tryed to deallocate non-existent model!\n";
+const char D_800ACA00[] = "MODELS Error : cannot free NULL model instance pointer!!\n";
+const char D_800ACA3C[] = "modLoadAnim: Overflowed AnimTab!\n";
+const char D_800ACA60[] = "modFreeAnim : NULL anim!!\n";
+const char D_800ACA7C[] = "Anim Error: Tryed to deallocate non-existent anim!!\n";
+const char D_800ACAB4[] = "modLoadAnimEvent: Overflowed AnimEventTab!\n";
+const char D_800ACAE0[] = "modFreeAnimEvents : NULL anim event table!!\n";
+const char D_800ACB10[] = "Anim Event Error: Tryed to deallocate non-existent anim event!\n";
+
+#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003B640.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/models/modInitModels.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/models/modLoadModel.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003C0C4_3CCC4.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003BE68.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003C12C_3CD2C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003BED0.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003C1B4_3CDB4.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003BF58.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/models/modFreeModel.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003C92C_3D52C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003C6D0.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003CB04_3D704.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003C8A8.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003CDAC_3D9AC.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003CB50.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003CF24_3DB24.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003CCC8.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003CFCC_3DBCC.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003CD70.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/models/modFreeAnim.s")
 
@@ -34,9 +48,9 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/models/makeModelGfx.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003E35C_3EF5C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003E100.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003E398_3EF98.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/models/func_8003E13C.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/models/modMakeLimbModel.s")
 
@@ -48,8 +62,8 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/models/modSetTextureFrame.s")
 
+#ifdef VERSION_us
 #pragma GLOBAL_ASM("asm_us/nonmatchings/models/modSuspendModelTextures.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/models/modResumeModelTextures.s")
-
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/D_800AC020_ACC20.s")
+#endif
