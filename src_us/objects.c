@@ -19,7 +19,22 @@ const char D_800AAD38[] = "stable\n";
 #endif
 const char D_800AAD40[] = "WARNING:%s (%x) already registered its dependancy with %s (%x)!\n";
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/resetVars.s")
+void resetVars(void) {
+    D_800F3860 = 1;
+    D_800F386C = 0;
+    D_800F3870 = 0;
+    D_800F3908 = 0;
+    D_800F3910 = 0;
+    D_800F391C = 0;
+    ObjListCount = 0;
+    D_800F38AC = 0;
+    D_800F38B8 = 0;
+    D_800F38BC = 0;
+    D_800F38C4 = 0;
+    D_800F38C0 = 0;
+    D_800F38C2 = 0;
+    D_800F3948 = 0;
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objFreeAll.s")
 
@@ -27,25 +42,45 @@ const char D_800AAD40[] = "WARNING:%s (%x) already registered its dependancy wit
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objGetClosestClass.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objSetObjRegionOverflow.s")
+#ifdef VERSION_us
+extern s8 D_800A0898_A1498;
+
+void objSetObjRegionOverflow(s8 arg0) {
+    D_800A0898_A1498 = arg0;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objGetObjdef.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objFreeObjdef.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objTvTimes.s")
+s32 objTvTimes(s32 timer) {
+    if (osTvType != OS_TV_TYPE_PAL || timer < 0) {
+        return timer;
+    } else {
+        return (timer * 5) / 6;
+    }
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_800050A8_5CA8.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_800052B4.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objLoadObjList.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objSetupPlayers.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80005BD0_67D0.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80005DDC.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objDeleteRomDef.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objGetObject.s")
+/**
+ * Returns the object at the current offset by ID.
+ */
+Object *objGetObject(s32 index) {
+    if (index < 0 || index >= ObjListCount) {
+        return 0;
+    }
+    return ObjList[index];
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objGetObjList.s")
 
@@ -53,31 +88,31 @@ const char D_800AAD40[] = "WARNING:%s (%x) already registered its dependancy wit
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objSetupObject.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80006E1C_7A1C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80006FFC.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80006F2C_7B2C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000710C.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_800072B4_7EB4.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80007494.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000740C_800C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_800075EC.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80007420_8020.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80007648.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80007528_8128.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80007760.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80007730_8330.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80007968.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000773C_833C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80007974.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000774C_834C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80007984.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objFreeObject.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objDoFrees.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80007C68_8868.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80007EA0.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80008F70_9B70.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_80008F60.s")
 
 void objObjectsPauseTick(void) {
 }
@@ -90,7 +125,9 @@ void objObjectsPauseTick(void) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objResetAnimModels.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objMoveXYZnocheck.s")
+void objMoveXYZnocheck(void) {
+    D_800A1208 = 1;
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objMoveXYZ.s")
 
@@ -102,13 +139,13 @@ void objObjectsPauseTick(void) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objDrawTracer.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000A9EC_B5EC.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000A9C0.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objPrintCustomObject.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objDrawDoor.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000B46C_C06C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/objects/func_8000B3DC.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/objects/objMakeGunMtx.s")
 
