@@ -68,6 +68,7 @@ void gsSndpSetPriority(UnkSndPriority *sndp, u8 priority) {
         sndp->unk40 = (s16) priority;
     }
 }
+
 /**
  * Retrieves the current sound state, refer to the SoundStates enum.
  * Official Name: gsSndpGetState
@@ -223,7 +224,6 @@ u32 gsSndpGetGlobalVolume(void) {
     return globalVolume;
 }
 
-#ifdef NON_MATCHING
 void gsSndpLimitVoices(s32 arg0) {
     if (gSoundPlayerPtr->maxSystemSoundChannels >= arg0) {
         gSoundPlayerPtr->curTime = arg0;
@@ -231,6 +231,3 @@ void gsSndpLimitVoices(s32 arg0) {
         gSoundPlayerPtr->curTime = gSoundPlayerPtr->maxSystemSoundChannels;
     }
 }
-#else
-#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/gsSndpLimitVoices.s")
-#endif
