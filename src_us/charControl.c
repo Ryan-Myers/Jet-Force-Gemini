@@ -15,59 +15,64 @@ const char D_800AC678[] = "grenade\n";
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/cameraGetBlend.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002B418_2C018.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002B378.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002B960_2C560.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002B8C0.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002BD04_2C904.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002BC64.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002C070_2CC70.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002BFD0.s")
+
+void func_8002C070(void) {
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002C078.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002C908_2D508.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002C868.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002C9A0_2D5A0.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002C900.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002CC70_2D870.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002CBD0.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002CF6C_2DB6C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002CF78.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/cameraTopDown.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/init_800f6e58_array.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002EDA0.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/cameraAddOverrideObject.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/cameraDeleteOverrideObject.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002F0DC_2FCDC.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002F0E8.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002F2B0_2FEB0.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002F2BC.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002F450_30050.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002F45C.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_setting_floyd_height.s")
+// func_setting_floyd_height
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8002F518.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/sidekickInit.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/sidekickControl.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80031090_31C90.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8003109C.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_800319C0_325C0.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80031984.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80031A80_32680.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80031A44.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80031D00_32900.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80031CC4.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlClearAimlocks.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80031F9C_32B9C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80031F60.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlPlayerReInit.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlDecapitatePlayer.s")
+void controlDecapitatePlayer(s32 arg0) {
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlPlayerInit.s")
 
@@ -81,7 +86,7 @@ const char D_800AC678[] = "grenade\n";
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlWalkingBack.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80033ED4_34AD4.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80033EE8.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlThrowWeapon.s")
 
@@ -95,7 +100,7 @@ const char D_800AC678[] = "grenade\n";
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlUpdateJetFlames.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_800344B4_350B4.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_800344C8.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlHalfTurn.s")
 
@@ -105,13 +110,13 @@ const char D_800AC678[] = "grenade\n";
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlSetTransition.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80035628_36228.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80035628.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlPlatform.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlAttitude.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80035B30_36730.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80035B30.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlHangOK.s")
 
@@ -121,21 +126,44 @@ const char D_800AC678[] = "grenade\n";
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlSquashCheckPost.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_800370D0_37CD0.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_800370D8.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlCeiling.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlDisableJoypad.s")
+void controlDisableJoypad(s32 arg0) {
+    disablejoy = arg0;
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlReadJoypad.s")
+void controlReadJoypad(s32 player) {
+    if ((player >= 0) && (player < MAXCONTROLLERS) && (disablejoy == 0)) {
+        controlXjoy = joyGetStickX(player);
+        D_800F7874 = joyGetAbsX(player);
+        controlYjoy = joyGetStickY(player);
+        D_800F7878 = joyGetAbsY(player);
+        controlKeys = joyGetButtons(player);
+        controlDkeys = joyGetPressed(player);
+        D_800F7868 = joyGetReleased(player);
+    } else {
+        controlXjoy = 0;
+        D_800F7874 = 0;
+        controlYjoy = 0;
+        D_800F7878 = 0;
+        controlKeys = 0;
+        controlDkeys = 0;
+        D_800F7868 = 0;
+    }
+}
 
+#ifdef VERSION_us
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlSetRumble.s")
+#endif
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlGetMaxCharge.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80037420_38020.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80037380.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/can_fire_weapon.s")
+// can_fire_weapon
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80037428.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlUpdateWeapon.s")
 
@@ -147,31 +175,43 @@ const char D_800AC678[] = "grenade\n";
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlFireDummyShot.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/shooting_func.s")
+// shooting_func
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80038488.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlFreePlayersStuff.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/shoot_plasmashot.s")
+// shoot_plasmashot
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80038D54.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/shoot_default.s")
+// shoot_default
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80038E70.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/shoot_TriRocket.s")
+// shoot_TriRocket
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_800390E0.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/shoot_HomingMissle.s")
+// shoot_HomingMissle
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8003931C.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/shoot_Shocker.s")
+// shoot_Shocker
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_800394A4.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/shoot_FishFood.s")
+// shoot_FishFood
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_800395B8.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/shoot_Grenades.s")
+// shoot_Grenades
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_800396F0.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/shoot_shuriken.s")
+// shoot_shuriken
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80039810.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/shoot_Mines.s")
+// shoot_Mines
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80039970.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/shoot_Flares.s")
+// shoot_Flares
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80039AE0.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/shoot_clusterBombs.s")
+// shoot_clusterBombs
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_80039CA4.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlUpdatePlayerAim.s")
 
@@ -185,15 +225,23 @@ const char D_800AC678[] = "grenade\n";
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlGetGunBarrelPos.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlPlayerTiltList.s")
+// TODO: This is clearly wrong, but it works.
+s32 controlPlayerTiltList(Object *obj) {
+    Object_Racer *player = &obj->racer[1];
+    return &player->pad68[0x90];
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlSidekickTiltList.s")
+// TODO: same as above
+s32 controlSidekickTiltList(Object *obj) {
+    Object_Racer *player = &obj->racer[0];
+    return &player->pad68[0x2E];
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlGravity.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlGetWeaponDef.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8003B51C_3C11C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/func_8003B2E4.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlAlterMood.s")
 
@@ -201,7 +249,11 @@ const char D_800AC678[] = "grenade\n";
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlGetPlayerSetup.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlClearPlayerSetup.s")
+extern u8 D_800A3708[8];
+
+void controlClearPlayerSetup(void) {
+    D_800A3708[0] = 0;
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlPlayerOpenChest.s")
 
