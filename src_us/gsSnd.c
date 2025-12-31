@@ -3,15 +3,15 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/gsSndpNew.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_80084468_85068.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_80084848.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_80084530_85130.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_80084910.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_8008582C_8642C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_80085C0C.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_8008589C_8649C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_80085C7C.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_80085918_86518.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_80085CF8.s")
 
 // ALSoundStateLists gSoundStateLists = { NULL, NULL, NULL };
 extern ALSoundStateLists gSoundStateLists;
@@ -48,9 +48,9 @@ u16 getSoundStateCounts(u16 *numFree, u16 *numAllocated) {
     return allocatedRevCounter;
 }
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_80085B20_86720.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_80085EF0.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_80085D50_86950.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/gsSnd/func_80086120.s")
 
 typedef struct {
     u8 pad[0x40];
