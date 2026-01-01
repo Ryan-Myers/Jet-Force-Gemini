@@ -77,7 +77,7 @@ segments:
       - [0x52610, c, segSetBase]
       - [0x52650, c, squads]
       - [0x54030, c, runLink]
-      - [0x55D50, asm, hasm/trapDanglingJump]
+      - [0x55D50, hasm, hasm/ido/trapDanglingJump]
       - [0x55F30, c, gameVi]
       - [0x56B80, c, textures]
       - [0x59780, c, screen]
