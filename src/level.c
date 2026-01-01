@@ -8,6 +8,10 @@ const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelNGetType.s")
 
+#ifdef VERSION_us
+#pragma GLOBAL_ASM("asm_us/nonmatchings/level/levelGetTune.s")
+#endif
+
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetWorld.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetRegionNo.s")
