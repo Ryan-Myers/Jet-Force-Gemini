@@ -92,7 +92,47 @@ const char D_800AC524_AD124[] = "%d\n";
 const char D_800AC528_AD128[] = "WARNING: couldn't find 'ra=0x666' in function %d\n";
 #endif
 
+#ifdef VERSION_kiosk
+void mainThread(UNUSED void *unused) {
+    // Anti Piracy - This will zero out all RAM if this is a PAL console.
+    if (osTvType == OS_TV_TYPE_PAL) {
+        s32 i = 0;
+        while (1) {
+            ((vu32 *) (RAM_END))[--i] = (u32) 0;
+        }
+    }
+    D_800A3B70 = osBootRamTest1_6105();
+    D_800A3B74 = osBootRamTest2_6105();
+    mainInitGame();
+    load_save_flags = joyRead(load_save_flags, 0);
+    D_800FE280 = 0;
+    mainGameMode = 6;
+    mainChangeLevel(0, D_800A3AB0, 0, 0, 1, 0);
+    func_80046070(0x1E);
+    while (1) {
+        if (mainResetPressed()) {
+            rumbleKill();
+            amStop();
+            osViBlack(TRUE);
+            __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_YIELD | SP_CLR_YIELDED | SP_CLR_TASKDONE |
+                            SP_CLR_RSPSIGNAL | SP_CLR_CPUSIGNAL | SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+            osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH | DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR |
+                          DPC_CLR_CMD_CTR | DPC_CLR_CMD_CTR);
+            while (1) {} // Infinite loop
+        }
+        func_80044938();
+        if (joyGetPressed(1) & L_TRIG) {
+            mainSetGameFlag(0x58, 1);
+        }
+        if (joyGetPressed(1) & R_TRIG) {
+            mainSetGameFlag(0x58, 0);
+        }
+        bootCheckStack();
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainThread.s")
+#endif
 
 #ifdef VERSION_us
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainPreNMI.s")
@@ -100,17 +140,50 @@ const char D_800AC528_AD128[] = "WARNING: couldn't find 'ra=0x666' in function %
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/RevealReturnAddresses.s")
 
+#ifdef VERSION_kiosk
+void mainInitGame(void) {
+    s32 viMode;
+
+    RevealReturnAddresses();
+    mmInit();
+    securitybuffer = mmAlloc(16, COLOUR_TAG_GREY);
+    rzipInit();
+    D_800FE26C = 0;
+
+    if (osTvType == OS_TV_TYPE_PAL) {
+        viMode = OS_VI_PAL_LPN1;
+    } else if (osTvType == OS_TV_TYPE_NTSC) {
+        viMode = OS_VI_NTSC_LPN1;
+    } else if (osTvType == OS_TV_TYPE_MPAL) {
+        viMode = OS_VI_MPAL_LPN1;
+    }
+    osCreateScheduler(&sc, &Time, 13, viMode, 1);
+    viInit(&sc);
+    piInit();
+    rcpInit(&sc);
+    runlinkInitialise();
+    TrapDanglingJump();
+    runlinkFreeCode(0x24);
+}
+#else
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainInitGame.s")
+#endif
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/func_800448B0.s")
 
+// main_game_loop in DKR
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/func_80044938.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainAddZBCheck.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainUpdateZBCheck.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainGetZBCheck.s")
+s8 mainGetZBCheck(s32 arg0) {
+    if ((arg0 < 0) || (arg0 >= 8)) {
+        return 1;
+    }
+    return D_800FE217[arg0].ZBCheck;
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainCPUeffects.s")
 
@@ -118,9 +191,16 @@ const char D_800AC528_AD128[] = "WARNING: couldn't find 'ra=0x666' in function %
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/func_8004552C.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainGameWindowChanging.s")
+s16 mainGameWindowChanging(void) {
+    return D_800A3A80;
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainGameWindowSize.s")
+void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
+    *x1 = mainGameWindowSizeX1;
+    *y1 = mainGameWindowSizeY1;
+    *x2 = mainGameWindowSizeX2;
+    *y2 = mainGameWindowSizeY2;
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/func_800456F8.s")
 
@@ -156,7 +236,9 @@ void mainSetAutoSave(s32 autoSave) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainSyncNextLevel.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainSetMode.s")
+void mainSetMode(s32 modeToSet) {
+    mainGameMode = modeToSet;
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainTitlePageInit.s")
 
@@ -210,12 +292,19 @@ void mainSetAutoSave(s32 autoSave) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainSetPauseMode.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainResetPressed.s")
+extern OSMesgQueue resetMsgQueue;
+extern s32 resetPressed;
+
+s32 mainResetPressed(void) {
+    if (resetPressed == 0) {
+        resetPressed = (s32) ((osRecvMesg(&resetMsgQueue, NULL, OS_MESG_NOBLOCK) + 1) != 0);
+    }
+    return resetPressed;
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainGetCurrentLevel.s")
 
 #ifdef VERSION_kiosk
-
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGameChanged.s")
 #endif
 
@@ -249,8 +338,24 @@ void mainSetAutoSave(s32 autoSave) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainGetPlayerCharacter.s")
 
+#ifdef VERSION_kiosk
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047EE8.s")
+
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047FC0.s")
+
+// Main debug menu
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004809C.s")
+#endif
+
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainResetRegion.s")
 
+#ifdef VERSION_kiosk
+void mainToggleDebug(void) {
+    // debugMenuEnable ^= 1;
+}
+#else
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainToggleDebug.s")
+#endif
 
+// Draw debug menu Lower Right section
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/debug_print_memory.s")
