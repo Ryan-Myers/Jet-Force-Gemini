@@ -92,7 +92,8 @@ const char D_800AC524_AD124[] = "%d\n";
 const char D_800AC528_AD128[] = "WARNING: couldn't find 'ra=0x666' in function %d\n";
 #endif
 
-#ifdef VERSION_kiosk
+void mainPreNMI(void);
+
 void mainThread(UNUSED void *unused) {
     // Anti Piracy - This will zero out all RAM if this is a PAL console.
     if (osTvType == OS_TV_TYPE_PAL) {
@@ -108,6 +109,7 @@ void mainThread(UNUSED void *unused) {
     D_800FE280 = 0;
     mainGameMode = 6;
     mainChangeLevel(0, D_800A3AB0, 0, 0, 1, 0);
+#ifdef VERSION_kiosk
     func_80046070(0x1E);
     while (1) {
         if (mainResetPressed()) {
@@ -129,10 +131,14 @@ void mainThread(UNUSED void *unused) {
         }
         bootCheckStack();
     }
-}
 #else
-#pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainThread.s")
+    while (1) {
+        mainPreNMI();
+        func_80044938();
+        bootCheckStack();
+    }
 #endif
+}
 
 #ifdef VERSION_us
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainPreNMI.s")
