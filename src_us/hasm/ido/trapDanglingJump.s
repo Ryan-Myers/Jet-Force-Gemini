@@ -1,5 +1,3 @@
-
-
 #include "PR/R4300.h"
 #include "sys/asm.h"
 #include "sys/regdef.h"
@@ -19,11 +17,11 @@
  *
  * Returns 0 if the overlay could not be loaded.
  */
-.set noreorder
 LEAF(TrapDanglingJump)
     /* Allocate stack frame */
     addiu      $sp, $sp, -0x60
     
+.set noreorder
     /* Load global overlay table pointers */
     lui        t0, %hi(overlayCount)              /* D_800FEAAC - number of overlays to search */
     lui        t1, %hi(overlayTable)              /* D_800FEAA0 - pointer to overlay header table */
@@ -49,16 +47,15 @@ LEAF(TrapDanglingJump)
 
 search_overlay_loop:
     /* Check if weve exhausted all overlays */
-    lui        v0, %hi(overlayCount)
-    lw         v0, %lo(overlayCount)(v0)
+    lw         v0, overlayCount
     subu       v0, v0, t0
-    beql       v0, zero, use_main_module         /* If first iteration, try main module */
-     lui       t2, (0x80000450 >> 16)             /* t2 = base VRAM address for main code */
+    beqzl      v0, use_main_module                /* If first iteration, try main module */
+    lui        t2, (0x80000450 >> 16)             /* t2 = base VRAM address for main code */
     
     /* Check if this overlay is loaded (base address != 0) */
     lw         t2, 0x0(t1)                       /* t2 = overlay VRAM base address */
-    beql       t2, zero, next_overlay            /* Skip if overlay not loaded */
-     addiu     t0, t0, -0x1
+    beqzl      t2, next_overlay                  /* Skip if overlay not loaded */
+    addiu      t0, t0, -0x1
     
     /* Calculate overlays relocation table address */
     /* overlayEnd = base + textSize + dataSize + rodataSize */
@@ -114,22 +111,22 @@ search_reloc_loop:
     sw         t5, 0x50($sp)
     sw         t7, 0x54($sp)
     
+.set reorder
     /* Download the overlay - a0 = ROM offset >> 20 (overlay ID) */
     lw         a0, 0x0(t6)
+    srl        a0, a0, 20
     jal        runlinkDownloadCode
-     srl       a0, a0, 20
+.set noreorder
     
     /* Check if download succeeded */
-    beql       v0, zero, download_failed
+    beqzl      v0, download_failed
      lw        ra, 0x34($sp)
     
     /* === DOWNLOAD SUCCEEDED - Calculate real target address === */
     lw         t6, 0x4C($sp)
-    lui        v1, %hi(overlayTable)
-    lw         v1, %lo(overlayTable)(v1)
+    lw         v1, overlayTable
     lw         t9, 0x0(t6)                       /* ROM table entry */
-    lui        AT, (0xFFFFF >> 16)
-    ori        AT, AT, (0xFFFFF & 0xFFFF)        /* AT = offset mask (20 bits) */
+    li         AT, 0xFFFFF
     srl        v0, t9, 20                        /* v0 = overlay index */
     sll        v0, v0, 5                         /* v0 = index * 32 (header size) */
     addu       v0, v0, v1                       /* v0 = &overlayTable[index] */
@@ -164,6 +161,7 @@ search_reloc_loop:
      addiu     $sp, $sp, 0x60
     lw         ra, 0x34($sp)
 
+.set reorder
 download_failed:
     /* Overlay download failed - restore args and return 0 */
     lw         a0, 0x14($sp)
@@ -176,24 +174,25 @@ download_failed:
     lwc1       fa1f, 0x30($sp)
     or         v0, zero, zero                   /* return 0 */
     or         v1, zero, zero
+    addiu      $sp, $sp, 0x60
     jr         ra
-     addiu     $sp, $sp, 0x60
+.set noreorder
     addiu      t4, t4, -0x1
 
+.set reorder
 next_relocation:
     /* Move to next relocation entry (8 bytes each) */
+    addiu     t3, t3, 0x8
     bnez       t4, search_reloc_loop
-     addiu     t3, t3, 0x8
 
     addiu      t0, t0, -0x1
 next_overlay:
     /* Move to next overlay header (32 bytes each) */
-    bgtz       t0, search_overlay_loop
-     addiu     t1, t1, 0x20
+    addiu     t1, t1, 0x20
+    bgtz      t0, search_overlay_loop
     
     /* No matching relocation found - return normally */
     lw         ra, 0x34($sp)
     addiu      $sp, $sp, 0x60
     jr         ra
-     nop
 END(TrapDanglingJump)
