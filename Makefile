@@ -1,5 +1,5 @@
 BASENAME  = jfg
-VERSION  := kiosk
+VERSION  := us
 NON_MATCHING ?= 0
 # Libultra version might be at least J, but still labeled in the header as G for some reason.
 LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6 -DBUILD_VERSION_STRING=\"2.0I\"
@@ -335,6 +335,7 @@ $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: MIPSISET := -mips2
 
 $(BUILD_DIR)/$(SRC_DIR)/hasm/ido/trapDanglingJump.s.o: OPT_FLAGS := -O2
+$(BUILD_DIR)/$(SRC_DIR)/hasm/ido/trapDanglingJump.s.o: MIPSISET := -mips3 -32
 $(BUILD_DIR)/$(SRC_DIR)/hasm/ido/math_util.s.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(SRC_DIR)/hasm/ido/math_util.s.o: MIPSISET := -mips3 -32
 
