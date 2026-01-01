@@ -232,6 +232,10 @@ void joySetSecurity(void) {
     joySecurity = 0;
 }
 
+#ifdef VERSION_us
+#pragma GLOBAL_ASM("asm_us/nonmatchings/controller/arithmeticFunction.s")
+#endif
+
 s32 joyCharVal(void) {
     return 1;
 }

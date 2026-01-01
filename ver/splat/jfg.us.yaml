@@ -295,7 +295,7 @@ segments:
       - [0xA1DC0, data, charControl]
       - [0xA3AC0, data, models]
       - [0xA3AD0, data, camera]
-      - [0xA3D90, data, controller]
+      - [0xA3D90, .data, controller]
       - [0xA3DA0, data, level]
       - [0xA3DD0, data, main]
       - [0xA3FE0, .data, hasm/ido/math_util]
@@ -428,7 +428,7 @@ segments:
       - { type: .bss, vram: 0x800F94D0, name: hasm/entrypoint }
       - { type: bss, vram: 0x800FA4D0, name: camera }
       - { type: bss, vram: 0x800FB080, name: staticcamera }
-      - { type: bss, vram: 0x800FB090, name: controller }
+      - { type: .bss, vram: 0x800FB090, name: controller }
       - { type: bss, vram: 0x800FB110, name: level }
       - { type: bss, vram: 0x800FB400, name: main }
       - { type: bss, vram: 0x800FD820, name: refractOutputAssembler }
