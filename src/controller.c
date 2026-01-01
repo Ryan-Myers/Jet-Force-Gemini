@@ -233,7 +233,15 @@ void joySetSecurity(void) {
 }
 
 #ifdef VERSION_us
-#pragma GLOBAL_ASM("asm_us/nonmatchings/controller/arithmeticFunction.s")
+void arithmeticFunction(OSMesgQueue *queue1, OSMesgQueue *queue2) {
+    osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
+    TrapDanglingJump(queue1, &joyMessageQueue);
+    osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
+    TrapDanglingJump(&joyMessageQueue);
+    osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
+    osContStartReadData(&joyMessageQueue);
+    TrapDanglingJump(queue2);
+}
 #endif
 
 s32 joyCharVal(void) {
