@@ -261,7 +261,7 @@ s32 camGetMode(void);
 s32 rcpWaitDP(void);
 
 // This function is unique in that it has no specific limit on arguments, 
-// and they can change even within the same funciton call it.
+// and they can change even within the same function call it.
 // This empty signature seems to be the way to handle it.
 s32 TrapDanglingJump();
 
