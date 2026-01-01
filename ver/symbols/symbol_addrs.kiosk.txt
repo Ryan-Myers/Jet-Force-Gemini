@@ -590,6 +590,7 @@ mainGetNumberOfPlayers = 0x80047E10;
 mainGetPlayerCharacter = 0x80047E80;
 mainResetRegion = 0x800489A8;
 mainToggleDebug = 0x80048B30;
+debug_print_memory = 0x80048B38;
 disableInterrupts = 0x80048E00;
 enableInterrupts = 0x80048E2C;
 setIntDisFlag = 0x80048E54;
