@@ -92,6 +92,7 @@ const char D_800AC524_AD124[] = "%d\n";
 const char D_800AC528_AD128[] = "WARNING: couldn't find 'ra=0x666' in function %d\n";
 #endif
 
+#ifdef VERSION_kiosk
 void mainThread(UNUSED void *unused) {
     // Anti Piracy - This will zero out all RAM if this is a PAL console.
     if (osTvType == OS_TV_TYPE_PAL) {
@@ -129,6 +130,9 @@ void mainThread(UNUSED void *unused) {
         bootCheckStack();
     }
 }
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainThread.s")
+#endif
 
 #ifdef VERSION_us
 #pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainPreNMI.s")
@@ -136,6 +140,7 @@ void mainThread(UNUSED void *unused) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
 
+#ifdef VERSION_kiosk
 void mainInitGame(void) {
     s32 viMode;
 
@@ -160,6 +165,9 @@ void mainInitGame(void) {
     TrapDanglingJump();
     runlinkFreeCode(0x24);
 }
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainInitGame.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800448B0.s")
 
@@ -220,9 +228,11 @@ void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80046070.s")
 
+#ifdef VERSION_kiosk
 void mainSetAutoSave(s32 autoSave) {
     mainGameAutoSave = autoSave;
 }
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSyncNextLevel.s")
 
@@ -294,7 +304,9 @@ s32 mainResetPressed(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetCurrentLevel.s")
 
+#ifdef VERSION_kiosk
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGameChanged.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainLoadGame.s")
 
@@ -337,9 +349,13 @@ s32 mainResetPressed(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainResetRegion.s")
 
+#ifdef VERSION_kiosk
 void mainToggleDebug(void) {
     // debugMenuEnable ^= 1;
 }
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainToggleDebug.s")
+#endif
 
 // Draw debug menu Lower Right section
 #pragma GLOBAL_ASM("asm/nonmatchings/main/debug_print_memory.s")
