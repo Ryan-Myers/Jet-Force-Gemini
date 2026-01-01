@@ -424,7 +424,7 @@ segments:
       - { type: bss, vram: 0x800F6B00, name: explosion }
       - { type: bss, vram: 0x800F6DA0, name: charControl }
       - { type: bss, vram: 0x800F6F10, name: models }
-      - { type: bss, vram: 0x800F7060, name: boot }
+      - { type: .bss, vram: 0x800F7060, name: boot }
       - { type: .bss, vram: 0x800F94D0, name: hasm/entrypoint }
       - { type: bss, vram: 0x800FA4D0, name: camera }
       - { type: bss, vram: 0x800FB080, name: staticcamera }
