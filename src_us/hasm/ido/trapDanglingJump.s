@@ -10,92 +10,115 @@
 .text
 
 /*
- * TrapDanglingJump - Runtime linker for dynamic code loading
+ * TrapDanglingJump - Runtime dynamic linker for overlay code loading
  * 
- * This function is called when code attempts to jump to an address
- * in an overlay that isnt currently loaded. It:
- *   1. Saves all argument registers to preserve the original call
- *   2. Searches overlay tables to find which overlay contains the target
- *   3. Downloads/loads the required overlay via runlinkDownloadCode
- *   4. Jumps to the now-loaded target function with original arguments
+ * When game code calls a function in an unloaded overlay, those calls are
+ * redirected to stub functions that call TrapDanglingJump. This function:
  *
- * Returns 0 if the overlay could not be loaded.
+ *   1. Saves all argument registers (a0-a3, f12-f15) to preserve the original call
+ *   2. Uses the return address to identify which stub was called
+ *   3. Searches relocation tables to find which overlay contains the target function
+ *   4. Downloads/loads the required overlay via runlinkDownloadCode
+ *   5. Calculates the real function address within the loaded overlay
+ *   6. Restores arguments and tail-calls the real function
+ *
+ * Register usage:
+ *   t0 - remaining overlay count (counts down)
+ *   t1 - current overlay header pointer (iterates through overlayTable)
+ *   t2 - overlay VRAM base address (or 0x80000450 for main module)
+ *   t3 - relocation table pointer
+ *   t4 - remaining relocation count (counts down)
+ *   t5 - caller`s jump address (ra - 8, points to the JAL instruction)
+ *   t6 - pointer into overlayRomTable
+ *   t7 - target overlay index from relocation entry
+ *   t8 - final computed target function address
+ *   t9 - ROM table entry (overlay_index << 20 | function_offset)
+ *
+ * Overlay header structure (32 bytes):
+ *   0x00: VRAM base address (0 if not loaded)
+ *   0x08: .text section size
+ *   0x0C: .data section size  
+ *   0x10: .rodata section size
+ *   0x14: relocation count (encoded, divide by 8)
+ *
+ * Relocation entry structure (8 bytes):
+ *   0x00: target overlay index
+ *   0x04: stub address offset (shifted left 8 bits)
+ *
+ * ROM table entry format:
+ *   bits 31-20: overlay index
+ *   bits 19-0:  function offset within overlay
+ *
+ * Returns: 0 if overlay could not be loaded, otherwise does not return
+ *          (tail-calls the target function)
  */
 LEAF(TrapDanglingJump)
-    /* Allocate stack frame */
+    /* === PROLOGUE: Allocate stack and save all argument registers === */
     addiu      $sp, $sp, -0x60
-    /* Save all argument registers to preserve the original function call */
-    sw         a0, 0x14($sp)
+    sw         a0, 0x14($sp)              /* Save integer arguments */
     sw         a1, 0x18($sp)
     sw         a2, 0x1C($sp)
     sw         a3, 0x20($sp)
-    swc1       fa0, 0x24($sp)
+    swc1       fa0, 0x24($sp)             /* Save float arguments */
     swc1       fa0f, 0x28($sp)
     swc1       fa1, 0x2C($sp)
     swc1       fa1f, 0x30($sp)
-    sw         ra, 0x34($sp)
-    sw         v0, 0x58($sp)
-    sw         v1, 0x5C($sp)
-    
-    /* Calculate callers jump instruction address (ra - 8 = the JAL that got us here) */
-    addiu      t5, ra, -0x8                      /* t5 = callerJumpAddr */
-     
-    /* Load global overlay table pointers */    
-    lw         t0, overlayCount                  /* t0 = number of overlays to search */
-    lw         t1, overlayTable                  /* t1 = pointer to overlay header table */
+    sw         ra, 0x34($sp)              /* Save return address */
+    sw         v0, 0x58($sp)              /* Save return value registers (may be set by caller) */
+    sw         v1, 0x5C($sp)    
+    subu       t5, ra, 8                  /* t5 = address of JAL that called the stub */
+    lw         t0, overlayCount           /* t0 = number of overlays to search */
+    lw         t1, overlayTable           /* t1 = pointer to first overlay header */
 
-search_overlay_loop:
-    /* Check if weve exhausted all overlays */
+    /* === OUTER LOOP: Iterate through all loaded overlays === */
+search_next_overlay:
     lw         v0, overlayCount
-    subu       v0, v0, t0
-    beqz       v0, use_main_module               /* If first iteration, try main module */
+    subu       v0, v0, t0                 /* v0 = how many overlays we`ve checked */
+    beqz       v0, search_main_module     /* First iteration: check main module`s relocations */
     
-    /* Check if this overlay is loaded (base address != 0) */
-    lw         t2, 0x0(t1)                       /* t2 = overlay VRAM base address */
-    beqz       t2, next_overlay                  /* Skip if overlay not loaded */
+    /* Check if this overlay is currently loaded */
+    lw         t2, 0x0(t1)                /* t2 = overlay VRAM base (0 if not loaded) */
+    beqz       t2, advance_to_next_overlay
     
-    /* Calculate overlays relocation table address */
-    /* overlayEnd = base + textSize + dataSize + rodataSize */
-    lw         v0, 0x8(t1)                        /* text section size */
-    lh         t4, 0x14(t1)                       /* relocation count (encoded) */
+    /* Calculate address of overlay`s relocation table */
+    /* relocTable = vramBase + textSize + dataSize + rodataSize */
+    lw         v0, 0x8(t1)                /* .text size */
     addu       t3, t2, v0
-    lw         v0, 0xC(t1)                        /* data section size */
-    sra        t4, t4, 3                          /* t4 = actual relocation count */
+    lw         v0, 0xC(t1)                /* .data size */
     addu       t3, t3, v0
-    lw         v0, 0x10(t1)                       /* rodata section size */
-    addu       t3, t3, v0                         /* t3 = relocation table ptr */
-    b          check_relocations
+    lh         t4, 0x14(t1)               /* relocation count (encoded) */
+    sra        t4, t4, 3                  /* t4 = actual relocation count */
+    lw         v0, 0x10(t1)               /* .rodata size */
+    addu       t3, t3, v0                 /* t3 = relocation table address */
+    b          search_relocation_table
 
-use_main_module:
-    lui        t2, (0x80000450 >> 16)
-    /* Fall back to searching main modules relocation table */
-    ori        t2, t2, (0x80000450 & 0xFFFF)      /* t2 = main module base address */
-    lw         t4, mainRelocCount                 /* t4 = number of relocations */
-    lw         t3, mainRelocTable                 /* t3 = relocation table ptr */
+    /* Fall back to main module`s relocation table */
+search_main_module:
+    li         t2, 0x80000450             /* Main module VRAM base */
+    lw         t4, mainRelocCount         /* Number of main module relocations */
+    lw         t3, mainRelocTable         /* Main module relocation table */
 
-check_relocations:
-    /* Skip if no relocations to check */
-    blez       t4, next_overlay
+    /* === INNER LOOP: Search relocation table for matching stub address === */
+search_relocation_table:
+    blez       t4, advance_to_next_overlay  /* No relocations? Try next overlay */
 
-search_reloc_loop:
-    /* Each relocation entry is 8 bytes: [overlayIndex:4][targetOffset:4] */
-    /* Check if this relocations target matches our caller address */
-    lw         v0, 0x4(t3)                        /* Get target offset (shifted) */
-    srl        v0, v0, 8
-    addu       v0, v0, t2                         /* v0 = absolute target address */
-    bne        v0, t5, next_relocation            /* Not our caller? Skip */
+search_next_relocation:
+    /* Check if this relocation`s stub address matches our caller */
+    lw         v0, 0x4(t3)                /* Get encoded stub offset */
+    srl        v0, v0, 8                  /* Decode offset */
+    addu       v0, v0, t2                 /* v0 = absolute stub address */
+    bne        v0, t5, advance_to_next_relocation  /* No match? Keep searching */
     
     /* === FOUND MATCHING RELOCATION === */
-    /* The caller jumped to this stub - now load the real target overlay */
+    /* This relocation entry tells us which overlay contains the real function */
     
-    lw         t7, 0x0(t3)                        /* t7 = target overlay index */
-    lui        v0, %hi(overlayRomTable)
-    lw         v0, %lo(overlayRomTable)(v0)
-    sll        t6, t7, 2                          /* t6 = index * 4 */
+    lw         v0, overlayRomTable        /* Get ROM table base */
+    lw         t7, 0x0(t3)                /* t7 = target overlay index */
+    sll        t6, t7, 2                  /* t6 = index * 4 (pointer offset) */
+    addu       t6, t6, v0                 /* t6 = &overlayRomTable[overlayIndex] */
     
-    /* Save search state to stack before calling download function */
+    /* Save search state before calling download function */
     sw         t0, 0x38($sp)
-    addu       t6, t6, v0                         /* t6 = &overlayRomTable[index] */
     sw         t1, 0x3C($sp)
     sw         t2, 0x40($sp)
     sw         t3, 0x44($sp)
@@ -104,28 +127,26 @@ search_reloc_loop:
     sw         t5, 0x50($sp)
     sw         t7, 0x54($sp)
     
-    /* Download the overlay - a0 = ROM offset >> 20 (overlay ID) */
-    lw         a0, 0x0(t6)
-    srl        a0, a0, 20
+    /* Download/load the target overlay */
+    lw         a0, 0x0(t6)                /* ROM table entry */
+    srl        a0, a0, 20                 /* Extract overlay index for download */
     jal        runlinkDownloadCode
     
-    /* Check if download succeeded */
-    beqz       v0, download_failed
+    beqz       v0, download_failed        /* Download failed? Return 0 */
     
-    /* === DOWNLOAD SUCCEEDED - Calculate real target address === */
-    lw         t6, 0x4C($sp)
+    /* === DOWNLOAD SUCCEEDED: Calculate real function address === */
     lw         v1, overlayTable
-    lw         t9, 0x0(t6)                        /* ROM table entry */
-    li         AT, 0xFFFFF                        /* AT = offset mask (20 bits) */
-    srl        v0, t9, 20                         /* v0 = overlay index */
-    sll        v0, v0, 5                          /* v0 = index * 32 (header size) */
-    addu       v0, v0, v1                         /* v0 = &overlayTable[index] */
-    lw         t8, 0x0(v0)                        /* t8 = overlay VRAM base */
-    and        v0, t9, AT                         /* v0 = function offset within overlay */
-    lw         t0, 0x38($sp)
-    addu       t8, t8, v0                         /* t8 = real target function address */
+    lw         t6, 0x4C($sp)              /* Restore ROM table pointer */
+    lw         t9, 0x0(t6)                /* t9 = ROM entry (index << 20 | offset) */
+    srl        v0, t9, 20                 /* v0 = overlay index */
+    sll        v0, v0, 5                  /* v0 = index * 32 (overlay header size) */
+    addu       v0, v0, v1                 /* v0 = &overlayTable[index] */
+    lw         t8, 0x0(v0)                /* t8 = overlay VRAM base (now loaded) */
+    and        v0, t9, 0xFFFFF            /* v0 = function offset (low 20 bits) */
+    addu       t8, t8, v0                 /* t8 = real function address! */
     
-    /* Restore search state (not really needed, but matches original) */
+    /* Restore search state (for consistency, though not strictly needed) */
+    lw         t0, 0x38($sp)
     lw         t1, 0x3C($sp)
     lw         t2, 0x40($sp)
     lw         t3, 0x44($sp)
@@ -133,7 +154,7 @@ search_reloc_loop:
     lw         t5, 0x50($sp)
     lw         t7, 0x54($sp)
     
-    /* Restore all original arguments for the real function call */
+    /* === EPILOGUE: Restore arguments and tail-call real function === */
     lw         a0, 0x14($sp)
     lw         a1, 0x18($sp)
     lw         a2, 0x1C($sp)
@@ -145,15 +166,12 @@ search_reloc_loop:
     lw         ra, 0x34($sp)
     lw         v0, 0x58($sp)
     lw         v1, 0x5C($sp)
-    
-    /* Tail-call the real target function with all original arguments */
     addiu      $sp, $sp, 0x60
-    jr         t8
+    jr         t8                         /* Jump to real function (tail call) */
 
+    /* === ERROR PATH: Overlay download failed === */
 download_failed:
-    lw         ra, 0x34($sp)
-    /* Overlay download failed - restore args and return 0 */
-    lw         a0, 0x14($sp)
+    lw         a0, 0x14($sp)              /* Restore arguments (for debugging) */
     lw         a1, 0x18($sp)
     lw         a2, 0x1C($sp)
     lw         a3, 0x20($sp)
@@ -161,26 +179,26 @@ download_failed:
     lwc1       fa0f, 0x28($sp)
     lwc1       fa1, 0x2C($sp)
     lwc1       fa1f, 0x30($sp)
-    or         v0, zero, zero                     /* return 0 */
+    lw         ra, 0x34($sp)
+    or         v0, zero, zero             /* Return 0 (failure) */
     or         v1, zero, zero
     addiu      $sp, $sp, 0x60
     jr         ra
 
-next_relocation:
-    addiu     t4, t4, -0x1
-    /* Move to next relocation entry (8 bytes each) */
-    addiu      t3, t3, 0x8
-    bnez       t4, search_reloc_loop
-    /* fall through to next_overlay */
+    /* === LOOP CONTROL: Advance to next relocation entry === */
+advance_to_next_relocation:
+    subu       t4, t4, 1                  /* Decrement relocation count */
+    addiu      t3, t3, 0x8                /* Advance to next entry (8 bytes each) */
+    bnez       t4, search_next_relocation
 
-next_overlay:
-    addiu     t0, t0, -0x1
-    /* Move to next overlay header (32 bytes each) */
-    addiu      t1, t1, 0x20
-    bgtz       t0, search_overlay_loop
+    /* === LOOP CONTROL: Advance to next overlay === */
+advance_to_next_overlay:
+    addiu      t1, t1, 0x20               /* Advance to next header (32 bytes each) */
+    subu       t0, t0, 1                  /* Decrement overlay count */
+    bgtz       t0, search_next_overlay
     
-    /* No matching relocation found - return normally */
+    /* === FALLTHROUGH: No matching relocation found === */
     lw         ra, 0x34($sp)
     addiu      $sp, $sp, 0x60
-    jr         ra
+    jr         ra                         /* Return (v0/v1 undefined) */
 END(TrapDanglingJump)
