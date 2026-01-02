@@ -290,6 +290,10 @@ void mmSetDelay(s32 state) {
     enableInterrupts(intFlags);
 }
 
+#ifdef VERSION_us
+#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mmFlushFreeStack.s")
+#endif
+
 /**
  * Unallocates data from the pool that contains the data. Will free immediately if the free queue
  * state is set to 0, otherwise the data will just be marked for deletion.

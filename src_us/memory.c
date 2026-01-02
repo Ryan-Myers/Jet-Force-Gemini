@@ -6,13 +6,13 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mmAllocRegion.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/make_heapBlock.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mempool_init.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mmAlloc.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mmAlloc2.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/func_8004A69C_4B29C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mempool_slot_find.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mmAllocR.s")
 
@@ -20,25 +20,27 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mmSetDelay.s")
 
+#ifdef VERSION_us
 #pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mmFlushFreeStack.s")
+#endif
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mmFree.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mmFreeTick.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/func_8004ABF4_4B7F4.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mempool_free_addr.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/func_8004AC90_4B890.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mempool_free_queue.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/find_heap_block.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mempool_get_pool.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/free_from_heap.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mempool_slot_clear.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mmGetSlotPtr.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mmGetDelay.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/add_to_heap.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mempool_slot_assign.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/memory/mmAlign16.s")
 
