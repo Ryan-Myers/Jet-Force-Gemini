@@ -60,9 +60,16 @@ UNUSED void rumbleProcessing(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/saves/rumbleTick.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/rumbleGetRumble.s")
+UNUSED void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
+    *arg1 = 0;
+    *arg2 = 0;
+    if ((arg0 >= 0) && (arg0 < 3)) {
+        *arg1 = D_800A3EAC[arg0].unk0;
+        *arg2 = D_800A3EAC[arg0].unk4;
+    }
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/func_8004BA98_4C698.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/func_8004C2A8.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packLoadCharacter.s")
 
@@ -82,11 +89,34 @@ UNUSED void rumbleProcessing(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packSaveGlobalFlagsEprom.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/flashROMInit.s")
+void flashROMInit(void) {
+    osCreateMesgQueue(&cartEventQueue, (OSMesg *) &cartEventBuf, 1);
+    osSetEventMesg(OS_EVENT_CART, &cartEventQueue, (OSMesg) 1);
+    osCreateMesgQueue(&flashEventQueue, (OSMesg *) &flashEventBuf, 1);
+    osCartRomInit();
+    osFlashInit();
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/func_8004BF98_4CB98.s")
+void flashROMWrite(u32 pageNum, u32 *dramAddr) {
+    // Page 0x3fe and 0x3ff are reserved by Nintendo.  Please refrain from using the pages.
+    if (pageNum < 0x3FE) {
+        osWritebackDCache(dramAddr, SECTOR_SIZE);
+        // Transfer data from RDRAM to the write buffer in 1M Flash
+        osFlashWriteBuffer(&flashMesgReqBlock, 0, dramAddr, &flashEventQueue);
+        osRecvMesg(&flashEventQueue, NULL, OS_MESG_BLOCK);
+        // Transfer data from write buffer to each page of 1M Flash
+        osFlashWriteArray(pageNum);
+    }
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/func_8004C008_4CC08.s")
+void flashROMRead(u32 pageNum, u32 *dramAddr) {
+    // Page 0x3fe and 0x3ff are reserved by Nintendo.  Please refrain from using the pages.
+    if (pageNum < 0x3FE) {
+        osInvalDCache(dramAddr, SECTOR_SIZE);
+        osFlashReadArray(&flashMesgReqBlock, 0, pageNum, dramAddr, 1, &flashEventQueue);
+        osRecvMesg(&flashEventQueue, NULL, OS_MESG_BLOCK);
+    }
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packOpen.s")
 
@@ -110,13 +140,152 @@ UNUSED void rumbleProcessing(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packCopyFile.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packOpenFile.s")
+SIDeviceStatus packOpenFile(s32 controllerIndex, char *fileName, char *fileExt, s32 *fileNumber) {
+    u32 gameCode;
+    char fileNameAsFontCodes[PFS_FILE_NAME_LEN];
+    UNUSED s32 pad;
+    char fileExtAsFontCodes[PFS_FILE_EXT_LEN];
+    UNUSED s32 pad2;
+    s32 ret;
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packReadFile.s")
+    string_to_font_codes(fileName, fileNameAsFontCodes, PFS_FILE_NAME_LEN);
+    string_to_font_codes(fileExt, fileExtAsFontCodes, PFS_FILE_EXT_LEN);
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packWriteFile.s")
+    if (frontGetLanguage() == LANGUAGE_JAPANESE) {
+        gameCode = JPN_GAME_CODE;
+    } else if (osTvType == OS_TV_TYPE_PAL) {
+        gameCode = PAL_GAME_CODE;
+    } else {
+        gameCode = NTSC_GAME_CODE;
+    }
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packFileSize.s")
+    ret = osPfsFindFile(&pfs[controllerIndex], COMPANY_CODE, gameCode, (u8 *) fileNameAsFontCodes,
+                        (u8 *) fileExtAsFontCodes, fileNumber);
+    if (ret == 0) {
+        return CONTROLLER_PAK_GOOD;
+    }
+    if ((ret == PFS_ERR_NOPACK) || (ret == PFS_ERR_DEVICE)) {
+        return NO_CONTROLLER_PAK;
+    }
+    if (ret == PFS_ERR_INCONSISTENT) {
+        return CONTROLLER_PAK_INCONSISTENT;
+    }
+    if (ret == PFS_ERR_ID_FATAL) {
+        return CONTROLLER_PAK_WITH_BAD_ID;
+    }
+    if (ret == PFS_ERR_INVALID) {
+        return CONTROLLER_PAK_CHANGED;
+    }
+
+    return CONTROLLER_PAK_BAD_DATA;
+}
+
+SIDeviceStatus packReadFile(s32 controllerIndex, s32 fileNum, u8 *data, s32 dataLength) {
+    s32 readResult = osPfsReadWriteFile(&pfs[controllerIndex], fileNum, PFS_READ, 0, dataLength, data);
+
+    if (readResult == 0) {
+        return CONTROLLER_PAK_GOOD;
+    }
+    if ((readResult == PFS_ERR_NOPACK) || (readResult == PFS_ERR_DEVICE)) {
+        return NO_CONTROLLER_PAK;
+    }
+    if (readResult == PFS_ERR_INCONSISTENT) {
+        return CONTROLLER_PAK_INCONSISTENT;
+    }
+    if (readResult == PFS_ERR_ID_FATAL) {
+        return CONTROLLER_PAK_WITH_BAD_ID;
+    }
+    if (readResult == PFS_ERR_INVALID) {
+        return CONTROLLER_PAK_CHANGED;
+    }
+
+    return CONTROLLER_PAK_BAD_DATA;
+}
+
+SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName, char *fileExt, u8 *dataToWrite,
+                             s32 fileSize) {
+    s32 temp;
+    u8 fileNameAsFontCodes[PFS_FILE_NAME_LEN];
+    UNUSED s32 temp2;
+    u8 fileExtAsFontCodes[PFS_FILE_EXT_LEN];
+    s32 ret;
+    s32 file_number;
+    s32 bytesToSave;
+    u32 game_code;
+
+    ret = packOpen(controllerIndex);
+    if (ret != CONTROLLER_PAK_GOOD) {
+        packClose(controllerIndex);
+        return ret;
+    }
+
+    bytesToSave = fileSize;
+    temp = fileSize & 0xFF;
+    if (temp != 0) {
+        bytesToSave = (fileSize - temp) + 0x100;
+    }
+
+    string_to_font_codes(fileName, (char *) fileNameAsFontCodes, PFS_FILE_NAME_LEN);
+    string_to_font_codes(fileExt, (char *) fileExtAsFontCodes, PFS_FILE_EXT_LEN);
+
+    if (frontGetLanguage() == LANGUAGE_JAPANESE) {
+        game_code = JPN_GAME_CODE;
+    } else if (osTvType == OS_TV_TYPE_PAL) {
+        game_code = PAL_GAME_CODE;
+    } else {
+        game_code = NTSC_GAME_CODE;
+    }
+
+    ret = packOpenFile(controllerIndex, fileName, fileExt, &file_number);
+    if (ret == CONTROLLER_PAK_GOOD) {
+        if (fileNumber != -1 && fileNumber != file_number) {
+            ret = CONTROLLER_PAK_BAD_DATA;
+        }
+    } else if (ret == CONTROLLER_PAK_CHANGED) {
+        if (fileNumber != -1) {
+            ret = CONTROLLER_PAK_BAD_DATA;
+        } else {
+            temp = osPfsAllocateFile(&pfs[controllerIndex], COMPANY_CODE, game_code, fileNameAsFontCodes,
+                                     fileExtAsFontCodes, bytesToSave, &file_number);
+            if (temp == 0) {
+                ret = CONTROLLER_PAK_GOOD;
+            } else if (temp == PFS_DATA_FULL || temp == PFS_DIR_FULL) {
+                ret = CONTROLLER_PAK_FULL;
+            } else {
+                ret = CONTROLLER_PAK_BAD_DATA;
+            }
+        }
+    }
+
+    if (ret == CONTROLLER_PAK_GOOD) {
+        temp = osPfsReadWriteFile(&pfs[controllerIndex], file_number, PFS_WRITE, 0, bytesToSave, dataToWrite);
+        if (temp == 0) {
+            ret = CONTROLLER_PAK_GOOD;
+        } else if ((temp == PFS_ERR_NOPACK) || (temp == PFS_ERR_DEVICE)) {
+            ret = NO_CONTROLLER_PAK;
+        } else if (temp == PFS_ERR_INCONSISTENT) {
+            ret = CONTROLLER_PAK_INCONSISTENT;
+        } else if (temp == PFS_ERR_ID_FATAL) {
+            ret = CONTROLLER_PAK_WITH_BAD_ID;
+        } else {
+            ret = CONTROLLER_PAK_BAD_DATA;
+        }
+    }
+
+    packClose(controllerIndex);
+    return ret;
+}
+
+SIDeviceStatus packFileSize(s32 controllerIndex, s32 fileNum, s32 *fileSize) {
+    OSPfsState state;
+
+    *fileSize = 0;
+    if (osPfsFileState(&pfs[controllerIndex], fileNum, &state) == 0) {
+        *fileSize = state.file_size;
+        return CONTROLLER_PAK_GOOD;
+    }
+    return CONTROLLER_PAK_BAD_DATA;
+}
 
 // Converts N64 Font codes used in controller pak file names, into C ASCII a coded string
 char *font_codes_to_string(char *inString, char *outString, s32 stringLength) {
