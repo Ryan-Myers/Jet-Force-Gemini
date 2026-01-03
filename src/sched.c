@@ -47,6 +47,7 @@ extern OSViMode osViModeMpalLpn1; // MPAL
 extern OSViMode osViModeNtscLpn1; // NTSC
 
 extern OSTime D_800FF668;
+extern s32 D_800A38CC_A44CC;
 // OSTime D_800FF668; //gYieldTime
 
 void osCreateScheduler(OSSched *sc, void *stack, OSPri priority, u8 mode, u8 numFields) {
@@ -154,6 +155,9 @@ static void __scMain(void *arg) {
         switch ((int) msg) {
             case (VIDEO_MSG):
                 __scHandleRetrace(sc);
+#ifdef VERSION_us
+                D_800A38CC_A44CC += 1;
+#endif
                 break;
 
             case (RSP_DONE_MSG):
