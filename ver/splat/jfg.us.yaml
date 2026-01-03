@@ -299,7 +299,7 @@ segments:
       - [0xA3DA0, data, level]
       - [0xA3DD0, data, main]
       - [0xA3FE0, .data, hasm/ido/math_util]
-      - [0xA3FF0, data, memory]
+      - [0xA3FF0, .data, memory]
       - [0xA4000, data, saves]
       - [0xA4130, data, pi] # new data symbol not in kiosk. Kiosk has no pi data.
       - [0xA4140, data, prnBorder]
@@ -432,7 +432,7 @@ segments:
       - { type: bss, vram: 0x800FB110, name: level }
       - { type: bss, vram: 0x800FB400, name: main }
       - { type: bss, vram: 0x800FD820, name: refractOutputAssembler }
-      - { type: bss, vram: 0x800FD840, name: memory }
+      - { type: .bss, vram: 0x800FD840, name: memory }
       - { type: bss, vram: 0x800FDDB0, name: saves }
       - { type: bss, vram: 0x800FDFE0, name: pi }
       - { type: bss, vram: 0x800FE080, name: rcpFast3d }
