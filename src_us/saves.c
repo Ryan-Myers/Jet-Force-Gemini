@@ -16,11 +16,35 @@
 // page, and write back the whole sector.
 #define SECTOR_SIZE 128
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/func_8004B070_4BC70.s")
+typedef enum Language { LANGUAGE_0, LANGUAGE_1, LANGUAGE_2, LANGUAGE_3, LANGUAGE_JAPANESE } Language;
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/rumbleRumbles.s")
+#ifdef VERSION_us
+s32 mainGetPauseMode();
+extern u8 D_800A3470_A4070;
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/rumbleProcessing.s")
+s32 func_8004B070_4BC70(void) {
+    s32 var_v0;
+
+    var_v0 = D_800A3470_A4070 != 0;
+    if (var_v0 != 0) {
+        return mainGetPauseMode() == 0;
+    }
+    // Bug! Doesn't guarantee a return
+}
+
+void rumbleRumbles(s32 arg0) {
+    D_800A3470_A4070 = arg0;
+}
+#endif
+
+UNUSED void rumbleProcessing(s32 arg0) {
+    if ((arg0 != 0) && (D_800A3ECC == 0)) {
+        D_800A3EC4 = 1;
+        D_800A3ECC = 1;
+    } else {
+        D_800A3ECC = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/saves/rumbleStart.s")
 
