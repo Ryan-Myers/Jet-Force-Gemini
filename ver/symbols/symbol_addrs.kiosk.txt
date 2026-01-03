@@ -1701,6 +1701,7 @@ D_800FBCA0 = 0x800FBCA0; // size:0x220
 sControllerMesgQueue = 0x800FEAC0;
 D_800FEAC4 = 0x800FEAC4;
 pfs = 0x800FEAC8;
+rumbleStructArray = 0x800FEC68;
 
 flashEventQueue = 0x800FEC90;
 flashEventBuf = 0x800FECA8;

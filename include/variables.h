@@ -281,13 +281,13 @@ extern OSIoMesg flashMesgReqBlock;
 extern u8 D_800A3EC4;
 extern u8 D_800A3ECC;
 extern f32 D_800AD4FC;
-extern RumbleStruct D_800FEC68[];
+extern RumbleStruct rumbleStructArray[];
 extern f32 D_800AD504;
 extern f32 D_800AD500;
 extern RumbleStruct D_800FEC6A[];
 
 //Size: 0xA
-//extern unkD_800FEC68 *D_800FEC68;
+//extern unkD_800FEC68 *rumbleStructArray;
 
 
 typedef struct unkD_800A3EAC {
