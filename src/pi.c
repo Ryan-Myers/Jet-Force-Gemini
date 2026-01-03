@@ -135,6 +135,10 @@ s32 piRomGetFileSize(u32 assetIndex) {
 
 #define MAX_TRANSFER_SIZE 0x5000
 
+#ifdef VERSION_us
+s32 D_800A3530_A4130 = 0;
+#endif
+
 /**
  * Copies data from the game cartridge to a ram address.
  */
@@ -151,6 +155,11 @@ void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes) {
         osPiStartDma(&gAssetsDmaIoMesg, OS_MESG_PRI_NORMAL, OS_READ, romOffset, (u32 *) ramAddress, numBytesToDMA,
                      &gDmaMesgQueue);
         osRecvMesg(&gDmaMesgQueue, &dmaMesg, OS_MESG_BLOCK);
+#ifdef VERSION_us
+        if (D_800A3530_A4130 != 0) {
+            mainPreNMI();
+        }
+#endif
         numBytes -= numBytesToDMA;
         romOffset += numBytesToDMA;
         ramAddress += numBytesToDMA;

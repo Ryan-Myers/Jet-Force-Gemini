@@ -301,7 +301,7 @@ segments:
       - [0xA3FE0, .data, hasm/ido/math_util]
       - [0xA3FF0, .data, memory]
       - [0xA4000, data, saves]
-      - [0xA4130, data, pi] # new data symbol not in kiosk. Kiosk has no pi data.
+      - [0xA4130, .data, pi] # new data symbol not in kiosk. Kiosk has no pi data.
       - [0xA4140, data, prnBorder]
       - [0xA41B0, data, rcpFast3d]
       - [0xA44B0, data, sched]
@@ -434,7 +434,7 @@ segments:
       - { type: bss, vram: 0x800FD820, name: refractOutputAssembler }
       - { type: .bss, vram: 0x800FD840, name: memory }
       - { type: bss, vram: 0x800FDDB0, name: saves }
-      - { type: bss, vram: 0x800FDFE0, name: pi }
+      - { type: .bss, vram: 0x800FDFE0, name: pi }
       - { type: bss, vram: 0x800FE080, name: rcpFast3d }
       - { type: bss, vram: 0x800FE950, name: sched }
       - { type: bss, vram: 0x800FE9A0, name: squads }
