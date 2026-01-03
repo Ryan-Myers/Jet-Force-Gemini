@@ -19,6 +19,11 @@
 typedef enum Language { LANGUAGE_0, LANGUAGE_1, LANGUAGE_2, LANGUAGE_3, LANGUAGE_JAPANESE } Language;
 
 #ifdef VERSION_us
+#define nosMotorInit osMotorInit
+#define nosMotorStart osMotorStart
+#define nosMotorStop osMotorStop
+
+
 s32 mainGetPauseMode();
 extern u8 D_800A3470_A4070;
 
@@ -46,19 +51,248 @@ UNUSED void rumbleProcessing(s32 arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/rumbleStart.s")
+UNUSED void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
+    RumbleStruct *rumblePak;
+    u8 controllerNum;
 
+#ifdef VERSION_us
+    if (func_8004B070_4BC70() != 0) {
+#endif
+    if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
+        controllerNum = joyGetController(controllerIndex);
+        rumblePak = &rumbleStructArray[controllerNum];
+        if (rumblePak->state.upper != 2) {
+            rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
+            rumblePak->unk2 = ((arg1 * arg1) * 0.1000000015f);
+            rumblePak->unk4 = rumblePak->unk2;
+            rumblePak->rumbleTime = (arg2 * 60.0f);
+        }
+    }
+#ifdef VERSION_us
+    }
+#endif
+}
+
+#ifdef VERSION_kiosk
+void rumbleStop(s32 controllerIndex) {
+    RumbleStruct *rumblePak;
+    u8 controllerNum;
+    u32 temp;
+    s32 flag = 3;
+
+    if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
+        controllerNum = joyGetController(controllerIndex);
+        rumblePak = &rumbleStructArray[controllerNum];
+        temp = rumblePak->state.upper;
+        if ((temp != 0) && (temp != flag)) {
+            rumblePak->state.flag = flag;
+            rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x30;
+        }
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm_us/nonmatchings/saves/rumbleStop.s")
+#endif
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/rumbleAlter.s")
+void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
+    s32 controllerNum;
+    RumbleStruct *rumblePak;
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/rumbleMax.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/rumbleKill.s")
+#ifdef VERSION_us
+    if (func_8004B070_4BC70() != 0) {
+#endif
+    if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
+        controllerNum = joyGetController(controllerIndex);
+        rumblePak = &D_800FEC6A[controllerNum];
+        if (arg1 != 0) {
+            rumblePak->state.half = ((arg1 * arg1) * 0.1000000015f);
+        }
+        rumblePak = &rumbleStructArray[controllerNum];
+        if (rumblePak->state.upper != 2 && arg2 != 0.0f) {
+            rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
+            rumblePak->rumbleTime = (arg2 * 60.0f);
+        }
+    }
+#ifdef VERSION_us
+    }
+#endif
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/rumbleUpdate.s")
+void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
+    RumbleStruct *rumblePak;
+    s32 temp_f16;
+    s32 controllerNum;
 
+#ifdef VERSION_us
+    if (func_8004B070_4BC70() != 0) {
+#endif
+    if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
+        controllerNum = joyGetController(controllerIndex);
+        rumblePak = &rumbleStructArray[controllerNum];
+#ifdef VERSION_us
+        if (rumblePak->rumbleTime <= 0) {
+            rumblePak->unk2 = 0;
+        }
+#endif
+        if (arg1 != 0) {
+            arg1 = ((arg1 * arg1) * 0.1000000015f);
+            if (rumblePak->unk2 < arg1) {
+                rumblePak->unk2 = arg1;
+            }
+        }
+        if (rumblePak->state.upper != 2) {
+            rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
+            temp_f16 = (arg2 * 60.0f);
+            if (rumblePak->rumbleTime < temp_f16) {
+                rumblePak->rumbleTime = temp_f16;
+            }
+        }
+    }
+#ifdef VERSION_us
+    }
+#endif
+}
+
+#ifdef VERSION_kiosk
+void rumbleKill(void) {
+    s32 i = MAXCONTROLLERS;
+    while (i--) {
+        rumbleStop(i);
+    }
+}
+#else
+void rumbleKill(s32 arg0) {
+    s32 i = MAXCONTROLLERS;
+    while (i--) {
+        rumbleStop(i, arg0);
+    }
+}
+#endif
+
+void rumbleUpdate(void) {
+    D_800A3EC4 = 1;
+}
+
+#ifdef NON_EQUIVALENT
+s32 nosMotorStart(OSPfs *);
+s32 nosMotorStop(OSPfs *);
+extern f32 D_800AD508;
+extern RumbleStruct rumbleStructArray[];
+
+void rumbleTick(s32 updateRate) {
+    RumbleStruct *rumble;
+    s32 pfsStatus;
+    s32 i;
+    s32 controllerToCheck;
+    u8 pfsBitPattern;
+
+    if (D_800A3ECC != 0) {
+        if (D_800A3EC4 != 0) {
+            osPfsIsPlug(sControllerMesgQueue, &pfsBitPattern);
+            for (i = 0, controllerToCheck = 1, rumble = rumbleStructArray; i < MAXCONTROLLERS;
+                 i++, controllerToCheck <<= 1, rumble++) {
+                if (pfsBitPattern & controllerToCheck) {
+                    if (nosMotorInit(sControllerMesgQueue, &pfs[i], i) != 0) {
+                        rumble->state.state &= ~4;
+                        sRumblePaksPresent &= ~controllerToCheck;
+                    } else {
+                        rumble->state.state |= 4;
+                        sRumblePaksPresent |= controllerToCheck;
+                    }
+                }
+            }
+            D_800A3EC4 = 0;
+        }
+        for (i = 0, controllerToCheck = 1, rumble = rumbleStructArray; i < MAXCONTROLLERS;
+             i++, controllerToCheck <<= 1, rumble++) {
+            if (rumble->state.upper & 0x400) {
+                pfsStatus = 0;
+                switch (rumble->state.upper) {
+                    case 1:
+                        rumble->rumbleTime -= updateRate;
+                        rumble->timer += updateRate;
+                        if (rumble->rumbleTime <= 0) {
+                            rumble->state.flag = 3;
+                            rumble->state.state = (rumble->state.state & ~0xF0) | 0x30;
+                        } else if (rumble->timer >= 0xF0) {
+                            rumble->timer = 60;
+                            rumble->state.state = (rumble->state.state & ~0xF0) | 0x20;
+                            rumble->state.flag = 3;
+                        } else {
+                            if (rumble->unk2 > 490.0f) {
+                                if (!(rumble->state.half_unsigned & 0x800)) {
+                                    pfsStatus = nosMotorStart(&pfs[i]);
+                                    rumble->state.state |= 8;
+                                }
+                            } else if (rumble->unk2 < D_800AD508) {
+                                if (rumble->state.half_unsigned & 0x800) {
+                                    pfsStatus = nosMotorStop(&pfs[i]);
+                                    rumble->state.state &= ~8;
+                                }
+                            } else {
+                                if (rumble->unk4 >= 0x100) {
+                                    rumble->unk4 -= 0x100;
+                                    if (!(rumble->state.half_unsigned & 0x800)) {
+                                        pfsStatus = nosMotorStart(&pfs[i]);
+                                        rumble->state.state |= 8;
+                                        rumble->unk4 -= 0x100;
+                                    }
+                                } else {
+                                    s32 var_t6;
+                                    var_t6 = rumble->unk4 + rumble->unk2;
+                                    if (rumble->state.half_unsigned & 0x800) {
+                                        pfsStatus = nosMotorStop(&pfs[i]);
+                                        rumble->state.state &= ~8;
+                                        var_t6 = rumble->unk4 + rumble->unk2;
+                                    }
+                                    rumble->unk4 = var_t6 + 4;
+                                }
+                            }
+                        }
+                        break;
+                    case 2:
+                        if (rumble->state.lower != 0) {
+                            if (nosMotorInit(sControllerMesgQueue, &pfs[i], i) == 0) {
+                                nosMotorStop(&pfs[i]);
+                            }
+                            rumble->rumbleTime = 0;
+                            rumble->state.state &= ~8;
+                            rumble->state.flag = (s8) rumble->state.flag - 1;
+                        }
+                        rumble->timer -= updateRate;
+                        if (rumble->timer <= 0) {
+                            rumble->timer = 0;
+                            rumble->state.state &= ~0xF0;
+                        }
+                        break;
+                    case 3: {
+                        u8 temp_t2;
+                        if (nosMotorInit(sControllerMesgQueue, &pfs[i], i) == 0) {
+                            nosMotorStop(&pfs[i]);
+                        }
+                        rumble->state.lower--;
+                        temp_t2 = rumble->state.state & ~8;
+                        rumble->rumbleTime = 0;
+                        rumble->timer = 0;
+                        rumble->state.state = temp_t2;
+                        if (rumble->state.lower == 0) {
+                            rumble->state.state = temp_t2 & 0xF;
+                        }
+                        break;
+                    }
+                }
+                if (pfsStatus != 0) {
+                    rumble->state.state &= ~4;
+                    sRumblePaksPresent &= ~controllerToCheck;
+                }
+            }
+        }
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm_us/nonmatchings/saves/rumbleTick.s")
+#endif
 
 UNUSED void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
     *arg1 = 0;
@@ -83,7 +317,7 @@ UNUSED void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packEraseEprom.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/func_8004BE44_4CA44.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/func_8004C9B8.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packLoadGlobalFlagsEprom.s")
 
@@ -118,27 +352,309 @@ void flashROMRead(u32 pageNum, u32 *dramAddr) {
     }
 }
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packOpen.s")
+SIDeviceStatus packOpen(s32 controllerIndex) {
+    OSMesg unusedMsg;
+    s32 ret;
+    s32 bytes_not_used;
+    s32 i;
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packClose.s")
+    if (sControllerMesgQueue->validCount == 0) {
+        if (nosMotorInit(sControllerMesgQueue, &pfs[controllerIndex], controllerIndex) == 0) {
+            return RUMBLE_PAK;
+        }
+    }
+
+    // Couldn't get a for loop to match this
+    i = 0;
+    while (sControllerMesgQueue->validCount != 0 && i < 10) {
+        osRecvMesg(sControllerMesgQueue, &unusedMsg, OS_MESG_NOBLOCK);
+        i++;
+    }
+
+    for (i = 0; i <= 4; i++) {
+        ret = osPfsFreeBlocks(&pfs[controllerIndex], &bytes_not_used);
+        if (ret == PFS_ERR_INVALID) {
+            ret = osPfsInit(sControllerMesgQueue, &pfs[controllerIndex], controllerIndex);
+        }
+        if (ret == PFS_ERR_ID_FATAL) {
+            if (nosMotorInit(sControllerMesgQueue, &pfs[controllerIndex], controllerIndex) == 0) {
+                return RUMBLE_PAK;
+            }
+        }
+        if (ret == PFS_ERR_NEW_PACK) {
+            if ((osPfsInit(sControllerMesgQueue, &pfs[controllerIndex], controllerIndex) == PFS_ERR_ID_FATAL) &&
+                (nosMotorInit(sControllerMesgQueue, &pfs[controllerIndex], controllerIndex) == 0)) {
+                return RUMBLE_PAK;
+            }
+            return CONTROLLER_PAK_CHANGED;
+        }
+        if (ret == PFS_ERR_NOPACK || ret == PFS_ERR_DEVICE) {
+            return NO_CONTROLLER_PAK;
+        }
+        if (ret == PFS_ERR_BAD_DATA) {
+            return CONTROLLER_PAK_BAD_DATA;
+        }
+        if (ret == PFS_ERR_ID_FATAL) {
+            return CONTROLLER_PAK_WITH_BAD_ID;
+        }
+        if (ret == PFS_ERR_INCONSISTENT) {
+            return CONTROLLER_PAK_INCONSISTENT;
+        }
+        if (ret == 0) {
+            return CONTROLLER_PAK_GOOD;
+        }
+    }
+
+    return NO_CONTROLLER_PAK;
+}
+
+s32 packClose(UNUSED s32 controllerIndex) {
+    osContStartReadData(sControllerMesgQueue);
+    return 0;
+}
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packInit.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packIsPresent.s")
+SIDeviceStatus packIsPresent(s32 controllerIndex) {
+    s32 ret;
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packRepair.s")
+    ret = packOpen(controllerIndex);
+    packClose(controllerIndex);
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packFormat.s")
+    if (ret == RUMBLE_PAK) {
+        sRumblePaksPresent |= 1 << controllerIndex;
+    }
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packDirectory.s")
+    return ret;
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packDirectoryFree.s")
+SIDeviceStatus packRepair(s32 controllerIndex) {
+    s32 ret;
+    s32 status = packOpen(controllerIndex);
+    if (status == CONTROLLER_PAK_GOOD || status == CONTROLLER_PAK_INCONSISTENT) {
+        status = osPfsChecker(&pfs[controllerIndex]);
+        if (status == 0) {
+            ret = CONTROLLER_PAK_GOOD;
+        } else if (status == PFS_ERR_NEW_PACK) {
+            ret = CONTROLLER_PAK_CHANGED;
+        } else {
+            ret = CONTROLLER_PAK_INCONSISTENT;
+        }
+    } else {
+        ret = CONTROLLER_PAK_GOOD;
+    }
+    packClose(controllerIndex);
+    return ret;
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packFreeSpace.s")
+SIDeviceStatus packFormat(s32 controllerIndex) {
+    s32 ret;
+    s32 status = packOpen(controllerIndex);
+    if (status == CONTROLLER_PAK_GOOD || status == CONTROLLER_PAK_INCONSISTENT ||
+        status == CONTROLLER_PAK_WITH_BAD_ID) {
+        status = osPfsReFormat(&pfs[controllerIndex], sControllerMesgQueue, controllerIndex);
+        if (status == 0) {
+            ret = CONTROLLER_PAK_GOOD;
+        } else if (status == PFS_ERR_NEW_PACK) {
+            ret = CONTROLLER_PAK_CHANGED;
+        } else {
+            ret = CONTROLLER_PAK_INCONSISTENT;
+        }
+    } else {
+        ret = CONTROLLER_PAK_GOOD;
+    }
+    packClose(controllerIndex);
+    return ret;
+}
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packDeleteFile.s")
+SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char **fileNames, char **fileExtensions,
+                             u32 *fileSizes, u8 *fileTypes) {
+    OSPfsState state;
+    s32 ret;
+    s32 maxNumOfFilesOnCpak;
+    s32 files_used;
+    s8 *temp_D_800DE440;
+    s32 i;
+    u32 gameCode;
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/saves/packCopyFile.s")
+    ret = packOpen(controllerIndex);
+    if (ret != CONTROLLER_PAK_GOOD) {
+        packClose(controllerIndex);
+        return ret;
+    }
+
+    if (osPfsNumFiles(&pfs[controllerIndex], &maxNumOfFilesOnCpak, &files_used) != 0) {
+        packClose(controllerIndex);
+        return CONTROLLER_PAK_BAD_DATA;
+    }
+
+    if (frontGetLanguage() == LANGUAGE_JAPANESE) {
+        gameCode = JPN_GAME_CODE;
+    } else if (osTvType == OS_TV_TYPE_PAL) {
+        gameCode = PAL_GAME_CODE;
+    } else {
+        gameCode = NTSC_GAME_CODE;
+    }
+
+    if (maxNumOfFilesToGet < maxNumOfFilesOnCpak) {
+        maxNumOfFilesOnCpak = maxNumOfFilesToGet;
+    }
+
+    if (sPackDirectory != NULL) {
+        mmFree(sPackDirectory);
+    }
+
+    files_used = maxNumOfFilesOnCpak * 24;
+    sPackDirectory = mmAlloc(files_used, COLOUR_TAG_BLACK);
+    bzero(sPackDirectory, files_used);
+    temp_D_800DE440 = sPackDirectory;
+
+    // TODO: There's probably an unidentified struct here
+    for (i = 0; i < maxNumOfFilesOnCpak; i++) {
+        fileNames[i] = (char *) temp_D_800DE440;
+        temp_D_800DE440 += 0x12;
+        fileExtensions[i] = (char *) temp_D_800DE440;
+        fileSizes[i] = 0;
+        fileTypes[i] = -1;
+        temp_D_800DE440 += 6;
+    }
+
+    while (i < maxNumOfFilesToGet) {
+        fileExtensions[i] = 0;
+        fileNames[i] = 0;
+        fileSizes[i] = 0;
+        fileTypes[i] = -1;
+        i++;
+    }
+
+    for (i = 0; i < maxNumOfFilesOnCpak; i++) {
+        ret = osPfsFileState(&pfs[controllerIndex], i, &state);
+        if (ret == PFS_ERR_INVALID) {
+            fileNames[i] = 0;
+            continue;
+        }
+
+        if (ret != 0) {
+            packClose(controllerIndex);
+            return CONTROLLER_PAK_BAD_DATA;
+        }
+
+        font_codes_to_string((char *) &state.game_name, (char *) fileNames[i], PFS_FILE_NAME_LEN);
+        font_codes_to_string((char *) &state.ext_name, (char *) fileExtensions[i], PFS_FILE_EXT_LEN);
+        fileSizes[i] = state.file_size;
+        fileTypes[i] = 1; // Unknown file type? Possibly from another game?
+
+        if ((state.game_code == gameCode) && (state.company_code == COMPANY_CODE)) {
+            fileTypes[i] = func_8004DDC4(controllerIndex, i);
+        }
+    }
+
+    packClose(controllerIndex);
+    return CONTROLLER_PAK_GOOD;
+}
+
+void packDirectoryFree(void) {
+    if (sPackDirectory != 0) {
+        mmFree(sPackDirectory);
+    }
+    sPackDirectory = 0;
+}
+
+SIDeviceStatus packFreeSpace(s32 controllerIndex, u32 *bytesFree, s32 *notesFree) {
+    s32 ret;
+    s32 bytesNotUsed;
+    s32 maxNotes;
+    s32 notesUsed;
+
+    ret = packOpen(controllerIndex);
+    if (ret == CONTROLLER_PAK_GOOD) {
+        if (bytesFree != 0) {
+            ret = osPfsFreeBlocks(&pfs[controllerIndex], &bytesNotUsed);
+            if (ret != 0) {
+                packClose(controllerIndex);
+                return CONTROLLER_PAK_BAD_DATA;
+            }
+            *bytesFree = bytesNotUsed;
+        }
+        if (notesFree != 0) {
+            ret = osPfsNumFiles(&pfs[controllerIndex], &maxNotes, &notesUsed);
+            if (ret != 0) {
+                packClose(controllerIndex);
+                return CONTROLLER_PAK_BAD_DATA;
+            }
+            if (notesUsed >= 16) {
+                *notesFree = 0;
+            } else {
+                *notesFree = 16 - notesUsed;
+            }
+        }
+    }
+
+    packClose(controllerIndex);
+    return ret;
+}
+
+SIDeviceStatus packDeleteFile(s32 controllerIndex, s32 fileNum) {
+    OSPfsState state;
+    s32 ret;
+
+    ret = packOpen(controllerIndex);
+    if (ret != CONTROLLER_PAK_GOOD) {
+        packClose(controllerIndex);
+        return ret;
+    }
+
+    ret = CONTROLLER_PAK_BAD_DATA;
+
+    if (osPfsFileState(&pfs[controllerIndex], fileNum, &state) == 0) {
+        if (osPfsDeleteFile(&pfs[controllerIndex], state.company_code, state.game_code, (u8 *) &state.game_name,
+                            (u8 *) &state.ext_name) == 0) {
+            ret = CONTROLLER_PAK_GOOD;
+        }
+    }
+
+    packClose(controllerIndex);
+
+    return ret;
+}
+
+SIDeviceStatus packCopyFile(s32 controllerIndex, s32 fileNumber, s32 secondControllerIndex) {
+    UNUSED s32 pad;
+    char fileName[PFS_FILE_NAME_LEN];
+    UNUSED s32 pad2;
+    char fileExt[PFS_FILE_EXT_LEN];
+    OSPfsState state;
+    s32 status;
+    u8 *alloc;
+
+    status = packOpen(controllerIndex);
+    if (status != CONTROLLER_PAK_GOOD) {
+        packClose(controllerIndex);
+        return status;
+    }
+
+    if (osPfsFileState(&pfs[controllerIndex], fileNumber, &state) != 0) {
+        packClose(controllerIndex);
+        return CONTROLLER_PAK_BAD_DATA;
+    }
+
+    alloc = mmAlloc(state.file_size, COLOUR_TAG_BLACK);
+
+    status = packReadFile(controllerIndex, fileNumber, alloc, state.file_size);
+    packClose(controllerIndex);
+    if (status != CONTROLLER_PAK_GOOD) {
+        mmFree(alloc);
+        return status;
+    }
+
+    font_codes_to_string(state.game_name, fileName, PFS_FILE_NAME_LEN);
+    font_codes_to_string(state.ext_name, fileExt, PFS_FILE_EXT_LEN);
+
+    status = packWriteFile(secondControllerIndex, -1, fileName, fileExt, alloc, state.file_size);
+
+    mmFree(alloc);
+    return status;
+}
 
 SIDeviceStatus packOpenFile(s32 controllerIndex, char *fileName, char *fileExt, s32 *fileNumber) {
     u32 gameCode;

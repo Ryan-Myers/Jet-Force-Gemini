@@ -764,6 +764,7 @@ packLoadGameEprom = 0x8004BAF4;
 packSaveGameEprom = 0x8004BC10;
 packClearGameEprom = 0x8004BCB4;
 packEraseEprom = 0x8004BD78;
+func_8004C9B8 = 0x8004BE44;
 packLoadGlobalFlagsEprom = 0x8004BE6C;
 packSaveGlobalFlagsEprom = 0x8004BEE4;
 flashROMInit = 0x8004BF2C;

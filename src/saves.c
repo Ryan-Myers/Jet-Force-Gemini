@@ -19,6 +19,11 @@
 typedef enum Language { LANGUAGE_0, LANGUAGE_1, LANGUAGE_2, LANGUAGE_3, LANGUAGE_JAPANESE } Language;
 
 #ifdef VERSION_us
+#define nosMotorInit osMotorInit
+#define nosMotorStart osMotorStart
+#define nosMotorStop osMotorStop
+
+
 s32 mainGetPauseMode();
 extern u8 D_800A3470_A4070;
 
@@ -50,6 +55,9 @@ UNUSED void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
     RumbleStruct *rumblePak;
     u8 controllerNum;
 
+#ifdef VERSION_us
+    if (func_8004B070_4BC70() != 0) {
+#endif
     if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
         controllerNum = joyGetController(controllerIndex);
         rumblePak = &rumbleStructArray[controllerNum];
@@ -60,8 +68,12 @@ UNUSED void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
             rumblePak->rumbleTime = (arg2 * 60.0f);
         }
     }
+#ifdef VERSION_us
+    }
+#endif
 }
 
+#ifdef VERSION_kiosk
 void rumbleStop(s32 controllerIndex) {
     RumbleStruct *rumblePak;
     u8 controllerNum;
@@ -78,11 +90,18 @@ void rumbleStop(s32 controllerIndex) {
         }
     }
 }
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleStop.s")
+#endif
 
 void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
     s32 controllerNum;
     RumbleStruct *rumblePak;
 
+
+#ifdef VERSION_us
+    if (func_8004B070_4BC70() != 0) {
+#endif
     if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
         controllerNum = joyGetController(controllerIndex);
         rumblePak = &D_800FEC6A[controllerNum];
@@ -95,6 +114,9 @@ void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
             rumblePak->rumbleTime = (arg2 * 60.0f);
         }
     }
+#ifdef VERSION_us
+    }
+#endif
 }
 
 void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
@@ -102,9 +124,17 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
     s32 temp_f16;
     s32 controllerNum;
 
+#ifdef VERSION_us
+    if (func_8004B070_4BC70() != 0) {
+#endif
     if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
         controllerNum = joyGetController(controllerIndex);
         rumblePak = &rumbleStructArray[controllerNum];
+#ifdef VERSION_us
+        if (rumblePak->rumbleTime <= 0) {
+            rumblePak->unk2 = 0;
+        }
+#endif
         if (arg1 != 0) {
             arg1 = ((arg1 * arg1) * 0.1000000015f);
             if (rumblePak->unk2 < arg1) {
@@ -119,14 +149,26 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
             }
         }
     }
+#ifdef VERSION_us
+    }
+#endif
 }
 
+#ifdef VERSION_kiosk
 void rumbleKill(void) {
     s32 i = MAXCONTROLLERS;
     while (i--) {
         rumbleStop(i);
     }
 }
+#else
+void rumbleKill(s32 arg0) {
+    s32 i = MAXCONTROLLERS;
+    while (i--) {
+        rumbleStop(i, arg0);
+    }
+}
+#endif
 
 void rumbleUpdate(void) {
     D_800A3EC4 = 1;
