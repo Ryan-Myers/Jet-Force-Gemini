@@ -305,7 +305,7 @@ segments:
       - [0xA4140, data, prnBorder]
       - [0xA41B0, data, rcpFast3d]
       - [0xA44B0, data, sched]
-      - [0xA44E0, data, squads]
+      - [0xA44E0, .data, squads]
       - [0xA44F0, data, runLink]
       - [0xA4500, data, gameVi]
       - [0xA4790, data, textures]
@@ -437,7 +437,7 @@ segments:
       - { type: .bss, vram: 0x800FDFE0, name: pi }
       - { type: bss, vram: 0x800FE080, name: rcpFast3d }
       - { type: bss, vram: 0x800FE950, name: sched }
-      - { type: bss, vram: 0x800FE9A0, name: squads }
+      - { type: .bss, vram: 0x800FE9A0, name: squads }
       - { type: bss, vram: 0x800FEAA0, name: runLink }
       - { type: bss, vram: 0x800FEB60, name: gameVi }
       - { type: bss, vram: 0x800FECE0, name: textures }

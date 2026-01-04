@@ -15,7 +15,11 @@ void *DisactivatedSquaddies;
 s32 D_800FF6B8;
 s32 D_800FF6BC;
 s32 SquadsModuleFlags;
+#ifdef VERSION_kiosk
 u8 D_800FF6C4[5];
+#else
+u8 D_800FF6C4[0x35];
+#endif
 u8 D_800FF6C9; // Linked with above?
 u8 squadsBehaviour;
 s32 D_800FF6CC;
@@ -28,7 +32,6 @@ Object *D_800FF6E4;
 Object_Racer *D_800FF6E8; // Could be any Object64 from DKR
 Object *D_800FF6EC;
 Object_Racer *D_800FF6F0; // Not sure if array, or not. Could be any Object64 from DKR
-UNUSED s32 D_800FF6F4;
 UNUSED u8 PathLists[0x3C];
 s32 *D_800FF734;
 UNUSED u8 AnimPathNumbers[0x40];
