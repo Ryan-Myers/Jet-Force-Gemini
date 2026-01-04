@@ -97,3 +97,7 @@ const char D_800AE3AC[] = "%s particle buffer is empty\n";
 #pragma GLOBAL_ASM("asm/nonmatchings/particles/partUpdateParticles.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/particles/partDraw.s")
+
+#ifdef VERSION_us
+#pragma GLOBAL_ASM("asm_us/nonmatchings/particles/partNullifyCircularParticleParents.s")
+#endif
