@@ -1,12 +1,18 @@
 #include "common.h"
 
+const char D_800ADC90[] = "WARNING: Unimplemented linkage operation %d\n";
+const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";
+#ifdef VERSION_us
+const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
+#endif
+
 #pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/GetSymbolName.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/func_80052874_53474.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/func_800534B4.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/func_80052A00_53600.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/func_80053640.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/func_80052AB8_536B8.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/func_800536F8.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/runlinkDownloadCode.s")
 
@@ -14,11 +20,11 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/runlinkIsModuleLoaded.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/func_8005338C_53F8C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/func_80053FC8.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/runlinkFreeCode.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/func_8005372C_5432C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/func_80054368.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/runlinkFlushModules.s")
 
@@ -35,7 +41,5 @@
 #pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/runlinkTick.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/runlinkLowMemoryPanic.s")
-
-#pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/D_800AD0D0_ADCD0.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/runLink/runlinkGetAddressInfo.s")
