@@ -30,15 +30,17 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/menu/frontPlayerScreenLimits.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/menu/func_80059A04_5A604.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/menu/func_8005A4B4.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/menu/func_80059A98_5A698.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/menu/func_8005A548.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/menu/freeFrontEndList.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/menu/freeFrontEndItem.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/menu/loadFrontEndList.s")
+
+const char D_800ADF40[] = "loadFrontEndItem() - Item no %d out of range 0-%d\n";
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/menu/loadFrontEndItem.s")
 
@@ -94,4 +96,6 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/menu/frontSetTargetControl.s")
 
+#ifdef VERSION_us
 #pragma GLOBAL_ASM("asm_us/nonmatchings/menu/frontCharSelectSetQuitMode.s")
+#endif

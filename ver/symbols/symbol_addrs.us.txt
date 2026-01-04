@@ -941,6 +941,8 @@ frontDrawRectangles = 0x800595F4;
 frontDrawRectangle = 0x80059814;
 frontFlashScreen = 0x80059864;
 frontPlayerScreenLimits = 0x80059938;
+func_8005A4B4 = 0x80059A04;
+func_8005A548 = 0x80059A98;
 freeFrontEndList = 0x80059CCC;
 freeFrontEndItem = 0x80059D2C;
 loadFrontEndList = 0x80059E1C;
@@ -2221,4 +2223,6 @@ __osCurrentTime = 0x80105980;
 __osBaseCounter = 0x80105988;
 __osViIntrCount = 0x8010598c;
 __osTimerCounter = 0x80105990;
+
+D_800ADF40 = 0x800AD390; // force_not_migration:True
 gMainMemoryPool = 0x801059A0;
