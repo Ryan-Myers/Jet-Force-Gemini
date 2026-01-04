@@ -37,5 +37,3 @@
 #pragma GLOBAL_ASM("asm_us/nonmatchings/weather/func_8005CBBC_5D7BC.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/weather/func_8005CC0C_5D80C.s")
-
-#pragma GLOBAL_ASM("asm_us/nonmatchings/weather/D_800AD510_AE110.s")

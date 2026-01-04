@@ -1827,7 +1827,6 @@ __osTimerList = 0x800A9F20;
 xlitob_data_0000 = 0x800a9f80;
 xlitob_data_0014 = 0x800a9f94;
 osVimode_getters = 0x800ad15c;
-D_800AD510_AE110 = 0x800AD510; // type:asciz
 gzip_border = 0x800AEE40; // type:s8
 gzip_cplens = 0x800AEE54; // type:s16
 gzip_cplext = 0x800AEE92; // type:s8

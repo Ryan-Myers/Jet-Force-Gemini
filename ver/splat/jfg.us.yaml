@@ -375,7 +375,7 @@ segments:
       - [0xADD90, .rodata, textures]
       - [0xADF50, .rodata, screen]
       - [0xADF70, .rodata, menu]
-      - [0xAE110, .rodata, weather]
+      - [0xAE1D0, .rodata, weather]
       - [0xAE1E0, .rodata, particles]
       - [0xAE450, .rodata, diprint]
       - [0xAE6C0, .rodata, diRcpTrace]
