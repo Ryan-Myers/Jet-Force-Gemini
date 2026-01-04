@@ -2008,6 +2008,7 @@ mainRelocTable = 0x800FEAA4;
 overlayRomTable = 0x800FEAA8;
 overlayCount = 0x800FEAAC;
 mainRelocCount = 0x800FEAB0;
+D_800FF838 = 0x800FEB58;
 osViMode_custom = 0x800fec50;
 framebufferSize = 0x800feca0;
 framebufferChoice = 0x800feca4;
