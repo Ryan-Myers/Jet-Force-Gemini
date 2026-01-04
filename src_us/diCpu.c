@@ -2,9 +2,9 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/diCpuTraceInit.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_80066BD4_677D4.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/diCpuThread.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/__rmonStopUserThreads.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/stop_all_threads_except_main.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/D_800AE750_AF350.s")
 
@@ -40,19 +40,19 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/D_800AE834_AF434.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_80066D28_67928.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_800676F8.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_80066E14_67A14.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_800677E4.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/D_800AE858_AF458.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/interactive_crash_screens.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_80067880.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/diCpuReportWatchpoint.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/diCpuLogMessage.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_80067790_68390.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_80067AA0.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/diCpuTraceMallocFault.s")
 
@@ -60,14 +60,14 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/diCpuTraceTick.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/crash_print.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/render_epc_lock_up_display.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_800680B0_68CB0.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_800683D0.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_800681D0_68DD0.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_800684F0.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/cpuXYPrintf.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_8006837C_68F7C.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/func_8006869C.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/diCpu/__rmonSendFault.s")

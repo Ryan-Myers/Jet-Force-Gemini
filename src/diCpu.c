@@ -140,6 +140,7 @@ void func_800677E4(void) {
     func_80067880(thread);
 }
 
+// interactive_crash_screens
 #ifdef NON_EQUIVALENT
 extern s32 osCicId;
 extern s32 D_800A6E98;
