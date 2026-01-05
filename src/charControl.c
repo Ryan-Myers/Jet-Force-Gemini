@@ -155,7 +155,7 @@ void controlReadJoypad(s32 player) {
 }
 
 #ifdef VERSION_us
-#pragma GLOBAL_ASM("asm_us/nonmatchings/charControl/controlSetRumble.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlSetRumble.s")
 #endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlGetMaxCharge.s")

@@ -141,7 +141,7 @@ void mainThread(UNUSED void *unused) {
 }
 
 #ifdef VERSION_us
-#pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainPreNMI.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainPreNMI.s")
 #endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
@@ -213,7 +213,7 @@ void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800457F4.s")
 
 #ifdef VERSION_us
-#pragma GLOBAL_ASM("asm_us/nonmatchings/main/mainValidateRestart.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainValidateRestart.s")
 #endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainRestartAfterDeath.s")

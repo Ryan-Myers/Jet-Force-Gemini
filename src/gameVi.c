@@ -5,7 +5,7 @@
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viChangeMode.s")
 
 #ifdef VERSION_us
-#pragma GLOBAL_ASM("asm_us/nonmatchings/gameVi/viReset.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viReset.s")
 #endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viAllocateZBuffer.s")

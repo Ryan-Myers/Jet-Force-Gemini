@@ -93,7 +93,7 @@
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxInitLines.s")
 
 #ifdef VERSION_us
-#pragma GLOBAL_ASM("asm_us/nonmatchings/fx/func_8006D110_6DD10.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006D110_6DD10.s")
 #endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxDrawLine.s")

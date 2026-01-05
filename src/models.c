@@ -63,7 +63,7 @@ const char D_800ACB10[] = "Anim Event Error: Tryed to deallocate non-existent an
 #pragma GLOBAL_ASM("asm/nonmatchings/models/modSetTextureFrame.s")
 
 #ifdef VERSION_us
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/modSuspendModelTextures.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/models/modSuspendModelTextures.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/models/modResumeModelTextures.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/models/modResumeModelTextures.s")
 #endif

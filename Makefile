@@ -37,17 +37,21 @@ define print
 endef
 
 # Directories
-ifeq ($(VERSION),kiosk)
-	BIN_DIRS  = assets
-	BUILD_DIR = build
-	SRC_DIR   = src
-	ASM_DIR   = asm
-else
-	BIN_DIRS  = assets_us
-	BUILD_DIR = build_us
-	SRC_DIR   = src_us
-	ASM_DIR   = asm_us
-endif
+BIN_DIRS  = assets
+BUILD_DIR = build
+SRC_DIR   = src
+ASM_DIR   = asm
+# ifeq ($(VERSION),us)
+# 	BIN_DIRS  = assets
+# 	BUILD_DIR = build
+# 	SRC_DIR   = src
+# 	ASM_DIR   = asm
+# else
+# 	BIN_DIRS  = assets_pal
+# 	BUILD_DIR = build_pal
+# 	SRC_DIR   = src_pal
+# 	ASM_DIR   = asm_pal
+# endif
 
 MATH_DIR  = $(SRC_DIR)/math
 OLD_LIBULTRA_DIR = $(SRC_DIR)/libultra
@@ -59,7 +63,7 @@ LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/sc $(LIBULTRA_DIR)/src/flash
 
 
-ifeq ($(VERSION),us)
+ifeq ($(VERSION),pal)
 	TEMP_US_LIBULTRA_DIR = $(SRC_DIR)/libultra_c
 	ASM_DIRS += $(ASM_DIR)/math $(ASM_DIR)/data/math $(ASM_DIR)/data/hasm
 	ASM_DIRS += $(ASM_DIR)/data/libultra_c/src/libc $(ASM_DIR)/data/libultra_c/src/os
@@ -376,11 +380,15 @@ no_verify: $(TARGET).z64
 
 extract:
 	$(SPLAT) ver/splat/$(BASENAME).$(VERSION).yaml
-# Add these files to certain versions to have an empy file for the pragmas
+# Add these files to certain versions to have an empty file for the pragmas
 ifeq ($(VERSION),kiosk)
 	mkdir -p asm/nonmatchings/libultra/n_cspgetstate
 	touch asm/nonmatchings/libultra/n_cspgetstate/n_alCSPGetState.s
 	touch asm/nonmatchings/libultra/n_cspgetstate/func_800899D8_8A5D8.s
+endif
+ifeq ($(VERSION),us)
+	mkdir -p asm/nonmatchings/libultra/n_synremoveplayer
+	touch asm/nonmatchings/libultra/n_synremoveplayer/n_alSynRemovePlayer.s
 endif
 
 extractall:

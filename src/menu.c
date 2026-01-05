@@ -97,5 +97,5 @@ const char D_800ADF40[] = "loadFrontEndItem() - Item no %d out of range 0-%d\n";
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetTargetControl.s")
 
 #ifdef VERSION_us
-#pragma GLOBAL_ASM("asm_us/nonmatchings/menu/frontCharSelectSetQuitMode.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontCharSelectSetQuitMode.s")
 #endif

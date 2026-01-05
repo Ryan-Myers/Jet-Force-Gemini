@@ -58,6 +58,10 @@ typedef struct SoundPlayer {
     ALSynth        *drvr;
     ALSoundState   *lastSoundState;
     ALSoundState   *soundStatesArray;
+    #ifdef VERSION_us
+    // This padding could be anywhere before here.
+    u8              pad[4];
+    #endif
     s32             maxSystemSoundChannels;
     s32             maxActiveSounds;
     s32             frameTime;

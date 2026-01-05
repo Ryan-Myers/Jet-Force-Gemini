@@ -132,7 +132,7 @@ void amTuneSetFade(f32 fade, u8 volume) {
 }
 
 #ifdef VERSION_us
-#pragma GLOBAL_ASM("asm_us/nonmatchings/audio_manager_1050/amTuneSetFadeScaled.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneSetFadeScaled.s")
 #endif
 
 void amTuneResetFade(void) {

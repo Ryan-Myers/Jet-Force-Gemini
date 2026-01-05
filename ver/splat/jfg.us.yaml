@@ -13,10 +13,10 @@ options:
   symbol_addrs_path: ver/symbols/symbol_addrs.us.txt
   symbol_name_format: $VRAM_$ROM
   ld_script_path: ver/jfg.us.ld
-  asm_path: asm_us
-  src_path: src_us
-  build_path: build_us
-  asset_path: assets_us
+  asm_path: asm
+  src_path: src
+  build_path: build
+  asset_path: assets
   asm_function_macro: glabel
   asm_jtbl_label_macro: jlabel
   asm_data_macro: dlabel
