@@ -94,6 +94,7 @@ void amSndSetXYZ(SoundMask *soundMask, f32 x, f32 y, f32 z) {
 }
 
 extern SoundMask **D_800F35F4; // gSoundMaskHeapUsed
+extern u16 D_800A0800_A1400;
 
 void amSndStopXYZ(SoundMask *soundMask) {
     s32 i;

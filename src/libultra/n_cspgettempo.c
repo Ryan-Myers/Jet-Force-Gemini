@@ -5,4 +5,5 @@
 void func_800869FC(void) {
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cspgettempo/func_80086A04.s")
+void func_80086A04(void) {
+}
