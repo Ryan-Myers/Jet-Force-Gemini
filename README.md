@@ -2,9 +2,9 @@
 
 A repository exploring a decompilation of Jet Force Gemini.
 
-This uses the Kiosk demo ROM as it was discovered to have many symbols, which will make things a little easier.
+This uses the US ROM by default, but it will also support the kiosk ROM if so desired. Work on PAL and JPN is so far minimal to not started.
 
-This is super minimal and likely won't become a full decomp project. It does the bare minimum to confirm the symbols found in the kiosk decomp are real, and can match known functions in the Diddy Kong Racing decompilation which this engine is based on.
+This game is a heavily modified Diddy Kong Racing engine, and thus this repository will steal from there when it can.
 
 Grab tools
 
@@ -17,6 +17,7 @@ Install Dependencies
 sudo apt install build-essential pkg-config git python3 wget python3-pip binutils-mips-linux-gnu python3-venv
 ```
 
+Drop in `us` into the `baseroms` folder as `baserom.us.z64` (sha1sum: `493ced9008dbe932d6e91179b68e8630cf23a023`)
 Drop in `kiosk` into the `baseroms` folder as `baserom.kiosk.z64` (sha1sum: `f00f7c7fb085d0df57dcb649793aced5be4e8562`)
 
 ```sh
