@@ -1,5 +1,5 @@
 def apply(config, args):
-    if args.version == "kiosk":
+    if args.version == "us" or args.version == "kiosk":
         config["build_directory"] = "build"
         config["source_directories"] = ["src"]
     else:

@@ -39,7 +39,7 @@ def firstDiffMain():
 
     args = parser.parse_args()
 
-    if args.version == "kiosk":
+    if args.version == "us" or args.version == "kiosk":
         buildFolder = Path("build")
     else:
         buildFolder = Path(f"build_{args.version}")

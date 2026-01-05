@@ -31,7 +31,7 @@ CPP_FLAGS = [
     "-DTARGET_N64",
     "-D_FINALROM",
     "-DNDEBUG",
-    "-DVERSION_us_v77",
+    "-DVERSION_us",
     "-DANTI_TAMPER",
     "-D BUILD_VERSION_STRING=\"2.0G\"",
     "-DM2CTX",
