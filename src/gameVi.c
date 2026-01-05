@@ -4,6 +4,10 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viChangeMode.s")
 
+#ifdef VERSION_us
+#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viReset.s")
+#endif
+
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viAllocateZBuffer.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viFreeZBuffer.s")
@@ -40,8 +44,11 @@ s32 viGetVideoMode(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055D44.s")
 
+//get_osViMode
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055DA8.s")
 
+//swap_framebuffer_pointers
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055E68.s")
 
+//osVimode_copy
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055F4C.s")

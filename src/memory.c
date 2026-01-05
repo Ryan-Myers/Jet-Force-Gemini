@@ -59,13 +59,17 @@ MemoryPoolSlot *mmAllocRegion(s32 poolDataSize, s32 numSlots) {
     s32 size;
     MemoryPoolSlot *slots;
     UNUSED s32 unused_2;
+#ifdef VERSION_kiosk
     u32 flags = disableInterrupts();
+#endif
     MemoryPoolSlot *newPool;
 
     size = poolDataSize + (numSlots * sizeof(MemoryPoolSlot));
     slots = (MemoryPoolSlot *) mmAlloc(size, COLOUR_TAG_WHITE);
     newPool = mempool_init(slots, size, numSlots);
+#ifdef VERSION_kiosk
     enableInterrupts(flags);
+#endif
     return newPool;
 }
 
@@ -160,14 +164,17 @@ MemoryPoolSlot *mempool_slot_find(MemoryPools poolIndex, s32 size, u32 colourTag
     UNUSED s32 pad;
     MemoryPool *pool;
     MemoryPoolSlot *slots;
-    u32 intFlags;
+#ifdef VERSION_kiosk
+    u32 intFlags = disableInterrupts();
+#endif
     s32 nextIndex;
     s32 currIndex;
 
-    intFlags = disableInterrupts();
     pool = &gMemoryPools[poolIndex];
     if (pool->maxNumSlots == pool->curNumSlots + 1) {
+#ifdef VERSION_kiosk
         enableInterrupts(intFlags);
+#endif
         return NULL;
     }
     currIndex = MEMSLOT_NONE;
@@ -188,12 +195,19 @@ MemoryPoolSlot *mempool_slot_find(MemoryPools poolIndex, s32 size, u32 colourTag
         }
         nextIndex = curSlot->nextIndex;
     } while (nextIndex != MEMSLOT_NONE);
+#ifdef VERSION_us
+    if (!currIndex && !currIndex){}
+#endif
     if (currIndex != MEMSLOT_NONE) {
-        mempool_slot_assign(poolIndex, (s32) currIndex, size, 1, 0, colourTag);
+        mempool_slot_assign(poolIndex, currIndex, size, TRUE, FALSE, colourTag);
+#ifdef VERSION_kiosk
         enableInterrupts(intFlags);
+#endif
         return (MemoryPoolSlot *) (slots + currIndex)->data;
     }
+#ifdef VERSION_kiosk
     enableInterrupts(intFlags);
+#endif
     return NULL;
 }
 
@@ -220,17 +234,17 @@ void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag) {
     s32 i;
     MemoryPoolSlot *curSlot;
     MemoryPoolSlot *slots;
+#ifdef VERSION_kiosk
     u32 intFlags;
+#endif
     s32 moduleId;
     s32 moduleAddress;
     UNUSED s32 pad;
     volatile s32 vaddress = 0x666;
 
-    if (size == 0) {
-        stubbed_printf("*** mmAllocAtAddr: size = 0 ***\n");
-    }
-
+#ifdef VERSION_kiosk
     intFlags = disableInterrupts();
+#endif
     if (mmColourTagUnk1 != -1) {
         colorTag = mmColourTagUnk1 | 0xFF000000;
     } else if (mmColourTagUnk2 != -1) {
@@ -239,9 +253,15 @@ void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag) {
         runlinkGetAddressInfo(vaddress - 8, &moduleId, &moduleAddress, NULL);
         colorTag = (moduleId << 24) | moduleAddress;
     }
+    if (size == 0) {
+        stubbed_printf("*** mmAllocAtAddr: size = 0 ***\n");
+    }
     if ((gMemoryPools[POOL_MAIN].curNumSlots + 1) == gMemoryPools[POOL_MAIN].maxNumSlots) {
+#ifdef VERSION_kiosk
         enableInterrupts(intFlags);
+#endif
         stubbed_printf("\n*** mm Error *** ---> No more slots available.\n");
+        return NULL;
     } else {
         if (size & 0xF) {
             size = _ALIGN16(size);
@@ -254,18 +274,24 @@ void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag) {
                     (u32) address + size <= (u32) curSlot->data + curSlot->size) {
                     if (address == (u8 *) curSlot->data) {
                         mempool_slot_assign(POOL_MAIN, i, size, 1, 0, colorTag);
+#ifdef VERSION_kiosk
                         enableInterrupts(intFlags);
+#endif
                         return curSlot->data;
                     } else {
                         i = mempool_slot_assign(POOL_MAIN, i, (u32) address - (u32) curSlot->data, 0, 1, colorTag);
                         mempool_slot_assign(POOL_MAIN, i, size, 1, 0, colorTag);
+#ifdef VERSION_kiosk
                         enableInterrupts(intFlags);
+#endif
                         return (slots + i)->data;
                     }
                 }
             }
         }
+#ifdef VERSION_kiosk
         enableInterrupts(intFlags);
+#endif
     }
     stubbed_printf("\n*** mm Error *** ---> Can't allocate memory at desired address. (%x, size = %d bytes)\n", address,
                    size);
@@ -280,15 +306,27 @@ void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag) {
  * Official Name: mmSetDelay
  */
 void mmSetDelay(s32 state) {
+#ifdef VERSION_kiosk
     u32 intFlags = disableInterrupts();
+#endif
     gFreeQueueTimer = state;
+#ifdef VERSION_kiosk
     if (state == 0) { // flush free queue if state is 0.
         while (gFreeQueueCount > 0) {
             mempool_free_addr(gFreeQueue[--gFreeQueueCount].dataAddress);
         }
     }
     enableInterrupts(intFlags);
+#endif
 }
+
+#ifdef VERSION_us
+void mmFlushFreeStack(void) {
+    while (gFreeQueueCount > 0) {
+        mempool_free_addr(gFreeQueue[--gFreeQueueCount].dataAddress);
+    }
+}
+#endif
 
 /**
  * Unallocates data from the pool that contains the data. Will free immediately if the free queue
@@ -296,15 +334,21 @@ void mmSetDelay(s32 state) {
  * Official Name: mmFree
  */
 void mmFree(void *data) {
+#ifdef VERSION_kiosk
     u32 intFlags;
+#endif
     volatile s32 sp18 = 0x666;
+#ifdef VERSION_kiosk
     intFlags = disableInterrupts();
+#endif
     if (gFreeQueueTimer == 0) {
         mempool_free_addr(data);
     } else {
         mempool_free_queue(data);
     }
+#ifdef VERSION_kiosk
     enableInterrupts(intFlags);
+#endif
 }
 
 /**
@@ -313,9 +357,9 @@ void mmFree(void *data) {
  */
 void mmFreeTick(void) {
     s32 i;
-    u32 intFlags;
-
-    intFlags = disableInterrupts();
+#ifdef VERSION_kiosk
+    u32 intFlags = disableInterrupts();
+#endif
 
 #ifdef JFGDIFFS
     if (FreeRAM < 0x14000) {
@@ -339,7 +383,9 @@ void mmFreeTick(void) {
         }
     }
 
+#ifdef VERSION_kiosk
     enableInterrupts(intFlags);
+#endif
 }
 
 /**

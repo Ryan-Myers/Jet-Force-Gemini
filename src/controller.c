@@ -232,6 +232,18 @@ void joySetSecurity(void) {
     joySecurity = 0;
 }
 
+#ifdef VERSION_us
+void arithmeticFunction(OSMesgQueue *queue1, OSMesgQueue *queue2) {
+    osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
+    TrapDanglingJump(queue1, &joyMessageQueue);
+    osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
+    TrapDanglingJump(&joyMessageQueue);
+    osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
+    osContStartReadData(&joyMessageQueue);
+    TrapDanglingJump(queue2);
+}
+#endif
+
 s32 joyCharVal(void) {
     return 1;
 }

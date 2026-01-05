@@ -1,5 +1,8 @@
 #include "common.h"
 
+#ifdef VERSION_us
+const char D_800AEF90_AFB90[] = "Path %d, Obj %d\n";
+#endif
 const char D_800AFB30[] = "Before Level Number %d (%d)\n";
 const char D_800AFB50[] = "After  Level Number %d\n";
 

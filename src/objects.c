@@ -15,7 +15,9 @@ const char D_800AAC98[] = "ObjSetupObject(4) Memory fail!!\n";
 const char D_800AACBC[] = "objSetupObject: clone shadow set up failed\n";
 const char D_800AACE8[] = "objSetupObject: clone blob shadow set up failed\n";
 const char D_800AAD1C[] = "objSetupChild: memory fail\n";
+#ifdef VERSION_kiosk
 const char D_800AAD38[] = "stable\n";
+#endif
 const char D_800AAD40[] = "WARNING:%s (%x) already registered its dependancy with %s (%x)!\n";
 
 void resetVars(void) {
@@ -40,6 +42,14 @@ void resetVars(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objGetClosestControlType.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objGetClosestClass.s")
+
+#ifdef VERSION_us
+extern s8 D_800A0898_A1498;
+
+void objSetObjRegionOverflow(s8 arg0) {
+    D_800A0898_A1498 = arg0;
+}
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objGetObjdef.s")
 
@@ -289,3 +299,7 @@ f32 GetRangeSquared(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objAddMine.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objDeleteMine.s")
+
+#ifdef VERSION_us
+#pragma GLOBAL_ASM("asm/nonmatchings/objects/func_80011E74_12A74.s")
+#endif

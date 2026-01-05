@@ -9,24 +9,18 @@ asm/*
 asm
 asm_jpn
 asm_jpn/*
-asm_us
-asm_us/*
 asm_pal
 asm_pal/*
 build/*
 build/
 build_jpn/*
 build_jpn/
-build_us/*
-build_us/
 build_pal/*
 build_pal/
 
 #binaries ripped from the ROMs
 assets/
 assets/*
-assets_us/
-assets_us/*
 bin/
 bin/*
 

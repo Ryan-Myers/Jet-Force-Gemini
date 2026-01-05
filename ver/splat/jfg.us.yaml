@@ -13,10 +13,10 @@ options:
   symbol_addrs_path: ver/symbols/symbol_addrs.us.txt
   symbol_name_format: $VRAM_$ROM
   ld_script_path: ver/jfg.us.ld
-  asm_path: asm_us
-  src_path: src_us
-  build_path: build_us
-  asset_path: assets_us
+  asm_path: asm
+  src_path: src
+  build_path: build
+  asset_path: assets
   asm_function_macro: glabel
   asm_jtbl_label_macro: jlabel
   asm_data_macro: dlabel
@@ -24,7 +24,7 @@ options:
   asm_end_label: endlabel
   asm_emit_size_directive: False
   section_order: [".text", ".data", ".rodata", ".bss"]
-  migrate_rodata_to_functions: False
+  migrate_rodata_to_functions: True
   hasm_in_src_path: True
 segments:
   - name: header
@@ -35,193 +35,480 @@ segments:
     type: bin
     start: 0x40
 
-  - name: entry
+  - name: main
     type: code
     start: 0x1000
     vram: 0x80000400
-    subsegments:
-      - [0x1000, hasm, entrypoint]
-
-  - name: main
-    type: code
-    start: 0x1050
-    vram: 0x80000450
-    follows_vram: entry
     bss_size: 0x54E50
     subsegments:
-      - [0x1050, asm]
-      - [0x2610, asm]
-      - [0x3430, asm]
-      - [0x53C0, asm]
-      - [0x12D50, asm]
-      - [0x1DA10, asm]
-      - [0x217C0, asm]
-      - [0x235E0, asm]
-      - [0x245D0, asm]
-      - [0x25A70, asm]
-      - [0x291B0, asm]
-      - [0x2BAA0, asm]
-      - [0x3C470, asm]
-      - [0x40240, asm]
-      - [0x432D0, asm]
-      - [0x44350, asm]
-      - [0x45750, asm]
-      - [0x49700, hasm, math_util]
-      - [0x4A2B0, hasm, math_util2]
-      - [0x4A9C0, asm]
-      - [0x4DED0, asm]
-      - [0x4E340, asm]
-      - [0x4E610, asm]
-      - [0x50300, asm]
-      - [0x51A90, asm]
-      - [0x51AD0, asm]
-      - [0x55130, asm]
-      - [0x59060, asm]
-      - [0x5B700, asm]
-      - [0x644E0, asm]
-      - [0x668E0, asm]
-      - [0x66B80, asm]
-      - [0x67780, asm]
-      - [0x69040, asm]
-      - [0x69050, asm]
-      - [0x707F0, asm]
-      - [0x72F30, asm]
-      - [0x737F0, asm]
-      - [0x74270, asm]
-      - [0x74A70, asm]
-      - [0x74A80, asm]
-      - [0x766C0, asm]
-      - [0x76C20, asm]
-      - [0x7A7D0, asm]
-      - [0x84690, asm]
-      - [0x846F0, asm]
-      - [0x84DA0, asm]
-      - [0x84E00, asm]
-      - [0x871A0, asm]
-      - [0x871F0, asm]
-      - [0x87240, asm]
-      - [0x8A460, asm]
-      - [0x8A4D0, asm]
-      - [0x8A560, asm]
-      - [0x8A5D0, asm]
-      - [0x8A5F0, asm]
-      - [0x8B010, asm]
-      - [0x8B200, asm]
-      - [0x8B2B0, asm]
-      - [0x8B330, asm]
-      - [0x8BEA0, asm]
-      - [0x8C0B0, asm]
-      - [0x8CB70, asm]
-      - [0x8CC40, asm]
-      - [0x8CD70, asm]
-      - [0x8D100, asm]
-      - [0x8D340, asm]
-      - [0x8E4A0, asm]
-      - [0x8F310, asm]
-      - [0x8F500, asm]
-      - [0x8F690, asm]
-      - [0x8F6B0, asm]
-      - [0x8F740, asm]
-      - [0x90DF0, asm]
-      - [0x91DE0, asm]
-      - [0x91E60, asm]
-      - [0x91E80, asm]
-      - [0x92080, asm]
-      - [0x92570, asm]
-      - [0x928E0, asm]
-      - [0x93430, asm]
-      - [0x93850, asm]
-      - [0x93930, asm]
-      - [0x93DE0, asm]
-      - [0x940E0, asm]
-      - [0x94690, asm]
-      - [0x95420, asm]
-      - [0x95550, asm]
-      - [0x95730, asm]
-      - [0x95900, asm]
-      - [0x95D60, asm]
-      - [0x961E0, asm]
-      - [0x96260, asm]
-      - [0x96490, asm]
-      - [0x97030, asm]
-      - [0x97270, asm]
-      - [0x974C0, asm]
-      - [0x97510, asm]
-      - [0x97650, asm]
-      - [0x977E0, asm]
-      - [0x97AA0, asm]
-      - [0x97B20, asm]
-      - [0x97C70, asm]
-      - [0x97C80, asm]
-      - [0x97D50, asm]
-      - [0x98120, asm]
-      - [0x98550, asm]
-      - [0x98910, asm]
-      - [0x98B70, asm]
-      - [0x98BA0, asm]
-      - [0x98C30, asm]
-      - [0x98C40, asm]
-      - [0x98C50, asm]
-      - [0x98CD0, asm]
-      - [0x98D50, asm]
-      - [0x98EB0, asm]
-      - [0x98F60, asm]
-      - [0x99000, asm]
-      - [0x99610, asm]
-      - [0x99640, asm]
-      - [0x99950, asm]
-      - [0x999C0, asm]
-      - [0x99AA0, asm]
-      - [0x99E00, asm]
-      - [0x99FB0, asm]
-      - [0x9A190, asm]
-      - [0x9A540, asm]
-      - [0x9A550, asm]
-      - [0x9A940, asm]
-      - [0x9A980, asm]
-      - [0x9AA50, asm]
-      - [0x9B180, asm]
-      - [0x9B1D0, asm]
-      - [0x9B220, asm]
-      - [0x9B270, asm]
-      - [0x9B310, asm]
-      - [0x9B370, asm]
-      - [0x9B4E0, asm]
-      - [0x9B780, asm]
-      - [0x9B8D0, asm]
-      - [0x9B9C0, asm]
-      - [0x9BB40, asm]
-      - [0x9BB60, asm]
-      - [0x9BC10, asm]
-      - [0x9BC60, asm]
-      - [0x9BCC0, asm]
-      - [0x9BCD0, asm]
-      - [0x9BDB0, asm]
-      - [0x9C1C0, asm]
-      - [0x9C520, asm]
-      - [0x9C560, asm]
-      - [0x9C5F0, asm]
-      - [0x9C620, asm]
-      - [0x9C630, asm]
-      - [0x9C660, asm]
-      - [0x9C6C0, asm]
-      - [0x9C820, asm]
-      - [0x9C9D0, asm]
-      - [0x9CA20, asm]
-      - [0x9D6E0, asm]
-      - [0x9D710, asm]
-      - [0x9D720, asm]
-      - [0x9D9C0, asm]
-      - [0x9E480, asm]
-      - [0x9E610, bin] # - [0x9E610, hasm] - This seems to call a func func_840010E0 which breaks things.
-      - [0x9E760, data]
-      - [0x9FE50, hasm]
-      - [0x9FED0, data]
-      - [0x9FF10, hasm]
-      - [0xA0350, data]
-      - { start: 0xB1750, type: bss, vram: 0x800B0B50 }
+      - [0x1000, hasm, hasm/entrypoint]
+      - [0x1050, c, audio_manager_1050] # audio in DKR
+      - [0x2610, c, audiomgr]
+      - [0x3430, c, audio_manager_36D0] # audio_spatial in DKR?
+      - [0x49B0, c, audio_manager_4C50]
+      - [0x53C0, c, objects]
+      - [0x12D50, c, track]
+      - [0x1DA10, asm, hasm/trackasm] #hasm
+      - [0x1E400, c, shadows]
+      - [0x21490, c, shadows_214A0]
+      - [0x217C0, c, lights]
+      - [0x235E0, asm, hasm/lights2] #hasm
+      - [0x245D0, c, camlight]
+      - [0x25A70, c, spranim]
+      - [0x291B0, c, explosion]
+      - [0x2BAA0, c, charControl]
+      - [0x3C470, c, models]
+      - [0x40100, c, boot]
+      - [0x40240, c, camera]
+      - [0x432D0, c, staticcamera]
+      - [0x43BE0, c, controller]
+      - [0x44350, c, level]
+      - [0x45750, c, main]
+      - [0x49700, hasm, hasm/ido/math_util]
+      - [auto, hasm, hasm/ido/math_data_tables]
+      - [0x4A9C0, asm, hasm/math_matrix]
+      - [0x4AFD0, c, memory]
+      - [0x4BC70, c, saves]
+      - [0x4DED0, c, pi]
+      - [0x4E340, c, prnBorder]
+      - [0x4E610, c, rcpFast3d]
+      - [0x50300, c, sched]
+      - [0x51A90, c, segSetBase]
+      - [0x51AD0, c, squads]
+      - [0x533F0, c, runLink]
+      - [0x55130, hasm, hasm/ido/trapDanglingJump]
+      - [0x55310, c, gameVi]
+      - [0x560B0, c, textures]
+      - [0x58CC0, c, screen]
+      - [0x59060, c, menu]
+      - [0x5B700, c, weather]
+      - [0x5DA60, c, particles]
+      - [0x644E0, c, diprint]
+      - [0x668E0, c, diRcpTrace]
+      - [0x66B80, c, diRcp]
+      - [0x67780, c, diCpu]
+      - [0x69040, c, diCpuTraceCurrentStack]
+      - [0x69050, c, fx]
+      - [0x707F0, c, font]
+      - [0x72F30, c, ../libultra/src/io/pimgr]
+      - [0x730A0, c, rzip]
+      - [0x737F0, hasm, hasm/inflate]
+      - [0x74270, c, subtitles]
+      - [0x74A70, c, ../libultra/src/io/leointerrupt]
+      - [0x74A80, hasm, hasm/gen_anim_data]
+      - [0x75A50, asm, hasm/conv_mult_matrix]
+      - [0x75C20, hasm, ../libultra/src/os/exceptasm]
+      - [0x765D0, c, ../libultra/src/os/createthread]
+      - [0x766C0, c, ../libultra/src/gu/perspective]
+      - [0x76840, c, refractOutputAssembler] # Could be hasm as it uses bnel which isn't mips1
+      - [0x76C20, c, anim]
+      - [0x7A7D0, c, hit]
+      - [0x84690, c, fmvInit]
+      - [0x846F0, c, ../libultra/src/flash/flashreinit]
+      - [0x84740, c, ../libultra/src/flash/flashinit]
+      - [0x84830, c, ../libultra/src/flash/flashreadstatus]
+      - [0x848C0, c, ../libultra/src/flash/flashreadid]
+      - [0x849E0, c, ../libultra/src/flash/flashallerase]
+      - [0x84AB0, c, ../libultra/src/flash/flashsectorerase]
+      - [0x84CE0, c, ../libultra/src/flash/flashreadarray]
+      - [0x84DA0, c, osBootRamTest]
+      - [0x84E00, c, gsSnd]
+      - [0x871A0, c, libultra/n_cspsetvol]
+      - [0x871F0, c, libultra/n_cspgettempo]
+      - [0x87240, c, libultra/n_csplayer]
+      - [0x8A460, c, libultra/n_cspsetchlvol]
+      - [0x8A4D0, c, libultra/n_cspsettempo]
+      - [0x8A560, c, libultra/n_cspsetpan]
+      - [0x8A5D0, c, libultra/n_cspgetstate]
+      - [0x8A5F0, c, libultra/n_cseq]
+      - [0x8AFC0, c, libultra/n_cspsetseq]
+      - [0x8B010, c, libultra/n_cspplay]
+      - [0x8B050, c, libultra/n_cspstop]
+      - [0x8B090, c, libultra/n_cspmessage] # This may be a custom Rare file.
+      - [0x8B140, c, libultra/n_sl]
+      - [0x8B200, c, libultra/slHeap] # Bit weird, but it looks like this is a split of 
+      - [0x8B2B0, c, libultra/sl] # these two files which are combined in later versions?
+      - [0x8B330, c, libultra/n_synthesizer]
+      - [0x8BE00, c, libultra/cents2ratio]
+      - [0x8BEA0, c, libultra/alsurround] # This may be a custom Rare file.
+      - [0x8C0B0, c, libultra/n_event]
+      - [0x8C710, c, libultra/n_synaddplayer]
+      - [0x8C860, c, libultra/n_synallocvoice]
+      - [0x8CB70, c, libultra/n_synsetvol]
+      - [0x8CC40, c, libultra/n_synstartvoiceparam]
+      - [0x8CD70, c, libultra/n_synsetpan]
+      - [0x8CE20, c, libultra/n_synsetpitch]
+      - [0x8CED0, c, libultra/n_synsetfxmix]
+      - [0x8CF80, c, libultra/n_synstopvoice]
+      - [0x8D020, c, libultra/n_synfreevoice]
+      - [0x8D100, c, libultra/n_alcspchan] # This may be a custom Rare file.
+      - [0x8D340, c, libultra/n_seqplayer]
+      - [0x8E4A0, c, libultra/n_alsynsetlpffreq] # This may be a custom Rare file.
+      - [0x8E550, c, libultra/n_alsynsetlpfgain] # This may be a custom Rare file.
+      - [0x8E600, c, libultra/n_drvrNew]
+      - [0x8F310, c, libultra/n_syngetfxref]
+      - [0x8F400, c, libultra/n_synsetfxparam]
+      - [0x8F500, c, libultra/n_alsynsetdistort]
+      - [0x8F5B0, c, libultra/n_cseqnextdelta]
+      - [0x8F690, c, libultra/n_syndelete]
+      - [0x8F6B0, c, libultra/n_synallocfx]
+      - [0x8F740, c, libultra/n_reverb]
+      - [0x90DF0, c, libultra/n_env]
+      - [0x91DE0, c, libultra/n_cspsendmidi]
+      - [0x91E60, c, libultra/n_synsetpriority]
+      - [0x91E80, c, math/math_atan]
+      - [0x92080, c, libultra/n_auxbus]
+      - [0x92570, c, libultra/n_mainbus]
+      - [0x928E0, c, libultra/n_load]
+      - [0x93430, c, libultra/n_alLPFilter] # This may be a custom Rare file.
+      - [0x93850, c, math/math_acosf]
+      - [0x93930, c, libultra/n_resample]
+      - [0x93BD0, c, math/math_arc]
+      - [0x93DE0, c, ../libultra/src/io/pfsisplug]
+      - [0x940E0, c, ../libultra/src/io/motor]
+      - [0x944F0, c, ../libultra/src/io/pfsfreeblocks]
+      - [0x94690, c, ../libultra/src/io/pfsinit]
+      - [0x94730, c, ../libultra/src/io/pfschecker]
+      - [0x950E0, c, ../libultra/src/io/pfsreformat]
+      - [0x95420, c, ../libultra/src/io/pfsnumfiles]
+      - [0x95550, c, ../libultra/src/io/pfsfilestate]
+      - [0x95730, c, ../libultra/src/io/pfssearchfile]
+      - [0x95900, c, ../libultra/src/io/pfsreadwritefile]
+      - [0x95D60, c, ../libultra/src/io/pfsallocatefile]
+      - [0x961E0, c, ../libultra/src/io/pfsselectbank]
+      - [0x96260, c, ../libultra/src/io/contramread]
+      - [0x96490, c, ../libultra/src/io/contpfs]
+      - [0x97030, c, ../libultra/src/io/pfsgetstatus]
+      - [0x97270, c, ../libultra/src/io/contramwrite]
+      - [0x974C0, hasm, ../libultra/src/os/getcount]
+      - [0x974D0, pad, pad974D0] #0x40 bytes of zeroes, could be parameters.s from libultra, but that's 0x60 bytes. Same as DKR.
+      - [0x97510, c, ../libultra/src/os/recvmesg]
+      - [0x97650, c, ../libultra/src/io/aisetfreq]
+      - [0x977B0, c, ../libultra/src/os/createmesgqueue]
+      - [0x977E0, c, ../libultra/src/os/startthread]
+      - [0x97930, c, ../libultra/src/os/stopthread]
+      - [0x979F0, c, ../libultra/src/io/aisetnextbuf]
+      - [0x97AA0, c, ../libultra/src/os/virtualtophysical]
+      - [0x97B20, c, ../libultra/src/os/sendmesg]
+      - [0x97C70, c, ../libultra/src/io/aigetlen]
+      - [0x97C80, c, ../libultra/src/io/pidma]
+      - [0x97D40, hasm, ../libultra/src/gu/sqrtf]
+      - [0x97D50, c, ../libultra/src/gu/sinf]
+      - [0x97F10, c, ../libultra/src/libc/llcvt]
+      - [0x98120, c, ../libultra/src/os/initialize]
+      - [0x98400, c, ../libultra/src/os/setthreadpri]
+      - [0x984E0, c, ../libultra/src/os/seteventmesg]
+      - [0x98550, c, ../libultra/src/io/controller]
+      - [0x98910, c, ../libultra/src/io/contreaddata]
+      - [0x98B70, c, ../libultra/src/os/settime]
+      - [0x98BA0, c, ../libultra/src/os/gettime]
+      - [0x98C30, c, ../libultra/src/io/spsetstat]
+      - [0x98C40, c, ../libultra/src/io/dpsetstat]
+      - [0x98C50, hasm, ../libultra/src/os/writebackdcache]
+      - [0x98CD0, hasm, ../libultra/src/os/invalicache]
+      - [0x98D50, c, ../libultra/src/io/cartrominit]
+      - [0x98EB0, hasm, ../libultra/src/os/invaldcache]
+      - [0x98F60, hasm, ../libultra/src/libc/bzero]
+      - [0x99000, c, ../libultra/src/io/pfsdeletefile]
+      - [0x99610, hasm, ../libultra/src/os/writebackdcacheall]
+      - [0x99640, c, ../libultra/src/io/vimgr]
+      - [0x99950, c, ../libultra/src/io/visetmode]
+      - [0x999C0, c, ../libultra/src/io/viblack]
+      - [0x99A30, c, ../libultra/src/io/visetevent]
+      - [0x99AA0, hasm, ../libultra/src/os/setintmask]
+      - [0x99B40, c, ../libultra/src/io/sptask]
+      - [0x99E00, c, ../libultra/src/io/sptaskyielded]
+      - [0x99E80, c, ../libultra/src/io/vigetcurrframebuf]
+      - [0x99EC0, c, ../libultra/src/io/vigetnextframebuf]
+      - [0x99F00, c, ../libultra/src/io/dpsetnextbuf]
+      - [0x99FB0, c, ../libultra/src/io/sptaskyield]
+      - [0x99FD0, c, ../libultra/src/io/visetspecial]
+      - [0x9A190, c, ../libultra/src/io/viswapbuf]
+      - [0x9A1E0, c, ../libultra/src/libc/ll]
+      - [0x9A4A0, c, ../libultra/src/libc/string]
+      - [0x9A540, c, ../libultra/src/os/getactivequeue]
+      - [0x9A550, hasm, ../libultra/src/libc/bcopy]
+      - [0x9A860, c, ../libultra/src/io/piacs]
+      - [0x9A920, c, ../libultra/src/os/getthreadpri]
+      - [0x9A940, hasm, ../libultra/src/os/interrupt]
+      - [0x9A980, c, ../libultra/src/io/pirawdma]
+      - [0x9AA50, c, ../libultra/src/io/epirawdma]
+      - [0x9AC30, c, ../libultra/src/io/devmgr]
+      - [auto, hasm, ../libultra/src/gu/libm_vals]
+      - [0x9B040, c, ../libultra/src/os/thread]
+      - [0x9B080, c, ../libultra/src/os/destroythread]
+      - [0x9B180, c, ../libultra/src/io/epilinkhandle]
+      - [0x9B1D0, c, ../libultra/src/io/epiwrite]
+      - [0x9B220, c, ../libultra/src/io/epiread]
+      - [0x9B270, c, ../libultra/src/io/epidma]
+      - [0x9B310, c, ../libultra/src/libc/syncprintf]
+      - [0x9B370, c, ../libultra/src/io/siacs]
+      - [0x9B430, c, ../libultra/src/io/sirawdma]
+      - [0x9B4E0, c, ../libultra/src/io/crc]
+      - [0x9B660, hasm, ../libultra/src/libc/bcmp]
+      - [0x9B780, c, ../libultra/src/io/vi]
+      - [0x9B8D0, c, ../libultra/src/io/ai]
+      - [0x9B900, hasm, ../libultra/src/os/probetlb]
+      - [0x9B9C0, c, ../libultra/src/os/jammesg]
+      - [0x9BB10, c, ../libultra/src/io/pigetcmdq]
+      - [0x9BB40, hasm, ../libultra/src/os/setsr]
+      - [0x9BB50, hasm, ../libultra/src/os/getsr]
+      - [0x9BB60, hasm, ../libultra/src/os/setfpccsr]
+      - [0x9BB70, c, ../libultra/src/io/sirawread]
+      - [0x9BBC0, c, ../libultra/src/io/sirawwrite]
+      - [0x9BC10, hasm, ../libultra/src/os/unmaptlball]
+      - [0x9BC60, hasm, ../libultra/src/os/maptlbrdb]
+      - [0x9BCC0, hasm, ../libultra/src/os/getcause]
+      - [0x9BCD0, c, ../libultra/src/os/settimer]
+      - [0x9BDB0, c, ../libultra/src/os/timerintr]
+      - [0x9C1B0, c, ../libultra/src/io/vigetcurrcontext]
+      - [0x9C1C0, c, ../libultra/src/io/viswapcontext]
+      - [0x9C520, c, ../libultra/src/io/spsetpc]
+      - [0x9C560, c, ../libultra/src/io/sprawdma]
+      - [0x9C5F0, c, ../libultra/src/io/sp]
+      - [0x9C620, c, ../libultra/src/io/spgetstat]
+      - [0x9C630, c, ../libultra/src/io/dp]
+      - [0x9C660, c, ../libultra/src/os/resetglobalintmask]
+      - [0x9C6C0, c, ../libultra/src/io/epirawwrite]
+      - [0x9C820, c, ../libultra/src/io/epirawread]
+      - [0x9C980, c, ../libultra/src/os/setglobalintmask]
+      - [0x9C9D0, c, ../libultra/src/os/yieldthread]
+      - [0x9CA20, c, ../libultra/src/libc/xprintf]
+      - [0x9D6E0, c, ../libultra/src/io/si]
+      - [0x9D710, hasm, ../libultra/src/os/setcompare]
+      - [0x9D720, c, ../libultra/src/libc/xlitob]
+      - [0x9D9C0, c, ../libultra/src/libc/xldtob]
+      - [0x9E480, c, ../libultra/src/libc/ldiv]
+      # not really sure exact offsets for these...
+      - [0x9E610, textbin, ucode_audio]
+      - [0x9FE50, textbin, ucode_boot]
+      - [0x9FFD0, textbin, ucode_f3ddkr_dram]
+      - [0xA1260, data, audio_manager_1050]
+      - [0xA12C0, data, audiomgr]
+      - [0xA1400, data, audio_manager_36D0]
+      - [0xA1420, data, objects]
+      - [0xA18D0, data, track]
+      - [0xA1A80, data, shadows]
+      - [0xA1C00, data, lights]
+      - [0xA1C20, data, camlight]
+      - [0xA1D20, data, spranim]
+      - [0xA1DB0, data, explosion]
+      - [0xA1DC0, data, charControl]
+      - [0xA3AC0, data, models]
+      - [0xA3AD0, data, camera]
+      - [0xA3D90, .data, controller]
+      - [0xA3DA0, data, level]
+      - [0xA3DD0, data, main]
+      - [0xA3FE0, .data, hasm/ido/math_util]
+      - [0xA3FF0, .data, memory]
+      - [0xA4000, data, saves]
+      - [0xA4130, .data, pi] # new data symbol not in kiosk. Kiosk has no pi data.
+      - [0xA4140, data, prnBorder]
+      - [0xA41B0, data, rcpFast3d]
+      - [0xA44B0, data, sched]
+      - [0xA44E0, .data, squads]
+      - [0xA44F0, data, runLink]
+      - [0xA4500, data, gameVi]
+      - [0xA4790, data, textures]
+      - [0xA5B20, data, screen]
+      - [0xA5BB0, data, menu] # so many variables in here are referenced in several files.
+      - [0xA6540, data, weather]
+      - [0xA6960, data, particles]
+      - [0xA6F80, data, diprint]
+      - [0xA70B0, data, diRcpTrace]
+      - [0xA70C0, data, diCpu]
+      - [0xA7380, data, fx]
+      - [0xA7A30, data, font]
+      - [0xA7B70, .data, ../libultra/src/io/pimgr]
+      - [0xA7BA0, .data, rzip]
+      - [0xA7BB0, data, subtitles]
+      - [0xA7BC0, .data, hasm/gen_anim_data] # Has a jump table that's data, and not rodata. Splat likes to warn about this.
+      - [0xA8080, .data, ../libultra/src/os/exceptasm]
+      - [0xA80B0, data, anim]
+      - [0xA8190, .data, hasm/ido/math_data_tables]
+      - [0xAA1A0, data, gsSnd]
+      - [0xAA1C0, data, libultra/n_csplayer]
+      - [0xAA3C0, data, libultra/n_sl]
+      - [0xAA3D0, data, libultra/n_synthesizer]
+      - [0xAA3E0, data, libultra/n_drvrNew]
+      - [0xAA420, data, libultra/n_env]
+      - [0xAA520, .data, math/math_arc]
+      - [0xAA630, .data, ../libultra/src/io/contramread]
+      - [0xAA640, .data, ../libultra/src/io/contpfs]
+      - [0xAA650, .data, ../libultra/src/io/aisetnextbuf]
+      - [0xAA660, .data, ../libultra/src/os/initialize]
+      - [0xAA670, .data, ../libultra/src/io/controller]
+      - [0xAA680, .data, ../libultra/src/io/cartrominit]
+      - [0xAA690, .data, ../libultra/src/io/vimgr]
+      - [0xAA6B0, data, libultra/vitbl]
+      - [0xAAA70, .data, ../libultra/src/io/piacs]
+      - [0xAAA80, .data, ../libultra/src/os/thread]
+      - [0xAAAA0, .data, ../libultra/src/io/siacs]
+      - [0xAAAB0, .data, ../libultra/src/io/vi]
+      - [0xAAB20, .data, ../libultra/src/os/timerintr]
+      - [0xAAB30, .data, ../libultra/src/libc/xprintf]
+      - [0xAAB80, .data, ../libultra/src/libc/xlitob]
+      - [0xAABB0, .rodata, audio_manager_1050]
+      - [0xAAD00, .rodata, audiomgr]
+      - [0xAAD60, .rodata, audio_manager_36D0]
+      - [0xAAD80, .rodata, audio_manager_4C50]
+      - [0xAADD0, .rodata, objects]
+      - [0xAC120, .rodata, track]
+      - [0xAC680, .rodata, shadows]
+      - [0xAC690, .rodata, lights]
+      - [0xAC6B0, .rodata, camlight]
+      - [0xAC6D0, .rodata, spranim]
+      - [0xAC720, .rodata, explosion]
+      - [0xAC910, .rodata, charControl]
+      - [0xACC20, .rodata, models]
+      - [0xACF50, .rodata, boot]
+      - [0xACF80, .rodata, camera]
+      - [0xAD030, .rodata, staticcamera]
+      - [0xAD040, .rodata, level]
+      - [0xAD0D0, .rodata, main]
+      - [0xAD230, .rodata, hasm/ido/math_util]
+      - [0xAD260, .rodata, memory]
+      - [0xAD3E0, .rodata, saves]
+      - [0xAD550, .rodata, sched]
+      - [0xAD8D0, .rodata, squads]
+      - [0xADCD0, .rodata, runLink]
+      - [0xADD50, .rodata, gameVi]
+      - [0xADD90, .rodata, textures]
+      - [0xADF50, .rodata, screen]
+      - [0xADF70, .rodata, menu]
+      - [0xAE1D0, .rodata, weather]
+      - [0xAE1E0, .rodata, particles]
+      - [0xAE450, .rodata, diprint]
+      - [0xAE6C0, .rodata, diRcpTrace]
+      - [0xAE710, .rodata, diRcp]
+      - [0xAF350, .rodata, diCpu]
+      - [0xAF890, .rodata, fx]
+      - [0xAFA20, .rodata, font]
+      - [0xAFA40, .rodata, hasm/inflate]
+      - [0xAFB30, .rodata, ../libultra/src/os/exceptasm]
+      - [0xAFB80, .rodata, ../libultra/src/gu/perspective]
+      - [0xAFB90, .rodata, anim]
+      - [0xAFE20, .rodata, hit]
+      - [0xB0020, .rodata, gsSnd]
+      - [0xB0170, .rodata, libultra/n_csplayer]
+      - [0xB0470, .rodata, libultra/n_synthesizer]
+      - [0xB0480, .rodata, libultra/cents2ratio]
+      - [0xB0490, .rodata, libultra/n_drvrNew]
+      - [0xB04B0, .rodata, libultra/n_synsetfxparam]
+      - [0xB04C0, .rodata, libultra/n_reverb]
+      - [0xB04F0, .rodata, libultra/n_env]
+      - [0xB0540, .rodata, math/math_atan]
+      - [0xB0560, .rodata, libultra/n_auxbus]
+      - [0xB0570, .rodata, libultra/n_alLPFilter]
+      - [0xB0580, .rodata, math/math_acosf]
+      - [0xB0590, .rodata, libultra/n_resample]
+      - [0xB05A0, .rodata, ../libultra/src/gu/sinf]
+      - [0xB05F0, .rodata, ../libultra/src/libc/llcvt]
+      - [0xB0600, .rodata, ../libultra/src/os/setintmask]
+      - [0xB0680, .rodata, ../libultra/src/io/devmgr]
+      - [0xB06A0, .rodata, ../libultra/src/gu/libm_vals]
+      - [0xB06B0, .rodata, ../libultra/src/libc/xprintf]
+      - [0xB07B0, .rodata, ../libultra/src/libc/xldtob]
+      # not really sure exact offsets for these...
+      - { start: 0xB0810, type: databin, name: data_audio,       linker_section_order: .rodata }
+      - { start: 0xB0AD0, type: databin, name: data_unk,         linker_section_order: .rodata }
+      - { start: 0xB0F50, type: databin, name: data_f3ddkr_dram, linker_section_order: .rodata }
+      - { type: bss, vram: 0x800B0B50, name: audio_manager_1050 }
+      - { type: bss, vram: 0x800E97A0, name: audiomgr }
+      - { type: bss, vram: 0x800F29F0, name: audio_manager_36D0 }
+      - { type: bss, vram: 0x800F2B10, name: audio_manager_4C50 }
+      - { type: bss, vram: 0x800F2C60, name: objects }
+      - { type: bss, vram: 0x800F2F70, name: track }
+      - { type: bss, vram: 0x800F33D0, name: shadows }
+      - { type: bss, vram: 0x800F5B20, name: lights }
+      - { type: bss, vram: 0x800F5B50, name: camlight }
+      - { type: bss, vram: 0x800F6B00, name: explosion }
+      - { type: bss, vram: 0x800F6DA0, name: charControl }
+      - { type: bss, vram: 0x800F6F10, name: models }
+      - { type: .bss, vram: 0x800F7060, name: boot }
+      - { type: .bss, vram: 0x800F94D0, name: hasm/entrypoint }
+      - { type: bss, vram: 0x800FA4D0, name: camera }
+      - { type: bss, vram: 0x800FB080, name: staticcamera }
+      - { type: .bss, vram: 0x800FB090, name: controller }
+      - { type: bss, vram: 0x800FB110, name: level }
+      - { type: bss, vram: 0x800FB400, name: main }
+      - { type: bss, vram: 0x800FD820, name: refractOutputAssembler }
+      - { type: .bss, vram: 0x800FD840, name: memory }
+      - { type: bss, vram: 0x800FDDB0, name: saves }
+      - { type: .bss, vram: 0x800FDFE0, name: pi }
+      - { type: bss, vram: 0x800FE080, name: rcpFast3d }
+      - { type: bss, vram: 0x800FE950, name: sched }
+      - { type: .bss, vram: 0x800FE9A0, name: squads }
+      - { type: bss, vram: 0x800FEAA0, name: runLink }
+      - { type: bss, vram: 0x800FEB60, name: gameVi }
+      - { type: bss, vram: 0x800FECE0, name: textures }
+      - { type: bss, vram: 0x800FED50, name: menu }
+      - { type: bss, vram: 0x80100840, name: weather }
+      - { type: bss, vram: 0x801008E0, name: particles }
+      - { type: bss, vram: 0x80100960, name: diprint }
+      - { type: bss, vram: 0x801012A0, name: diRcpTrace }
+      - { type: bss, vram: 0x801022B0, name: diCpu }
+      - { type: bss, vram: 0x80102760, name: fx }
+      - { type: bss, vram: 0x80103BA0, name: font }
+      - { type: .bss, vram: 0x80104110, name: ../libultra/src/io/pimgr }
+      - { type: .bss, vram: 0x80104550, name: rzip }
+      - { type: bss, vram: 0x80104560, name: subtitles }
+      - { type: bss, vram: 0x801045B0, name: anim }
+      - { type: bss, vram: 0x801047E0, name: hit }
+      - { type: .bss, vram: 0x80104E50, name: fmvInit }
+      - { type: .bss, vram: 0x80104EA0, name: ../libultra/src/flash/flashinit }
+      - { type: bss, vram: 0x80104F60, name: gsSnd }
+      - { type: bss, vram: 0x80104FD0, name: libultra/n_csplayer }
+      - { type: bss, vram: 0x80105010, name: libultra/alsurround }
+      - { type: bss, vram: 0x80105020, name: libultra/n_event }
+      - { type: .bss, vram: 0x80105030, name: ../libultra/src/io/pfsisplug }
+      - { type: .bss, vram: 0x80105070, name: ../libultra/src/io/motor }
+      - { type: .bss, vram: 0x80105170, name: ../libultra/src/io/contpfs }
+      - { type: .bss, vram: 0x80105270, name: ../libultra/src/os/initialize }
+      - { type: .bss, vram: 0x80105280, name: ../libultra/src/os/seteventmesg }
+      - { type: .bss, vram: 0x80105300, name: ../libultra/src/io/controller }
+      - { type: .bss, vram: 0x80105390, name: ../libultra/src/io/cartrominit }
+      - { type: .bss, vram: 0x80105410, name: ../libultra/src/io/vimgr }
+      - { type: .bss, vram: 0x80105730, name: ../libultra/src/io/sptask }
+      - { type: .bss, vram: 0x80105770, name: ../libultra/src/io/piacs }
+      - { type: .bss, vram: 0x80105790, name: ../libultra/src/debug/kdebugserver }
+      - { type: .bss, vram: 0x80105940, name: ../libultra/src/io/siacs }
+      - { type: .bss, vram: 0x80105960, name: ../libultra/src/os/timerintr }
 
-  - type: bin
+  - name: assets
+    type: bin
     start: 0xB1750
-    follows_vram: main
+
+  - name: overlaydata #?
+    type: bin
+    start: 0xB1880
+
+  - name: runlinks_section1
+    type: bin
+    start: 0x1ECF220
+
+  - name: runlinks_section2
+    type: bin
+    start: 0x1ED0270
+
+  - name: runlinks_section3
+    type: bin
+    start: 0x1ED2780
+
+  - name: runlinks_section4
+    type: bin
+    start: 0x1ED3B20
+
+  - name: symbolsTable_offsets
+    type: bin
+    start: 0x1FEB040
+
+  - name: symbolsTable_symbol_names
+    type: bin
+    start: 0x1FED550
+
+  - name: padding
+    type: bin
+    start: 0x1FF6820
+
   - [0x2000000]

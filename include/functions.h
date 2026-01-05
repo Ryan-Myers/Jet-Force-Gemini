@@ -7,6 +7,12 @@
 #include "memory.h"
 #include "boot.h"
 
+#ifdef VERSION_us
+#define nosMotorInit osMotorInit
+#define nosMotorStart osMotorStart
+#define nosMotorStop osMotorStop
+#endif
+
 void squadsPreInit(RomDefHeader *list, s32 listSize);
 s32 runlinkDownloadCode(s32);
 void *ad_sndp_play(ALBank *arg0, s16 arg1, u16 arg2, u8 arg3, f32 arg4, u8 arg5, void **arg6);
@@ -138,8 +144,13 @@ void packInit(void);
 void flashROMWrite(u32 pageNum, u32 *dramAddr);
 void flashROMRead(u32 pageNum, u32 *dramAddr);
 void rumbleUpdate(void);
+#ifdef VERSION_kiosk
 void rumbleStop(s32 controllerIndex);
 void rumbleKill(void);
+#else
+void rumbleStop(s32 controllerIndex, s32 arg1);
+void rumbleKill(s32 arg0);
+#endif
 void rumbleProcessing(s32 arg0);
 void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2);
 void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2);
@@ -150,6 +161,7 @@ void func_80046070(s32 arg0);
 void mainChangeLevel(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 void mainInitGame(void);
 void mainSetGameFlag(s32 arg0, s32 arg1);
+void mainPreNMI(void);
 s32 osBootRamTest1_6105(void);
 s32 osBootRamTest2_6105(void);
 s32 diPrintf(const char *format, ...);
@@ -261,7 +273,7 @@ s32 camGetMode(void);
 s32 rcpWaitDP(void);
 
 // This function is unique in that it has no specific limit on arguments, 
-// and they can change even within the same funciton call it.
+// and they can change even within the same function call it.
 // This empty signature seems to be the way to handle it.
 s32 TrapDanglingJump();
 

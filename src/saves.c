@@ -18,6 +18,30 @@
 
 typedef enum Language { LANGUAGE_0, LANGUAGE_1, LANGUAGE_2, LANGUAGE_3, LANGUAGE_JAPANESE } Language;
 
+#ifdef VERSION_us
+#define nosMotorInit osMotorInit
+#define nosMotorStart osMotorStart
+#define nosMotorStop osMotorStop
+
+
+s32 mainGetPauseMode();
+extern u8 D_800A3470_A4070;
+
+s32 func_8004B070_4BC70(void) {
+    s32 var_v0;
+
+    var_v0 = D_800A3470_A4070 != 0;
+    if (var_v0 != 0) {
+        return mainGetPauseMode() == 0;
+    }
+    // Bug! Doesn't guarantee a return
+}
+
+void rumbleRumbles(s32 arg0) {
+    D_800A3470_A4070 = arg0;
+}
+#endif
+
 UNUSED void rumbleProcessing(s32 arg0) {
     if ((arg0 != 0) && (D_800A3ECC == 0)) {
         D_800A3EC4 = 1;
@@ -31,9 +55,12 @@ UNUSED void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
     RumbleStruct *rumblePak;
     u8 controllerNum;
 
+#ifdef VERSION_us
+    if (func_8004B070_4BC70() != 0) {
+#endif
     if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
         controllerNum = joyGetController(controllerIndex);
-        rumblePak = &D_800FEC68[controllerNum];
+        rumblePak = &rumbleStructArray[controllerNum];
         if (rumblePak->state.upper != 2) {
             rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
             rumblePak->unk2 = ((arg1 * arg1) * 0.1000000015f);
@@ -41,8 +68,12 @@ UNUSED void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
             rumblePak->rumbleTime = (arg2 * 60.0f);
         }
     }
+#ifdef VERSION_us
+    }
+#endif
 }
 
+#ifdef VERSION_kiosk
 void rumbleStop(s32 controllerIndex) {
     RumbleStruct *rumblePak;
     u8 controllerNum;
@@ -51,7 +82,7 @@ void rumbleStop(s32 controllerIndex) {
 
     if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
         controllerNum = joyGetController(controllerIndex);
-        rumblePak = &D_800FEC68[controllerNum];
+        rumblePak = &rumbleStructArray[controllerNum];
         temp = rumblePak->state.upper;
         if ((temp != 0) && (temp != flag)) {
             rumblePak->state.flag = flag;
@@ -59,23 +90,33 @@ void rumbleStop(s32 controllerIndex) {
         }
     }
 }
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/rumbleStop.s")
+#endif
 
 void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
     s32 controllerNum;
     RumbleStruct *rumblePak;
 
+
+#ifdef VERSION_us
+    if (func_8004B070_4BC70() != 0) {
+#endif
     if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
         controllerNum = joyGetController(controllerIndex);
         rumblePak = &D_800FEC6A[controllerNum];
         if (arg1 != 0) {
             rumblePak->state.half = ((arg1 * arg1) * 0.1000000015f);
         }
-        rumblePak = &D_800FEC68[controllerNum];
+        rumblePak = &rumbleStructArray[controllerNum];
         if (rumblePak->state.upper != 2 && arg2 != 0.0f) {
             rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
             rumblePak->rumbleTime = (arg2 * 60.0f);
         }
     }
+#ifdef VERSION_us
+    }
+#endif
 }
 
 void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
@@ -83,9 +124,17 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
     s32 temp_f16;
     s32 controllerNum;
 
+#ifdef VERSION_us
+    if (func_8004B070_4BC70() != 0) {
+#endif
     if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
         controllerNum = joyGetController(controllerIndex);
-        rumblePak = &D_800FEC68[controllerNum];
+        rumblePak = &rumbleStructArray[controllerNum];
+#ifdef VERSION_us
+        if (rumblePak->rumbleTime <= 0) {
+            rumblePak->unk2 = 0;
+        }
+#endif
         if (arg1 != 0) {
             arg1 = ((arg1 * arg1) * 0.1000000015f);
             if (rumblePak->unk2 < arg1) {
@@ -100,14 +149,26 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
             }
         }
     }
+#ifdef VERSION_us
+    }
+#endif
 }
 
+#ifdef VERSION_kiosk
 void rumbleKill(void) {
     s32 i = MAXCONTROLLERS;
     while (i--) {
         rumbleStop(i);
     }
 }
+#else
+void rumbleKill(s32 arg0) {
+    s32 i = MAXCONTROLLERS;
+    while (i--) {
+        rumbleStop(i, arg0);
+    }
+}
+#endif
 
 void rumbleUpdate(void) {
     D_800A3EC4 = 1;
@@ -117,7 +178,7 @@ void rumbleUpdate(void) {
 s32 nosMotorStart(OSPfs *);
 s32 nosMotorStop(OSPfs *);
 extern f32 D_800AD508;
-extern RumbleStruct D_800FEC68[];
+extern RumbleStruct rumbleStructArray[];
 
 void rumbleTick(s32 updateRate) {
     RumbleStruct *rumble;
@@ -129,7 +190,7 @@ void rumbleTick(s32 updateRate) {
     if (D_800A3ECC != 0) {
         if (D_800A3EC4 != 0) {
             osPfsIsPlug(sControllerMesgQueue, &pfsBitPattern);
-            for (i = 0, controllerToCheck = 1, rumble = D_800FEC68; i < MAXCONTROLLERS;
+            for (i = 0, controllerToCheck = 1, rumble = rumbleStructArray; i < MAXCONTROLLERS;
                  i++, controllerToCheck <<= 1, rumble++) {
                 if (pfsBitPattern & controllerToCheck) {
                     if (nosMotorInit(sControllerMesgQueue, &pfs[i], i) != 0) {
@@ -143,7 +204,7 @@ void rumbleTick(s32 updateRate) {
             }
             D_800A3EC4 = 0;
         }
-        for (i = 0, controllerToCheck = 1, rumble = D_800FEC68; i < MAXCONTROLLERS;
+        for (i = 0, controllerToCheck = 1, rumble = rumbleStructArray; i < MAXCONTROLLERS;
              i++, controllerToCheck <<= 1, rumble++) {
             if (rumble->state.upper & 0x400) {
                 pfsStatus = 0;
@@ -830,3 +891,19 @@ s32 func_8004DDC4(s32 controllerIndex, s32 fileNum) {
     mmFree(data);
     return ret;
 }
+
+#ifdef VERSION_us
+const char D_800AC7E0[] = "*** SAVING GAME ***\n";
+const char D_800AC7F8[] = "FlashSectorErase failed\n";
+const char D_800AC814[] = "*** ERASING GAME %d***\n";
+const char D_800AC82C[] = "FlashSectorErase failed\n";
+const char D_800AC848[] = "*** ERASING FLASH ROM ***\n";
+const char D_800AC864[] = "FlashSectorErase failed\n";
+const char D_800AC880[] = "Global Flags size = %d\n";
+const char D_800AC898[] = "Loaded Globals :: (%04x == %04x) ?\n";
+const char D_800AC8BC[] = "RESET GLOBAL FLAGS\n";
+const char D_800AC8D0[] = "FlashSectorErase failed\n";
+const char D_800AC8EC[] = "Saved Globals :: %04x\n";
+const char D_800AC904[] = "osFlashWriteArray failed (%d)\n";
+const char D_800AC924[] = "osFlashReadArray failed!\n";
+#endif

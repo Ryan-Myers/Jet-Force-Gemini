@@ -5,7 +5,11 @@
 
 extern OSThread *__osGetActiveQueue(void);
 
+#ifdef VERSION_kiosk
 const char D_800AF300[] = "7.2";
+#else
+const char D_800AF300[] = "9.6";
+#endif
 const char D_800AF304[] = "interrupt";
 const char D_800AF310[] = "TLB modify";
 const char D_800AF31C[] = "TLB load or fetch";
@@ -25,6 +29,8 @@ const char D_800AF3E4[] = "floating point";
 const char D_800AF3F4[] = ">fault< ";
 const char D_800AF400[] = "CORE";
 const char D_800AF408[] = "";
+#ifdef VERSION_kiosk
+// These rodata symbols are contained within the relevant functions, which I didn't do for kiosk.
 const char D_800AF40C[] = "%08x:%08x";
 const char D_800AF418[] = "MEMORY REGION %d";
 const char D_800AF42C[] = "MOD";
@@ -41,6 +47,7 @@ const char D_800AF478[] = "Module %d at %08x";
 const char D_800AF48C[] = "%1x";
 const char D_800AF490[] = "%d lines logged";
 const char D_800AF4A0[] = "Page %d/%d";
+#endif
 
 /**
  * Start the exception program counter thread.
@@ -140,6 +147,7 @@ void func_800677E4(void) {
     func_80067880(thread);
 }
 
+// interactive_crash_screens
 #ifdef NON_EQUIVALENT
 extern s32 osCicId;
 extern s32 D_800A6E98;
@@ -182,6 +190,7 @@ UNUSED void diCpuReportWatchpoint(u32 address) {
     while (1) {} // Infinite loop; waiting for the player to reset the console?
 }
 
+#ifdef VERSION_kiosk
 const char D_800AF4DC[] = "%04d: %04d: %s";
 const char D_800AF4EC[] = "Fault in thread %d   (%s)";
 const char D_800AF508[] = "epc NULL";
@@ -225,6 +234,7 @@ const char D_800AF7B4[] = "Track polygon buffer overflow";
 const char D_800AF7D4[] = "Track edge buffer overflow";
 const char D_800AF7F0[] = "Object polygon buffer overflow";
 const char D_800AF810[] = "Object edge buffer overflow";
+#endif
 
 #ifdef NON_EQUIVALENT
 extern s32 D_800A6E90;
@@ -346,8 +356,6 @@ void func_8006869C(void) {
         var_v1++;
     }
 }
-
-// File split?
 
 void __rmonSendFault(OSThread *thread) {
     volatile float f UNUSED;

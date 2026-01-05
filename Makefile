@@ -1,5 +1,5 @@
 BASENAME  = jfg
-VERSION  := kiosk
+VERSION  := us
 NON_MATCHING ?= 0
 # Libultra version might be at least J, but still labeled in the header as G for some reason.
 LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6 -DBUILD_VERSION_STRING=\"2.0I\"
@@ -40,14 +40,46 @@ endef
 BIN_DIRS  = assets
 BUILD_DIR = build
 SRC_DIR   = src
+ASM_DIR   = asm
+# ifeq ($(VERSION),us)
+# 	BIN_DIRS  = assets
+# 	BUILD_DIR = build
+# 	SRC_DIR   = src
+# 	ASM_DIR   = asm
+# else
+# 	BIN_DIRS  = assets_pal
+# 	BUILD_DIR = build_pal
+# 	SRC_DIR   = src_pal
+# 	ASM_DIR   = asm_pal
+# endif
+
 MATH_DIR  = $(SRC_DIR)/math
 OLD_LIBULTRA_DIR = $(SRC_DIR)/libultra
 LIBULTRA_DIR = libultra
-ASM_DIRS  = asm asm/data asm/nonmatchings asm/data/libultra asm/hasm asm/libultra asm/libultra/src/flash
+ASM_DIRS  = $(ASM_DIR) $(ASM_DIR)/data $(ASM_DIR)/nonmatchings $(ASM_DIR)/data/libultra $(ASM_DIR)/hasm $(ASM_DIR)/libultra $(ASM_DIR)/libultra/src/flash
 HASM_DIRS = $(SRC_DIR)/hasm $(SRC_DIR)/hasm/ido $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc $(OLD_LIBULTRA_DIR)
 LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/sc $(LIBULTRA_DIR)/src/flash
+
+
+ifeq ($(VERSION),pal)
+	TEMP_PAL_LIBULTRA_DIR = $(SRC_DIR)/libultra_c
+	ASM_DIRS += $(ASM_DIR)/math $(ASM_DIR)/data/math $(ASM_DIR)/data/hasm
+	ASM_DIRS += $(ASM_DIR)/data/libultra_c/src/libc $(ASM_DIR)/data/libultra_c/src/os
+	ASM_DIRS += $(ASM_DIR)/data/libultra_c/src/gu $(ASM_DIR)/data/libultra_c/src/io
+	ASM_DIRS += $(ASM_DIR)/data/libultra_c/src/flash $(ASM_DIR)/data/libultra_c/src/debug
+	ASM_DIRS += $(ASM_DIR)/libultra_c $(ASM_DIR)/libultra_c/src/flash
+	ASM_DIRS += $(ASM_DIR)/libultra_c $(ASM_DIR)/libultra_c/src
+	ASM_DIRS += $(ASM_DIR)/libultra_c/src/debug $(ASM_DIR)/libultra_c/src/gu $(ASM_DIR)/libultra_c/src/io
+	ASM_DIRS += $(ASM_DIR)/libultra_c/src/libc $(ASM_DIR)/libultra_c/src/os $(ASM_DIR)/libultra_c/src/sc $(ASM_DIR)/libultra_c/src/flash
+	LIBULTRA_SRC_DIRS += $(ASM_DIR)/libultra_c $(ASM_DIR)/libultra_c/src
+	LIBULTRA_SRC_DIRS += $(ASM_DIR)/libultra_c/src/debug $(ASM_DIR)/libultra_c/src/gu $(ASM_DIR)/libultra_c/src/io
+	LIBULTRA_SRC_DIRS += $(ASM_DIR)/libultra_c/src/libc $(ASM_DIR)/libultra_c/src/os $(ASM_DIR)/libultra_c/src/sc $(ASM_DIR)/libultra_c/src/flash
+	LIBULTRA_SRC_DIRS += $(TEMP_PAL_LIBULTRA_DIR) $(TEMP_PAL_LIBULTRA_DIR)/src
+	LIBULTRA_SRC_DIRS += $(TEMP_PAL_LIBULTRA_DIR)/src/debug $(TEMP_PAL_LIBULTRA_DIR)/src/gu $(TEMP_PAL_LIBULTRA_DIR)/src/io
+	LIBULTRA_SRC_DIRS += $(TEMP_PAL_LIBULTRA_DIR)/src/libc $(TEMP_PAL_LIBULTRA_DIR)/src/os $(TEMP_PAL_LIBULTRA_DIR)/src/sc $(TEMP_PAL_LIBULTRA_DIR)/src/flash
+endif
 
 # Files requiring pre/post-processing
 GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) $(LIBULTRA_DIR) </dev/null 2>/dev/null)
@@ -218,6 +250,55 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawwrite.c.o: LIBULTRA_VERSION_DEFINE := 
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawread.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawdma.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
 
+ifeq ($(VERSION),us)
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/leointerrupt.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aisetfreq.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aisetfreq.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aisetnextbuf.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aisetnextbuf.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aigetlen.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/controller.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/contreaddata.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/spsetstat.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/dpsetstat.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pfsdeletefile.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pfsdeletefile.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/visetmode.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/viblack.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/visetevent.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sptask.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sptaskyielded.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vigetcurrframebuf.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vigetnextframebuf.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/dpsetnextbuf.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sptaskyield.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/visetspecial.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/viswapbuf.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/siacs.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sirawdma.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sirawdma.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/crc.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/crc.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vi.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/ai.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sirawread.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sirawwrite.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vigetcurrcontext.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/viswapcontext.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/viswapcontext.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/spsetpc.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sprawdma.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sp.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/dp.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/spgetstat.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/si.c.o: OPT_FLAGS := -O1
+endif
+
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/%.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/ll.c.o: MIPSISET := -mips3 -32
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: MIPSISET := -mips3 -32
@@ -257,6 +338,8 @@ $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: MIPSISET := -mips2
 
+$(BUILD_DIR)/$(SRC_DIR)/hasm/ido/trapDanglingJump.s.o: OPT_FLAGS := -O2
+$(BUILD_DIR)/$(SRC_DIR)/hasm/ido/trapDanglingJump.s.o: MIPSISET := -mips3 -32
 $(BUILD_DIR)/$(SRC_DIR)/hasm/ido/math_util.s.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(SRC_DIR)/hasm/ido/math_util.s.o: MIPSISET := -mips3 -32
 
@@ -297,6 +380,16 @@ no_verify: $(TARGET).z64
 
 extract:
 	$(SPLAT) ver/splat/$(BASENAME).$(VERSION).yaml
+# Add these files to certain versions to have an empty file for the pragmas
+ifeq ($(VERSION),kiosk)
+	mkdir -p asm/nonmatchings/libultra/n_cspgetstate
+	touch asm/nonmatchings/libultra/n_cspgetstate/n_alCSPGetState.s
+	touch asm/nonmatchings/libultra/n_cspgetstate/func_800899D8_8A5D8.s
+endif
+ifeq ($(VERSION),us)
+	mkdir -p asm/nonmatchings/libultra/n_synremoveplayer
+	touch asm/nonmatchings/libultra/n_synremoveplayer/n_alSynRemovePlayer.s
+endif
 
 extractall:
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).kiosk.yaml

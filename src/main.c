@@ -1,6 +1,7 @@
 #include "common.h"
 #include "sched.h"
 
+#ifdef VERSION_kiosk
 const char D_800ACDB0[] = "1.1723";
 const char D_800ACDB8[] = "19/08/99 15:26";
 const char D_800ACDC8[] = "jpegg";
@@ -78,6 +79,20 @@ const char D_800AD160[] = "CLUSTER BOMB";
 // const char D_800AD170[] = "%5d  %5d  %5d\n";
 // const char D_800AD180[] = "FREE %d";
 // const char D_800AD188[] = "%d K";
+#else
+const char D_800AC4D0_AD0D0[] = "1.1848";
+const char D_800AC4D8_AD0D8[] = "04/09/99 20:40";
+const char D_800AC4E8_AD0E8[] = "jpegg";
+const char D_800AC4F0_AD0F0[] = "null";
+const char D_800AC4F8_AD0F8[] = "setting up";
+const char D_800AC504_AD104[] = "freeing";
+const char D_800AC50C_AD10C[] = "processing";
+const char D_800AC518_AD118[] = "exploding";
+const char D_800AC524_AD124[] = "%d\n";
+const char D_800AC528_AD128[] = "WARNING: couldn't find 'ra=0x666' in function %d\n";
+#endif
+
+void mainPreNMI(void);
 
 void mainThread(UNUSED void *unused) {
     // Anti Piracy - This will zero out all RAM if this is a PAL console.
@@ -94,6 +109,7 @@ void mainThread(UNUSED void *unused) {
     D_800FE280 = 0;
     mainGameMode = 6;
     mainChangeLevel(0, D_800A3AB0, 0, 0, 1, 0);
+#ifdef VERSION_kiosk
     func_80046070(0x1E);
     while (1) {
         if (mainResetPressed()) {
@@ -115,10 +131,22 @@ void mainThread(UNUSED void *unused) {
         }
         bootCheckStack();
     }
+#else
+    while (1) {
+        mainPreNMI();
+        func_80044938();
+        bootCheckStack();
+    }
+#endif
 }
+
+#ifdef VERSION_us
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainPreNMI.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
 
+#ifdef VERSION_kiosk
 void mainInitGame(void) {
     s32 viMode;
 
@@ -143,6 +171,9 @@ void mainInitGame(void) {
     TrapDanglingJump();
     runlinkFreeCode(0x24);
 }
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainInitGame.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800448B0.s")
 
@@ -181,6 +212,10 @@ void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800457F4.s")
 
+#ifdef VERSION_us
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainValidateRestart.s")
+#endif
+
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainRestartAfterDeath.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80045D44.s")
@@ -199,9 +234,11 @@ void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80046070.s")
 
+#ifdef VERSION_kiosk
 void mainSetAutoSave(s32 autoSave) {
     mainGameAutoSave = autoSave;
 }
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSyncNextLevel.s")
 
@@ -273,7 +310,9 @@ s32 mainResetPressed(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetCurrentLevel.s")
 
+#ifdef VERSION_kiosk
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGameChanged.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainLoadGame.s")
 
@@ -305,18 +344,24 @@ s32 mainResetPressed(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetPlayerCharacter.s")
 
+#ifdef VERSION_kiosk
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047EE8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047FC0.s")
 
 // Main debug menu
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004809C.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainResetRegion.s")
 
+#ifdef VERSION_kiosk
 void mainToggleDebug(void) {
     // debugMenuEnable ^= 1;
 }
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/main/mainToggleDebug.s")
+#endif
 
 // Draw debug menu Lower Right section
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80048B38.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/debug_print_memory.s")

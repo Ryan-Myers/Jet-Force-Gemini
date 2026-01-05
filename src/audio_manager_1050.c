@@ -5,11 +5,19 @@
 #include "naudio/n_sndp.h"
 #include "audio.h"
 
+#ifdef VERSION_us
+const char D_800A9FB0[] = "No I'm not playing MIDI sequence %d, its over 32K\n";
+#endif
 const char D_800AA950[] = "WARNING: Sync arrived before wait - music will be out of sync with sequence\n";
+#ifdef VERSION_us
+const char D_800AA034[] = "I'm not playing any ditty over 4K nowadays (%d)\n";
+#endif
 const char D_800AA9A0[] = "amSndPlay: Illegal sound effects table index\n";
 const char D_800AA9D0[] = "amSndPlayDirect: Somebody tried to play illegal sound %d\n";
 const char D_800AAA0C[] = "Invalid midi sequence index\n";
+#ifdef VERSION_kiosk
 const char D_800AAA2C[] = "amTuneRestart:Jump failed - not previously pushed onto seq player %x\n";
+#endif
 
 void n_alCSPVoiceLimit(N_ALCSPlayer *seqp, u8 value);
 u32 gsSndpGetGlobalVolume(void); //sndp_get_global_volume
@@ -20,6 +28,7 @@ extern u8 sfxRelativeVolume;
 extern u8 gAudioVolumeSetting;
 extern N_ALSeqPlayer *ambientSeqPlayer; // Official Name: ambientSeqPlayer
 #define AL_SNDP_GROUP_VOLUME_MAX 32767
+void music_sequence_init(u8 seqID, N_ALSeqPlayer *seqPlayer); // Could be different in kiosk
 
 void amTuneStop(void);
 void music_sequence_start(u8 seqID, N_ALSeqPlayer *seqPlayer);
@@ -63,7 +72,9 @@ void amSetMuteMode(s32 behaviour) {
  * Stops any playing existing music beforehand.
  * Official Name: amTunePlay
  */
+extern u32 *seqLen;
 void amTunePlay(u8 seqID) {
+#ifdef VERSION_kiosk
     if (gBlockMusicChange == FALSE) {
         if (gCanPlayMusic) {
             amTuneStop();
@@ -73,6 +84,17 @@ void amTunePlay(u8 seqID) {
         audioPrevCount = osGetCount();
         gDynamicMusicChannelMask = MUSIC_CHAN_MASK_NONE;
     }
+#else
+    if (gBlockMusicChange == FALSE && seqLen[seqID] <= 0x8000) {
+        if (gCanPlayMusic) {
+            amTuneStop();
+            music_sequence_init(seqID, tuneSeqPlayer);
+        }
+        gMusicTempo = n_alCSPGetTempo(tuneSeqPlayer);
+        audioPrevCount = osGetCount();
+        gDynamicMusicChannelMask = MUSIC_CHAN_MASK_NONE;
+    }
+#endif
 }
 
 /**
@@ -109,6 +131,10 @@ void amTuneSetFade(f32 fade, u8 volume) {
     }
 }
 
+#ifdef VERSION_us
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneSetFadeScaled.s")
+#endif
+
 void amTuneResetFade(void) {
     gTuneFade = 0;
 }
@@ -138,7 +164,7 @@ void amAmbientResetFade(void) {
     gAmbientFade = 0;
 }
 
-void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
+//void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
 void func_80001990(N_ALCSPlayer *arg0, u8 *arg1, ALCSeq *arg2);
 extern ALCSeq *tuneCSeqp;
 extern ALCSeq **tuneCSeqs;
@@ -372,19 +398,21 @@ u8 amSoundIsLooped(u16 soundID) {
     return ((u32) (1 + sfxBankPtr->bankArray[0]->instArray[0]->soundArray[soundID - 1]->envelope->decayTime) == 0);
 }
 
+#ifdef VERSION_kiosk
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/music_sequence_start.s")
+#endif
 
 /**
  * If the sequence player is currently inactive, start a new sequence with the current properties.
  */
-void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
+// void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/music_sequence_init.s")
 
 // Could be an alternate version of the above without the sequence
 void func_80001990(N_ALCSPlayer *arg0, u8 *arg1, ALCSeq *arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001990.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001B88.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/stop_ALSeqp.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneSetReverbOnOff.s")
 

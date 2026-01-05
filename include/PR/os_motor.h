@@ -66,8 +66,10 @@ extern s32 osMotorInit(OSMesgQueue *, OSPfs *, int);
 #if BUILD_VERSION >= VERSION_J
 #define MOTOR_START		1
 #define MOTOR_STOP		0
+#ifndef JFGDIFFS
 #define	osMotorStart(x)		__osMotorAccess((x), MOTOR_START)
 #define	osMotorStop(x)		__osMotorAccess((x), MOTOR_STOP)
+#endif
 extern s32 __osMotorAccess(OSPfs *, s32);
 #else
 extern s32 osMotorStop(OSPfs *);

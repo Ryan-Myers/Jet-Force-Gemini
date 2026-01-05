@@ -50,7 +50,7 @@ s32 osPfsIsPlug(OSMesgQueue* mq, u8* pattern) {
 }
 
 void __osPfsRequestData(u8 cmd) {
-#ifdef RAREDIFFS
+#ifdef VERSION_kiosk
     u8 *ptr;
 #else
     u8* ptr = (u8*)&__osPfsPifRam;
@@ -59,13 +59,13 @@ void __osPfsRequestData(u8 cmd) {
     int i;
 
     __osContLastCmd = cmd;
-#ifdef RAREDIFFS
+#ifdef VERSION_kiosk
     for (i = 0; i < ARRLEN(__osPfsPifRam.ramarray) + 1; i++) {
         __osPfsPifRam.ramarray[i] = 0;
     }
 #endif
     __osPfsPifRam.pifstatus = CONT_CMD_EXE;
-#ifdef RAREDIFFS
+#ifdef VERSION_kiosk
     ptr = (u8 *)&__osPfsPifRam;
 #endif
     requestformat.dummy = CONT_CMD_NOP;

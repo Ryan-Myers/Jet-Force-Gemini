@@ -56,11 +56,13 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/hitanim2Init.s")
 
+#ifdef VERSION_kiosk
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/hitanimsndInit.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/hitanim2sndInit.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/hitanimsndControl.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/muzzleFlashInit.s")
 

@@ -92,6 +92,10 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxInitLines.s")
 
+#ifdef VERSION_us
+#pragma GLOBAL_ASM("asm/nonmatchings/fx/func_8006D110_6DD10.s")
+#endif
+
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxDrawLine.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxDrawLineInWindow.s")
@@ -102,7 +106,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxInttostr.s")
 
+#ifdef VERSION_kiosk
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/ClipPoint.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxDrawLine3D.s")
 

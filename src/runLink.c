@@ -2,12 +2,15 @@
 
 const char D_800ADC90[] = "WARNING: Unimplemented linkage operation %d\n";
 const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";
+#ifdef VERSION_us
+const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
+#endif
 
 typedef struct runlinkModule {
     s32 unk0;
     u8 pad4[25];
 } runlinkModule;
-extern runlinkModule *D_800FF780;
+extern runlinkModule *overlayTable;
 
 #if 0
 extern u32 D_1B94430[], D_1B96910[]; // Linker symbols for the start of two lookup tables.
@@ -90,7 +93,7 @@ void *func_800534B4(s32 arg0, s32 arg1, UnkRunLink800534B4 *arg2, func_800534B4_
             var_t1 = (u32)&D_800B16B0 - (u32)&amSetMuteMode;
             break;
         }
-        temp_a0 = (s32 *)(((D_800FF780[0].unk0) + (var_v1_2 << 5)));
+        temp_a0 = (s32 *)(((overlayTable[0].unk0) + (var_v1_2 << 5)));
         if (temp_a0 == 0) {
             temp_t4 = arg2->unk7_0;
             if ((temp_t4 == 4) || (temp_t4 == 2)) {
@@ -100,13 +103,13 @@ void *func_800534B4(s32 arg0, s32 arg1, UnkRunLink800534B4 *arg2, func_800534B4_
         }
         return temp_a0 + (temp_t0 & 0xFFFFF) + var_t1;
     case 1:
-        var_v1 = (s32 *)((D_800FF780[arg1].unk0) + arg2->unk0);
+        var_v1 = (s32 *)((overlayTable[arg1].unk0) + arg2->unk0);
         if ((arg2->unk7_0) == 2) {
             var_v1 += arg3->unk0_0;
         }
         return var_v1;
     case 2:
-        return (s32 *)((D_800FF780[arg1].unk0) + ((arg3->unk0_6)));
+        return (s32 *)((overlayTable[arg1].unk0) + ((arg3->unk0_6)));
     default:
         return NULL;
     }
@@ -163,7 +166,7 @@ void func_80053640(Unk80053640_arg0 *arg0, u32 arg1, u8 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkEnsureJumpIsValid.s")
 
 s32 runlinkIsModuleLoaded(s32 module) {
-    return D_800FF780[module].unk0;
+    return overlayTable[module].unk0;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_80053FC8.s")
@@ -196,7 +199,7 @@ typedef struct LowMemoryStruct {
     };
 } LowMemoryStruct;
 
-extern s32 D_800FF78C;
+extern s32 overlayCount;
 extern LowMemoryStruct *D_800FF838;
 
 void runlinkLowMemoryPanic(void) {
@@ -204,7 +207,7 @@ void runlinkLowMemoryPanic(void) {
     u32 temp_v0;
     LowMemoryStruct *temp_s0;
 
-    var_s1 = D_800FF78C;
+    var_s1 = overlayCount;
     while (var_s1--) {
         temp_s0 = &D_800FF838[var_s1];
         temp_v0 = temp_s0->unk0;

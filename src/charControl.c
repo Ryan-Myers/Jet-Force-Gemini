@@ -3,7 +3,9 @@
 const char D_800AC5E0[] = "charAnimSoundTick: Illegal soundtype\n";
 const char D_800AC608[] = "The maximum number of camera objects has been exceeded.\n";
 const char D_800AC644[] = "Cannot delete camera object, it is not in list.\n";
+#ifdef VERSION_kiosk
 const char D_800AC678[] = "grenade\n";
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/charSpeak.s")
 
@@ -48,6 +50,7 @@ void func_8002C070(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_8002F45C.s")
 
+// func_setting_floyd_height
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_8002F518.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/sidekickInit.s")
@@ -151,10 +154,15 @@ void controlReadJoypad(s32 player) {
     }
 }
 
+#ifdef VERSION_us
+#pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlSetRumble.s")
+#endif
+
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlGetMaxCharge.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_80037380.s")
 
+// can_fire_weapon
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_80037428.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlUpdateWeapon.s")
@@ -167,30 +175,42 @@ void controlReadJoypad(s32 player) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlFireDummyShot.s")
 
+// shooting_func
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_80038488.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlFreePlayersStuff.s")
 
+// shoot_plasmashot
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_80038D54.s")
 
+// shoot_default
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_80038E70.s")
 
+// shoot_TriRocket
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_800390E0.s")
 
+// shoot_HomingMissle
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_8003931C.s")
 
+// shoot_Shocker
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_800394A4.s")
 
+// shoot_FishFood
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_800395B8.s")
 
+// shoot_Grenades
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_800396F0.s")
 
+// shoot_shuriken
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_80039810.s")
 
+// shoot_Mines
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_80039970.s")
 
+// shoot_Flares
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_80039AE0.s")
 
+// shoot_clusterBombs
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/func_80039CA4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlUpdatePlayerAim.s")
