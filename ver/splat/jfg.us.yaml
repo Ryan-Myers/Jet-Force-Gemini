@@ -454,7 +454,7 @@ segments:
       - { type: bss, vram: 0x80104560, name: subtitles }
       - { type: bss, vram: 0x801045B0, name: anim }
       - { type: bss, vram: 0x801047E0, name: hit }
-      - { type: bss, vram: 0x80104E50, name: fmvInit }
+      - { type: .bss, vram: 0x80104E50, name: fmvInit }
       - { type: .bss, vram: 0x80104EA0, name: ../libultra/src/flash/flashinit }
       - { type: bss, vram: 0x80104F60, name: gsSnd }
       - { type: bss, vram: 0x80104FD0, name: libultra/n_csplayer }
