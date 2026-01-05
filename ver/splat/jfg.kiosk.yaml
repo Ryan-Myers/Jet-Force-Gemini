@@ -119,6 +119,8 @@ segments:
       - [0x87610, c, libultra/n_csplayer]
       - [0x8A800, c, libultra/n_seqplayer]
       - [0x8B960, c, libultra/n_synremoveplayer]
+      - [0x8BA30, c, libultra/n_synaddplayer]
+      - [0x8BB80, c, libultra/n_cspsetchlvol]
       - [0x8BBF0, c, libultra/n_cspsettempo]
       - [0x8BC80, c, libultra/n_cspsetpan]
       - [0x8BCF0, c, libultra/n_cseq]

@@ -116,7 +116,7 @@ segments:
       - [0x871A0, c, libultra/n_cspsetvol]
       - [0x871F0, c, libultra/n_cspgettempo]
       - [0x87240, c, libultra/n_csplayer]
-      - [0x8A460, c, libultra/n_synremoveplayer]
+      - [0x8A460, c, libultra/n_cspsetchlvol]
       - [0x8A4D0, c, libultra/n_cspsettempo]
       - [0x8A560, c, libultra/n_cspsetpan]
       - [0x8A5D0, c, libultra/n_cspgetstate]
@@ -132,6 +132,7 @@ segments:
       - [0x8BE00, c, libultra/cents2ratio]
       - [0x8BEA0, c, libultra/alsurround] # This may be a custom Rare file.
       - [0x8C0B0, c, libultra/n_event]
+      - [0x8C710, c, libultra/n_synaddplayer]
       - [0x8C860, c, libultra/n_synallocvoice]
       - [0x8CB70, c, libultra/n_synsetvol]
       - [0x8CC40, c, libultra/n_synstartvoiceparam]

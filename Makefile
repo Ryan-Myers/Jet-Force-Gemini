@@ -376,6 +376,12 @@ no_verify: $(TARGET).z64
 
 extract:
 	$(SPLAT) ver/splat/$(BASENAME).$(VERSION).yaml
+# Add these files to certain versions to have an empy file for the pragmas
+ifeq ($(VERSION),kiosk)
+	mkdir -p asm/nonmatchings/libultra/n_cspgetstate
+	touch asm/nonmatchings/libultra/n_cspgetstate/n_alCSPGetState.s
+	touch asm/nonmatchings/libultra/n_cspgetstate/func_800899D8_8A5D8.s
+endif
 
 extractall:
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).kiosk.yaml
