@@ -68,6 +68,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/severedLimbInit.s")
 
+//CollectedDroneHead is in here, seemingly when the mainSaveGlobalFlags calls are made
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/severedLimbControl.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/spranim/severedLimbDestroy.s")

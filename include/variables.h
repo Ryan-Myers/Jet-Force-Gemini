@@ -10,9 +10,9 @@ extern ALBankFile *sfxBankPtr;
 
 //spranim.c
 extern s32 disablejoy;
-extern s32 D_800F7868;
-extern s32 D_800F7874;
-extern s32 D_800F7878;
+extern s32 controlReleasedKeys;
+extern s32 controlAbsXjoy;
+extern s32 controlAbsYjoy;
 extern s32 controlDkeys;
 extern s32 controlKeys;
 extern s32 controlXjoy;

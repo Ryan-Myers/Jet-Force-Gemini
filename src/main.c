@@ -210,6 +210,7 @@ void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800456F8.s")
 
+// PauseGame happens here, right when the rumblekill is called
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800457F4.s")
 
 #ifdef VERSION_us

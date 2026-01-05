@@ -135,22 +135,22 @@ void controlDisableJoypad(s32 arg0) {
 }
 
 void controlReadJoypad(s32 player) {
-    if ((player >= 0) && (player < MAXCONTROLLERS) && (disablejoy == 0)) {
+    if (player >= 0 && player < MAXCONTROLLERS && !disablejoy) {
         controlXjoy = joyGetStickX(player);
-        D_800F7874 = joyGetAbsX(player);
+        controlAbsXjoy = joyGetAbsX(player);
         controlYjoy = joyGetStickY(player);
-        D_800F7878 = joyGetAbsY(player);
+        controlAbsYjoy = joyGetAbsY(player);
         controlKeys = joyGetButtons(player);
         controlDkeys = joyGetPressed(player);
-        D_800F7868 = joyGetReleased(player);
+        controlReleasedKeys = joyGetReleased(player);
     } else {
         controlXjoy = 0;
-        D_800F7874 = 0;
+        controlAbsXjoy = 0;
         controlYjoy = 0;
-        D_800F7878 = 0;
+        controlAbsYjoy = 0;
         controlKeys = 0;
         controlDkeys = 0;
-        D_800F7868 = 0;
+        controlReleasedKeys = 0;
     }
 }
 
