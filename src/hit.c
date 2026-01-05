@@ -1,6 +1,8 @@
 #include "common.h"
 
+#ifdef VERSION_kiosk
 const char D_800AFDB0[] = "fragment killed squaddie\n";
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/hit/hitInit.s")
 

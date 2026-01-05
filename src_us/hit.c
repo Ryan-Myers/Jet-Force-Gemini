@@ -1,5 +1,9 @@
 #include "common.h"
 
+#ifdef VERSION_kiosk
+const char D_800AFDB0[] = "fragment killed squaddie\n";
+#endif
+
 #pragma GLOBAL_ASM("asm_us/nonmatchings/hit/hitInit.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/hit/hitReset.s")
@@ -8,9 +12,9 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/hit/hitInitObjectHit.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007A018_7AC18.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007A638.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007A324_7AF24.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007A944.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/hit/hitUpdate.s")
 
@@ -22,15 +26,15 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/hit/hitVectorCheck.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007CCF0_7D8F0.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007D1E8.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007CF28_7DB28.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007D420.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007D0B4_7DCB4.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007D5AC.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007D168_7DD68.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007D660.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007DE98_7EA98.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007E2F0.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/hit/hitPlayer.s")
 
@@ -42,9 +46,9 @@
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/hit/hitModelsTick.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007E5EC_7F1EC.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007EA44.s")
 
-#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007E794_7F394.s")
+#pragma GLOBAL_ASM("asm_us/nonmatchings/hit/func_8007EBEC.s")
 
 #pragma GLOBAL_ASM("asm_us/nonmatchings/hit/hitTransformBox.s")
 
