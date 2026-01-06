@@ -6,15 +6,99 @@ const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";
 const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
 #endif
 
-typedef struct runlinkModule {
-    s32 unk0;
-    u8 pad4[25];
-} runlinkModule;
-extern runlinkModule *overlayTable;
+
+/**
+ * Overlays work by having functions that call the overlay actually load TrapDanglingJump
+ * That function then uses the overlayRomTable to figure out which overlay to load
+ * and where the function is within that overlay. It then uses runlink to load the overlay
+ * into memory if it is not already loaded, and then jumps to the function within that overlay.
+ * 
+ * When a function calls TrapDanglingJump, the return address is shifted back by 8 bytes 
+ * to point to the exact VRAM address of the instruction that called the function.
+ * That function address is used to lookup in mainRelocTable and see if it can find that address.
+ * If it finds it, it then loads the index value next to it, which is an index into overlayRomTable.
+ * When it finds the entry in overlayRomTable, it reads the overlay number and function offset
+ * within that overlay. It then calls runlink to load that overlay if it is not already loaded,
+ * and then jumps to the function offset within that overlay.
+ */
+
+
+ /**
+  * Complete Analysis: How rcpWaitDP Uses TrapDanglingJump
+  * 
+  * At VRAM address 0x8004DD50, rcpWaitDP has a jal TrapDanglingJump instruction.
+  * TrapDanglingJump has the ra register set to ra = 0x8004DD58
+  * It then stores the address of the calling jal to t5 with: t5 = ra - 8 = 0x8004DD50
+  * Then is substracted by the base address the start of the text segment: 0x8004DD50 - 0x80000450 = 0x4D900
+  * 
+  * Searches assets/mainRelocTable.bin for an entry matching 0x4D900, which it finds at: offset 0xD00
+  * The index value next to it is 0x69E (1684)
+  * That index is then used to lookup in assets/overlayRomTable.bin which is 4 bytes per entry.
+  * So it reads the entry at offset 0x69E * 4 = 0x1A78 and finds 0x00315E34
+  * 
+  * ______________________________________________
+  * |Field              | Value                   |
+  * |_____________________________________________|
+  * |Overlay entry      | 0x00315E34              |
+  * |Overlay number	    | 3 (bits 31-20: 0x003)   |
+  * |Function offset	| 0x15E34 (bits 19-0)     |
+  * |_____________________________________________|
+  * 
+  * So according to our symbols, overlay 3 at function offset 0x15E34 is BindRegionsToObjects
+  * 
+  * It triggers the dynamic linker to load overlay 3 (if not already loaded)
+  * The actual function called is BindRegionsToObjects at offset 0x15E34 within that overlay
+  */
+
+typedef struct RelocTableEntry {
+    /* 0x00 */ u32 functionAddress; // This is the address of the calling function less 0x80000450 (0x8004DD50 - 0x80000450 = 0x4D900)
+    /* 0x04 */ u32 overlayIndex;    // This is an index into overlayRomTable
+} RelocTableEntry;
+extern RelocTableEntry D_1ECF220[]; // mainRelocTable
+extern RelocTableEntry mainRelocTable[]; // mainRelocTable
+
+typedef struct RomTableEntry {
+    union {
+        u32 bytes;
+        struct {
+            u32 FunctionOffset : 20;
+            u32 OverlayNumber : 12;
+        };
+    } entry;
+} RomTableEntry;
+
+extern RomTableEntry *overlayRomTable;
+extern RomTableEntry D_1ED0270[]; // overlayRomTable
+
+typedef struct OverlayHeader {
+    /* 0x00 */ s32 VramBase; // (0 if not loaded, set after alloc)
+    /* 0x04 */ s32 RomAddress;
+    /* 0x08 */ s32 TextSize;
+    /* 0x0C */ s32 DataSize;
+    /* 0x10 */ s32 RodataSize;
+    /* 0x14 */ u16 RelocationTableSize;
+    /* 0x16 */ u16 SecondaryRelocationTableSize; // ?
+    /* 0x18 */ s32 InitFunction; // -1 if none
+    /* 0x1C */ u8 reserved[4];
+} OverlayHeader;
+extern OverlayHeader D_1ED2780[]; // overlayTable
+extern OverlayHeader *overlayTable; // overlayTable
+
+
+extern s32 mainRelocCount;
+extern s32 overlayCount;
+extern void amSetMuteMode(s32 behaviour); // 0x80000450 Start of .text
+extern void *tuneSeqPlayer; // 0x800A0660 Start of .data
+
+// typedef struct runlinkModule {
+//     s32 unk0;
+//     u8 pad4[25];
+// } runlinkModule;
+// extern runlinkModule *overlayTable;
 
 #if 0
 extern u32 D_1B94430[], D_1B96910[]; // Linker symbols for the start of two lookup tables.
-// D_1B94430 is a 4 byte value used as an offset in the list symbols for the start 
+// D_1B94430 is a 4 byte value used as an offset in the list symbols for overlayRomTable the start 
 // D_1B96910 is just a list of symbol names as ascii strings with null byte seperators
 
 char *GetSymbolName(u32 arg0) {
@@ -58,60 +142,57 @@ typedef struct func_800534B4_arg3 {
     s32 unk0_0 : 6;
 } func_800534B4_arg3;
 
-extern s32 *D_800B16B0;
+extern s32 *gMusicSequenceData;
 extern s32 *D_800FF788;
 extern u32 *D_800FF7B4;
-extern void amSetMuteMode(void); // Start of functions Address
-extern s32 tuneSeqPlayer; // Start of Data Address
-
-void *func_800534B4(s32 arg0, s32 arg1, UnkRunLink800534B4 *arg2, func_800534B4_arg3 *arg3) {
-    s32 *var_v1;
-    s32 *temp_a0;
+//s32 (*func_800534B4(s32 arg0, s32 arg1, UnkRunLink800534B4 *arg2, s32 *arg3))() {
+void *func_800534B4(s32 arg0, s32 arg1, UnkRunLink800534B4 *arg2, s32 *arg3) {
+    s32 (*var_v1)();
+    s32 temp_a0;
     s32 temp_t8;
     s32 var_t1;
     u32 temp_t0;
     u32 temp_t4;
-    u32 var_v1_2;
+    u32 overlayNumber;
 
-    temp_t8 = arg2->unk4_24;
+    overlayNumber = overlayRomTable[arg0].entry.OverlayNumber >> 20;
+    temp_t8 = arg2->unk4_0 & 0xF;
     var_t1 = 0;
-    temp_t0 = &D_800FF788[arg0];//*((arg0 * 4) + D_800FF788);
-    var_v1_2 = temp_t0 >> 20;
-    switch (temp_t8) {                              /* irregular */
-    case 0:
-        switch (var_v1_2) {                         /* switch 1; irregular */
-        case 0xFFD:                                 /* switch 1 */
-            var_v1_2 = 0;
-            var_t1 = (u32)&tuneSeqPlayer - (u32)&amSetMuteMode;
-            break;
-        case 0xFFE:                                 /* switch 1 */
-            var_v1_2 = 0;
-            var_t1 = (u32)&tuneSeqPlayer - (u32)&amSetMuteMode;
-            break;
-        case 0xFFF:                                 /* switch 1 */
-            var_v1_2 = 0;
-            var_t1 = (u32)&D_800B16B0 - (u32)&amSetMuteMode;
-            break;
-        }
-        temp_a0 = (s32 *)(((overlayTable[0].unk0) + (var_v1_2 << 5)));
-        if (temp_a0 == 0) {
-            temp_t4 = arg2->unk7_0;
-            if ((temp_t4 == 4) || (temp_t4 == 2)) {
-                return &TrapDanglingJump;
+    switch (temp_t8) {
+        case 0:
+            switch (overlayNumber) {
+                case 0xFFD: // Data section (tuneSeqPlayer base)
+                    overlayNumber = 0;
+                    var_t1 = (u32)&tuneSeqPlayer - (u32)&amSetMuteMode;
+                    break;
+                case 0xFFE: // Data section (tuneSeqPlayer base)
+                    overlayNumber = 0;
+                    var_t1 = (u32)&tuneSeqPlayer - (u32)&amSetMuteMode;
+                    break;
+                case 0xFFF: //BSS section (gMusicSequenceData base)
+                    overlayNumber = 0;
+                    var_t1 = (u32)&gMusicSequenceData - (u32)&amSetMuteMode;
+                    break;
             }
-            return &D_800FF7B4;
-        }
-        return temp_a0 + (temp_t0 & 0xFFFFF) + var_t1;
-    case 1:
-        var_v1 = (s32 *)((overlayTable[arg1].unk0) + arg2->unk0);
-        if ((arg2->unk7_0) == 2) {
-            var_v1 += arg3->unk0_0;
-        }
-        return var_v1;
-    case 2:
-        return (s32 *)((overlayTable[arg1].unk0) + ((arg3->unk0_6)));
-    default:
-        return NULL;
+            temp_a0 = overlayTable[overlayNumber].VramBase;
+            if (temp_a0 == 0) {
+                temp_t4 = arg2->unk7_0 >> 4;
+                if ((temp_t4 == 4) || (temp_t4 == 2)) {
+                    return &TrapDanglingJump;
+                }
+                return &D_800FF7B4;
+            }
+            return 0;//temp_a0 + (temp_t0 & 0xFFFFF) + var_t1;
+        case 1:
+            // var_v1 = overlayTable[arg1].VramBase + arg2->unk0;
+            // if ((arg2->unk7_0) == 2) {
+            //     var_v1 += *arg3;
+            // }
+            // return var_v1;
+        case 2:
+            return (s32 *)((overlayTable[arg1].VramBase) + ((*arg3 & 0x03FFFFFF)));
+        default:
+            return NULL;
     }
 }
 #else
@@ -166,7 +247,7 @@ void func_80053640(Unk80053640_arg0 *arg0, u32 arg1, u8 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkEnsureJumpIsValid.s")
 
 s32 runlinkIsModuleLoaded(s32 module) {
-    return overlayTable[module].unk0;
+    return overlayTable[module].VramBase;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_80053FC8.s")
