@@ -61,8 +61,8 @@ typedef struct RomTableEntry {
     union {
         u32 bytes;
         struct {
-            u32 FunctionOffset : 20;
             u32 OverlayNumber : 12;
+            u32 FunctionOffset : 20;
         };
     } entry;
 } RomTableEntry;
@@ -89,6 +89,7 @@ extern s32 mainRelocCount;
 extern s32 overlayCount;
 extern void amSetMuteMode(s32 behaviour); // 0x80000450 Start of .text
 extern void *tuneSeqPlayer; // 0x800A0660 Start of .data
+extern u32 *D_800FF7B4;
 
 // typedef struct runlinkModule {
 //     s32 unk0;
@@ -117,16 +118,10 @@ char *GetSymbolName(u32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/GetSymbolName.s")
 #endif
 
-#if 0
-
 typedef struct UnkRunLink800534B4 {
     s32 unk0;
     union {
-        struct  {
-            s32 unk4_0 : 4;
-            s32 unk4_6 : 22;
-            s32 unk4_24 : 4;
-        };
+        s32 unk4_s32;
         struct {            
             u8 unk4;
             u8 unk5;
@@ -137,67 +132,61 @@ typedef struct UnkRunLink800534B4 {
     };
 } UnkRunLink800534B4;
 
-typedef struct func_800534B4_arg3 {
-    s32 unk0_6 : 26;
-    s32 unk0_0 : 6;
-} func_800534B4_arg3;
+extern s32 *__BSS_SECTION_START;
+extern s32 *__DATA_SECTION_START;
+extern s32 *__CODE_SECTION_START;
 
-extern s32 *gMusicSequenceData;
-extern s32 *D_800FF788;
-extern u32 *D_800FF7B4;
-//s32 (*func_800534B4(s32 arg0, s32 arg1, UnkRunLink800534B4 *arg2, s32 *arg3))() {
 void *func_800534B4(s32 arg0, s32 arg1, UnkRunLink800534B4 *arg2, s32 *arg3) {
-    s32 (*var_v1)();
+    s32 var_v1;
     s32 temp_a0;
     s32 temp_t8;
     s32 var_t1;
     u32 temp_t0;
     u32 temp_t4;
     u32 overlayNumber;
+    RomTableEntry *romTableEntry = &overlayRomTable[arg0];
+    OverlayHeader *overlay;
 
-    overlayNumber = overlayRomTable[arg0].entry.OverlayNumber >> 20;
-    temp_t8 = arg2->unk4_0 & 0xF;
+    overlayNumber = romTableEntry->entry.OverlayNumber;
     var_t1 = 0;
-    switch (temp_t8) {
+    switch (arg2->unk4_s32 & 0xF) {
         case 0:
             switch (overlayNumber) {
-                case 0xFFD: // Data section (tuneSeqPlayer base)
+                case 0xFFD: // Data section
                     overlayNumber = 0;
-                    var_t1 = (u32)&tuneSeqPlayer - (u32)&amSetMuteMode;
+                    var_t1 = (u32) &__DATA_SECTION_START - (u32) &__CODE_SECTION_START;
                     break;
-                case 0xFFE: // Data section (tuneSeqPlayer base)
+                case 0xFFE: // Data section
                     overlayNumber = 0;
-                    var_t1 = (u32)&tuneSeqPlayer - (u32)&amSetMuteMode;
+                    var_t1 = (u32) &__DATA_SECTION_START - (u32) &__CODE_SECTION_START;
                     break;
-                case 0xFFF: //BSS section (gMusicSequenceData base)
+                case 0xFFF: //BSS section
                     overlayNumber = 0;
-                    var_t1 = (u32)&gMusicSequenceData - (u32)&amSetMuteMode;
+                    var_t1 = (u32) &__BSS_SECTION_START - (u32) &__CODE_SECTION_START;
                     break;
             }
             temp_a0 = overlayTable[overlayNumber].VramBase;
             if (temp_a0 == 0) {
-                temp_t4 = arg2->unk7_0 >> 4;
+                temp_t4 = arg2->unk7_0;
                 if ((temp_t4 == 4) || (temp_t4 == 2)) {
                     return &TrapDanglingJump;
                 }
                 return &D_800FF7B4;
             }
-            return 0;//temp_a0 + (temp_t0 & 0xFFFFF) + var_t1;
+            return temp_a0 + (romTableEntry->entry.FunctionOffset) + var_t1;
         case 1:
-            // var_v1 = overlayTable[arg1].VramBase + arg2->unk0;
-            // if ((arg2->unk7_0) == 2) {
-            //     var_v1 += *arg3;
-            // }
-            // return var_v1;
+            var_v1 = overlayTable[arg1].VramBase + arg2->unk0;
+            if ((arg2->unk7_0) == 2) {
+                var_v1 += *arg3;
+            }
+            return var_v1;
         case 2:
-            return (s32 *)((overlayTable[arg1].VramBase) + ((*arg3 & 0x03FFFFFF)));
+            temp_t8 = ((*arg3 & 0x03FFFFFF) << 2) + overlayTable[arg1].VramBase;
+            return temp_t8;
         default:
             return NULL;
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_800534B4.s")
-#endif
 
 #if 0
 typedef struct Unk80053640_arg0 {
