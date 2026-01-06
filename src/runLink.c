@@ -254,7 +254,7 @@ void PatchInstruction(MipsInstruction *instr, u32 address, u8 relocType) {
     osInvalICache(instr, sizeof(MipsInstruction));
 }
 
-#if 1
+#ifdef NON_EQUIVALENT
 
 typedef struct RelocationBase {
     u8 pad0[8];
@@ -262,61 +262,63 @@ typedef struct RelocationBase {
 } RelocationBase;
 
 // Relocation section base addresses (set by runlinkDownloadCode when loading an overlay)
-extern MipsInstruction *gRelocTextBase;  // Base address of overlay's .text section being relocated
-extern MipsInstruction *gRelocDataBase;  // Base address for type-3 relocations (alternate section)
+extern u8 *gRelocTextBase;  // Base address of overlay's .text section being relocated
+extern u8 *gRelocDataBase;  // Base address for type-3 relocations (alternate section)
 
 s32 func_800536F8(RelocationEntry *relocEntry, s32 otIndex) {
-    u32 temp_v0_2;
-    u16 var_v1;
-    u32 resolvedRelocAddress;
+    u32 combinedAddr;
+    s32 loImmediate;
+    u32 resolvedAddr;
     s32 overlayNumber;
-    u32 temp_v1;
-    u32 var_v0_2;
     MipsInstruction *nextPatchLocation;
     MipsInstruction *patchLocation;
+    s32 flagsLo;
+    s32 flagsHi;
 
+    flagsLo = relocEntry->flagsLo;
+    flagsHi = relocEntry->flagsHi;
     if (relocEntry->relocType == 3) {
         relocEntry->flags &= 0xFFF0;
-        patchLocation = &gRelocDataBase[relocEntry->targetOffset];
+        patchLocation = (MipsInstruction *) &gRelocDataBase[relocEntry->targetOffset];
     } else {
-        patchLocation = &gRelocTextBase[relocEntry->targetOffset];
+        patchLocation = (MipsInstruction *) &gRelocTextBase[relocEntry->targetOffset];
     }
-    resolvedRelocAddress = ResolveRelocAddress(relocEntry->symbolIndex, otIndex, relocEntry, patchLocation);
-    if (relocEntry->flagsHi == 5) {
+    resolvedAddr = ResolveRelocAddress(relocEntry->symbolIndex, otIndex, relocEntry, patchLocation);
+    if (flagsHi == 5) {
         overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
         if (overlayNumber >= 0xFFC) {
             overlayNumber = 0;
         }
-        if (!(relocEntry->flagsLo) && (overlayTable[overlayNumber].VramBase == 0)) {
-            resolvedRelocAddress = &gUnresolvedSymbolAddr;
+        if (relocEntry->relocType == 0 && (overlayTable[overlayNumber].VramBase == 0)) {
+            resolvedAddr = (u32) &gUnresolvedSymbolAddr;
         }
-        nextPatchLocation = &gRelocTextBase[relocEntry[1].targetOffset];
-        var_v1 = nextPatchLocation->itype.upper;
-        if (var_v1 & 0x8000) {
-            var_v1 |= 0xFFFF0000;
+        nextPatchLocation = (MipsInstruction *) &gRelocTextBase[relocEntry[1].targetOffset];
+        loImmediate = nextPatchLocation->itype.upper;
+        if (loImmediate & 0x8000) {
+            loImmediate |= 0xFFFF0000;
         }
-        temp_v0_2 = (patchLocation->itype.upper << 16) + var_v1;
-        if (temp_v0_2 != (u32) &gUnresolvedSymbolAddr) {
-            resolvedRelocAddress += temp_v0_2;
+        combinedAddr = (patchLocation->itype.upper << 16) + loImmediate;
+        if (combinedAddr != (u32) &gUnresolvedSymbolAddr) {
+            resolvedAddr += combinedAddr;
         }
-        PatchInstruction(patchLocation, resolvedRelocAddress, 5);
-        PatchInstruction(nextPatchLocation, resolvedRelocAddress, 6);
-        relocEntry->flags = (relocEntry->relocType) | (relocEntry->flags & 0xFFF0);
+        PatchInstruction(patchLocation, resolvedAddr, 5);
+        PatchInstruction(nextPatchLocation, resolvedAddr, 6);
+        relocEntry->flags = (flagsLo & 0xF) | (relocEntry->flags & 0xFFF0);
         return 2;
     }
-    if (relocEntry->flagsHi == 6) {
+    if (flagsHi == 6) {
         overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
         if (overlayNumber >= 0xFFC) {
             overlayNumber = 0;
         }
-        if (!(relocEntry->flagsLo) && (overlayTable[overlayNumber].VramBase == 0)) {
-            resolvedRelocAddress = (u32) &gUnresolvedSymbolAddr;
+        if (relocEntry->relocType == 0 && (overlayTable[overlayNumber].VramBase == 0)) {
+            resolvedAddr = (u32) &gUnresolvedSymbolAddr;
         }
-        PatchInstruction(patchLocation, resolvedRelocAddress + patchLocation->itype.upper, 6);
-        relocEntry->flags = (relocEntry->relocType) | (relocEntry->flags & 0xFFF0);
+        PatchInstruction(patchLocation, resolvedAddr + patchLocation->itype.upper, 6);
+        relocEntry->flags = (flagsLo & 0xF) | (relocEntry->flags & 0xFFF0);
     } else {
-        PatchInstruction(patchLocation, resolvedRelocAddress, relocEntry->flagsHi);
-        relocEntry->flags = (relocEntry->relocType) | (relocEntry->flags & 0xFFF0);
+        PatchInstruction(patchLocation, resolvedAddr, flagsHi);
+        relocEntry->flags = (flagsLo & 0xF) | (relocEntry->flags & 0xFFF0);
     }
     return 1;
 }
