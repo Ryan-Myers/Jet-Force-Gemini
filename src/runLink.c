@@ -150,7 +150,7 @@ extern void *__BSS_SECTION_START;
 extern void *__DATA_SECTION_START;
 extern void *__CODE_SECTION_START;
 
-void *func_800534B4(s32 ortIndex, s32 otIndex, RelocationEntry *arg2, s32 *arg3) {
+void *func_800534B4(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry, u32 *patchLocation) {
     s32 var_v1;
     s32 addressBase;
     s32 addressOffset;
@@ -160,7 +160,7 @@ void *func_800534B4(s32 ortIndex, s32 otIndex, RelocationEntry *arg2, s32 *arg3)
     romTableEntry = &overlayRomTable[ortIndex];
     overlayNumber = romTableEntry->entry.OverlayNumber;
     addressOffset = 0;
-    switch (arg2->info & 0xF) { // Extract relocType from low 4 bits
+    switch (relocEntry->info & 0xF) { // Extract relocType from low 4 bits
         case 0: // R_MIPS_32: Absolute symbol reference
             switch (overlayNumber) {
                 case 0xFFD: // Data section
@@ -179,20 +179,20 @@ void *func_800534B4(s32 ortIndex, s32 otIndex, RelocationEntry *arg2, s32 *arg3)
             addressBase = overlayTable[overlayNumber].VramBase;
             if (addressBase == 0) {
                 // Overlay not loaded - check if caller wants stub or trap
-                if (arg2->flagsLo == 4 || arg2->flagsLo == 2) {
+                if (relocEntry->flagsLo == 4 || relocEntry->flagsLo == 2) {
                     return &TrapDanglingJump;
                 }
                 return &D_800FF7B4;
             }
             return addressBase + (romTableEntry->entry.FunctionOffset) + addressOffset;
         case 1: // Local offset relocation (relative to section base)
-            var_v1 = overlayTable[otIndex].VramBase + arg2->symbolIndex;
-            if (arg2->flagsLo == 2) {
-                var_v1 += *arg3;
+            var_v1 = overlayTable[otIndex].VramBase + relocEntry->symbolIndex;
+            if (relocEntry->flagsLo == 2) {
+                var_v1 += *patchLocation;
             }
             return var_v1;
         case 2: // R_MIPS_26: Jump target relocation
-            return ((*arg3 & 0x03FFFFFF) << 2) + overlayTable[otIndex].VramBase;
+            return ((*patchLocation & 0x03FFFFFF) << 2) + overlayTable[otIndex].VramBase;
         default:
             return NULL;
     }
