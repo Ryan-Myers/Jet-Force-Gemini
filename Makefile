@@ -222,81 +222,61 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/flash/%.c.o: MIPSISET := -mips1
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/gu/sinf.c.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/gu/sinf.c.o: MIPSISET := -mips2
 
+# IO Files for kiosk version
+ifeq ($(VERSION),kiosk)
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: MIPSISET := -mips1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: MIPSISET := -mips1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/cartrominit.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/cartrominit.c.o: MIPSISET := -mips2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/piacs.c.o: MIPSISET := -mips2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: MIPSISET := -mips2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pigetcmdq.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pidma.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pirawdma.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/cartrominit.c.o: OPT_FLAGS := -O2 -g3
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/devmgr.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epiwrite.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epiread.c.o: OPT_FLAGS := -O2 -g3
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epidma.c.o: OPT_FLAGS := -O2 -g3
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epilinkhandle.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawread.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawwrite.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawdma.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/piacs.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/cartrominit.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/cartrominit.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawwrite.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawread.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawdma.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawdma.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawread.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawread.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawwrite.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epirawwrite.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epiread.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/epiwrite.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: MIPSISET := -mips1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: OPT_FLAGS := -O2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/piacs.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/piacs.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pidma.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pigetcmdq.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: MIPSISET := -mips1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: OPT_FLAGS := -O2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pirawdma.c.o: OPT_FLAGS := -O2 -g3
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: OPT_FLAGS := -O2
+endif
 
+# IO Files for US version
 ifeq ($(VERSION),us)
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=7
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/%.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: MIPSISET := -mips2
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/motor.c.o: OPT_FLAGS := -O2 -g3
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/leointerrupt.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aisetfreq.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aisetfreq.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aisetnextbuf.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aisetnextbuf.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/aigetlen.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/controller.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/contreaddata.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/spsetstat.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/dpsetstat.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pfsdeletefile.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pfsdeletefile.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vimgr.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/visetmode.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/viblack.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/visetevent.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sptask.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sptaskyielded.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vigetcurrframebuf.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vigetnextframebuf.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/dpsetnextbuf.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sptaskyield.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/visetspecial.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/viswapbuf.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/siacs.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sirawdma.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sirawdma.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/crc.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/crc.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vi.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/ai.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sirawread.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sirawwrite.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/vigetcurrcontext.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/viswapcontext.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/viswapcontext.c.o: LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/spsetpc.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sprawdma.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/sp.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/dp.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/spgetstat.c.o: OPT_FLAGS := -O1
-$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/si.c.o: OPT_FLAGS := -O1
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/pimgr.c.o: MIPSISET := -mips1
+
+# Files to be compiled with -O1
+IO_OPT_O1_FILES := ai.c.o aigetlen.c.o aisetfreq.c.o aisetnextbuf.c.o \
+				contreaddata.c.o controller.c.o crc.c.o dp.c.o dpsetnextbuf.c.o dpsetstat.c.o \
+				leointerrupt.c.o pfsdeletefile.c.o sirawdma.c.o sirawread.c.o sirawwrite.c.o si.c.o siacs.c.o \
+				sp.c.o spgetstat.c.o sprawdma.c.o spsetpc.c.o spsetstat.c.o sptask.c.o sptaskyield.c.o \
+				sptaskyielded.c.o vi.c.o viblack.c.o vigetcurrcontext.c.o vigetcurrframebuf.c.o \
+				vigetnextframebuf.c.o visetevent.c.o visetmode.c.o visetspecial.c.o viswapbuf.c.o viswapcontext.c.o 
+$(addprefix $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/,$(IO_OPT_O1_FILES)): OPT_FLAGS := -O1
+
+# Files to be compiled just with -O2 and not -g3
+IO_OPT_O2_FILES := pimgr.c.o vimgr.c.o
+$(addprefix $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/,$(IO_OPT_O2_FILES)): OPT_FLAGS := -O2
+
+# Files that are matching libultra version 6 diffs
+IO_BUILD_VERSION_6_FILES := $(IO_OPT_O1_FILES) $(IO_OPT_O2_FILES)
+$(addprefix $(BUILD_DIR)/$(LIBULTRA_DIR)/src/io/,$(IO_BUILD_VERSION_6_FILES)): LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6
+
 endif
 
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/%.c.o: MIPSISET := -mips2
@@ -338,10 +318,9 @@ $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: MIPSISET := -mips2
 
-$(BUILD_DIR)/$(SRC_DIR)/hasm/ido/trapDanglingJump.s.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(SRC_DIR)/hasm/ido/trapDanglingJump.s.o: MIPSISET := -mips3 -32
-$(BUILD_DIR)/$(SRC_DIR)/hasm/ido/math_util.s.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(SRC_DIR)/hasm/ido/math_util.s.o: MIPSISET := -mips3 -32
+# IDO Hasm files
+$(BUILD_DIR)/$(SRC_DIR)/hasm/ido/%.s.o: OPT_FLAGS := -O2
+$(BUILD_DIR)/$(SRC_DIR)/hasm/ido/%.s.o: MIPSISET := -mips3 -32
 
 $(BUILD_DIR)/$(MATH_DIR)/%.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(MATH_DIR)/%.c.o: MIPSISET := -mips2
