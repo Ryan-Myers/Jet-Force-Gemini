@@ -118,25 +118,39 @@ char *GetSymbolName(u32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/GetSymbolName.s")
 #endif
 
-typedef struct UnkRunLink800534B4 {
-    s32 unk0;
-    union {
-        s32 unk4_s32;
-        struct {            
-            u8 unk4;
-            u8 unk5;
-            u8 unk6;
-            u8 unk7_0 : 4;
-            u8 unk7_4 : 4;
+/**
+ * Relocation entry format used by the overlay dynamic linker.
+ * Each entry is 8 bytes and describes how to patch an address reference.
+ */
+typedef struct RelocationEntry {
+    /* 0x00 */ u32 symbolIndex;    // Index into overlayRomTable, OR local offset for type 1
+    /* 0x04 */ union {
+        u32 info;
+        struct {
+            u32 relocType : 4;     // Relocation type (R_MIPS_32=0, LOCAL=1, R_MIPS_26=2, SPECIAL=3, HI16=5, LO16=6)
+            u32 unused : 4;
+            u32 targetOffset : 24; // Offset into section where relocation should be applied
+        };
+        struct {
+            u8 typeByte;           // Low nibble: relocType, High nibble written back after processing
+            u8 offsetHi;           // Upper bits of targetOffset
+            u8 offsetMid;
+            union {
+                u8 flags;          // Upper nibble: additional flags (2=addend, 4=stub if unloaded)
+                struct {
+                    u8 flagsLo : 4;
+                    u8 flagsHi : 4;
+                };
+            }
         };
     };
-} UnkRunLink800534B4;
+} RelocationEntry; /* 8 bytes */
 
 extern void *__BSS_SECTION_START;
 extern void *__DATA_SECTION_START;
 extern void *__CODE_SECTION_START;
 
-void *func_800534B4(s32 ortIndex, s32 otIndex, UnkRunLink800534B4 *arg2, s32 *arg3) {
+void *func_800534B4(s32 ortIndex, s32 otIndex, RelocationEntry *arg2, s32 *arg3) {
     s32 var_v1;
     s32 addressBase;
     s32 addressOffset;
@@ -146,8 +160,8 @@ void *func_800534B4(s32 ortIndex, s32 otIndex, UnkRunLink800534B4 *arg2, s32 *ar
     romTableEntry = &overlayRomTable[ortIndex];
     overlayNumber = romTableEntry->entry.OverlayNumber;
     addressOffset = 0;
-    switch (arg2->unk4_s32 & 0xF) {
-        case 0:
+    switch (arg2->info & 0xF) { // Extract relocType from low 4 bits
+        case 0: // R_MIPS_32: Absolute symbol reference
             switch (overlayNumber) {
                 case 0xFFD: // Data section
                     overlayNumber = 0;
@@ -157,26 +171,27 @@ void *func_800534B4(s32 ortIndex, s32 otIndex, UnkRunLink800534B4 *arg2, s32 *ar
                     overlayNumber = 0;
                     addressOffset = (u32) &__DATA_SECTION_START - (u32) &__CODE_SECTION_START;
                     break;
-                case 0xFFF: //BSS section
+                case 0xFFF: // BSS section
                     overlayNumber = 0;
                     addressOffset = (u32) &__BSS_SECTION_START - (u32) &__CODE_SECTION_START;
                     break;
             }
             addressBase = overlayTable[overlayNumber].VramBase;
             if (addressBase == 0) {
-                if (arg2->unk7_0 == 4 || arg2->unk7_0 == 2) {
+                // Overlay not loaded - check if caller wants stub or trap
+                if (arg2->flagsLo == 4 || arg2->flagsLo == 2) {
                     return &TrapDanglingJump;
                 }
                 return &D_800FF7B4;
             }
             return addressBase + (romTableEntry->entry.FunctionOffset) + addressOffset;
-        case 1:
-            var_v1 = overlayTable[otIndex].VramBase + arg2->unk0;
-            if (arg2->unk7_0 == 2) {
+        case 1: // Local offset relocation (relative to section base)
+            var_v1 = overlayTable[otIndex].VramBase + arg2->symbolIndex;
+            if (arg2->flagsLo == 2) {
                 var_v1 += *arg3;
             }
             return var_v1;
-        case 2:
+        case 2: // R_MIPS_26: Jump target relocation
             return ((*arg3 & 0x03FFFFFF) << 2) + overlayTable[otIndex].VramBase;
         default:
             return NULL;
