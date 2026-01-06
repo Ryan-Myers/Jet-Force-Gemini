@@ -91,6 +91,10 @@ extern void amSetMuteMode(s32 behaviour); // 0x80000450 Start of .text
 extern void *tuneSeqPlayer; // 0x800A0660 Start of .data
 extern u32 *D_800FF7B4;
 
+// Relocation section base addresses (set by runlinkDownloadCode when loading an overlay)
+extern u8 *gRelocTextBase;  // Base address of overlay's .text section being relocated
+extern u8 *gRelocDataBase;  // Base address for type-3 relocations (alternate section)
+
 // typedef struct runlinkModule {
 //     s32 unk0;
 //     u8 pad4[25];
@@ -146,11 +150,27 @@ typedef struct RelocationEntry {
     };
 } RelocationEntry; /* 8 bytes */
 
+/**
+ * MIPS instruction word layout (big-endian).
+ * Used for runtime instruction patching during relocation.
+ */
+typedef union MipsInstruction {
+    u32 word;
+    struct {
+        u32 opcode : 6;     // Instruction opcode (bits 26-31)
+        u32 target : 26;    // J/JAL target address >> 2 (bits 0-25)
+    } jump;
+    struct {
+        u16 immediate;      // immediate value (bits 0-15)
+        u16 upper;          // rs/rt/opcode (bits 16-31)
+    } itype;
+} MipsInstruction; /* 4 bytes */
+
 extern void *__BSS_SECTION_START;
 extern void *__DATA_SECTION_START;
 extern void *__CODE_SECTION_START;
 
-void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry, u32 *patchLocation) {
+void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry, MipsInstruction *patchLocation) {
     s32 var_v1;
     s32 addressBase;
     s32 addressOffset;
@@ -181,38 +201,23 @@ void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry
                 // Overlay not loaded - check if caller wants stub or trap
                 if (relocEntry->flagsHi == 4 || relocEntry->flagsHi == 2) {
                     return &TrapDanglingJump;
+                } else {
+                    return &D_800FF7B4;
                 }
-                return &D_800FF7B4;
             }
             return addressBase + (romTableEntry->entry.FunctionOffset) + addressOffset;
         case 1: // Local offset relocation (relative to section base)
             var_v1 = overlayTable[otIndex].VramBase + relocEntry->symbolIndex;
             if (relocEntry->flagsHi == 2) {
-                var_v1 += *patchLocation;
+                var_v1 += patchLocation->word;
             }
             return var_v1;
         case 2: // R_MIPS_26: Jump target relocation
-            return ((*patchLocation & 0x03FFFFFF) << 2) + overlayTable[otIndex].VramBase;
+            return (patchLocation->jump.target << 2) + overlayTable[otIndex].VramBase;
         default:
             return NULL;
     }
 }
-
-/**
- * MIPS instruction word layout (big-endian).
- * Used for runtime instruction patching during relocation.
- */
-typedef union MipsInstruction {
-    u32 word;
-    struct {
-        u32 target : 26;    // J/JAL target address >> 2 (bits 0-25)
-        u32 opcode : 6;     // Instruction opcode (bits 26-31)
-    } jump;
-    struct {
-        u16 immediate;      // immediate value (bits 0-15)
-        u16 upper;          // rs/rt/opcode (bits 16-31)
-    } itype;
-} MipsInstruction; /* 4 bytes */
 
 /**
  * Patches a MIPS instruction with a relocated address.
@@ -295,17 +300,17 @@ extern s32 overlayCount;
 extern LowMemoryStruct *D_800FF838;
 
 void runlinkLowMemoryPanic(void) {
-    s32 var_s1;
+    s32 overlayIndex;
     u32 temp_v0;
     LowMemoryStruct *temp_s0;
 
-    var_s1 = overlayCount;
-    while (var_s1--) {
-        temp_s0 = &D_800FF838[var_s1];
+    overlayIndex = overlayCount;
+    while (overlayIndex--) {
+        temp_s0 = &D_800FF838[overlayIndex];
         temp_v0 = temp_s0->unk0;
         if ((temp_v0 >> 6) != 0) {
             if (!(temp_v0 & 0x3F)) {
-                runlinkFreeCode(var_s1);
+                runlinkFreeCode(overlayIndex);
                 temp_s0->unk0 = (u16) (temp_s0->unk0 & 0x3F);
                 temp_s0->unk0_1 = (u8) (temp_s0->unk0_1 & 0xFFC0);
             }
