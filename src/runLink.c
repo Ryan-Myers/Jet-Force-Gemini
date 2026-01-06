@@ -89,11 +89,9 @@ extern s32 mainRelocCount;
 extern s32 overlayCount;
 extern void amSetMuteMode(s32 behaviour); // 0x80000450 Start of .text
 extern void *tuneSeqPlayer; // 0x800A0660 Start of .data
-extern u32 *D_800FF7B4;
 
-// Relocation section base addresses (set by runlinkDownloadCode when loading an overlay)
-extern u8 *gRelocTextBase;  // Base address of overlay's .text section being relocated
-extern u8 *gRelocDataBase;  // Base address for type-3 relocations (alternate section)
+// Placeholder address returned when a symbol cannot be resolved (overlay not loaded)
+extern u32 gUnresolvedSymbolAddr;
 
 // typedef struct runlinkModule {
 //     s32 unk0;
@@ -202,7 +200,7 @@ void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry
                 if (relocEntry->flagsHi == 4 || relocEntry->flagsHi == 2) {
                     return &TrapDanglingJump;
                 } else {
-                    return &D_800FF7B4;
+                    return &gUnresolvedSymbolAddr;
                 }
             }
             return addressBase + (romTableEntry->entry.FunctionOffset) + addressOffset;
@@ -256,7 +254,75 @@ void PatchInstruction(MipsInstruction *instr, u32 address, u8 relocType) {
     osInvalICache(instr, sizeof(MipsInstruction));
 }
 
+#if 1
+
+typedef struct RelocationBase {
+    u8 pad0[8];
+    u16 unk2;
+} RelocationBase;
+
+// Relocation section base addresses (set by runlinkDownloadCode when loading an overlay)
+extern MipsInstruction *gRelocTextBase;  // Base address of overlay's .text section being relocated
+extern MipsInstruction *gRelocDataBase;  // Base address for type-3 relocations (alternate section)
+
+s32 func_800536F8(RelocationEntry *relocEntry, s32 otIndex) {
+    u32 temp_v0_2;
+    u16 var_v1;
+    u32 resolvedRelocAddress;
+    s32 overlayNumber;
+    u32 temp_v1;
+    u32 var_v0_2;
+    MipsInstruction *nextPatchLocation;
+    MipsInstruction *patchLocation;
+
+    if (relocEntry->relocType == 3) {
+        relocEntry->flags &= 0xFFF0;
+        patchLocation = &gRelocDataBase[relocEntry->targetOffset];
+    } else {
+        patchLocation = &gRelocTextBase[relocEntry->targetOffset];
+    }
+    resolvedRelocAddress = ResolveRelocAddress(relocEntry->symbolIndex, otIndex, relocEntry, patchLocation);
+    if (relocEntry->flagsHi == 5) {
+        overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
+        if (overlayNumber >= 0xFFC) {
+            overlayNumber = 0;
+        }
+        if (!(relocEntry->flagsLo) && (overlayTable[overlayNumber].VramBase == 0)) {
+            resolvedRelocAddress = &gUnresolvedSymbolAddr;
+        }
+        nextPatchLocation = &gRelocTextBase[relocEntry[1].targetOffset];
+        var_v1 = nextPatchLocation->itype.upper;
+        if (var_v1 & 0x8000) {
+            var_v1 |= 0xFFFF0000;
+        }
+        temp_v0_2 = (patchLocation->itype.upper << 16) + var_v1;
+        if (temp_v0_2 != (u32) &gUnresolvedSymbolAddr) {
+            resolvedRelocAddress += temp_v0_2;
+        }
+        PatchInstruction(patchLocation, resolvedRelocAddress, 5);
+        PatchInstruction(nextPatchLocation, resolvedRelocAddress, 6);
+        relocEntry->flags = (relocEntry->relocType) | (relocEntry->flags & 0xFFF0);
+        return 2;
+    }
+    if (relocEntry->flagsHi == 6) {
+        overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
+        if (overlayNumber >= 0xFFC) {
+            overlayNumber = 0;
+        }
+        if (!(relocEntry->flagsLo) && (overlayTable[overlayNumber].VramBase == 0)) {
+            resolvedRelocAddress = (u32) &gUnresolvedSymbolAddr;
+        }
+        PatchInstruction(patchLocation, resolvedRelocAddress + patchLocation->itype.upper, 6);
+        relocEntry->flags = (relocEntry->relocType) | (relocEntry->flags & 0xFFF0);
+    } else {
+        PatchInstruction(patchLocation, resolvedRelocAddress, relocEntry->flagsHi);
+        relocEntry->flags = (relocEntry->relocType) | (relocEntry->flags & 0xFFF0);
+    }
+    return 1;
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_800536F8.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkDownloadCode.s")
 

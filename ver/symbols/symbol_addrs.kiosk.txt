@@ -1742,6 +1742,7 @@ overlayCount = 0x800FF78C;
 mainRelocCount = 0x800FF790;
 gRelocTextBase = 0x800FF79C;
 gRelocDataBase = 0x800FF7A0;
+gUnresolvedSymbolAddr = 0x800FF7B4;
 currentScreen = 0x800FF990;
 extraScreen = 0x800FF994;
 otherScreen = 0x800FF998;
