@@ -254,7 +254,7 @@ void PatchInstruction(MipsInstruction *instr, u32 address, u8 relocType) {
     osInvalICache(instr, sizeof(MipsInstruction));
 }
 
-#ifdef NON_EQUIVALENT
+#if 1
 
 typedef struct RelocationBase {
     u8 pad0[8];
@@ -267,19 +267,21 @@ extern u8 *gRelocDataBase;  // Base address for type-3 relocations (alternate se
 
 s32 func_800536F8(RelocationEntry *relocEntry, s32 otIndex) {
     u32 combinedAddr;
-    s32 loImmediate;
     u32 resolvedAddr;
-    s32 overlayNumber;
-    MipsInstruction *nextPatchLocation;
-    MipsInstruction *patchLocation;
     s32 flagsLo;
     s32 flagsHi;
+    u32 nextLoImmediate;
+    u32 currLoImmediate;
+    MipsInstruction *nextPatchLocation;
+    MipsInstruction *patchLocation;
+    s32 overlayNumber;
 
-    flagsLo = relocEntry->flagsLo;
+    
     flagsHi = relocEntry->flagsHi;
+    flagsLo = relocEntry->flagsLo;
     if (relocEntry->relocType == 3) {
-        relocEntry->flags &= 0xFFF0;
         patchLocation = (MipsInstruction *) &gRelocDataBase[relocEntry->targetOffset];
+        relocEntry->flags &= 0xFFF0;
     } else {
         patchLocation = (MipsInstruction *) &gRelocTextBase[relocEntry->targetOffset];
     }
@@ -293,11 +295,12 @@ s32 func_800536F8(RelocationEntry *relocEntry, s32 otIndex) {
             resolvedAddr = (u32) &gUnresolvedSymbolAddr;
         }
         nextPatchLocation = (MipsInstruction *) &gRelocTextBase[relocEntry[1].targetOffset];
-        loImmediate = nextPatchLocation->itype.upper;
-        if (loImmediate & 0x8000) {
-            loImmediate |= 0xFFFF0000;
+        nextLoImmediate = nextPatchLocation->itype.upper;
+        currLoImmediate = patchLocation->itype.upper;
+        if (nextLoImmediate & 0x8000) {
+            nextLoImmediate |= 0xFFFF0000;
         }
-        combinedAddr = (patchLocation->itype.upper << 16) + loImmediate;
+        combinedAddr = (currLoImmediate << 16) + nextLoImmediate;
         if (combinedAddr != (u32) &gUnresolvedSymbolAddr) {
             resolvedAddr += combinedAddr;
         }
@@ -316,11 +319,12 @@ s32 func_800536F8(RelocationEntry *relocEntry, s32 otIndex) {
         }
         PatchInstruction(patchLocation, resolvedAddr + patchLocation->itype.upper, 6);
         relocEntry->flags = (flagsLo & 0xF) | (relocEntry->flags & 0xFFF0);
+        return 1;
     } else {
         PatchInstruction(patchLocation, resolvedAddr, flagsHi);
         relocEntry->flags = (flagsLo & 0xF) | (relocEntry->flags & 0xFFF0);
+        return 1;
     }
-    return 1;
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_800536F8.s")
