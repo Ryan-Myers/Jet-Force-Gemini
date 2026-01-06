@@ -209,12 +209,11 @@ typedef union MipsInstruction {
         u32 opcode : 6;     // Instruction opcode (bits 26-31)
     } jump;
     struct {
-        s16 immediate;      // Offset 0: immediate value (bits 0-15)
-        u16 upper;          // Offset 2: rs/rt/opcode (bits 16-31)
+        u16 immediate;      // immediate value (bits 0-15)
+        u16 upper;          // rs/rt/opcode (bits 16-31)
     } itype;
 } MipsInstruction; /* 4 bytes */
 
-#ifdef NON_MATCHING
 /**
  * Patches a MIPS instruction with a relocated address.
  * @param instr     Pointer to the instruction to patch
@@ -222,6 +221,7 @@ typedef union MipsInstruction {
  * @param relocType The relocation type (2=R_MIPS_32, 4=R_MIPS_26, 5=HI16, 6=LO16)
  */
 void PatchInstruction(MipsInstruction *instr, u32 address, u8 relocType) {
+    u32 instrWord;
     u32 temp;
 
     switch (relocType) {
@@ -230,27 +230,26 @@ void PatchInstruction(MipsInstruction *instr, u32 address, u8 relocType) {
             break;
         case 4: // R_MIPS_26: Patch jump target (preserve opcode)
             temp = (address >> 2) & 0x03FFFFFF;
-            temp ^= instr->word;
+            instrWord = instr->word;
+            temp ^= instrWord;
             temp = (temp << 6) >> 6; // Clear upper 6 bits (opcode)
-            instr->word = temp ^ instr->word;
+            temp ^= instrWord;
+            instr->word = temp;
             break;
         case 5: // R_MIPS_HI16: Patch upper 16 bits of address
             temp = address >> 16;
             if (address & 0x8000) {
                 temp++; // Adjust for sign extension of LO16
             }
-            instr->itype.upper = (u16)temp;
+            instr->itype.upper = (u16) temp;
             break;
         case 6: // R_MIPS_LO16: Patch lower 16 bits of address
-            instr->itype.upper = (u16)address;
+            instr->itype.upper = (u16) address;
             break;
     }
     osWritebackDCache(instr, sizeof(MipsInstruction));
     osInvalICache(instr, sizeof(MipsInstruction));
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/PatchInstruction.s")
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_800536F8.s")
 
