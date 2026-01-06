@@ -132,57 +132,52 @@ typedef struct UnkRunLink800534B4 {
     };
 } UnkRunLink800534B4;
 
-extern s32 *__BSS_SECTION_START;
-extern s32 *__DATA_SECTION_START;
-extern s32 *__CODE_SECTION_START;
+extern void *__BSS_SECTION_START;
+extern void *__DATA_SECTION_START;
+extern void *__CODE_SECTION_START;
 
-void *func_800534B4(s32 arg0, s32 arg1, UnkRunLink800534B4 *arg2, s32 *arg3) {
+void *func_800534B4(s32 ortIndex, s32 otIndex, UnkRunLink800534B4 *arg2, s32 *arg3) {
     s32 var_v1;
-    s32 temp_a0;
-    s32 temp_t8;
-    s32 var_t1;
-    u32 temp_t0;
-    u32 temp_t4;
+    s32 addressBase;
+    s32 addressOffset;
     u32 overlayNumber;
-    RomTableEntry *romTableEntry = &overlayRomTable[arg0];
-    OverlayHeader *overlay;
+    RomTableEntry *romTableEntry;
 
+    romTableEntry = &overlayRomTable[ortIndex];
     overlayNumber = romTableEntry->entry.OverlayNumber;
-    var_t1 = 0;
+    addressOffset = 0;
     switch (arg2->unk4_s32 & 0xF) {
         case 0:
             switch (overlayNumber) {
                 case 0xFFD: // Data section
                     overlayNumber = 0;
-                    var_t1 = (u32) &__DATA_SECTION_START - (u32) &__CODE_SECTION_START;
+                    addressOffset = (u32) &__DATA_SECTION_START - (u32) &__CODE_SECTION_START;
                     break;
                 case 0xFFE: // Data section
                     overlayNumber = 0;
-                    var_t1 = (u32) &__DATA_SECTION_START - (u32) &__CODE_SECTION_START;
+                    addressOffset = (u32) &__DATA_SECTION_START - (u32) &__CODE_SECTION_START;
                     break;
                 case 0xFFF: //BSS section
                     overlayNumber = 0;
-                    var_t1 = (u32) &__BSS_SECTION_START - (u32) &__CODE_SECTION_START;
+                    addressOffset = (u32) &__BSS_SECTION_START - (u32) &__CODE_SECTION_START;
                     break;
             }
-            temp_a0 = overlayTable[overlayNumber].VramBase;
-            if (temp_a0 == 0) {
-                temp_t4 = arg2->unk7_0;
-                if ((temp_t4 == 4) || (temp_t4 == 2)) {
+            addressBase = overlayTable[overlayNumber].VramBase;
+            if (addressBase == 0) {
+                if (arg2->unk7_0 == 4 || arg2->unk7_0 == 2) {
                     return &TrapDanglingJump;
                 }
                 return &D_800FF7B4;
             }
-            return temp_a0 + (romTableEntry->entry.FunctionOffset) + var_t1;
+            return addressBase + (romTableEntry->entry.FunctionOffset) + addressOffset;
         case 1:
-            var_v1 = overlayTable[arg1].VramBase + arg2->unk0;
-            if ((arg2->unk7_0) == 2) {
+            var_v1 = overlayTable[otIndex].VramBase + arg2->unk0;
+            if (arg2->unk7_0 == 2) {
                 var_v1 += *arg3;
             }
             return var_v1;
         case 2:
-            temp_t8 = ((*arg3 & 0x03FFFFFF) << 2) + overlayTable[arg1].VramBase;
-            return temp_t8;
+            return ((*arg3 & 0x03FFFFFF) << 2) + overlayTable[otIndex].VramBase;
         default:
             return NULL;
     }
