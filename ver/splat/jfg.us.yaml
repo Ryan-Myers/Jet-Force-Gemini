@@ -483,15 +483,34 @@ segments:
     type: bin
     start: 0xB1880
 
-  - name: runlinks_section1
+  # - name: Overlay3
+  #   type: code
+  #   start: 0xD4050
+  #   bss_size: 0
+  #   vram: 0x0
+  #   exclusive_ram_id: overlay_3
+  #   symbol_name_format: $SEG_$VRAM_$ROM
+  #   subsegments:
+  #     - [0xD4050, asm]
+  #     # - [0xD4050, asm]
+  #     # - [0xEBA60, data]
+  #     # - [0xEE170, rodata]
+
+  # - name: overlaydata2 #?
+  #   type: bin
+  #   start: 0xEEF70
+
+  # 8 bytes to contain the address that tried to load an overlay, and the index into it's overlayRomTable entry
+  - name: mainRelocTable
     type: bin
     start: 0x1ECF220
 
-  - name: runlinks_section2
+  # 4 bytes to describe which overlay and function to load
+  - name: overlayRomTable
     type: bin
     start: 0x1ED0270
 
-  - name: runlinks_section3
+  - name: overlayTable
     type: bin
     start: 0x1ED2780
 

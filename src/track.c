@@ -181,6 +181,7 @@ void trackSetFog(s32 fogIdx, s16 near, s16 far, s16 arg3, u8 red, u8 green, u8 b
     fogData->intendedFog.g = green;
     fogData->intendedFog.b = blue;
 }
+
 void trackGetFog(s32 playerID, s16 *near, s16 *far, s16 *unk18, u8 *r, u8 *g, u8 *b, s8 *unk33) {
     FogData *fogData;
 
