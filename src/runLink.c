@@ -267,14 +267,14 @@ extern u8 *gRelocDataBase;  // Base address for type-3 relocations (alternate se
 
 s32 func_800536F8(RelocationEntry *relocEntry, s32 otIndex) {
     u32 combinedAddr;
-    u32 resolvedAddr;
-    s32 flagsLo;
+    u8 *resolvedAddr;
+    MipsInstruction *patchLocation;
+    MipsInstruction *nextPatchLocation;
+    s32 overlayNumber;
     s32 flagsHi;
+    s32 flagsLo;
     u32 nextLoImmediate;
     u32 currLoImmediate;
-    MipsInstruction *nextPatchLocation;
-    MipsInstruction *patchLocation;
-    s32 overlayNumber;
 
     
     flagsHi = relocEntry->flagsHi;
@@ -301,6 +301,7 @@ s32 func_800536F8(RelocationEntry *relocEntry, s32 otIndex) {
             nextLoImmediate |= 0xFFFF0000;
         }
         combinedAddr = (currLoImmediate << 16) + nextLoImmediate;
+        //combinedAddr = ((currLoImmediate << 2) << 14) + nextLoImmediate;
         if (combinedAddr != (u32) &gUnresolvedSymbolAddr) {
             resolvedAddr += combinedAddr;
         }
