@@ -99,22 +99,45 @@ extern u32 gUnresolvedSymbolAddr;
 // } runlinkModule;
 // extern runlinkModule *overlayTable;
 
-#if 0
-extern u32 D_1B94430[], D_1B96910[]; // Linker symbols for the start of two lookup tables.
-// D_1B94430 is a 4 byte value used as an offset in the list symbols for overlayRomTable the start 
-// D_1B96910 is just a list of symbol names as ascii strings with null byte seperators
+#ifdef NON_EQUIVALENT
+// ROM addresses for symbol name lookup tables
+extern u32 D_1FEB040[]; // Symbol offset table (4 bytes per entry)
+extern u8 D_1FED550[];  // Symbol string table base
 
-char *GetSymbolName(u32 arg0) {
-    char symbolName[96];
-    u32 secondRomOffset;
-    u32 symbolBytes;
-    u32 romOffset;
-    romOffset = &D_1B94430[arg0];
-    romCopy((u32) romOffset, &symbolBytes, 8);
-    secondRomOffset = *(&symbolBytes + ((u32) &romOffset & 7)) + (u32) D_1B96910;
-    symbolBytes = ((u32) secondRomOffset & 7);
-    romCopy(((u32) secondRomOffset & ~7), &symbolName, 96);
-    return symbolName + symbolBytes;
+/**
+ * Retrieves a symbol name from ROM given its index.
+ * @param symbolIndex Index into the symbol offset table
+ * @return Pointer to the symbol name string (in stack buffer - use immediately!)
+ */
+char *GetSymbolName(u32 symbolIndex) {
+    char stringBuffer[96];    // Buffer for string data
+    u32 offsetAddr;
+    u32 stringOffset;
+    u32 stringAddr;
+    u32 bufferOffset;
+    u32 offsetTableEntry[2];  // 8-byte aligned buffer for offset table read
+
+    // Calculate ROM address of offset table entry
+    offsetAddr = (u32)&D_1FEB040[symbolIndex];
+    
+    // Read 8 bytes aligned (ROM requires 8-byte aligned reads)
+    romCopy(offsetAddr & ~7, (u32)offsetTableEntry, 8);
+    
+    // Extract the 4-byte offset value using low bits to index into buffer
+    stringOffset = ((((*((u32 *) (((u8 *) offsetTableEntry) + (offsetAddr & 7))))) ) & 0xFFFFFFFFFFFFFFFF);
+    
+    // Calculate string ROM address
+    stringAddr = stringOffset + (u32)D_1FED550;
+    
+    // Save offset within aligned block
+    bufferOffset = stringAddr & 7;
+    if (((!stringBuffer) && (!stringBuffer)) && (!stringBuffer)) { }
+    if (!bufferOffset){}
+    // Read 96 bytes of string data (aligned)
+    romCopy(stringAddr & ~7, (u32)stringBuffer, 96);
+    
+    // Return pointer to string within buffer
+    return stringBuffer + bufferOffset;
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/GetSymbolName.s")
