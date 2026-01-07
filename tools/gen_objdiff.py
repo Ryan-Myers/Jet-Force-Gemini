@@ -14,7 +14,16 @@ def generate_objdiff_config():
         units.append({
             "name": name,
             "target_path": f"expected/build/{rel_path}.o",
-            "base_path": f"build/{rel_path}.o"
+            "base_path": f"build/{rel_path}.o",
+            "metadata": {
+                "source_path": f"{rel_path}",
+            },
+            "scratch": {
+                "platform": "n64",
+                "compiler": "ido5.3",
+                "ctx_path": "ctx.c",
+                "c_flags": "-O2 -mips1"
+            }
         })
     
     # Add libultra/*.c files
@@ -25,7 +34,16 @@ def generate_objdiff_config():
         units.append({
             "name": name,
             "target_path": f"expected/build/{rel_path}.o",
-            "base_path": f"build/{rel_path}.o"
+            "base_path": f"build/{rel_path}.o",
+            "metadata": {
+                "source_path": f"{rel_path}",
+            },
+            "scratch": {
+                "platform": "n64",
+                "compiler": "ido5.3",
+                "ctx_path": "ctx.c",
+                "c_flags": "-O2 -mips1"
+            }
         })
     
     config = {
