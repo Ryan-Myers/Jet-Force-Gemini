@@ -477,15 +477,17 @@ segments:
     type: bin
     start: 0xB23E0
 
-  - name: runlinks_section1
+  # 8 bytes to contain the address that tried to load an overlay, and the index into it's overlayRomTable entry
+  - name: mainRelocTable
     type: bin
     start: 0x1A7C4D0
 
-  - name: runlinks_section2
+  # 4 bytes to describe which overlay and function to load
+  - name: overlayRomTable
     type: bin
     start: 0x1A7D500
 
-  - name: runlinks_section3
+  - name: overlayTable
     type: bin
     start: 0x1A7F9E0
 

@@ -761,6 +761,7 @@ ProcessRelocationEntry = 0x800536F8;
 runlinkDownloadCode = 0x8005393C;
 runlinkEnsureJumpIsValid = 0x80053E08;
 runlinkIsModuleLoaded = 0x80053FAC;
+runlinkCallResumeFunction = 0x80053FC8;
 runlinkFreeCode = 0x80054068;
 runlinkFlushModules = 0x80054570;
 runlinkInitialise = 0x8005461C;

@@ -78,8 +78,8 @@ typedef struct OverlayHeader {
     /* 0x10 */ s32 RodataSize;
     /* 0x14 */ u16 RelocationTableSize;
     /* 0x16 */ u16 SecondaryRelocationTableSize; // ?
-    /* 0x18 */ s32 InitFunction; // -1 if none
-    /* 0x1C */ u8 reserved[4];
+    /* 0x18 */ s32 InitFunction; // -1 if none, offset from VramBase
+    /* 0x1C */ s32 ResumeFunction; // -1 if none, offset from VramBase
 } OverlayHeader;
 extern OverlayHeader D_1ED2780[]; // overlayTable
 extern OverlayHeader *overlayTable; // overlayTable
@@ -327,8 +327,9 @@ s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/ProcessRelocationEntry.s")
 #endif
 
-// Forward declaration
+// Forward declarations
 s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex);
+void runlinkResumeCode(s32 overlayIndex);
 
 typedef struct RelocContext {
     u32 unk0;              // 0x00 - unused?
@@ -549,7 +550,42 @@ s32 runlinkIsModuleLoaded(s32 module) {
     return overlayTable[module].VramBase;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_80053FC8.s")
+/**
+ * Ensures an overlay is loaded/resumed and calls its ResumeFunction if present.
+ * If the overlay is in the pending load list, resumes it first.
+ * @param overlayIndex Index of the overlay
+ */
+void runlinkCallResumeFunction(s32 overlayIndex) {
+    OverlayHeader *overlay;
+    PendingOverlayLoad *pendingLoad;
+    s32 relocCount;
+
+    overlay = &overlayTable[overlayIndex];
+
+    // If no resume function defined, nothing to do
+    if (overlay->ResumeFunction == -1) {
+        return;
+    }
+
+    pendingLoad = gPendingOverlayLoads;
+
+    // If overlay not loaded, check if it's in pending list and resume it
+    if (overlay->VramBase == 0) {
+        relocCount = ARRAY_COUNT(gPendingOverlayLoads);
+        while (relocCount--) {
+            if (overlayIndex == pendingLoad->overlayIndex) {
+                runlinkResumeCode(overlayIndex);
+                break;
+            }
+            pendingLoad++;
+        }
+    }
+
+    // If overlay is now loaded, call its resume function
+    if (overlay->VramBase != 0) {
+        ((void (*)(void))(overlay->VramBase + overlay->ResumeFunction))();
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkFreeCode.s")
 
