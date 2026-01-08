@@ -612,18 +612,30 @@ void runlinkCallResumeFunction(s32 overlayIndex) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkFreeCode.s")
 
-// Need a better struct definition here
-typedef struct LowMemoryStruct {
+/**
+ * Timer/state entry for overlay self-destruct system.
+ * D_800FF838 points to an array indexed by overlay number.
+ * 
+ * The 16-bit word layout:
+ *   - selfDestructTimer (10 bits, bits 6-15): Ticks until overlay auto-unloads, 0 = disabled
+ *   - refCount (6 bits, bits 0-5): Reference counter or usage flags
+ * 
+ * runlinkTick() decrements both timers each frame.
+ * When selfDestructTimer reaches 0 and refCount is also 0, runlinkFreeCode() is called.
+ * 
+ * runlinkSetDestructTimer(overlayIndex, selfDestructTimer, refCount) sets both fields.
+ */
+typedef struct OverlayTimerEntry {
     union {
-        u16 unk0;
+        u16 packed;              // Full 16-bit access: selfDestructTimer[9:0] << 6 | refCount[5:0]
         struct {
-            u8 unk0_0;
-            u8 unk0_1;
+            u16 selfDestructTimer : 10;
+            u16 refCount : 6;
         };
     };
-} LowMemoryStruct;
+} OverlayTimerEntry;
 
-extern LowMemoryStruct *D_800FF838;
+extern OverlayTimerEntry *D_800FF838;
 
 /**
  * Unloads an overlay and patches all references back to TrapDanglingJump.
@@ -674,8 +686,9 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
     mmFree((void *) address);
     overlay->VramBase = 0;
     
-    D_800FF838[overlayIndex].unk0 &= 0x3F; // Clear overlay state flags in D_800FF838    
-    D_800FF838[overlayIndex].unk0_1 &= 0xFFC0; // Also clear upper bits of the high byte
+    // Clear overlay timer entry - reset selfDestructTimer and refCount
+    D_800FF838[overlayIndex].selfDestructTimer = 0;
+    D_800FF838[overlayIndex].refCount = 0;
 
     // Iterate through mainRelocTable and patch entries referencing this overlay
     relocEntry = (RelocationEntry *) mainRelocTable->functionAddress; // Maybe mainRelocTable needs a new struct def?
@@ -733,20 +746,24 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
 
 extern s32 overlayCount;
 
+/**
+ * Called when memory is low - frees overlays that have no references.
+ * Iterates through all overlays and unloads any that have:
+ *   - A non-zero selfDestructTimer
+ *   - A zero refCount
+ */
 void runlinkLowMemoryPanic(void) {
     s32 overlayIndex;
-    u32 temp_v0;
-    LowMemoryStruct *temp_s0;
+    OverlayTimerEntry *timerEntry;
 
     overlayIndex = overlayCount;
     while (overlayIndex--) {
-        temp_s0 = &D_800FF838[overlayIndex];
-        temp_v0 = temp_s0->unk0;
-        if ((temp_v0 >> 6) != 0) {
-            if (!(temp_v0 & 0x3F)) {
+        timerEntry = &D_800FF838[overlayIndex];
+        if (timerEntry->selfDestructTimer != 0) {  // Has selfDestructTimer set?
+            if (timerEntry->refCount == 0) {       // No references
                 runlinkFreeCode(overlayIndex);
-                temp_s0->unk0 = (u16) (temp_s0->unk0 & 0x3F);
-                temp_s0->unk0_1 = (u8) (temp_s0->unk0_1 & 0xFFC0);
+                timerEntry->selfDestructTimer = 0;
+                timerEntry->refCount = 0;
             }
         }
     }
