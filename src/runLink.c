@@ -612,6 +612,7 @@ void runlinkCallResumeFunction(s32 overlayIndex) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkFreeCode.s")
 
+// Need a better struct definition here
 typedef struct LowMemoryStruct {
     union {
         u16 unk0;
@@ -624,20 +625,17 @@ typedef struct LowMemoryStruct {
 
 extern LowMemoryStruct *D_800FF838;
 
-#ifdef NON_EQUIVALENT
 /**
  * Unloads an overlay and patches all references back to TrapDanglingJump.
  * @param overlayIndex Index of the overlay to unload
- * 
- * C equivalent of func_80054368 (runlinkUnloadOverlay)
- * This version does not match due to compiler register allocation differences.
  */
-void func_80054368(s32 overlayIndex) {
+void runlinkUnloadOverlay(s32 overlayIndex) {
     OverlayHeader *overlay;
     PendingOverlayLoad *pendingLoad;
     RelocationEntry *relocEntry;
     MipsInstruction *patchLocation;
     s32 overlayNum;
+    s32 new_var;
     s32 relocType;
     s32 found;
     s32 i;
@@ -646,9 +644,10 @@ void func_80054368(s32 overlayIndex) {
 
     overlay = &overlayTable[overlayIndex];
     runlinkCallResumeFunction(overlayIndex);
-    address = overlay->VramBase;
+    new_var = overlay->VramBase;
+    address = new_var;
 
-    if (address== 0) {
+    if (address == 0) {
         found = FALSE;
         // Overlay not loaded - check if it's in pending list
         pendingLoad = gPendingOverlayLoads;
@@ -691,7 +690,7 @@ void func_80054368(s32 overlayIndex) {
 
         if (overlayNum == overlayIndex) {
             // This entry references the overlay being unloaded
-            if (relocType == 3) {
+            if (relocEntry->relocType == 3) {
                 // Type 3: data section relocation
                 patchLocation = (MipsInstruction *)((u8 *)&__DATA_SECTION_START + (relocEntry->targetOffset));
                 relocEntry->flags &= 0xFFF0;  // Clear low nibble of flags
@@ -702,7 +701,7 @@ void func_80054368(s32 overlayIndex) {
 
             // Get flagsHi and determine what to patch
             flagsHi = relocEntry->flagsHi;
-            if (flagsHi == 4) {
+            if ((flagsHi ^ 0) == 4) { // FAKE MATCH
                 // Patch back to TrapDanglingJump
                 address = TrapDanglingJump;
             } else {
@@ -712,14 +711,11 @@ void func_80054368(s32 overlayIndex) {
             PatchInstruction(patchLocation, address, flagsHi);
         }
 
-        relocEntry->flags = (relocType & 0xF) |  (relocEntry->flags & 0xFFF0);
+        relocEntry->flags = ((u8) relocType & 0xF) |  (relocEntry->flags & 0xFFF0);
 
         relocEntry++;
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_80054368.s")
-#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkFlushModules.s")
 
