@@ -55,7 +55,7 @@ typedef struct RelocTableEntry {
     /* 0x04 */ u32 overlayIndex;    // This is an index into overlayRomTable
 } RelocTableEntry;
 extern RelocTableEntry D_1ECF220[]; // mainRelocTable ROM address
-extern RelocTableEntry *mainRelocTable; // mainRelocTable RAM pointer
+extern RelocTableEntry mainRelocTable[]; // mainRelocTable RAM pointer
 
 typedef struct RomTableEntry {
     union {
@@ -746,7 +746,8 @@ extern u8 overlayTable_ROM_START[];
 extern u8 overlayTable_ROM_END[];
 extern u8 mainRelocTable_ROM_START[];
 extern u8 mainRelocTable_ROM_END[];
-extern u8 runlinks_section4_START[]; // D_1ED3B20
+extern u8 overlayCode_ROM_START[];
+extern u8 overlayCode_ROM_END[];
 
 #ifdef NON_EQUIVALENT
 /**
@@ -820,7 +821,7 @@ void runlinkInitialise(void) {
     overlayEntry = overlayTable + 1;  // Start from overlay 1
     i = overlayCount - 1;
     while (i--) {
-        overlayEntry->RomAddress = (s32)(runlinks_section4_START + overlayEntry->RomAddress);
+        overlayEntry->RomAddress = (s32)(overlayCode_ROM_START + overlayEntry->RomAddress);
         overlayEntry++;
     }
 

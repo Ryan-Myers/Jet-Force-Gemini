@@ -475,30 +475,13 @@ segments:
       - { type: .bss, vram: 0x80105940, name: ../libultra/src/io/siacs }
       - { type: .bss, vram: 0x80105960, name: ../libultra/src/os/timerintr }
 
-  - name: assets
+  - name: assets_lut
     type: bin
     start: 0xB1750
 
-  - name: overlaydata #?
+  - name: assets #?
     type: bin
     start: 0xB1880
-
-  # - name: Overlay3
-  #   type: code
-  #   start: 0xD4050
-  #   bss_size: 0
-  #   vram: 0x0
-  #   exclusive_ram_id: overlay_3
-  #   symbol_name_format: $SEG_$VRAM_$ROM
-  #   subsegments:
-  #     - [0xD4050, asm]
-  #     # - [0xD4050, asm]
-  #     # - [0xEBA60, data]
-  #     # - [0xEE170, rodata]
-
-  # - name: overlaydata2 #?
-  #   type: bin
-  #   start: 0xEEF70
 
   # 8 bytes to contain the address that tried to load an overlay, and the index into it's overlayRomTable entry
   - name: mainRelocTable
@@ -514,7 +497,7 @@ segments:
     type: bin
     start: 0x1ED2780
 
-  - name: runlinks_section4
+  - name: overlayCode
     type: bin
     start: 0x1ED3B20
 

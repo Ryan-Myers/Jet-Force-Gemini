@@ -6,8 +6,8 @@ __DATA_SECTION_START = main_DATA_START; /* Entrypoint addresses */
 __TEXT_SECTION_START = main_TEXT_START; /* Entrypoint addresses */
 __CODE_SECTION_START = main_TEXT_START  + 0x50;
 
-__ASSETS_LUT_START = assets_ROM_START;
-__ASSETS_LUT_END = assets_ROM_END;
+__ASSETS_LUT_START = assets_lut_ROM_START;
+__ASSETS_LUT_END = assets_lut_ROM_END;
 
 __SYMBOLS_LUT_START = symbolsTable_offsets_ROM_START;
 __SYMBOLS_NAMES_START = symbolsTable_symbol_names_ROM_START;

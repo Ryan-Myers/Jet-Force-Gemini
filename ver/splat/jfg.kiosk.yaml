@@ -469,11 +469,11 @@ segments:
       - { type: .bss, vram: 0x80106280, name: ../libultra/src/debug/kdebugserver }
       - { type: .bss, vram: 0x80106430, name: ../libultra/src/os/timerintr }
 
-  - name: assets
+  - name: assets_lut
     type: bin
     start: 0xB22B0
 
-  - name: overlaydata #?
+  - name: assets #?
     type: bin
     start: 0xB23E0
 
@@ -491,7 +491,7 @@ segments:
     type: bin
     start: 0x1A7F9E0
 
-  - name: runlinks_section4
+  - name: overlayCode
     type: bin
     start: 0x1A80D60
 
