@@ -54,8 +54,8 @@ typedef struct RelocTableEntry {
     /* 0x00 */ u32 functionAddress; // This is the address of the calling function less 0x80000450 (0x8004DD50 - 0x80000450 = 0x4D900)
     /* 0x04 */ u32 overlayIndex;    // This is an index into overlayRomTable
 } RelocTableEntry;
-extern RelocTableEntry D_1ECF220[]; // mainRelocTable
-extern RelocTableEntry mainRelocTable[]; // mainRelocTable
+extern RelocTableEntry D_1ECF220[]; // mainRelocTable ROM address
+extern RelocTableEntry *mainRelocTable; // mainRelocTable RAM pointer
 
 typedef struct RomTableEntry {
     union {
@@ -188,6 +188,7 @@ typedef union MipsInstruction {
 } MipsInstruction; /* 4 bytes */
 
 extern void *__BSS_SECTION_START;
+extern void *__BSS_SECTION_END;
 extern void *__DATA_SECTION_START;
 extern void *__CODE_SECTION_START;
 
@@ -730,9 +731,104 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
     }
 }
 
+
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkFlushModules.s")
 
+extern s32 D_800A4344;      // Some flag cleared at init
+extern s32 D_800A4348;      // Symbol table size (D_1FED550 - D_1FEB040)
+
+// ROM addresses for runlink tables
+extern u8 symbolsTable_offsets_ROM_START[];
+extern u8 symbolsTable_offsets_ROM_END[];
+extern u8 overlayRomTable_ROM_START[];
+extern u8 overlayRomTable_ROM_END[];
+extern u8 overlayTable_ROM_START[];
+extern u8 overlayTable_ROM_END[];
+extern u8 mainRelocTable_ROM_START[];
+extern u8 mainRelocTable_ROM_END[];
+extern u8 runlinks_section4_START[]; // D_1ED3B20
+
+#ifdef NON_EQUIVALENT
+/**
+ * Initializes the runtime linker system.
+ * - Allocates and copies overlayTable, overlayRomTable, and mainRelocTable from ROM
+ * - Sets up the main module (overlay 0) with section base addresses
+ * - Initializes the pending overlay load slots
+ * - Allocates the overlay timer entry array (D_800FF838)
+ * - Converts relative ROM addresses in overlay headers to absolute
+ */
+void runlinkInitialise(void) {
+    s32 overlayTableSize;
+    s32 tableSize;
+    PendingOverlayLoad *pendingSlot;
+    OverlayHeader *overlayEntry;
+    OverlayTimerEntry *timerArray;
+    s32 i;
+
+    // Store symbol table size for GetSymbolName
+    D_800A4348 = symbolsTable_offsets_ROM_END - symbolsTable_offsets_ROM_START;
+
+    // Allocate and copy overlayTable from ROM
+    // Extra 0x20 bytes at start for main module header (overlay 0)
+    overlayTableSize = overlayTable_ROM_END - overlayTable_ROM_START;
+    overlayTable = mmAlloc(overlayTableSize + 0x20, COLOUR_TAG_WHITE);
+    romCopy(overlayTable_ROM_START, (u32)(overlayTable + 1), overlayTableSize);
+
+    // Allocate and copy overlayRomTable from ROM
+    tableSize = overlayRomTable_ROM_END - overlayRomTable_ROM_START;
+    overlayRomTable = mmAlloc(tableSize, COLOUR_TAG_WHITE);
+    romCopy(overlayRomTable_ROM_START, overlayRomTable, tableSize);
+
+    // Allocate and copy mainRelocTable from ROM
+    // First word contains the count, actual table starts at +4
+    tableSize = mainRelocTable_ROM_END - mainRelocTable_ROM_START;
+    mainRelocTable = mmAlloc(tableSize, COLOUR_TAG_WHITE);
+    romCopy(mainRelocTable_ROM_START, mainRelocTable, tableSize);
+
+    // Extract mainRelocCount from first word, then advance pointer past it
+    mainRelocCount = *(u32 *)mainRelocTable;
+    mainRelocTable = (RelocTableEntry *)((u8 *)mainRelocTable + 4);
+
+    // Calculate overlay count from table size (each entry is 0x20 bytes)
+    // +1 for the main module (overlay 0)
+    overlayCount = ((u32)overlayTableSize >> 5) + 1;
+
+    // Initialize pending overlay load slots to unused (0xFFB)
+    // Loop from end to start
+    pendingSlot = &gPendingOverlayLoads[ARRAY_COUNT(gPendingOverlayLoads) - 1];
+    i = ARRAY_COUNT(gPendingOverlayLoads);
+    while (i--) {
+        pendingSlot->overlayIndex = 0xFFB;
+        pendingSlot--;
+    }
+
+    // Allocate and zero the overlay timer array
+    timerArray = mmAlloc(overlayCount * 2, -1);
+    D_800FF838 = timerArray;
+    bzero(timerArray, overlayCount * 2);
+
+    // Initialize main module header (overlay 0) with section addresses
+    overlayTable->VramBase = (s32)&__CODE_SECTION_START;
+    overlayTable->RomAddress = 0;
+    overlayTable->TextSize = (s32)((u8 *)&__DATA_SECTION_START - (u8 *)&__CODE_SECTION_START);
+    overlayTable->DataSize = (s32)((u8 *)&__BSS_SECTION_START - (u8 *)&__DATA_SECTION_START);
+    overlayTable->RodataSize = (s32)((u8 *)&__BSS_SECTION_END - (u8 *)&__BSS_SECTION_START);
+    overlayTable->RelocationTableSize = mainRelocCount * 8;
+    overlayTable->SecondaryRelocationTableSize = 0;
+
+    // Convert relative ROM addresses to absolute for all overlay entries
+    overlayEntry = overlayTable + 1;  // Start from overlay 1
+    i = overlayCount - 1;
+    while (i--) {
+        overlayEntry->RomAddress = (s32)(runlinks_section4_START + overlayEntry->RomAddress);
+        overlayEntry++;
+    }
+
+    D_800A4344 = 0;
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkInitialise.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkSuspendCode.s")
 

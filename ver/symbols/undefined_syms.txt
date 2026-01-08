@@ -1,4 +1,5 @@
 gMainMemoryPool = main_BSS_END;         /* This variable is just supposed to be available at the end of BSS for allocating memory to  */
+__BSS_SECTION_END = main_BSS_END;
 __BSS_SECTION_START = main_BSS_START;   /* Entrypoint addresses */
 __BSS_SECTION_SIZE = main_BSS_SIZE;     /* Entrypoint addresses */
 __DATA_SECTION_START = main_DATA_START; /* Entrypoint addresses */
