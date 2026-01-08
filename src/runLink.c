@@ -612,7 +612,114 @@ void runlinkCallResumeFunction(s32 overlayIndex) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkFreeCode.s")
 
+typedef struct LowMemoryStruct {
+    union {
+        u16 unk0;
+        struct {
+            u8 unk0_0;
+            u8 unk0_1;
+        };
+    };
+} LowMemoryStruct;
+
+extern LowMemoryStruct *D_800FF838;
+
+#ifdef NON_EQUIVALENT
+/**
+ * Unloads an overlay and patches all references back to TrapDanglingJump.
+ * @param overlayIndex Index of the overlay to unload
+ * 
+ * C equivalent of func_80054368 (runlinkUnloadOverlay)
+ * This version does not match due to compiler register allocation differences.
+ */
+void func_80054368(s32 overlayIndex) {
+    OverlayHeader *overlay;
+    PendingOverlayLoad *pendingLoad;
+    RelocationEntry *relocEntry;
+    MipsInstruction *patchLocation;
+    s32 overlayNum;
+    s32 relocType;
+    s32 found;
+    s32 i;
+    s32 flagsHi;
+    u32 address;
+
+    overlay = &overlayTable[overlayIndex];
+    runlinkCallResumeFunction(overlayIndex);
+    address = overlay->VramBase;
+
+    if (address== 0) {
+        found = FALSE;
+        // Overlay not loaded - check if it's in pending list
+        pendingLoad = gPendingOverlayLoads;
+        i = ARRAY_COUNT(gPendingOverlayLoads);
+        while (i--) {
+            if (overlayIndex == pendingLoad->overlayIndex) {
+                found = TRUE;
+                break;
+            }
+            pendingLoad++;
+        }
+
+        if (found == FALSE) {
+            return;
+        }
+
+        // Free the pending load's memory (base + textSize offset)
+        mmFree((void *)(pendingLoad->unk0 + overlay->TextSize));
+        pendingLoad->overlayIndex = 0xFFB;  // Mark slot as unused
+        return;
+    }
+
+    // Overlay is loaded - free it
+    mmFree((void *) address);
+    overlay->VramBase = 0;
+    
+    D_800FF838[overlayIndex].unk0 &= 0x3F; // Clear overlay state flags in D_800FF838    
+    D_800FF838[overlayIndex].unk0_1 &= 0xFFC0; // Also clear upper bits of the high byte
+
+    // Iterate through mainRelocTable and patch entries referencing this overlay
+    relocEntry = (RelocationEntry *) mainRelocTable->functionAddress; // Maybe mainRelocTable needs a new struct def?
+    i = mainRelocCount;
+    while (i--) {
+        relocType = relocEntry->relocType;
+        overlayNum = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
+
+        if (overlayNum >= 0xFFC) {
+            overlayNum = 0;
+        }
+
+        if (overlayNum == overlayIndex) {
+            // This entry references the overlay being unloaded
+            if (relocType == 3) {
+                // Type 3: data section relocation
+                patchLocation = (MipsInstruction *)((u8 *)&__DATA_SECTION_START + (relocEntry->targetOffset));
+                relocEntry->flags &= 0xFFF0;  // Clear low nibble of flags
+            } else {
+                // Other types: text section relocation
+                patchLocation = (MipsInstruction *)((u8 *)&__CODE_SECTION_START + (relocEntry->targetOffset));
+            }
+
+            // Get flagsHi and determine what to patch
+            flagsHi = relocEntry->flagsHi;
+            if (flagsHi == 4) {
+                // Patch back to TrapDanglingJump
+                address = TrapDanglingJump;
+            } else {
+                // Clear the reference
+                address = NULL;
+            }
+            PatchInstruction(patchLocation, address, flagsHi);
+        }
+
+        relocEntry->flags = (relocType & 0xF) |  (relocEntry->flags & 0xFFF0);
+
+        relocEntry++;
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/func_80054368.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkFlushModules.s")
 
@@ -628,18 +735,7 @@ void runlinkCallResumeFunction(s32 overlayIndex) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkTick.s")
 
-typedef struct LowMemoryStruct {
-    union {
-        u16 unk0;
-        struct {
-            u8 unk0_0;
-            u8 unk0_1;
-        };
-    };
-} LowMemoryStruct;
-
 extern s32 overlayCount;
-extern LowMemoryStruct *D_800FF838;
 
 void runlinkLowMemoryPanic(void) {
     s32 overlayIndex;
