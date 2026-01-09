@@ -10,7 +10,9 @@ options:
   platform: n64
   undefined_funcs_auto_path: ver/symbols/undefined_funcs_auto.kiosk.txt
   undefined_syms_auto_path: ver/symbols/undefined_syms_auto.kiosk.txt
-  symbol_addrs_path: ver/symbols/symbol_addrs.kiosk.txt
+  symbol_addrs_path:
+    - ver/symbols/symbol_addrs.kiosk.txt
+    - ver/symbols/overlays.kiosk.txt
   symbol_name_format: $VRAM
   ld_script_path: ver/jfg.kiosk.ld
   asm_path: asm
@@ -491,9 +493,2131 @@ segments:
     type: bin
     start: 0x1A7F9E0
 
-  - name: overlayCode
-    type: bin
+  - name: overlay_1
+    type: code
     start: 0x1A80D60
+    vram: 0xF0000000
+    bss_size: 0x1010
+    align: 0x8
+    dir: overlays_kiosk/o1
+    exclusive_ram_id: overlay_1
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1A80D60, c, overlay_1]
+      - [0x1A81990, data, overlay_1]
+      - [0x1A819D0, bin, overlay_1_reloc]
+
+  - name: overlay_2
+    type: code
+    start: 0x1A81C20
+    vram: 0xF0000000
+    bss_size: 0x47A0
+    align: 0x8
+    dir: overlays_kiosk/o2
+    exclusive_ram_id: overlay_2
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1A81C20, c, overlay_2]
+      - [0x1A82470, bin, overlay_2_reloc]
+
+  - name: overlay_3
+    type: code
+    start: 0x1A82720
+    vram: 0xF0000000
+    bss_size: 0xE10
+    align: 0x8
+    dir: overlays_kiosk/o3
+    exclusive_ram_id: overlay_3
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1A82720, c, overlay_3]
+      - [0x1A9A130, data, overlay_3]
+      - [0x1A9C820, bin, overlay_3_reloc]
+
+  - name: overlay_4
+    type: code
+    start: 0x1AA3560
+    vram: 0xF0000000
+    bss_size: 0x160
+    align: 0x8
+    dir: overlays_kiosk/o4
+    exclusive_ram_id: overlay_4
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AA3560, c, overlay_4]
+      - [0x1AA4BB0, data, overlay_4]
+      - [0x1AA4CB0, bin, overlay_4_reloc]
+
+  - name: overlay_5
+    type: code
+    start: 0x1AA5008
+    vram: 0xF0000000
+    bss_size: 0xA0
+    align: 0x8
+    dir: overlays_kiosk/o5
+    exclusive_ram_id: overlay_5
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AA5008, c, overlay_5]
+      - [0x1AA5D08, data, overlay_5]
+      - [0x1AA5D58, bin, overlay_5_reloc]
+
+  - name: overlay_6
+    type: code
+    start: 0x1AA6188
+    vram: 0xF0000000
+    bss_size: 0xF0
+    align: 0x8
+    dir: overlays_kiosk/o6
+    exclusive_ram_id: overlay_6
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AA6188, c, overlay_6]
+      - [0x1AA7B08, data, overlay_6]
+      - [0x1AA7C78, bin, overlay_6_reloc]
+
+  - name: overlay_7
+    type: code
+    start: 0x1AA8310
+    vram: 0xF0000000
+    bss_size: 0x1B0
+    align: 0x8
+    dir: overlays_kiosk/o7
+    exclusive_ram_id: overlay_7
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AA8310, c, overlay_7]
+      - [0x1AAABB0, data, overlay_7]
+      - [0x1AAAE80, bin, overlay_7_reloc]
+
+  - name: overlay_8
+    type: code
+    start: 0x1AAC280
+    vram: 0xF0000000
+    bss_size: 0x15A0
+    align: 0x8
+    dir: overlays_kiosk/o8
+    exclusive_ram_id: overlay_8
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AAC280, c, overlay_8]
+      - [0x1AAD8B0, data, overlay_8]
+      - [0x1AAD9C0, bin, overlay_8_reloc]
+
+  - name: overlay_9
+    type: code
+    start: 0x1AADE78
+    vram: 0xF0000000
+    bss_size: 0x4E40
+    align: 0x8
+    dir: overlays_kiosk/o9
+    exclusive_ram_id: overlay_9
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AADE78, c, overlay_9]
+      - [0x1AB1EA8, data, overlay_9]
+      - [0x1AB24A8, bin, overlay_9_reloc]
+
+  - name: overlay_10
+    type: code
+    start: 0x1AB39B0
+    vram: 0xF0000000
+    bss_size: 0x140
+    align: 0x8
+    dir: overlays_kiosk/o10
+    exclusive_ram_id: overlay_10
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AB39B0, c, overlay_10]
+      - [0x1AB4040, data, overlay_10]
+      - [0x1AB4050, bin, overlay_10_reloc]
+
+  - name: overlay_11
+    type: code
+    start: 0x1AB41F8
+    vram: 0xF0000000
+    bss_size: 0x3E0
+    align: 0x8
+    dir: overlays_kiosk/o11
+    exclusive_ram_id: overlay_11
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AB41F8, c, overlay_11]
+      - [0x1AB5E58, data, overlay_11]
+      - [0x1AB5E68, bin, overlay_11_reloc]
+
+  - name: overlay_12
+    type: code
+    start: 0x1AB6048
+    vram: 0xF0000000
+    bss_size: 0x60
+    align: 0x8
+    dir: overlays_kiosk/o12
+    exclusive_ram_id: overlay_12
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AB6048, c, overlay_12]
+      - [0x1AB7A48, data, overlay_12]
+      - [0x1AB7CD8, bin, overlay_12_reloc]
+
+  - name: overlay_13
+    type: code
+    start: 0x1AB8A08
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o13
+    exclusive_ram_id: overlay_13
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AB8A08, c, overlay_13]
+      - [0x1AB9BC8, data, overlay_13]
+      - [0x1ABA1D8, bin, overlay_13_reloc]
+
+  - name: overlay_14
+    type: code
+    start: 0x1ABA680
+    vram: 0xF0000000
+    bss_size: 0x20
+    align: 0x8
+    dir: overlays_kiosk/o14
+    exclusive_ram_id: overlay_14
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1ABA680, c, overlay_14]
+      - [0x1ABE470, data, overlay_14]
+      - [0x1ABEEA0, bin, overlay_14_reloc]
+
+  - name: overlay_15
+    type: code
+    start: 0x1AC05B8
+    vram: 0xF0000000
+    bss_size: 0x20
+    align: 0x8
+    dir: overlays_kiosk/o15
+    exclusive_ram_id: overlay_15
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AC05B8, c, overlay_15]
+      - [0x1AC7F28, data, overlay_15]
+      - [0x1AC8AB8, bin, overlay_15_reloc]
+
+  - name: overlay_16
+    type: code
+    start: 0x1ACA670
+    vram: 0xF0000000
+    bss_size: 0x10
+    align: 0x8
+    dir: overlays_kiosk/o16
+    exclusive_ram_id: overlay_16
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1ACA670, c, overlay_16]
+      - [0x1AD17C0, data, overlay_16]
+      - [0x1AD2280, bin, overlay_16_reloc]
+
+  - name: overlay_17
+    type: code
+    start: 0x1AD3BB0
+    vram: 0xF0000000
+    bss_size: 0x10
+    align: 0x8
+    dir: overlays_kiosk/o17
+    exclusive_ram_id: overlay_17
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AD3BB0, c, overlay_17]
+      - [0x1AD99A0, data, overlay_17]
+      - [0x1ADA110, bin, overlay_17_reloc]
+
+  - name: overlay_18
+    type: code
+    start: 0x1ADB480
+    vram: 0xF0000000
+    bss_size: 0x150
+    align: 0x8
+    dir: overlays_kiosk/o18
+    exclusive_ram_id: overlay_18
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1ADB480, c, overlay_18]
+      - [0x1AE14C0, data, overlay_18]
+      - [0x1AE19E0, bin, overlay_18_reloc]
+
+  - name: overlay_19
+    type: code
+    start: 0x1AE4DB8
+    vram: 0xF0000000
+    bss_size: 0x70
+    align: 0x8
+    dir: overlays_kiosk/o19
+    exclusive_ram_id: overlay_19
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AE4DB8, c, overlay_19]
+      - [0x1AE5EC8, data, overlay_19]
+      - [0x1AE62B8, bin, overlay_19_reloc]
+
+  - name: overlay_20
+    type: code
+    start: 0x1AE7270
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o20
+    exclusive_ram_id: overlay_20
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AE7270, c, overlay_20]
+      - [0x1AE76A0, data, overlay_20]
+      - [0x1AE76B0, bin, overlay_20_reloc]
+
+  - name: overlay_22
+    type: code
+    start: 0x1AE7700
+    vram: 0xF0000000
+    bss_size: 0x20
+    align: 0x8
+    dir: overlays_kiosk/o22
+    exclusive_ram_id: overlay_22
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AE7700, c, overlay_22]
+      - [0x1AEA730, data, overlay_22]
+      - [0x1AEAAF0, bin, overlay_22_reloc]
+
+  - name: overlay_23
+    type: code
+    start: 0x1AEBEE8
+    vram: 0xF0000000
+    bss_size: 0x40
+    align: 0x8
+    dir: overlays_kiosk/o23
+    exclusive_ram_id: overlay_23
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AEBEE8, c, overlay_23]
+      - [0x1AEC5C8, data, overlay_23]
+      - [0x1AEC6C8, bin, overlay_23_reloc]
+
+  - name: overlay_24
+    type: code
+    start: 0x1AEC950
+    vram: 0xF0000000
+    bss_size: 0x10
+    align: 0x8
+    dir: overlays_kiosk/o24
+    exclusive_ram_id: overlay_24
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AEC950, c, overlay_24]
+      - [0x1AEE260, data, overlay_24]
+      - [0x1AEE290, bin, overlay_24_reloc]
+
+  - name: overlay_25
+    type: code
+    start: 0x1AEE668
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o25
+    exclusive_ram_id: overlay_25
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AEE668, c, overlay_25]
+      - [0x1AEEE98, bin, overlay_25_reloc]
+
+  - name: overlay_26
+    type: code
+    start: 0x1AEF260
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o26
+    exclusive_ram_id: overlay_26
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AEF260, c, overlay_26]
+      - [0x1AF0250, data, overlay_26]
+      - [0x1AF0290, bin, overlay_26_reloc]
+
+  - name: overlay_27
+    type: code
+    start: 0x1AF05C8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o27
+    exclusive_ram_id: overlay_27
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AF05C8, c, overlay_27]
+      - [0x1AF0A08, data, overlay_27]
+      - [0x1AF0A18, bin, overlay_27_reloc]
+
+  - name: overlay_28
+    type: code
+    start: 0x1AF0AF8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o28
+    exclusive_ram_id: overlay_28
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AF0AF8, c, overlay_28]
+      - [0x1AF26C8, data, overlay_28]
+      - [0x1AF2738, bin, overlay_28_reloc]
+
+  - name: overlay_29
+    type: code
+    start: 0x1AF2950
+    vram: 0xF0000000
+    bss_size: 0x50
+    align: 0x8
+    dir: overlays_kiosk/o29
+    exclusive_ram_id: overlay_29
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AF2950, c, overlay_29]
+      - [0x1AF38E0, data, overlay_29]
+      - [0x1AF3920, bin, overlay_29_reloc]
+
+  - name: overlay_30
+    type: code
+    start: 0x1AF3F98
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o30
+    exclusive_ram_id: overlay_30
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AF3F98, c, overlay_30]
+      - [0x1AF5A58, bin, overlay_30_reloc]
+
+  - name: overlay_31
+    type: code
+    start: 0x1AF5B00
+    vram: 0xF0000000
+    bss_size: 0x540
+    align: 0x8
+    dir: overlays_kiosk/o31
+    exclusive_ram_id: overlay_31
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AF5B00, c, overlay_31]
+      - [0x1AF93D0, data, overlay_31]
+      - [0x1AF9AC0, bin, overlay_31_reloc]
+
+  - name: overlay_32
+    type: code
+    start: 0x1AFB208
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o32
+    exclusive_ram_id: overlay_32
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AFB208, c, overlay_32]
+      - [0x1AFD638, data, overlay_32]
+      - [0x1AFE258, bin, overlay_32_reloc]
+
+  - name: overlay_33
+    type: code
+    start: 0x1AFEB38
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o33
+    exclusive_ram_id: overlay_33
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AFEB38, c, overlay_33]
+      - [0x1AFED48, bin, overlay_33_reloc]
+
+  - name: overlay_34
+    type: code
+    start: 0x1AFEDC8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o34
+    exclusive_ram_id: overlay_34
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AFEDC8, c, overlay_34]
+      - [0x1AFF218, bin, overlay_34_reloc]
+
+  - name: overlay_35
+    type: code
+    start: 0x1AFF418
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o35
+    exclusive_ram_id: overlay_35
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AFF418, c, overlay_35]
+      - [0x1AFF6D8, bin, overlay_35_reloc]
+
+  - name: overlay_36
+    type: code
+    start: 0x1AFF818
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o36
+    exclusive_ram_id: overlay_36
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1AFF818, c, overlay_36]
+      - [0x1AFFE48, data, overlay_36]
+      - [0x1AFFEC8, bin, overlay_36_reloc]
+
+  - name: overlay_37
+    type: code
+    start: 0x1B00470
+    vram: 0xF0000000
+    bss_size: 0x60
+    align: 0x8
+    dir: overlays_kiosk/o37
+    exclusive_ram_id: overlay_37
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B00470, c, overlay_37]
+      - [0x1B01C40, data, overlay_37]
+      - [0x1B01D30, bin, overlay_37_reloc]
+
+  - name: overlay_38
+    type: code
+    start: 0x1B029C8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o38
+    exclusive_ram_id: overlay_38
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B029C8, c, overlay_38]
+      - [0x1B02CD8, data, overlay_38]
+      - [0x1B02D48, bin, overlay_38_reloc]
+
+  - name: overlay_39
+    type: code
+    start: 0x1B02DD0
+    vram: 0xF0000000
+    bss_size: 0x30
+    align: 0x8
+    dir: overlays_kiosk/o39
+    exclusive_ram_id: overlay_39
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B02DD0, c, overlay_39]
+      - [0x1B03340, data, overlay_39]
+      - [0x1B03580, bin, overlay_39_reloc]
+
+  - name: overlay_40
+    type: code
+    start: 0x1B03758
+    vram: 0xF0000000
+    bss_size: 0x60
+    align: 0x8
+    dir: overlays_kiosk/o40
+    exclusive_ram_id: overlay_40
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B03758, c, overlay_40]
+      - [0x1B05B88, data, overlay_40]
+      - [0x1B05C18, bin, overlay_40_reloc]
+
+  - name: overlay_41
+    type: code
+    start: 0x1B06E48
+    vram: 0xF0000000
+    bss_size: 0x20
+    align: 0x8
+    dir: overlays_kiosk/o41
+    exclusive_ram_id: overlay_41
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B06E48, c, overlay_41]
+      - [0x1B083B8, data, overlay_41]
+      - [0x1B08518, bin, overlay_41_reloc]
+
+  - name: overlay_42
+    type: code
+    start: 0x1B08BB8
+    vram: 0xF0000000
+    bss_size: 0x2000
+    align: 0x8
+    dir: overlays_kiosk/o42
+    exclusive_ram_id: overlay_42
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B08BB8, c, overlay_42]
+      - [0x1B0BCA8, data, overlay_42]
+      - [0x1B0BF68, bin, overlay_42_reloc]
+
+  - name: overlay_43
+    type: code
+    start: 0x1B0D490
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o43
+    exclusive_ram_id: overlay_43
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B0D490, c, overlay_43]
+      - [0x1B0D820, data, overlay_43]
+      - [0x1B0DB00, bin, overlay_43_reloc]
+
+  - name: overlay_44
+    type: code
+    start: 0x1B0DB90
+    vram: 0xF0000000
+    bss_size: 0x5F0
+    align: 0x8
+    dir: overlays_kiosk/o44
+    exclusive_ram_id: overlay_44
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B0DB90, c, overlay_44]
+      - [0x1B0E700, data, overlay_44]
+      - [0x1B0E840, bin, overlay_44_reloc]
+
+  - name: overlay_45
+    type: code
+    start: 0x1B0E980
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o45
+    exclusive_ram_id: overlay_45
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B0E980, c, overlay_45]
+      - [0x1B0F2D0, data, overlay_45]
+      - [0x1B0F300, bin, overlay_45_reloc]
+
+  - name: overlay_46
+    type: code
+    start: 0x1B0F570
+    vram: 0xF0000000
+    bss_size: 0x40
+    align: 0x8
+    dir: overlays_kiosk/o46
+    exclusive_ram_id: overlay_46
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B0F570, c, overlay_46]
+      - [0x1B11B10, data, overlay_46]
+      - [0x1B11C50, bin, overlay_46_reloc]
+
+  - name: overlay_47
+    type: code
+    start: 0x1B12310
+    vram: 0xF0000000
+    bss_size: 0x10
+    align: 0x8
+    dir: overlays_kiosk/o47
+    exclusive_ram_id: overlay_47
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B12310, c, overlay_47]
+      - [0x1B12A60, data, overlay_47]
+      - [0x1B12A70, bin, overlay_47_reloc]
+
+  - name: overlay_48
+    type: code
+    start: 0x1B12C80
+    vram: 0xF0000000
+    bss_size: 0xA0
+    align: 0x8
+    dir: overlays_kiosk/o48
+    exclusive_ram_id: overlay_48
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B12C80, c, overlay_48]
+      - [0x1B13850, data, overlay_48]
+      - [0x1B138A0, bin, overlay_48_reloc]
+
+  - name: overlay_49
+    type: code
+    start: 0x1B13AB0
+    vram: 0xF0000000
+    bss_size: 0x10
+    align: 0x8
+    dir: overlays_kiosk/o49
+    exclusive_ram_id: overlay_49
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B13AB0, c, overlay_49]
+      - [0x1B152D0, data, overlay_49]
+      - [0x1B15B00, bin, overlay_49_reloc]
+
+  - name: overlay_50
+    type: code
+    start: 0x1B16228
+    vram: 0xF0000000
+    bss_size: 0x10
+    align: 0x8
+    dir: overlays_kiosk/o50
+    exclusive_ram_id: overlay_50
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B16228, c, overlay_50]
+      - [0x1B17A08, data, overlay_50]
+      - [0x1B17F88, bin, overlay_50_reloc]
+
+  - name: overlay_51
+    type: code
+    start: 0x1B184F0
+    vram: 0xF0000000
+    bss_size: 0x10
+    align: 0x8
+    dir: overlays_kiosk/o51
+    exclusive_ram_id: overlay_51
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B184F0, c, overlay_51]
+      - [0x1B19D10, data, overlay_51]
+      - [0x1B1A600, bin, overlay_51_reloc]
+
+  - name: overlay_52
+    type: code
+    start: 0x1B1AD78
+    vram: 0xF0000000
+    bss_size: 0x40
+    align: 0x8
+    dir: overlays_kiosk/o52
+    exclusive_ram_id: overlay_52
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B1AD78, c, overlay_52]
+      - [0x1B1E248, data, overlay_52]
+      - [0x1B1E688, bin, overlay_52_reloc]
+
+  - name: overlay_53
+    type: code
+    start: 0x1B1F268
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o53
+    exclusive_ram_id: overlay_53
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B1F268, c, overlay_53]
+      - [0x1B1FA08, data, overlay_53]
+      - [0x1B1FCF8, bin, overlay_53_reloc]
+
+  - name: overlay_54
+    type: code
+    start: 0x1B1FE18
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o54
+    exclusive_ram_id: overlay_54
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B1FE18, c, overlay_54]
+      - [0x1B20998, data, overlay_54]
+      - [0x1B209E8, bin, overlay_54_reloc]
+
+  - name: overlay_56
+    type: code
+    start: 0x1B20A90
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o56
+    exclusive_ram_id: overlay_56
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B20A90, c, overlay_56]
+      - [0x1B21400, data, overlay_56]
+      - [0x1B214A0, bin, overlay_56_reloc]
+
+  - name: overlay_57
+    type: code
+    start: 0x1B21A78
+    vram: 0xF0000000
+    bss_size: 0x40
+    align: 0x8
+    dir: overlays_kiosk/o57
+    exclusive_ram_id: overlay_57
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B21A78, c, overlay_57]
+      - [0x1B22978, data, overlay_57]
+      - [0x1B22B48, bin, overlay_57_reloc]
+
+  - name: overlay_58
+    type: code
+    start: 0x1B23338
+    vram: 0xF0000000
+    bss_size: 0x50
+    align: 0x8
+    dir: overlays_kiosk/o58
+    exclusive_ram_id: overlay_58
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B23338, c, overlay_58]
+      - [0x1B238A8, data, overlay_58]
+      - [0x1B23EE8, bin, overlay_58_reloc]
+
+  - name: overlay_59
+    type: code
+    start: 0x1B243B8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o59
+    exclusive_ram_id: overlay_59
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B243B8, c, overlay_59]
+      - [0x1B243C8, data, overlay_59]
+
+  - name: overlay_60
+    type: code
+    start: 0x1B24E28
+    vram: 0xF0000000
+    bss_size: 0x1D0
+    align: 0x8
+    dir: overlays_kiosk/o60
+    exclusive_ram_id: overlay_60
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B24E28, c, overlay_60]
+      - [0x1B27D48, data, overlay_60]
+      - [0x1B283A8, bin, overlay_60_reloc]
+
+  - name: overlay_61
+    type: code
+    start: 0x1B29250
+    vram: 0xF0000000
+    bss_size: 0xE0
+    align: 0x8
+    dir: overlays_kiosk/o61
+    exclusive_ram_id: overlay_61
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B29250, c, overlay_61]
+      - [0x1B2BAB0, data, overlay_61]
+      - [0x1B2BCB0, bin, overlay_61_reloc]
+
+  - name: overlay_62
+    type: code
+    start: 0x1B2DB90
+    vram: 0xF0000000
+    bss_size: 0x30
+    align: 0x8
+    dir: overlays_kiosk/o62
+    exclusive_ram_id: overlay_62
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B2DB90, c, overlay_62]
+      - [0x1B2E910, data, overlay_62]
+      - [0x1B2EBB0, bin, overlay_62_reloc]
+
+  - name: overlay_63
+    type: code
+    start: 0x1B2F378
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o63
+    exclusive_ram_id: overlay_63
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B2F378, c, overlay_63]
+      - [0x1B2FFD8, data, overlay_63]
+      - [0x1B300E8, bin, overlay_63_reloc]
+
+  - name: overlay_64
+    type: code
+    start: 0x1B30198
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o64
+    exclusive_ram_id: overlay_64
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B30198, c, overlay_64]
+      - [0x1B30838, data, overlay_64]
+      - [0x1B30848, bin, overlay_64_reloc]
+
+  - name: overlay_65
+    type: code
+    start: 0x1B308E8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o65
+    exclusive_ram_id: overlay_65
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B308E8, c, overlay_65]
+      - [0x1B312D8, bin, overlay_65_reloc]
+
+  - name: overlay_66
+    type: code
+    start: 0x1B31358
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o66
+    exclusive_ram_id: overlay_66
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B31358, c, overlay_66]
+      - [0x1B35768, data, overlay_66]
+      - [0x1B361B8, bin, overlay_66_reloc]
+
+  - name: overlay_67
+    type: code
+    start: 0x1B36E70
+    vram: 0xF0000000
+    bss_size: 0xD30
+    align: 0x8
+    dir: overlays_kiosk/o67
+    exclusive_ram_id: overlay_67
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B36E70, c, overlay_67]
+      - [0x1B47CB0, data, overlay_67]
+      - [0x1B49320, bin, overlay_67_reloc]
+
+  - name: overlay_68
+    type: code
+    start: 0x1B4C710
+    vram: 0xF0000000
+    bss_size: 0x20
+    align: 0x8
+    dir: overlays_kiosk/o68
+    exclusive_ram_id: overlay_68
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B4C710, c, overlay_68]
+      - [0x1B4E2B0, data, overlay_68]
+      - [0x1B4E710, bin, overlay_68_reloc]
+
+  - name: overlay_69
+    type: code
+    start: 0x1B4EE00
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o69
+    exclusive_ram_id: overlay_69
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B4EE00, c, overlay_69]
+      - [0x1B4EED0, bin, overlay_69_reloc]
+
+  - name: overlay_70
+    type: code
+    start: 0x1B4EEF8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o70
+    exclusive_ram_id: overlay_70
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B4EEF8, c, overlay_70]
+      - [0x1B4EF68, bin, overlay_70_reloc]
+
+  - name: overlay_71
+    type: code
+    start: 0x1B4EF90
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o71
+    exclusive_ram_id: overlay_71
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B4EF90, c, overlay_71]
+      - [0x1B4F410, data, overlay_71]
+      - [0x1B4F420, bin, overlay_71_reloc]
+
+  - name: overlay_72
+    type: code
+    start: 0x1B4F4B8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o72
+    exclusive_ram_id: overlay_72
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B4F4B8, c, overlay_72]
+      - [0x1B4FC18, data, overlay_72]
+      - [0x1B4FFE8, bin, overlay_72_reloc]
+
+  - name: overlay_73
+    type: code
+    start: 0x1B500E0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o73
+    exclusive_ram_id: overlay_73
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B500E0, c, overlay_73]
+      - [0x1B50320, data, overlay_73]
+      - [0x1B50330, bin, overlay_73_reloc]
+
+  - name: overlay_74
+    type: code
+    start: 0x1B50358
+    vram: 0xF0000000
+    bss_size: 0x30
+    align: 0x8
+    dir: overlays_kiosk/o74
+    exclusive_ram_id: overlay_74
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B50358, c, overlay_74]
+      - [0x1B51738, data, overlay_74]
+      - [0x1B51938, bin, overlay_74_reloc]
+
+  - name: overlay_75
+    type: code
+    start: 0x1B51F40
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o75
+    exclusive_ram_id: overlay_75
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B51F40, c, overlay_75]
+      - [0x1B52C50, data, overlay_75]
+      - [0x1B52DF0, bin, overlay_75_reloc]
+
+  - name: overlay_76
+    type: code
+    start: 0x1B52F00
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o76
+    exclusive_ram_id: overlay_76
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B52F00, c, overlay_76]
+      - [0x1B53740, data, overlay_76]
+      - [0x1B53770, bin, overlay_76_reloc]
+
+  - name: overlay_77
+    type: code
+    start: 0x1B53850
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o77
+    exclusive_ram_id: overlay_77
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B53850, c, overlay_77]
+      - [0x1B53910, bin, overlay_77_reloc]
+
+  - name: overlay_78
+    type: code
+    start: 0x1B53928
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o78
+    exclusive_ram_id: overlay_78
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B53928, c, overlay_78]
+      - [0x1B539B8, bin, overlay_78_reloc]
+
+  - name: overlay_79
+    type: code
+    start: 0x1B539C0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o79
+    exclusive_ram_id: overlay_79
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B539C0, c, overlay_79]
+      - [0x1B54E50, data, overlay_79]
+      - [0x1B54F50, bin, overlay_79_reloc]
+
+  - name: overlay_80
+    type: code
+    start: 0x1B55180
+    vram: 0xF0000000
+    bss_size: 0x60
+    align: 0x8
+    dir: overlays_kiosk/o80
+    exclusive_ram_id: overlay_80
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B55180, c, overlay_80]
+      - [0x1B55D60, data, overlay_80]
+      - [0x1B55DA0, bin, overlay_80_reloc]
+
+  - name: overlay_81
+    type: code
+    start: 0x1B55FA0
+    vram: 0xF0000000
+    bss_size: 0x30
+    align: 0x8
+    dir: overlays_kiosk/o81
+    exclusive_ram_id: overlay_81
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B55FA0, c, overlay_81]
+      - [0x1B57740, data, overlay_81]
+      - [0x1B57890, bin, overlay_81_reloc]
+
+  - name: overlay_82
+    type: code
+    start: 0x1B57F98
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o82
+    exclusive_ram_id: overlay_82
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B57F98, c, overlay_82]
+      - [0x1B59198, data, overlay_82]
+      - [0x1B591E8, bin, overlay_82_reloc]
+
+  - name: overlay_83
+    type: code
+    start: 0x1B594E0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o83
+    exclusive_ram_id: overlay_83
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B594E0, c, overlay_83]
+      - [0x1B595B0, bin, overlay_83_reloc]
+
+  - name: overlay_84
+    type: code
+    start: 0x1B595B8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o84
+    exclusive_ram_id: overlay_84
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B595B8, c, overlay_84]
+      - [0x1B598A8, bin, overlay_84_reloc]
+
+  - name: overlay_85
+    type: code
+    start: 0x1B59908
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o85
+    exclusive_ram_id: overlay_85
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B59908, c, overlay_85]
+      - [0x1B59EC8, data, overlay_85]
+      - [0x1B59ED8, bin, overlay_85_reloc]
+
+  - name: overlay_86
+    type: code
+    start: 0x1B59F88
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o86
+    exclusive_ram_id: overlay_86
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B59F88, c, overlay_86]
+      - [0x1B5B178, data, overlay_86]
+      - [0x1B5B418, bin, overlay_86_reloc]
+
+  - name: overlay_87
+    type: code
+    start: 0x1B5B640
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o87
+    exclusive_ram_id: overlay_87
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B5B640, c, overlay_87]
+      - [0x1B5B930, data, overlay_87]
+      - [0x1B5B950, bin, overlay_87_reloc]
+
+  - name: overlay_88
+    type: code
+    start: 0x1B5B9D0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o88
+    exclusive_ram_id: overlay_88
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B5B9D0, c, overlay_88]
+      - [0x1B5BE50, data, overlay_88]
+      - [0x1B5BE70, bin, overlay_88_reloc]
+
+  - name: overlay_89
+    type: code
+    start: 0x1B5BEE0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o89
+    exclusive_ram_id: overlay_89
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B5BEE0, c, overlay_89]
+      - [0x1B5C550, data, overlay_89]
+      - [0x1B5C5D0, bin, overlay_89_reloc]
+
+  - name: overlay_90
+    type: code
+    start: 0x1B5C718
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o90
+    exclusive_ram_id: overlay_90
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B5C718, c, overlay_90]
+      - [0x1B5D678, data, overlay_90]
+      - [0x1B5D6C8, bin, overlay_90_reloc]
+
+  - name: overlay_91
+    type: code
+    start: 0x1B5D8A0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o91
+    exclusive_ram_id: overlay_91
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B5D8A0, c, overlay_91]
+      - [0x1B5DFC0, data, overlay_91]
+      - [0x1B5E000, bin, overlay_91_reloc]
+
+  - name: overlay_92
+    type: code
+    start: 0x1B5E128
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o92
+    exclusive_ram_id: overlay_92
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B5E128, c, overlay_92]
+      - [0x1B5E3D8, data, overlay_92]
+      - [0x1B5E4A8, bin, overlay_92_reloc]
+
+  - name: overlay_93
+    type: code
+    start: 0x1B5E528
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o93
+    exclusive_ram_id: overlay_93
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B5E528, c, overlay_93]
+      - [0x1B5E668, data, overlay_93]
+      - [0x1B5E688, bin, overlay_93_reloc]
+
+  - name: overlay_94
+    type: code
+    start: 0x1B5E708
+    vram: 0xF0000000
+    bss_size: 0x20
+    align: 0x8
+    dir: overlays_kiosk/o94
+    exclusive_ram_id: overlay_94
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B5E708, c, overlay_94]
+      - [0x1B5FEB8, data, overlay_94]
+      - [0x1B5FEE8, bin, overlay_94_reloc]
+
+  - name: overlay_95
+    type: code
+    start: 0x1B60068
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o95
+    exclusive_ram_id: overlay_95
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B60068, c, overlay_95]
+      - [0x1B60688, data, overlay_95]
+      - [0x1B606A8, bin, overlay_95_reloc]
+
+  - name: overlay_96
+    type: code
+    start: 0x1B60770
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o96
+    exclusive_ram_id: overlay_96
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B60770, c, overlay_96]
+      - [0x1B60B30, data, overlay_96]
+      - [0x1B60B40, bin, overlay_96_reloc]
+
+  - name: overlay_97
+    type: code
+    start: 0x1B60BB0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o97
+    exclusive_ram_id: overlay_97
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B60BB0, c, overlay_97]
+      - [0x1B60C20, bin, overlay_97_reloc]
+
+  - name: overlay_98
+    type: code
+    start: 0x1B60C48
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o98
+    exclusive_ram_id: overlay_98
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B60C48, c, overlay_98]
+      - [0x1B61318, data, overlay_98]
+      - [0x1B61358, bin, overlay_98_reloc]
+
+  - name: overlay_99
+    type: code
+    start: 0x1B614C0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o99
+    exclusive_ram_id: overlay_99
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B614C0, c, overlay_99]
+      - [0x1B617B0, data, overlay_99]
+      - [0x1B617C0, bin, overlay_99_reloc]
+
+  - name: overlay_100
+    type: code
+    start: 0x1B617F0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o100
+    exclusive_ram_id: overlay_100
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B617F0, c, overlay_100]
+      - [0x1B627D0, data, overlay_100]
+      - [0x1B62910, bin, overlay_100_reloc]
+
+  - name: overlay_101
+    type: code
+    start: 0x1B62AA8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o101
+    exclusive_ram_id: overlay_101
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B62AA8, c, overlay_101]
+      - [0x1B633A8, data, overlay_101]
+      - [0x1B633C8, bin, overlay_101_reloc]
+
+  - name: overlay_102
+    type: code
+    start: 0x1B63488
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o102
+    exclusive_ram_id: overlay_102
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B63488, c, overlay_102]
+      - [0x1B636C8, data, overlay_102]
+      - [0x1B636E8, bin, overlay_102_reloc]
+
+  - name: overlay_103
+    type: code
+    start: 0x1B63750
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o103
+    exclusive_ram_id: overlay_103
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B63750, c, overlay_103]
+      - [0x1B63DD0, data, overlay_103]
+      - [0x1B63DF0, bin, overlay_103_reloc]
+
+  - name: overlay_104
+    type: code
+    start: 0x1B63ED0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o104
+    exclusive_ram_id: overlay_104
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B63ED0, c, overlay_104]
+      - [0x1B65DA0, data, overlay_104]
+      - [0x1B65DB0, bin, overlay_104_reloc]
+
+  - name: overlay_105
+    type: code
+    start: 0x1B65E98
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o105
+    exclusive_ram_id: overlay_105
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B65E98, c, overlay_105]
+      - [0x1B67BC8, data, overlay_105]
+      - [0x1B67C48, bin, overlay_105_reloc]
+
+  - name: overlay_106
+    type: code
+    start: 0x1B680E8
+    vram: 0xF0000000
+    bss_size: 0x190
+    align: 0x8
+    dir: overlays_kiosk/o106
+    exclusive_ram_id: overlay_106
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B680E8, c, overlay_106]
+      - [0x1B69148, data, overlay_106]
+      - [0x1B691B8, bin, overlay_106_reloc]
+
+  - name: overlay_107
+    type: code
+    start: 0x1B69340
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o107
+    exclusive_ram_id: overlay_107
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B69340, c, overlay_107]
+      - [0x1B69560, data, overlay_107]
+      - [0x1B69580, bin, overlay_107_reloc]
+
+  - name: overlay_108
+    type: code
+    start: 0x1B695E0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o108
+    exclusive_ram_id: overlay_108
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B695E0, c, overlay_108]
+      - [0x1B6A170, data, overlay_108]
+      - [0x1B6A200, bin, overlay_108_reloc]
+
+  - name: overlay_109
+    type: code
+    start: 0x1B6A400
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o109
+    exclusive_ram_id: overlay_109
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B6A400, c, overlay_109]
+      - [0x1B6A780, bin, overlay_109_reloc]
+
+  - name: overlay_110
+    type: code
+    start: 0x1B6A810
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o110
+    exclusive_ram_id: overlay_110
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B6A810, c, overlay_110]
+
+  - name: overlay_111
+    type: code
+    start: 0x1B6A820
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o111
+    exclusive_ram_id: overlay_111
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B6A820, c, overlay_111]
+      - [0x1B6BC10, data, overlay_111]
+      - [0x1B6BC50, bin, overlay_111_reloc]
+
+  - name: overlay_112
+    type: code
+    start: 0x1B6BF18
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o112
+    exclusive_ram_id: overlay_112
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B6BF18, c, overlay_112]
+      - [0x1B6CBD8, data, overlay_112]
+      - [0x1B6CBF8, bin, overlay_112_reloc]
+
+  - name: overlay_113
+    type: code
+    start: 0x1B6CD60
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o113
+    exclusive_ram_id: overlay_113
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B6CD60, c, overlay_113]
+      - [0x1B6D350, data, overlay_113]
+      - [0x1B6D360, bin, overlay_113_reloc]
+
+  - name: overlay_114
+    type: code
+    start: 0x1B6D380
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o114
+    exclusive_ram_id: overlay_114
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B6D380, c, overlay_114]
+      - [0x1B6D740, bin, overlay_114_reloc]
+
+  - name: overlay_115
+    type: code
+    start: 0x1B6D808
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o115
+    exclusive_ram_id: overlay_115
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B6D808, c, overlay_115]
+      - [0x1B6DD08, data, overlay_115]
+      - [0x1B6DD18, bin, overlay_115_reloc]
+
+  - name: overlay_116
+    type: code
+    start: 0x1B6DE40
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o116
+    exclusive_ram_id: overlay_116
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B6DE40, c, overlay_116]
+      - [0x1B6E9C0, data, overlay_116]
+      - [0x1B6E9E0, bin, overlay_116_reloc]
+
+  - name: overlay_117
+    type: code
+    start: 0x1B6EB10
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o117
+    exclusive_ram_id: overlay_117
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B6EB10, c, overlay_117]
+      - [0x1B6F340, data, overlay_117]
+      - [0x1B6F370, bin, overlay_117_reloc]
+
+  - name: overlay_118
+    type: code
+    start: 0x1B6F4E0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o118
+    exclusive_ram_id: overlay_118
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B6F4E0, c, overlay_118]
+      - [0x1B6F5D0, data, overlay_118]
+      - [0x1B6F5E0, bin, overlay_118_reloc]
+
+  - name: overlay_119
+    type: code
+    start: 0x1B6F618
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o119
+    exclusive_ram_id: overlay_119
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B6F618, c, overlay_119]
+      - [0x1B700E8, data, overlay_119]
+      - [0x1B70128, bin, overlay_119_reloc]
+
+  - name: overlay_120
+    type: code
+    start: 0x1B702F0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o120
+    exclusive_ram_id: overlay_120
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B702F0, c, overlay_120]
+      - [0x1B71320, data, overlay_120]
+      - [0x1B71330, bin, overlay_120_reloc]
+
+  - name: overlay_121
+    type: code
+    start: 0x1B713D0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o121
+    exclusive_ram_id: overlay_121
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B713D0, c, overlay_121]
+      - [0x1B724C0, data, overlay_121]
+      - [0x1B72500, bin, overlay_121_reloc]
+
+  - name: overlay_122
+    type: code
+    start: 0x1B72738
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o122
+    exclusive_ram_id: overlay_122
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B72738, c, overlay_122]
+      - [0x1B72B68, bin, overlay_122_reloc]
+
+  - name: overlay_123
+    type: code
+    start: 0x1B72B98
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o123
+    exclusive_ram_id: overlay_123
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B72B98, c, overlay_123]
+      - [0x1B73548, data, overlay_123]
+      - [0x1B73558, bin, overlay_123_reloc]
+
+  - name: overlay_124
+    type: code
+    start: 0x1B73670
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o124
+    exclusive_ram_id: overlay_124
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B73670, c, overlay_124]
+      - [0x1B73C00, data, overlay_124]
+      - [0x1B73C30, bin, overlay_124_reloc]
+
+  - name: overlay_125
+    type: code
+    start: 0x1B73CD8
+    vram: 0xF0000000
+    bss_size: 0x300
+    align: 0x8
+    dir: overlays_kiosk/o125
+    exclusive_ram_id: overlay_125
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B73CD8, c, overlay_125]
+      - [0x1B74F28, data, overlay_125]
+      - [0x1B74F78, bin, overlay_125_reloc]
+
+  - name: overlay_126
+    type: code
+    start: 0x1B75170
+    vram: 0xF0000000
+    bss_size: 0x50
+    align: 0x8
+    dir: overlays_kiosk/o126
+    exclusive_ram_id: overlay_126
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B75170, c, overlay_126]
+      - [0x1B762C0, data, overlay_126]
+      - [0x1B76340, bin, overlay_126_reloc]
+
+  - name: overlay_127
+    type: code
+    start: 0x1B769C0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o127
+    exclusive_ram_id: overlay_127
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B769C0, c, overlay_127]
+      - [0x1B76C80, data, overlay_127]
+      - [0x1B76C90, bin, overlay_127_reloc]
+
+  - name: overlay_128
+    type: code
+    start: 0x1B76CF0
+    vram: 0xF0000000
+    bss_size: 0x40
+    align: 0x8
+    dir: overlays_kiosk/o128
+    exclusive_ram_id: overlay_128
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B76CF0, c, overlay_128]
+      - [0x1B77D50, data, overlay_128]
+      - [0x1B77F30, bin, overlay_128_reloc]
+
+  - name: overlay_129
+    type: code
+    start: 0x1B784B8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o129
+    exclusive_ram_id: overlay_129
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B784B8, c, overlay_129]
+      - [0x1B78A98, data, overlay_129]
+      - [0x1B78AA8, bin, overlay_129_reloc]
+
+  - name: overlay_130
+    type: code
+    start: 0x1B78B60
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o130
+    exclusive_ram_id: overlay_130
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B78B60, c, overlay_130]
+      - [0x1B79320, data, overlay_130]
+      - [0x1B79360, bin, overlay_130_reloc]
+
+  - name: overlay_131
+    type: code
+    start: 0x1B79460
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o131
+    exclusive_ram_id: overlay_131
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B79460, c, overlay_131]
+      - [0x1B79770, data, overlay_131]
+      - [0x1B79790, bin, overlay_131_reloc]
+
+  - name: overlay_132
+    type: code
+    start: 0x1B79808
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o132
+    exclusive_ram_id: overlay_132
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B79808, c, overlay_132]
+
+  - name: overlay_133
+    type: code
+    start: 0x1B79818
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o133
+    exclusive_ram_id: overlay_133
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B79818, c, overlay_133]
+      - [0x1B79908, bin, overlay_133_reloc]
+
+  - name: overlay_134
+    type: code
+    start: 0x1B79918
+    vram: 0xF0000000
+    bss_size: 0x20
+    align: 0x8
+    dir: overlays_kiosk/o134
+    exclusive_ram_id: overlay_134
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B79918, c, overlay_134]
+      - [0x1B7C2E8, data, overlay_134]
+      - [0x1B7C3E8, bin, overlay_134_reloc]
+
+  - name: overlay_135
+    type: code
+    start: 0x1B7C790
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o135
+    exclusive_ram_id: overlay_135
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B7C790, c, overlay_135]
+      - [0x1B7E540, data, overlay_135]
+      - [0x1B7E630, bin, overlay_135_reloc]
+
+  - name: overlay_136
+    type: code
+    start: 0x1B7E7D0
+    vram: 0xF0000000
+    bss_size: 0x240
+    align: 0x8
+    dir: overlays_kiosk/o136
+    exclusive_ram_id: overlay_136
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B7E7D0, c, overlay_136]
+      - [0x1B7FF30, data, overlay_136]
+      - [0x1B7FF50, bin, overlay_136_reloc]
+
+  - name: overlay_137
+    type: code
+    start: 0x1B80258
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o137
+    exclusive_ram_id: overlay_137
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B80258, c, overlay_137]
+      - [0x1B80548, data, overlay_137]
+      - [0x1B80558, bin, overlay_137_reloc]
+
+  - name: overlay_138
+    type: code
+    start: 0x1B805D8
+    vram: 0xF0000000
+    bss_size: 0x90
+    align: 0x8
+    dir: overlays_kiosk/o138
+    exclusive_ram_id: overlay_138
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B805D8, c, overlay_138]
+      - [0x1B809B8, data, overlay_138]
+      - [0x1B809C8, bin, overlay_138_reloc]
+
+  - name: overlay_139
+    type: code
+    start: 0x1B80AA8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o139
+    exclusive_ram_id: overlay_139
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B80AA8, c, overlay_139]
+      - [0x1B80E58, data, overlay_139]
+      - [0x1B80E78, bin, overlay_139_reloc]
+
+  - name: overlay_140
+    type: code
+    start: 0x1B80EF0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o140
+    exclusive_ram_id: overlay_140
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B80EF0, c, overlay_140]
+      - [0x1B812A0, data, overlay_140]
+      - [0x1B812B0, bin, overlay_140_reloc]
+
+  - name: overlay_141
+    type: code
+    start: 0x1B81338
+    vram: 0xF0000000
+    bss_size: 0x40
+    align: 0x8
+    dir: overlays_kiosk/o141
+    exclusive_ram_id: overlay_141
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B81338, c, overlay_141]
+      - [0x1B82738, data, overlay_141]
+      - [0x1B82858, bin, overlay_141_reloc]
+
+  - name: overlay_142
+    type: code
+    start: 0x1B82DB0
+    vram: 0xF0000000
+    bss_size: 0x300
+    align: 0x8
+    dir: overlays_kiosk/o142
+    exclusive_ram_id: overlay_142
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B82DB0, c, overlay_142]
+      - [0x1B859B0, data, overlay_142]
+      - [0x1B85DD0, bin, overlay_142_reloc]
+
+  - name: overlay_143
+    type: code
+    start: 0x1B86500
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o143
+    exclusive_ram_id: overlay_143
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B86500, c, overlay_143]
+
+  - name: overlay_144
+    type: code
+    start: 0x1B86510
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o144
+    exclusive_ram_id: overlay_144
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B86510, c, overlay_144]
+      - [0x1B868B0, bin, overlay_144_reloc]
+
+  - name: overlay_145
+    type: code
+    start: 0x1B86948
+    vram: 0xF0000000
+    bss_size: 0x10
+    align: 0x8
+    dir: overlays_kiosk/o145
+    exclusive_ram_id: overlay_145
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B86948, c, overlay_145]
+      - [0x1B87668, data, overlay_145]
+      - [0x1B877A8, bin, overlay_145_reloc]
+
+  - name: overlay_146
+    type: code
+    start: 0x1B87CE8
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o146
+    exclusive_ram_id: overlay_146
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B87CE8, c, overlay_146]
+      - [0x1B88298, data, overlay_146]
+      - [0x1B882B8, bin, overlay_146_reloc]
+
+  - name: overlay_147
+    type: code
+    start: 0x1B883C0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o147
+    exclusive_ram_id: overlay_147
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B883C0, c, overlay_147]
+      - [0x1B885E0, bin, overlay_147_reloc]
+
+  - name: overlay_148
+    type: code
+    start: 0x1B88620
+    vram: 0xF0000000
+    bss_size: 0x40
+    align: 0x8
+    dir: overlays_kiosk/o148
+    exclusive_ram_id: overlay_148
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B88620, c, overlay_148]
+      - [0x1B8A7A0, data, overlay_148]
+      - [0x1B8A850, bin, overlay_148_reloc]
+
+  - name: overlay_149
+    type: code
+    start: 0x1B8AD60
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o149
+    exclusive_ram_id: overlay_149
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B8AD60, c, overlay_149]
+      - [0x1B8B060, bin, overlay_149_reloc]
+
+  - name: overlay_150
+    type: code
+    start: 0x1B8B0A0
+    vram: 0xF0000000
+    bss_size: 0xD0
+    align: 0x8
+    dir: overlays_kiosk/o150
+    exclusive_ram_id: overlay_150
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B8B0A0, c, overlay_150]
+      - [0x1B8C080, data, overlay_150]
+      - [0x1B8C090, bin, overlay_150_reloc]
+
+  - name: overlay_151
+    type: code
+    start: 0x1B8C320
+    vram: 0xF0000000
+    bss_size: 0x440
+    align: 0x8
+    dir: overlays_kiosk/o151
+    exclusive_ram_id: overlay_151
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B8C320, c, overlay_151]
+      - [0x1B8D1E0, data, overlay_151]
+      - [0x1B8D1F0, bin, overlay_151_reloc]
+
+  - name: overlay_152
+    type: code
+    start: 0x1B8D558
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o152
+    exclusive_ram_id: overlay_152
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B8D558, c, overlay_152]
+      - [0x1B8D978, data, overlay_152]
+      - [0x1B8D988, bin, overlay_152_reloc]
+
+  - name: overlay_153
+    type: code
+    start: 0x1B8DA00
+    vram: 0xF0000000
+    bss_size: 0x1A0
+    align: 0x8
+    dir: overlays_kiosk/o153
+    exclusive_ram_id: overlay_153
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B8DA00, c, overlay_153]
+      - [0x1B8F260, data, overlay_153]
+      - [0x1B8F290, bin, overlay_153_reloc]
+
+  - name: overlay_154
+    type: code
+    start: 0x1B8F888
+    vram: 0xF0000000
+    bss_size: 0x1310
+    align: 0x8
+    dir: overlays_kiosk/o154
+    exclusive_ram_id: overlay_154
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B8F888, c, overlay_154]
+      - [0x1B934F8, data, overlay_154]
+      - [0x1B93548, bin, overlay_154_reloc]
+
+  - name: overlay_155
+    type: code
+    start: 0x1B941B0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o155
+    exclusive_ram_id: overlay_155
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B941B0, c, overlay_155]
+
+  - name: overlay_156
+    type: code
+    start: 0x1B941E0
+    vram: 0xF0000000
+    bss_size: 0x0
+    align: 0x8
+    dir: overlays_kiosk/o156
+    exclusive_ram_id: overlay_156
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1B941E0, c, overlay_156]
+      - [0x1B94360, data, overlay_156]
+      - [0x1B94410, bin, overlay_156_reloc]
 
   - name: symbolsTable_offsets
     type: bin

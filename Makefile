@@ -41,6 +41,21 @@ BIN_DIRS  = assets
 BUILD_DIR = build
 SRC_DIR   = src
 ASM_DIR   = asm
+
+ifeq ($(VERSION),us)
+SRC_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard src/overlays/*/)))
+ASM_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard asm/overlays/*/)))
+ASM_OVERLAYS_DIRS += $(patsubst %/,%,$(dir $(wildcard asm/nonmatchings/overlays/*/)))
+ASM_OVERLAYS_DIRS += $(patsubst %/,%,$(dir $(wildcard asm/data/overlays/*/)))
+BIN_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard assets/overlays/*/)))
+else
+SRC_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard src/overlays_$(VERSION)/*/)))
+ASM_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard asm/overlays_$(VERSION)/*/)))
+ASM_OVERLAYS_DIRS += $(patsubst %/,%,$(dir $(wildcard asm/nonmatchings/overlays_$(VERSION)/*/)))
+ASM_OVERLAYS_DIRS += $(patsubst %/,%,$(dir $(wildcard asm/data/overlays_$(VERSION)/*/)))
+BIN_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard assets/overlays_$(VERSION)/*/)))
+endif
+
 # ifeq ($(VERSION),us)
 # 	BIN_DIRS  = assets
 # 	BUILD_DIR = build
@@ -85,7 +100,7 @@ endif
 GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) $(LIBULTRA_DIR) </dev/null 2>/dev/null)
 GLOBAL_ASM_O_FILES := $(foreach file,$(GLOBAL_ASM_C_FILES),$(BUILD_DIR)/$(file).o)
 
-SRC_DIRS = $(SRC_DIR) $(MATH_DIR) $(LIBULTRA_SRC_DIRS) $(OLD_LIBULTRA_DIR)
+SRC_DIRS = $(SRC_DIR) $(SRC_OVERLAYS_DIRS) $(MATH_DIR) $(LIBULTRA_SRC_DIRS) $(OLD_LIBULTRA_DIR)
 SYMBOLS_DIR = ver/symbols
 
 TOOLS_DIR = tools
@@ -109,14 +124,13 @@ RECOMP_DIR := $(TOOLS_DIR)/ido-recomp/$(DETECTED_OS)
 
 # Files
 
-S_FILES         = $(foreach dir,$(ASM_DIRS) $(HASM_DIRS),$(wildcard $(dir)/*.s))
+S_FILES         = $(foreach dir,$(ASM_DIRS) $(HASM_DIRS) $(ASM_OVERLAYS_DIRS),$(wildcard $(dir)/*.s))
 C_FILES         = $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
-BIN_FILES       = $(foreach dir,$(BIN_DIRS),$(wildcard $(dir)/*.bin))
+BIN_FILES       = $(foreach dir,$(BIN_DIRS) $(BIN_OVERLAYS_DIRS),$(wildcard $(dir)/*.bin))
 
 O_FILES := $(foreach file,$(S_FILES),$(BUILD_DIR)/$(file).o) \
            $(foreach file,$(C_FILES),$(BUILD_DIR)/$(file).o) \
            $(foreach file,$(BIN_FILES),$(BUILD_DIR)/$(file).o)
-
 
 find-command = $(shell which $(1) 2>/dev/null)
 
@@ -340,7 +354,7 @@ default: all
 all: $(VERIFY)
 
 dirs:
-	$(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(HASM_DIRS) $(BIN_DIRS),$(shell mkdir -p $(BUILD_DIR)/$(dir)))
+	$(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(HASM_DIRS) $(BIN_DIRS) $(BIN_OVERLAYS_DIRS) $(ASM_OVERLAYS_DIRS) $(SRC_OVERLAYS_DIRS),$(shell mkdir -p $(BUILD_DIR)/$(dir)))
 
 verify: $(TARGET).z64
 	$(V)$(CRC)
