@@ -8,4 +8,4 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o42/overlay_42/frontKeyboardGetTiltList.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o42/overlay_42/func_overlay_42_F0002C8C_1F61D54.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o42/overlay_42/func_overlay_42_02A02C8C_1F61D54.s")

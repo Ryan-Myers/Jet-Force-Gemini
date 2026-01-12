@@ -6,7 +6,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o46/overlay_46/animseqLockOnUpdate.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o46/overlay_46/func_overlay_46_F00001C4_1F64D3C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o46/overlay_46/func_overlay_46_02E001C4_1F64D3C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o46/overlay_46/animseqLockOnDraw.s")
 

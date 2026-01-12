@@ -10,6 +10,6 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o151/overlay_151/SpiderSpitControl.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o151/overlay_151/func_overlay_151_F000084C_1FE24B4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o151/overlay_151/func_overlay_151_0970084C_1FE24B4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o151/overlay_151/GenerateSpitTexture.s")

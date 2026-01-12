@@ -293,7 +293,8 @@ def format_symbols_splat(symbols: list) -> str:
             # Overlay - use fake VRAM (0xF0000000 + offset) and segment tag
             # The segment: tag tells splat which segment this symbol belongs to,
             # matching the segment name in the YAML (e.g., overlay_3)
-            fake_addr = 0xF0000000 + offset
+            # fake_addr = 0xF0000000 + offset
+            fake_addr = (section << 20) + offset # Use the overlay index to create a unique VRAM base
             lines.append(f"{name} = 0x{fake_addr:08X}; // segment:overlay_{section} type:func")
         elif address is not None:
             # Data/BSS sections
@@ -344,7 +345,8 @@ def generate_overlay_symbol_files(rom_data: bytes, version: str, output_dir: Pat
         for name, offset in syms:
             # Use fake VRAM at 0xF0000000 + offset for splat compatibility
             # Include segment: tag to associate with the overlay segment
-            fake_addr = 0xF0000000 + offset
+            # fake_addr = 0xF0000000 + offset
+            fake_addr = (overlay_num << 20) + offset # Use the overlay index to create a unique VRAM base
             lines.append(f"{name} = 0x{fake_addr:08X}; // segment:{segment_name} type:func")
         
     out_path = output_dir / f"overlays.{version}.txt"

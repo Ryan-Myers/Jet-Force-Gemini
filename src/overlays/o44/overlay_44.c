@@ -8,6 +8,6 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o44/overlay_44/amAudioLineAddVertex.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o44/overlay_44/func_overlay_44_F00007D8_1F643B8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o44/overlay_44/func_overlay_44_02C007D8_1F643B8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o44/overlay_44/amLineDefinitionComplete.s")

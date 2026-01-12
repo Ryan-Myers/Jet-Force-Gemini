@@ -22,7 +22,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/sprintUpdate.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/func_overlay_31_F0001150_1F4BDA0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/func_overlay_31_01F01150_1F4BDA0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/sprintAIJoypad.s")
 
@@ -42,15 +42,15 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/sprintHitBomb.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/func_overlay_31_F00021F0_1F4CE40.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/func_overlay_31_01F021F0_1F4CE40.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/sprintInitInstruments.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/func_overlay_31_F000242C_1F4D07C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/func_overlay_31_01F0242C_1F4D07C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/func_overlay_31_F00026B8_1F4D308.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/func_overlay_31_01F026B8_1F4D308.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/func_overlay_31_F00029FC_1F4D64C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/func_overlay_31_01F029FC_1F4D64C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/sprintDrawInstruments.s")
 
@@ -60,6 +60,6 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/racingInGameEnd.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/func_overlay_31_F00038E0_1F4E530.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/func_overlay_31_01F038E0_1F4E530.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o31/overlay_31/sprintShipCollision.s")

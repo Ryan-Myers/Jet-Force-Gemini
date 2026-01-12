@@ -129,7 +129,11 @@ def generate_splat_segment(overlay: OverlayHeader) -> str:
     lines = []
     
     rom_start = overlay.absolute_rom
-    vram = overlay.vram_base if overlay.vram_base != 0 else 0xF0000000 # Default VRAM for overlays
+    vram = overlay.vram_base
+    
+    if overlay.vram_base == 0:
+        #vram = 0xF0000000 # Default VRAM for overlays not loaded at fixed address
+        vram = overlay.index << 20 # Use the overlay index to create a unique VRAM base
     
     # ROM layout: [text][data][reloc_table]
     # VRAM layout: [text][data][bss][reloc_table]

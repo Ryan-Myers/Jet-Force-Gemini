@@ -2,19 +2,19 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/mantisEditMenu.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/func_overlay_67_F0000008_1F87A00.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/func_overlay_67_04300008_1F87A00.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/mantisJump.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/func_overlay_67_F000025C_1F87C54.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/func_overlay_67_0430025C_1F87C54.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/func_overlay_67_F0000300_1F87CF8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/func_overlay_67_04300300_1F87CF8.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/func_overlay_67_F000064C_1F88044.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/func_overlay_67_0430064C_1F88044.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/mantisLand.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/func_overlay_67_F00008C4_1F882BC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/func_overlay_67_043008C4_1F882BC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o67/overlay_67/mantisInit.s")
 

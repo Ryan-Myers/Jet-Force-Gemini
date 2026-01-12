@@ -1,6 +1,6 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o8/overlay_8/func_overlay_8_F0000000_1EFF168.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o8/overlay_8/func_overlay_8_00800000_1EFF168.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o8/overlay_8/bloodSpurtFreeLib.s")
 

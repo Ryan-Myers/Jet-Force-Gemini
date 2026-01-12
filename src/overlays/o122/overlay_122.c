@@ -2,7 +2,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o122/overlay_122/ShirukenInit.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o122/overlay_122/func_overlay_122_F0000374_1FC825C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o122/overlay_122/func_overlay_122_07A00374_1FC825C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o122/overlay_122/ShirukenControl.s")
 

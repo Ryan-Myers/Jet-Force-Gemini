@@ -1,8 +1,8 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o87/overlay_87/func_overlay_87_F0000000_1FB0DC0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o87/overlay_87/func_overlay_87_05700000_1FB0DC0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o87/overlay_87/func_overlay_87_F00000D4_1FB0E94.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays/o87/overlay_87/func_overlay_87_057000D4_1FB0E94.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays/o87/overlay_87/damagecrateInit.s")
 
