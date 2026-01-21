@@ -60,6 +60,18 @@ ROM_OFFSETS = {
         'overlay_table': 0x1ED2780,   # Overlay table ROM address
         'overlay_data_base': 0x1ED3B20,  # Overlay data base ROM address
         'num_overlays': 157,          # Number of overlay entries
+    },
+    'jpn': {
+        'addr_table': 0x1EC7640,      # Address offset table
+        'name_offsets': 0x1FE23A0,    # Symbol name offset table
+        'symbol_names': 0x1FE4F00,    # Symbol names data
+        'base_addr': 0x80000450,      # Base address for main code section
+        'data_base': 0x800A0520,      # Base address for data section (tuneSeqPlayer)
+        'bss_base': 0x800B0A60,       # Base address for BSS section (gMusicSequenceData)
+        'num_symbols': 2374,          # Number of symbols (from name table size)
+        'overlay_table': 0x1EC9B60,   # Overlay table ROM address
+        'overlay_data_base': 0x1ECAF00,  # Overlay data base ROM address
+        'num_overlays': 157,          # Number of overlay entries
     }
 }
 
@@ -399,18 +411,25 @@ def format_symbols_sections(symbols: list) -> str:
 
 def auto_detect_version(rom_data: bytes) -> str:
     """Try to auto-detect the ROM version."""
-    # Check ROM header for game code
-    # JFG NTSC-U: "NJDE" at 0x3B-0x3E
-    # JFG Kiosk: Similar but may differ
+    # Check ROM header for game code at 0x3B-0x3F
+    # NJFE = US retail
+    # NJFJ = Japanese (Star Twins)
+    # NJDE = Kiosk demo
     
     if len(rom_data) < 0x40:
-        return 'kiosk'
+        return 'us'
     
     game_code = rom_data[0x3B:0x3F].decode('ascii', errors='replace')
     
-    # Try to detect based on ROM size or header
-    # For now, default to kiosk since that's what we have info for
-    return 'kiosk'
+    if game_code == 'NJFE':
+        return 'us'
+    elif game_code == 'NJFJ':
+        return 'jpn'
+    elif game_code == 'NJDE':
+        return 'kiosk'
+    else:
+        # Unknown version, default to US
+        return 'us'
 
 
 def main():
@@ -424,7 +443,7 @@ def main():
                         default='map',
                         help='Output format (default: map)')
     parser.add_argument('-v', '--version',
-                        choices=['kiosk', 'us', 'auto'],
+                        choices=['kiosk', 'us', 'jpn', 'auto'],
                         default='auto',
                         help='ROM version (default: auto)')
     parser.add_argument('-s', '--section', type=lambda x: int(x, 0),

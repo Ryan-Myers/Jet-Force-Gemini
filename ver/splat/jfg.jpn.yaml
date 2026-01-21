@@ -218,6 +218,10 @@ segments:
       - [0x9E4D0, bin] # - [0x9E4D0, hasm] - This seems to call a func func_840010E0 which breaks things.
       - [0x9E620, textbin] # ucode
       - [0xA1120, data]
+      - [0xAAAC0, rodata, audio_manager_1050]
+      - [0xAAC10, rodata]
+      - [0xADBE0, rodata, runLink]
+      - [0xADC60, rodata]
       - { type: bss, vram: 0x800B0A60 }
       # 801058B0 BSS Section End
 

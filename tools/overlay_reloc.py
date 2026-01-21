@@ -36,6 +36,8 @@ ROM_OFFSETS = {
         'symbol_names_data': 0x1FED550,
         'num_symbols': 2371,
         'base_addr': 0x80000450,
+        'data_base': 0x800A0660,      # Base address for data section (tuneSeqPlayer)
+        'bss_base': 0x800B0B50,       # Base address for BSS section (gMusicSequenceData)
         'num_overlays': 157,
     }
 }
@@ -254,10 +256,16 @@ class OverlayRelocTool:
                 vram = self.offsets['base_addr'] + offset
                 sym_name = self.find_symbol_by_address(0, offset)
                 target = f"main:0x{vram:08X}"
-            elif overlay >= 0xFFD:
-                # Special sections (data/BSS)
-                target = f"section_{overlay:03X}+0x{offset:05X}"
-                sym_name = None
+            elif overlay == 0xFFD or overlay == 0xFFE:
+                # Data section
+                vram = self.offsets['data_base'] + offset
+                sym_name = self.find_symbol_by_address(overlay, offset)
+                target = f"data:0x{vram:08X}"
+            elif overlay == 0xFFF:
+                # BSS section
+                vram = self.offsets['bss_base'] + offset
+                sym_name = self.find_symbol_by_address(overlay, offset)
+                target = f"bss:0x{vram:08X}"
             elif overlay == overlay_num:
                 # Same overlay (intra-overlay reference)
                 if offset < header.text_size:
