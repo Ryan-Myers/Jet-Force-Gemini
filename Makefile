@@ -347,6 +347,11 @@ $(BUILD_DIR)/$(SRC_DIR)/diCpuTraceCurrentStack.c.o: OPT_FLAGS := -dollar
 $(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: CC_WARNINGS := -w
 $(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: CC_CHECK := :
 
+# Potential for overlays. Overlays seems to hae just a data section maybe not a rodata:
+#     -use_readwrite_const
+#	     All string	and aggregate constants	are put	into a read/write data
+#	     section.
+
 ### Targets
 
 default: all

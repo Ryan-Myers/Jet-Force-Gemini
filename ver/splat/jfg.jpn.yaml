@@ -2,25 +2,32 @@ name: Star Twins (Japanese)
 sha1: 15099233760b36e7afad7da36b9464da1512c4b1
 options:
   basename: jfg.jpn
-  target_path: baserom.jpn.z64
-  base_path: .
+  target_path: baseroms/baserom.jpn.z64
+  base_path: ../../
   compiler: IDO
   find_file_boundaries: True
   header_encoding: ASCII
   platform: n64
-  undefined_funcs_auto_path: undefined_funcs_auto.jpn.txt
-  undefined_syms_auto_path: undefined_syms_auto.jpn.txt
-  symbol_addrs_path: symbol_addrs.jpn.txt
+  undefined_funcs_auto_path: ver/symbols/undefined_funcs_auto.jpn.txt
+  undefined_syms_auto_path: ver/symbols/undefined_syms_auto.jpn.txt
+  symbol_addrs_path: 
+    - ver/symbols/symbol_addrs.jpn.txt
+    - ver/symbols/overlays.jpn.txt
+  symbol_name_format: $VRAM_$ROM
+  ld_script_path: ver/jfg.jpn.ld
   asm_path: asm_jpn
   src_path: src_jpn
   build_path: build_jpn
-  #extensions_path: tools/splat_ext
-  #mips_abi_float_regs: o32
+  asset_path: assets_jpn
+  asm_function_macro: glabel
+  asm_jtbl_label_macro: jlabel
+  asm_data_macro: dlabel
+  asm_function_alt_macro: alabel
+  asm_end_label: endlabel
+  asm_emit_size_directive: False
   section_order: [".text", ".data", ".rodata", ".bss"]
-  auto_all_sections: [".data", ".rodata", ".bss"]
-  symbol_name_format: $VRAM_$ROM
-  #libultra_symbols: True
-  #hardware_regs: True
+  migrate_rodata_to_functions: False
+  hasm_in_src_path: True
 segments:
   - name: header
     type: header
@@ -35,7 +42,7 @@ segments:
     start: 0x1000
     vram: 0x80000400
     subsegments:
-      - [0x1000, hasm, entrypoint]
+      - [0x1000, hasm, hasm/entrypoint]
 
   - name: main
     type: code
@@ -69,7 +76,7 @@ segments:
       - [0x4E520, asm]
       - [0x50210, asm]
       - [0x519E0, asm]
-      - [0x51A20, asm]
+      - [0x51A20, c, runLink]
       - [0x54FF0, asm]
       - [0x55F60, asm]
       - [0x58F10, asm]
@@ -209,8 +216,10 @@ segments:
       - [0x9D880, asm]
       - [0x9E340, asm]
       - [0x9E4D0, bin] # - [0x9E4D0, hasm] - This seems to call a func func_840010E0 which breaks things.
-      - [0x9E620, data]
-      - { start: 0xB1660, type: bss, vram: 0x800B0A60 }
+      - [0x9E620, textbin] # ucode
+      - [0xA1120, data]
+      - { type: bss, vram: 0x800B0A60 }
+      # 801058B0 BSS Section End
 
   - type: bin
     start: 0xB1660

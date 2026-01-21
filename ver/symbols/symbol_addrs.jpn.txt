@@ -107,7 +107,6 @@ D_800F2784_F3384 = 0x800F1A34;
 D_800F34A0_F40A0 = 0x800F27A8;
 D_800F34B8_F40B8 = 0x800F27C0;
 D_800F2418_F3018 = 0x800F16C8;
-D_800F2420_F3020 = 0x800F16D0;
 __amMain = 0x80001D7C;
 osCreateThread = 0x800758D0;
 amGo = 0x80001EA0;
@@ -184,3 +183,14 @@ mathCos = 0x800494A4;
 mathSin = 0x800494A8;
 mathBreakPoint = 0x800494E8;
 pointListRPY = 0x800494F0;
+
+
+
+symbol_names = 0x1ECAF00;
+// name_offsets = 0x1EC9B60;
+// overlay_table = 0x1EC9B60;
+romCopy = 0x8004D550;
+mmAlloc = 0x8004A3BC;
+overlayRomTable = 0x800FE9C8;
+runlinkInitialise = 0x800538BC;
+bzero = 0x80098220;

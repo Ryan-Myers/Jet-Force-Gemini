@@ -55,7 +55,7 @@ typedef struct RelocTableEntry {
     /* 0x04 */ u32 overlayIndex;    // This is an index into overlayRomTable
 } RelocTableEntry;
 extern RelocTableEntry D_1ECF220[]; // mainRelocTable ROM address
-extern RelocTableEntry mainRelocTable[]; // mainRelocTable RAM pointer
+extern RelocTableEntry *mainRelocTable; // mainRelocTable RAM pointer
 
 typedef struct RomTableEntry {
     union {
@@ -523,8 +523,8 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
                 gRelocContext.textBase = (u8 *) &__CODE_SECTION_START;  // Start of .text
                 gRelocContext.dataBase = (u8 *) &__DATA_SECTION_START; // Start of .data
                 gRelocContext.bssBase = (u8 *) &__BSS_SECTION_START;
-                relocEntry = (RelocationEntry *) mainRelocTable->functionAddress;
-                gRelocContext.relocBase = (u8 *) mainRelocTable->functionAddress;
+                relocEntry = (RelocationEntry *) mainRelocTable;
+                gRelocContext.relocBase = (u8 *) mainRelocTable;
                 relocCount = mainRelocCount;
             } else {
                 // Other overlay - set up context for it
@@ -692,7 +692,7 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
     D_800FF838[overlayIndex].refCount = 0;
 
     // Iterate through mainRelocTable and patch entries referencing this overlay
-    relocEntry = (RelocationEntry *) mainRelocTable->functionAddress; // Maybe mainRelocTable needs a new struct def?
+    relocEntry = (RelocationEntry *) mainRelocTable;
     i = mainRelocCount;
     while (i--) {
         relocType = relocEntry->relocType;
@@ -787,8 +787,8 @@ void runlinkInitialise(void) {
     romCopy(mainRelocTable_ROM_START, mainRelocTable, tableSize);
 
     // Extract mainRelocCount from first word, then advance pointer past it
-    mainRelocCount = *(u32 *)mainRelocTable;
-    mainRelocTable = (RelocTableEntry *)((u8 *)mainRelocTable + 4);
+    mainRelocCount = mainRelocTable->functionAddress;
+    mainRelocTable = &mainRelocTable[1];
 
     // Calculate overlay count from table size (each entry is 0x20 bytes)
     // +1 for the main module (overlay 0)
