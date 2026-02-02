@@ -1,0 +1,903 @@
+=== Cross-Overlay References ===
+
+Found 76 overlays that reference other overlays.
+
+Overlay   3 -> [2, 8, 14, 138, 139, 140, 141, 142, 143, 145, 146, 147, 148, 149, 150, 151, 152, 154, 155] (56 references)
+    -> Overlay 2:
+        +0x0D494: refractInit
+    -> Overlay 8:
+        +0x09E88: bloodSpurtAdd
+        +0x1461C: bloodSpurtAdd
+    -> Overlay 14:
+        +0x00B84: instShowBearBar
+        +0x115C8: instShowBearBar
+    -> Overlay 138:
+        +0x0706C: AntShipMover
+    -> Overlay 139:
+        +0x1497C: squadsIsFoodAvailable
+        +0x15A64: squadsIsFoodAvailable
+        +0x16BCC: squadsMakeFoodList
+    -> Overlay 140:
+        +0x05404: BTSBBlackAnt
+        +0x19384: BTSBBlackAnt
+    -> Overlay 141:
+        +0x07044: DragonflyMover
+        +0x0ECD0: DragonflyTilt
+        +0x193AC: BTSBDragonfly
+    -> Overlay 142:
+        +0x164FC: CreateBSPFromRegion
+    -> Overlay 143:
+        +0x07080: GalaxianBatsMover
+        +0x13F64: FatBobPhaseChange
+        +0x14D98: GalaxianBatsSoundsHandler
+        +0x193E4: BTSBFatBob
+    -> Overlay 145:
+        +0x070C0: FloaterMover
+        +0x193E8: BTSBFloater
+    -> Overlay 146:
+        +0x018A4: NewFlopsyFunction
+        +0x042DC: FlopsyDogCheckPriority
+        +0x07058: FlopsyDogMover
+        +0x0B28C: FlopsyDogFacer
+        +0x0C7D0: FlopsyDogSpotPlayer
+    -> Overlay 147:
+        +0x19370: BTSBGalaxianCorkScrew
+        +0x19658: CorkScrewAttackMover
+        +0x196C0: CorkScrewAttackFacer
+    -> Overlay 148:
+        +0x193D4: BTSBGunTurret
+        +0x19668: TurretFireMover
+    -> Overlay 149:
+        +0x0EA40: SlugBossMover
+        +0x13F74: SlugBossPhaseChange
+        +0x19360: BTSBSlugBoss
+    -> Overlay 150:
+        +0x193D0: BTSBSpannerHand
+    -> Overlay 151:
+        +0x07030: SpiderMover
+        +0x19398: BTSBSpider
+        +0x19660: SpiderEatStuffMover
+    -> Overlay 152:
+        +0x1939C: BTSBWaterBoss
+    -> Overlay 154:
+        +0x01CE4: PerformNodeCommand
+        +0x027AC: EnsureValidNode
+        +0x028A4: GetNextNodeNumber
+        +0x03390: GetNextNodeNumber
+        +0x033E4: GetClosestPatrolNode
+        +0x03434: GetNextNodeNumber
+        +0x03AB0: EnsureValidNode
+        +0x03C00: FallBackToSniperPoint
+        +0x0553C: CopyStaticsToPatrolNodes
+        +0x05638: CopyStaticsToPatrolNodes
+        +0x0DE48: GetClosestPatrolNode
+        +0x15F48: PatrolPathsInit
+        +0x16B34: SetBlockedNodes
+    -> Overlay 155:
+        +0x03C94: SquadronControlSmart
+        +0x07100: SmartMover
+        +0x0B250: SmartFacer
+        +0x0C754: smartPlayerSeen
+Overlay   7 -> [32] (4 references)
+    -> Overlay 32:
+        +0x006E8: mrHintsTalk
+        +0x007CC: mrHintsTalk
+        +0x010F0: mrHintsTalk
+        +0x01138: mrHintsTalk
+Overlay   9 -> [5, 18, 19, 38] (11 references)
+    -> Overlay 5:
+        +0x00120: starfieldInit
+        +0x003B0: starfieldFree
+        +0x01494: starfieldDrawSP
+        +0x02778: starfieldMove
+    -> Overlay 18:
+        +0x034BC: frontGetSelectableCharacter
+        +0x0354C: frontGetSelectableCharacter
+    -> Overlay 19:
+        +0x0003C: pausePlayer
+        +0x00040: pausePlayer
+        +0x0098C: pauseSetNewLevel
+        +0x02834: pauseSetScreen
+    -> Overlay 38:
+        +0x00A04: pauseClearScreen
+Overlay  12 -> [5, 6] (5 references)
+    -> Overlay 5:
+        +0x004D8: rainSetDraw
+        +0x00560: rainSetDraw
+        +0x00810: rainSetDraw
+    -> Overlay 6:
+        +0x00C5C: instSpriteToScreenCoord
+        +0x00C68: instSpriteToScreenCoord
+Overlay  14 -> [6, 13, 157] (13 references)
+    -> Overlay 6:
+        +0x00040: instInitHealthMeter
+        +0x00048: instInitMsgQueues
+        +0x00FC8: instSpriteToScreenCoord
+        +0x0109C: instDrawHealth
+        +0x010B0: instMsgQueueTick
+        +0x02CDC: instFreeHealthMeter
+        +0x03094: instScreenToSpriteCoord
+        +0x03774: instScreenToSpriteCoord
+        +0x03CB0: instSpriteToScreenCoord
+        +0x03CBC: instSpriteToScreenCoord
+    -> Overlay 13:
+        +0x00008: frontInitTarget
+        +0x00BE8: frontPlayerTarget
+    -> Overlay 157:
+        +0x03B9C: fxDrawWindow
+Overlay  15 -> [1, 22, 107, 129] (9 references)
+    -> Overlay 1:
+        +0x01FF0: dropletAdd
+        +0x02008: dropletUpdate
+        +0x02598: dropletAdd
+    -> Overlay 22:
+        +0x061F0: sidekickpadMovePlayer
+    -> Overlay 107:
+        +0x011B4: invincibilityShieldTransform
+        +0x011C8: invincibilityShieldTransform
+        +0x011DC: invincibilityShieldTransform
+        +0x011FC: invincibilityShieldTransform
+    -> Overlay 129:
+        +0x0623C: transformerMovePlayer
+Overlay  16 -> [1, 22, 107, 129] (7 references)
+    -> Overlay 1:
+        +0x02190: dropletAdd
+    -> Overlay 22:
+        +0x05ED4: sidekickpadMovePlayer
+    -> Overlay 107:
+        +0x010B4: invincibilityShieldTransform
+        +0x010C8: invincibilityShieldTransform
+        +0x010DC: invincibilityShieldTransform
+        +0x010FC: invincibilityShieldTransform
+    -> Overlay 129:
+        +0x05F20: transformerMovePlayer
+Overlay  17 -> [1, 22, 107, 129] (7 references)
+    -> Overlay 1:
+        +0x01F18: dropletAdd
+    -> Overlay 22:
+        +0x05328: sidekickpadMovePlayer
+    -> Overlay 107:
+        +0x00ED8: invincibilityShieldTransform
+        +0x00EEC: invincibilityShieldTransform
+        +0x00F00: invincibilityShieldTransform
+        +0x00F20: invincibilityShieldTransform
+    -> Overlay 129:
+        +0x05374: transformerMovePlayer
+Overlay  18 -> [6, 9, 19, 41] (68 references)
+    -> Overlay 6:
+        +0x007D4: frontGetHourTime
+        +0x0094C: frontGetHourTime
+        +0x00A50: frontGetHourTime
+    -> Overlay 9:
+        +0x00104: frontMapInitWorldIcons
+        +0x00170: frontMapCleanupWorldIcons
+        +0x0024C: frontMapDrawWorldIcon
+        +0x00264: frontMapDrawWorldIcon
+    -> Overlay 19:
+        +0x002DC: pausePlayer
+        +0x002E0: pausePlayer
+        +0x00A94: pausePlayer
+        +0x00A98: pausePlayer
+        +0x00AB0: pauseSetScreen
+        +0x0131C: pausePlayer
+        +0x01320: pausePlayer
+        +0x0139C: pausePlayer
+        +0x013A0: pausePlayer
+        +0x013E4: pausePlayer
+        +0x013E8: pausePlayer
+        +0x01C9C: pauseSetScreen
+        +0x01D30: pausePlayer
+        +0x01D34: pausePlayer
+        +0x02708: pausePlayer
+        +0x02738: pausePlayer
+        +0x02864: pausePlayer
+        +0x02868: pausePlayer
+        +0x028CC: pausePlayer
+        +0x028D0: pausePlayer
+        +0x02910: pausePlayer
+        +0x02914: pausePlayer
+        +0x02934: pausePlayer
+        +0x02940: pausePlayer
+        +0x029B4: pausePlayer
+        +0x029B8: pausePlayer
+        +0x029F4: pausePlayer
+        +0x029F8: pausePlayer
+        +0x02A0C: pausePlayer
+        +0x02A1C: pausePlayer
+        +0x02A74: pausePlayer
+        +0x02A78: pausePlayer
+        +0x02ABC: pausePlayer
+        +0x02AC0: pausePlayer
+        +0x02AE0: pausePlayer
+        +0x02AEC: pausePlayer
+        +0x02CDC: pausePlayer
+        +0x02CE0: pausePlayer
+        +0x02D4C: pauseSetScreen
+        +0x02D58: pausePlayer
+        +0x02D60: pausePlayer
+        +0x0376C: pausePlayer
+        +0x03778: pausePlayer
+        +0x039A8: pausePlayer
+        +0x039AC: pausePlayer
+        +0x03A00: pauseGetPauseCharacter
+        +0x03AF0: pauseSetNewLevel
+        +0x03B00: pauseGetPauseCharacter
+        +0x03B24: pauseSetScreen
+        +0x048A0: pausePlayer
+        +0x048A4: pausePlayer
+        +0x048BC: pauseSetScreen
+        +0x04B84: pausePlayer
+        +0x04B88: pausePlayer
+        +0x05744: pausePlayer
+        +0x05748: pausePlayer
+        +0x05760: pauseSetScreen
+        +0x06564: pausePlayer
+        +0x06568: pausePlayer
+        +0x06584: pauseSetScreen
+    -> Overlay 41:
+        +0x047B0: frontCharBadge
+Overlay  19 -> [5, 9, 12, 18, 37, 38] (54 references)
+    -> Overlay 5:
+        +0x003B4: rainSetDraw
+    -> Overlay 9:
+        +0x00244: frontCleanupMap
+        +0x00418: frontInitMap
+        +0x006A4: frontMap
+    -> Overlay 12:
+        +0x00120: pausetunevol
+        +0x00124: pausetunevol
+        +0x0013C: frontSetMenuFrame
+        +0x00254: frontMenuFrameSetEnable
+        +0x00294: frontMenuFrameSetEnable
+        +0x002AC: frontMenuFrameSetEnable
+        +0x002E4: frontMenuFrameSetEnable
+        +0x0030C: frontMenuFrameSetEnable
+        +0x004F8: frontClearMenuFrame
+        +0x00548: frontClearMenuFrame
+        +0x00588: menuFrameChangeLevel
+        +0x005D0: frontGetMenuFrameAlpha
+        +0x005E8: frontGetMenuFullyOpen
+        +0x00618: frontMenuFrameTrackDrawingOn
+        +0x007D4: frontSetMenuFrameFade
+        +0x007E4: frontSetMenuFrameFade
+        +0x00868: pausetunevol
+        +0x0086C: pausetunevol
+        +0x00884: frontSetMenuFrame
+    -> Overlay 18:
+        +0x00264: menuScreenCleanup
+        +0x00284: tribalScreenCleanup
+        +0x002A4: weaponScreenCleanup
+        +0x002D4: healthScreenCleanup
+        +0x002F4: shipScreenCleanup
+        +0x00304: inventoryScreenCleanup
+        +0x00400: tribalScreenInit
+        +0x00430: weaponScreenInit
+        +0x00448: menuScreenInit
+        +0x00490: healthScreenInit
+        +0x004A8: shipScreenInit
+        +0x004C0: inventoryScreenInit
+        +0x00674: menuScreen
+        +0x006C0: tribalScreen
+        +0x006DC: weaponScreen
+        +0x0070C: healthScreen
+        +0x00728: shipScreen
+        +0x00744: inventoryScreen
+        +0x00760: menuScreen
+    -> Overlay 37:
+        +0x002BC: frontCleanupOptionsPage
+        +0x00478: frontInitOptionsPage
+        +0x006F0: frontOptionsPage
+    -> Overlay 38:
+        +0x00668: pauseClearScreen
+        +0x00684: pauseClearScreen
+        +0x006B4: pauseClearScreen
+        +0x006D0: pauseClearScreen
+        +0x00700: pauseClearScreen
+        +0x0071C: pauseClearScreen
+        +0x00738: pauseClearScreen
+        +0x00754: pauseClearScreen
+        +0x00B74: pauseClearScreen
+Overlay  22 -> [46, 74, 101, 118] (7 references)
+    -> Overlay 46:
+        +0x00598: animseqStartNoisyFade
+        +0x00A28: animseqStartNoisyFade
+        +0x00B9C: animseqStartNoisyFade
+    -> Overlay 74:
+        +0x02234: animswitchInit
+    -> Overlay 101:
+        +0x0226C: glassInit
+    -> Overlay 118:
+        +0x021E4: robottargetInit
+        +0x0220C: robotcollectableInit
+Overlay  24 -> [71, 137] (2 references)
+    -> Overlay 71:
+        +0x00698: osCartDmaTest3_6105
+    -> Overlay 137:
+        +0x001E0: realReflectSurfaces
+Overlay  32 -> [7] (13 references)
+    -> Overlay 7:
+        +0x01140: hinttextStart
+        +0x011CC: hinttextStart
+        +0x011E0: hinttextStart
+        +0x0128C: hinttextActive
+        +0x012AC: hinttextActiveMagic
+        +0x012E8: hinttextActiveMagic
+        +0x013B4: hinttextActive
+        +0x01588: hinttextStopMagic
+        +0x01698: hinttextLoadObject
+        +0x0175C: hinttextStartLevel
+        +0x01A60: hinttextTriedToEnd
+        +0x01AB4: hinttextStart
+        +0x01B88: hinttextStop
+Overlay  34 -> [33] (1 references)
+    -> Overlay 33:
+        +0x002A8: objInitExplosions
+Overlay  36 -> [25, 26, 34, 35] (4 references)
+    -> Overlay 25:
+        +0x00014: amInit
+    -> Overlay 26:
+        +0x000B4: partInitLib
+    -> Overlay 34:
+        +0x00060: objInitObjects
+    -> Overlay 35:
+        +0x00114: fontInit
+Overlay  37 -> [6, 19, 38] (5 references)
+    -> Overlay 6:
+        +0x01B48: instScreenToSpriteCoord
+        +0x01C28: instSpriteToScreenCoord
+    -> Overlay 19:
+        +0x00B88: pauseSetScreen
+        +0x018D4: pauseSetNewLevel
+    -> Overlay 38:
+        +0x00460: pauseClearScreen
+Overlay  40 -> [6, 38, 61] (26 references)
+    -> Overlay 6:
+        +0x00B18: instScreenToSpriteCoord
+        +0x00BE8: instSpriteToScreenCoord
+        +0x00CA4: instScreenToSpriteCoord
+        +0x00F68: instScreenToSpriteCoord
+        +0x01058: instScreenToSpriteCoord
+        +0x010DC: instSpriteToScreenCoord
+        +0x01548: instScreenToSpriteCoord
+        +0x0161C: instSpriteToScreenCoord
+        +0x01640: frontGetTime
+        +0x017E8: instScreenToSpriteCoord
+        +0x01AAC: instScreenToSpriteCoord
+        +0x01BA0: instScreenToSpriteCoord
+        +0x01C24: instSpriteToScreenCoord
+        +0x020BC: instScreenToSpriteCoord
+        +0x02188: instSpriteToScreenCoord
+        +0x02248: instScreenToSpriteCoord
+    -> Overlay 38:
+        +0x001C8: pauseClearScreen
+    -> Overlay 61:
+        +0x000A4: sortByKills
+        +0x000B4: sortPlayers
+        +0x000C4: sortPlayers
+        +0x000D4: sortPlayers
+        +0x002AC: sortByKills
+        +0x002D8: sortPlayers
+        +0x00304: sortPlayers
+        +0x00334: sortPlayers
+        +0x003A0: sortPlayers
+Overlay  41 -> [58, 135] (2 references)
+    -> Overlay 58:
+        +0x00DA0: frontTeleporterTick
+    -> Overlay 135:
+        +0x009FC: menuCamGetObjPtr
+Overlay  42 -> [38] (1 references)
+    -> Overlay 38:
+        +0x001E0: pauseClearScreen
+Overlay  43 -> [6] (1 references)
+    -> Overlay 6:
+        +0x0030C: instQueueMsg
+Overlay  46 -> [23, 29, 39, 110] (5 references)
+    -> Overlay 23:
+        +0x007D8: dayGetTrackFade
+    -> Overlay 29:
+        +0x0080C: girlMagicTrackFade
+    -> Overlay 39:
+        +0x007B4: mantisLightingGetTrackFade
+    -> Overlay 110:
+        +0x00930: trackFadeExceptions
+        +0x0043C: trackFadeExceptions
+Overlay  47 -> [8, 106, 157] (3 references)
+    -> Overlay 8:
+        +0x02018: bloodSpurtAdd
+    -> Overlay 106:
+        +0x01E74: hoovergemCreate
+    -> Overlay 157:
+        +0x024E0: fxDrawWindow
+Overlay  50 -> [6, 107] (3 references)
+    -> Overlay 6:
+        +0x0039C: frontSetInstrumentsHide
+    -> Overlay 107:
+        +0x0067C: invincibilityShieldTransform
+        +0x00694: invincibilityShieldTransform
+Overlay  51 -> [6, 107] (3 references)
+    -> Overlay 6:
+        +0x0039C: frontSetInstrumentsHide
+    -> Overlay 107:
+        +0x0067C: invincibilityShieldTransform
+        +0x00690: invincibilityShieldTransform
+Overlay  52 -> [6, 107] (3 references)
+    -> Overlay 6:
+        +0x0039C: frontSetInstrumentsHide
+    -> Overlay 107:
+        +0x0067C: invincibilityShieldTransform
+        +0x00694: invincibilityShieldTransform
+Overlay  53 -> [31, 107] (7 references)
+    -> Overlay 31:
+        +0x0031C: sprintAIJoypad
+        +0x004F4: sprintAIPlayer
+        +0x00DAC: sprintPlayerFire
+        +0x00FA8: sprintPlayerBoost
+        +0x01A8C: sprintAIPlayer
+        +0x02144: sprintAIPlayer
+    -> Overlay 107:
+        +0x00A60: invincibilityShieldTransform
+Overlay  57 -> [55] (4 references)
+    -> Overlay 55:
+        +0x00068: fmvStart
+        +0x0037C: fmvUpdate
+        +0x00898: fmvDraw
+        +0x0091C: fmvStop
+Overlay  58 -> [41, 135] (4 references)
+    -> Overlay 41:
+        +0x0022C: frontCharBadge
+    -> Overlay 135:
+        +0x0014C: menuCamGetObjPtr
+        +0x00EDC: multiCharArmSetStatus
+        +0x00EEC: multiCharArmSetStatus
+Overlay  61 -> [6, 13] (15 references)
+    -> Overlay 6:
+        +0x002F8: instInitHealthMeter
+        +0x00328: instInitMsgQueues
+        +0x003E4: instFreeHealthMeter
+        +0x00828: instMsgQueueTick
+        +0x008F4: instGetPos
+        +0x00990: instDrawHealth
+        +0x009B8: instGetPos
+        +0x0122C: instGetBarY
+        +0x01234: instGetBarWidth
+        +0x01834: instSpriteToScreenCoord
+        +0x01840: instSpriteToScreenCoord
+        +0x01F58: instGetPos
+        +0x02188: instSpriteToScreenCoord
+        +0x02334: instSpriteToScreenCoord
+    -> Overlay 13:
+        +0x00ECC: frontPlayerTarget
+Overlay  62 -> [38] (1 references)
+    -> Overlay 38:
+        +0x003AC: pauseClearScreen
+Overlay  67 -> [8, 10, 39] (3 references)
+    -> Overlay 8:
+        +0x00A60: bloodSpurtAdd
+    -> Overlay 10:
+        +0x00B18: sparkAdd
+    -> Overlay 39:
+        +0x00EDC: mantisLightingInit
+Overlay  68 -> [6, 8, 10] (24 references)
+    -> Overlay 6:
+        +0x03A60: frontSetInstrumentsHide
+        +0x03CA0: frontSetInstrumentsHide
+        +0x03E0C: frontSetInstrumentsHide
+        +0x03E54: frontSetInstrumentsHide
+        +0x03FC0: frontSetInstrumentsHide
+        +0x0400C: frontSetInstrumentsHide
+        +0x044B0: frontSetInstrumentsHide
+        +0x04694: frontSetInstrumentsHide
+        +0x0482C: frontSetInstrumentsHide
+        +0x050B0: frontSetInstrumentsHide
+    -> Overlay 8:
+        +0x01248: bloodSpurtAdd
+        +0x012BC: bloodHitSpriteAdd
+        +0x09990: bloodSpurtAdd
+        +0x0A10C: bloodSpurtAdd
+        +0x0A8D4: bloodSpurtAdd
+        +0x0AD88: bloodSpurtAdd
+        +0x0B1F0: bloodSpurtAdd
+        +0x0B448: bloodSpurtAdd
+        +0x0B870: bloodSpurtAdd
+        +0x0BACC: bloodSpurtAdd
+    -> Overlay 10:
+        +0x09844: sparkAdd
+        +0x0D238: sparkAdd
+        +0x0DA58: sparkAdd
+        +0x0FD4C: sparkAdd
+Overlay  72 -> [6] (1 references)
+    -> Overlay 6:
+        +0x00344: instQueueMsg
+Overlay  82 -> [7] (5 references)
+    -> Overlay 7:
+        +0x00C80: hinttextStop
+        +0x01310: hinttextStart
+        +0x01390: hinttextStart
+        +0x013A4: hinttextStart
+        +0x01670: hinttextFreeObject
+Overlay  85 -> [5, 6] (4 references)
+    -> Overlay 5:
+        +0x00238: rainResetCamera
+        +0x00318: rainResetCamera
+    -> Overlay 6:
+        +0x00124: frontSetInstrumentsHide
+        +0x0020C: frontSetInstrumentsHide
+Overlay  87 -> [8] (1 references)
+    -> Overlay 8:
+        +0x00B44: bloodSpurtAdd
+Overlay  90 -> [10] (2 references)
+    -> Overlay 10:
+        +0x004C0: sparkSetGravity
+        +0x00534: sparkAdd
+Overlay  93 -> [6, 10] (2 references)
+    -> Overlay 6:
+        +0x00278: instQueueMsg
+    -> Overlay 10:
+        +0x001EC: sparkAdd
+Overlay  95 -> [3] (2 references)
+    -> Overlay 3:
+        +0x013D0: squadsPlayerShootsSquaddie
+        +0x013D8: SetSquaddieOnFire
+Overlay  96 -> [105] (1 references)
+    -> Overlay 105:
+        +0x00474: hitBridgeMoveWith
+Overlay  99 -> [4092] (2 references)
+    -> Overlay 4092:
+        +0x000A0: osTvType
+        +0x000A8: osTvType
+Overlay 102 -> [3] (1 references)
+    -> Overlay 3:
+        +0x00564: SquaddieLightAndAnimate
+Overlay 104 -> [6] (3 references)
+    -> Overlay 6:
+        +0x00500: instQueueMsg
+        +0x00548: instQueueMsg
+        +0x00624: instQueueMsg
+Overlay 106 -> [23, 81] (6 references)
+    -> Overlay 23:
+        +0x0115C: dayStopAtNoon
+    -> Overlay 81:
+        +0x00340: chargeEffectCreate
+        +0x01044: chargeEffectSetPower
+        +0x01054: chargeEffectUpdate
+        +0x019F8: chargeEffectDraw
+        +0x01A84: chargeEffectFree
+Overlay 107 -> [6] (1 references)
+    -> Overlay 6:
+        +0x00240: instQueueMsg
+Overlay 108 -> [6] (1 references)
+    -> Overlay 6:
+        +0x00204: instQueueMsg
+Overlay 112 -> [105] (1 references)
+    -> Overlay 105:
+        +0x00290: hitBridgeMoveWith
+Overlay 115 -> [77, 85] (10 references)
+    -> Overlay 77:
+        +0x0026C: blastdoorStatus
+        +0x00294: blastdoorStatus
+        +0x002FC: blastdoorStatus
+        +0x00378: blastdoorStatus
+    -> Overlay 85:
+        +0x00260: cutcameraActivate
+        +0x00288: cutcameraActivate
+        +0x002BC: cutcameraActivate
+        +0x002F0: cutcameraUpdate
+        +0x00338: cutcameraActivate
+        +0x0036C: cutcameraUpdate
+Overlay 116 -> [31] (5 references)
+    -> Overlay 31:
+        +0x001CC: sprintPickedUpOil
+        +0x001E0: sprintPickedUpBomb
+        +0x001F4: sprintPickedUpBoost
+        +0x003A0: sprintHitOilSlick
+        +0x003B0: sprintHitBomb
+Overlay 118 -> [10, 22] (6 references)
+    -> Overlay 10:
+        +0x002CC: sparkAdd
+    -> Overlay 22:
+        +0x003BC: robotUpdateObjectives
+        +0x00574: robotUpdateObjectives
+        +0x008AC: robotUpdateObjectives
+        +0x008DC: robotFinished
+        +0x004C4: robotFinished
+Overlay 120 -> [10] (1 references)
+    -> Overlay 10:
+        +0x0020C: sparkAdd
+Overlay 122 -> [3, 105] (3 references)
+    -> Overlay 3:
+        +0x003B8: GetBaddyData
+        +0x003CC: SquaddieLightAndAnimate
+    -> Overlay 105:
+        +0x005C4: hitBridgeMoveWith
+Overlay 124 -> [10] (1 references)
+    -> Overlay 10:
+        +0x0090C: sparkAdd
+Overlay 125 -> [85] (1 references)
+    -> Overlay 85:
+        +0x00430: cutcameraActivate
+Overlay 127 -> [7] (3 references)
+    -> Overlay 7:
+        +0x004E0: hinttextStart
+        +0x00530: hinttextStop
+        +0x00538: hinttextActive
+Overlay 128 -> [6] (1 references)
+    -> Overlay 6:
+        +0x00264: instQueueMsg
+Overlay 129 -> [77] (4 references)
+    -> Overlay 77:
+        +0x00648: blastdoorStatus
+        +0x00654: blastdoorStatus
+        +0x00694: blastdoorStatus
+        +0x006A0: blastdoorStatus
+Overlay 132 -> [6] (1 references)
+    -> Overlay 6:
+        +0x002F8: instQueueMsg
+Overlay 136 -> [11, 44, 154] (3 references)
+    -> Overlay 11:
+        +0x0120C: splinecamMakeSpline
+    -> Overlay 44:
+        +0x00E0C: amAudioLineAddVertex
+    -> Overlay 154:
+        +0x01C48: GetClosestPatrolNode
+Overlay 137 -> [95] (1 references)
+    -> Overlay 95:
+        +0x009F0: flamethrowerDraw
+Overlay 138 -> [3] (2 references)
+    -> Overlay 3:
+        +0x00018: squadsGetClosestPlayer
+        +0x00188: squadsFireWeapon
+Overlay 139 -> [3] (3 references)
+    -> Overlay 3:
+        +0x0022C: GetRangeSquared2D
+        +0x00274: IsPointInRegionIdx
+        +0x00340: IsPointInRegionIdx
+Overlay 140 -> [3] (3 references)
+    -> Overlay 3:
+        +0x0008C: squadsGetClosestPlayer
+        +0x00174: IsPointInRegionIdx
+        +0x00354: BTSBStandardFire
+Overlay 141 -> [3] (6 references)
+    -> Overlay 3:
+        +0x00028: DoesSquaddieWantToFire
+        +0x00058: TryToSetMission
+        +0x0006C: UpdateOrSetAnim
+        +0x00128: TryToSetAnim
+        +0x00168: TryToSetAnim
+        +0x00260: TryToUpdateAnim
+Overlay 142 -> [3] (2 references)
+    -> Overlay 3:
+        +0x00E8C: GetRegionIndex
+        +0x01010: GetRegionIndex
+Overlay 143 -> [3, 87] (19 references)
+    -> Overlay 3:
+        +0x00180: squadsGetChildPolyPosition
+        +0x001A8: squadsGetChildPolyPosition
+        +0x001D0: squadsGetChildPolyPosition
+        +0x001F8: squadsGetChildPolyPosition
+        +0x00220: squadsGetChildPolyPosition
+        +0x00260: squadsGetChildPolyPosition
+        +0x0091C: squadsGetClosestPlayer
+        +0x00C6C: squadsGetClosestPlayer
+        +0x01860: CheckLineOfSight
+        +0x0187C: TryToSetMission
+        +0x0190C: UpdateOrSetAnim
+        +0x01960: squadsGetClosestPlayer
+        +0x02068: ClearMissionFields
+        +0x020D0: squadsGetChildPolyPosition
+        +0x02180: squadsGetChildPolyPosition
+    -> Overlay 87:
+        +0x00E84: damagecrateChangeHitsmin
+        +0x00F34: damagecrateRepair
+        +0x00F44: damagecrateRepair
+        +0x02010: damagecrateChangeHitsmin
+Overlay 145 -> [3] (9 references)
+    -> Overlay 3:
+        +0x00038: DoesSquaddieWantToFire
+        +0x00054: TryToSetMission
+        +0x0009C: squadsFireWeapon
+        +0x000AC: squadsFireWeapon
+        +0x000B8: ClearMissionFields
+        +0x001EC: TryToSetAnim
+        +0x0023C: TryToSetAnim
+        +0x0027C: TryToSetAnim
+        +0x00378: TryToUpdateAnim
+Overlay 146 -> [3, 139] (31 references)
+    -> Overlay 3:
+        +0x0005C: squadsPrepareToProcessSquaddie
+        +0x00160: IsPointInRegionIdx
+        +0x00194: DoesLineCrossRegionIdx
+        +0x001AC: IsPointInRegionIdx
+        +0x00270: squadsGetLoudestEvent
+        +0x002D4: TryToSetAnim
+        +0x00304: TryToSetAnim
+        +0x0037C: squadsGetClosestPlayer
+        +0x00398: squadsPrepareToProcessSquaddie
+        +0x003A0: squadsGetClosestPlayer
+        +0x00408: GetRangeSquared2D
+        +0x00474: IsPointInRegionIdx
+        +0x0052C: IsPointInRegionIdx
+        +0x00734: TryToUpdateAnim
+        +0x007AC: TryToUpdateAnim
+        +0x007C4: GetRangeSquared2D
+        +0x00810: TryToUpdateAnim
+        +0x0084C: TryToUpdateAnim
+        +0x00888: TryToUpdateAnim
+        +0x008E0: TryToUpdateAnim
+        +0x008F8: GetRangeSquared2D
+        +0x00964: TryToUpdateAnim
+        +0x0097C: GetRangeSquared2D
+        +0x009BC: TryToUpdateAnim
+        +0x00A38: TryToUpdateAnim
+        +0x00A7C: TryToUpdateAnim
+        +0x00A88: squadsGetLoudestEvent
+        +0x00AC0: TryToUpdateAnim
+        +0x00C78: squadsPrepareToProcessSquaddie
+        +0x00CA8: squadsGetClosestPlayer
+    -> Overlay 139:
+        +0x005E0: squadsGetClosestFood
+Overlay 147 -> [3] (8 references)
+    -> Overlay 3:
+        +0x00024: DoesSquaddieWantToFire
+        +0x00088: TryToSetMission
+        +0x000A0: TryToSetAnim
+        +0x000DC: squadsGetClosestPlayer
+        +0x000E8: GetBaddyData
+        +0x00388: squadsFireWeapon
+        +0x004F8: squadsGetFormationPosition
+        +0x0054C: ClearMissionFields
+Overlay 148 -> [3] (4 references)
+    -> Overlay 3:
+        +0x00018: DoesSquaddieWantToFire
+        +0x00048: TryToSetMission
+        +0x00140: squadsFireWeapon
+        +0x001E0: ClearMissionFields
+Overlay 149 -> [3] (7 references)
+    -> Overlay 3:
+        +0x00024: squadsGetClosestPlayer
+        +0x00368: TryToSetAnimByIndex
+        +0x005B4: squadsChangeLevel
+        +0x00744: TryToSetMission
+        +0x00980: TryToSetAnimByIndex
+        +0x009D8: squadsGetClosestPlayer
+        +0x01ED8: TryToSetAnimByIndex
+Overlay 150 -> [3] (2 references)
+    -> Overlay 3:
+        +0x00030: squadsGetChildPolyPosition
+        +0x00080: BTSBStandardFire
+Overlay 151 -> [3, 8, 139] (19 references)
+    -> Overlay 3:
+        +0x000AC: TryToSetMission
+        +0x000F8: DoesSquaddieWantToFire
+        +0x00124: TryToSetMission
+        +0x00138: UpdateOrSetAnim
+        +0x001A4: squadsGetClosestPlayer
+        +0x00234: IsPointInRegionIdx
+        +0x00248: IsPointInSibling
+        +0x0027C: GetRangeSquared2D
+        +0x002EC: IsPointInRegionIdx
+        +0x003A0: DoesLineCrossRegionIdx
+        +0x00458: squadsGetClosestPlayer
+        +0x004F4: GetRangeSquared2D
+        +0x00518: TryToSetAnim
+        +0x00654: TryToUpdateAnim
+        +0x006A0: TryToUpdateAnim
+        +0x006CC: ClearMissionFields
+    -> Overlay 8:
+        +0x00648: bloodSpurtAdd
+    -> Overlay 139:
+        +0x00078: squadsGetClosestFood
+        +0x00498: squadsIsObjectEdible
+Overlay 153 -> [3, 8] (2 references)
+    -> Overlay 3:
+        +0x00284: SquaddieLightAndAnimate
+    -> Overlay 8:
+        +0x00398: bloodSpurtAdd
+Overlay 154 -> [3] (6 references)
+    -> Overlay 3:
+        +0x00688: GetRange2D
+        +0x008F4: GetRange2D
+        +0x011B4: TryToSetMission
+        +0x011DC: TryToSetMission
+        +0x01214: RemoveSquaddie
+        +0x0180C: squadsGetClosestPlayer
+Overlay 155 -> [3] (22 references)
+    -> Overlay 3:
+        +0x001D8: IsPointInRegion
+        +0x0021C: IsPointInRegion
+        +0x006A4: GetRegionIndex
+        +0x00B1C: DoesLineCrossRegion
+        +0x00D3C: DoLinesIntersect
+        +0x00E64: DoesLineCrossRegion
+        +0x0102C: GetRegion
+        +0x010FC: GetRegionIndex
+        +0x01608: GetRegion
+        +0x01618: GetBaddyData
+        +0x01814: WhichRegionIsPointIn
+        +0x01DB8: GetRegion
+        +0x02058: DoesLineCrossRegion
+        +0x020BC: GetRegion
+        +0x025F8: DoesLineCrossRegion
+        +0x02BFC: GetBaddyData
+        +0x034FC: DoesSquaddieWantToFire
+        +0x0357C: GetRangeSquared2D
+        +0x036F4: IsPointInRegion
+        +0x03728: TryToSetMission
+        +0x03890: GetRangeSquared2D
+        +0x03ADC: GetRangeSquared2D
+
+=== Overlays Referenced By Others ===
+
+Overlay   1 <- [15, 16, 17] (3 callers)
+Overlay   2 <- [3] (1 callers)
+Overlay   3 <- [95, 102, 122, 138, 139, 140, 141, 142, 143, 145, 146, 147, 148, 149, 150, 151, 153, 154, 155] (19 callers)
+Overlay   5 <- [9, 12, 19, 85] (4 callers)
+Overlay   6 <- [12, 14, 18, 37, 40, 43, 50, 51, 52, 61, 68, 72, 85, 93, 104, 107, 108, 128, 132] (19 callers)
+Overlay   7 <- [32, 82, 127] (3 callers)
+Overlay   8 <- [3, 47, 67, 68, 87, 151, 153] (7 callers)
+Overlay   9 <- [18, 19] (2 callers)
+Overlay  10 <- [67, 68, 90, 93, 118, 120, 124] (7 callers)
+Overlay  11 <- [136] (1 callers)
+Overlay  12 <- [19] (1 callers)
+Overlay  13 <- [14, 61] (2 callers)
+Overlay  14 <- [3] (1 callers)
+Overlay  18 <- [9, 19] (2 callers)
+Overlay  19 <- [9, 18, 37] (3 callers)
+Overlay  22 <- [15, 16, 17, 118] (4 callers)
+Overlay  23 <- [46, 106] (2 callers)
+Overlay  25 <- [36] (1 callers)
+Overlay  26 <- [36] (1 callers)
+Overlay  29 <- [46] (1 callers)
+Overlay  31 <- [53, 116] (2 callers)
+Overlay  32 <- [7] (1 callers)
+Overlay  33 <- [34] (1 callers)
+Overlay  34 <- [36] (1 callers)
+Overlay  35 <- [36] (1 callers)
+Overlay  37 <- [19] (1 callers)
+Overlay  38 <- [9, 19, 37, 40, 42, 62] (6 callers)
+Overlay  39 <- [46, 67] (2 callers)
+Overlay  41 <- [18, 58] (2 callers)
+Overlay  44 <- [136] (1 callers)
+Overlay  46 <- [22] (1 callers)
+Overlay  55 <- [57] (1 callers)
+Overlay  58 <- [41] (1 callers)
+Overlay  61 <- [40] (1 callers)
+Overlay  71 <- [24] (1 callers)
+Overlay  74 <- [22] (1 callers)
+Overlay  77 <- [115, 129] (2 callers)
+Overlay  81 <- [106] (1 callers)
+Overlay  85 <- [115, 125] (2 callers)
+Overlay  87 <- [143] (1 callers)
+Overlay  95 <- [137] (1 callers)
+Overlay 101 <- [22] (1 callers)
+Overlay 105 <- [96, 112, 122] (3 callers)
+Overlay 106 <- [47] (1 callers)
+Overlay 107 <- [15, 16, 17, 50, 51, 52, 53] (7 callers)
+Overlay 110 <- [46] (1 callers)
+Overlay 118 <- [22] (1 callers)
+Overlay 129 <- [15, 16, 17] (3 callers)
+Overlay 135 <- [41, 58] (2 callers)
+Overlay 137 <- [24] (1 callers)
+Overlay 138 <- [3] (1 callers)
+Overlay 139 <- [3, 146, 151] (3 callers)
+Overlay 140 <- [3] (1 callers)
+Overlay 141 <- [3] (1 callers)
+Overlay 142 <- [3] (1 callers)
+Overlay 143 <- [3] (1 callers)
+Overlay 145 <- [3] (1 callers)
+Overlay 146 <- [3] (1 callers)
+Overlay 147 <- [3] (1 callers)
+Overlay 148 <- [3] (1 callers)
+Overlay 149 <- [3] (1 callers)
+Overlay 150 <- [3] (1 callers)
+Overlay 151 <- [3] (1 callers)
+Overlay 152 <- [3] (1 callers)
+Overlay 154 <- [3, 136] (2 callers)
+Overlay 155 <- [3] (1 callers)
+Overlay 157 <- [14, 47] (2 callers)
+Overlay 4092 <- [99] (1 callers)
+
+=== Root Overlays (reference others, not referenced) ===
+Overlays: [15, 16, 17, 24, 36, 40, 42, 43, 47, 50, 51, 52, 53, 57, 62, 67, 68, 72, 82, 90, 93, 96, 99, 102, 104, 108, 112, 115, 116, 120, 122, 124, 125, 127, 128, 132, 136, 153]
+
+=== Leaf Overlays (referenced by others, no outgoing refs) ===
+Overlays: [1, 2, 5, 6, 8, 10, 11, 13, 23, 25, 26, 29, 31, 33, 35, 38, 39, 44, 55, 71, 74, 77, 81, 101, 105, 110, 135, 152, 157, 4092]

@@ -73,3 +73,6 @@ m2cfiles/
 tools/ido-recomp
 tools/objdiff
 objdiff.json
+node_modules/
+package.json
+package-lock.json
