@@ -68,8 +68,8 @@ segments:
       - [0x401B0, asm]
       - [0x431D0, asm]
       - [0x44250, asm]
-      - [0x45650, hasm, math_util]
-      - [0x4A0F0, hasm, math_util2]
+      - [0x45650, hasm, hasm/math_util]
+      - [0x4A0F0, hasm, hasm/math_util2]
       - [0x4A800, asm]
       - [0x4DDE0, asm]
       - [0x4E250, asm]
@@ -99,7 +99,7 @@ segments:
       - [0x84C60, asm]
       - [0x84CC0, asm]
       - [0x87060, asm]
-      - [0x870B0, asm]
+      - [0x870B0, asm, libultra/cspgettempo.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
       - [0x87100, asm]
       - [0x8A320, asm]
       - [0x8A390, asm]
@@ -110,6 +110,7 @@ segments:
       - [0x8B0C0, asm]
       - [0x8B170, asm]
       - [0x8B1F0, asm]
+      - [0x8BCC0, asm, libultra/cents2ratio.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
       - [0x8BD60, asm]
       - [0x8BF70, asm]
       - [0x8CA30, asm]
@@ -146,75 +147,98 @@ segments:
       - [0x96350, asm]
       - [0x96EF0, asm]
       - [0x97130, asm]
-      - [0x97380, asm]
-      - [0x973D0, asm]
-      - [0x97510, asm]
-      - [0x976A0, asm]
-      - [0x97960, asm]
-      - [0x979E0, asm]
+      - [0x97380, asm, libultra/getcount.o] # libultra 2.0E 2.0F 2.0G 2.0H 2.0I 2.0J 2.0K 2.0L
+      - [0x97390, asm]
+      - [0x973D0, asm, libultra/recvmesg.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x97510, asm, libultra/aisetfreq.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x97670, asm, libultra/createmesgqueue.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x976A0, asm, libultra/startthread.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x977F0, asm, libultra/stopthread.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x978B0, asm, libultra/aisetnextbuf.o] # libultra 2.0E 2.0F 2.0G
+      - [0x97960, asm, libultra/virtualtophysical.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x979E0, asm, libultra/sendmesg.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
       - [0x97B30, asm]
       - [0x97B40, asm]
-      - [0x97C10, asm]
+      - [0x97C10, asm, libultra/sinf.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x97DD0, asm, libultra/llcvt.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
       - [0x97FE0, asm]
-      - [0x98410, asm]
-      - [0x987D0, asm]
-      - [0x98A30, asm]
-      - [0x98A60, asm]
-      - [0x98AF0, asm]
+      - [0x982C0, asm, libultra/setthreadpri.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x983A0, asm, libultra/seteventmesg.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x98410, asm, libultra/controller.o] # libultra 2.0F 2.0G
+      - [0x987D0, asm, libultra/contreaddata.o] # libultra 2.0E 2.0F 2.0G
+      - [0x98A30, asm, libultra/settime.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x98A60, asm, libultra/gettime.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x98AF0, asm, libultra/spsetstat.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
       - [0x98B00, asm]
-      - [0x98B10, asm]
-      - [0x98B90, asm]
+      - [0x98B10, asm, libultra/writebackdcache.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x98B90, asm, libultra/invalicache.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
       - [0x98C10, asm]
-      - [0x98D70, asm]
-      - [0x98E20, asm]
-      - [0x98EC0, asm]
-      - [0x994D0, asm]
+      - [0x98D70, asm, libultra/invaldcache.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x98E20, asm, libultra/bzero.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x98EC0, asm, libultra/pfsdeletefile.o] # libultra 2.0F 2.0G
+      - [0x994D0, asm, libultra/writebackdcacheall.o] # libultra 2.0E 2.0F 2.0G 2.0H 2.0I 2.0J 2.0K 2.0L ique_v1.5
       - [0x99500, asm]
-      - [0x99810, asm]
-      - [0x99880, asm]
-      - [0x99960, asm]
-      - [0x99CC0, asm]
-      - [0x99EC0, asm]
-      - [0x9A0A0, asm]
+      - [0x99810, asm, libultra/visetmode.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x99880, asm, libultra/viblack.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x998F0, asm, libultra/visetevent.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x99960, asm, libultra/setintmask.o] # libultra 2.0F 2.0G 2.0H 2.0I 2.0J 2.0K 2.0L
+      - [0x99A00, asm, libultra/sptask.o] # libultra 2.0E 2.0F 2.0G
+      - [0x99CC0, asm, libultra/viswapbuf.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x99D10, asm, libultra/sptaskyielded.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x99D90, asm]
+      - [0x99E10, asm, libultra/dpsetnextbuf.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x99EC0, asm, libultra/sptaskyield.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x99EE0, asm, libultra/visetspecial.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x9A0A0, asm, libultra/ll.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x9A360, asm, libultra/string.o] # libultra 2.0E 2.0F 2.0G 2.0I
       - [0x9A400, asm]
-      - [0x9A410, asm]
+      - [0x9A410, asm, libultra/bcopy.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
       - [0x9A720, asm]
-      - [0x9A800, asm]
-      - [0x9A840, asm]
+      - [0x9A7E0, asm, libultra/getthreadpri.o] # libultra 2.0E 2.0F 2.0G 2.0H 2.0I 2.0J 2.0K 2.0L ique_v1.5
+      - [0x9A800, asm, libultra/interrupt.o] # libultra 2.0E 2.0F 2.0G 2.0H 2.0I
+      - [0x9A840, asm, libultra/pirawdma.o] # libultra 2.0J 2.0K 2.0L
       - [0x9A910, asm]
+      - [0x9AF00, asm, libultra/thread.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x9AF40, asm, libultra/destroythread.o] # libultra 2.0E 2.0F 2.0G
       - [0x9B040, asm]
       - [0x9B090, asm]
       - [0x9B0E0, asm]
       - [0x9B130, asm]
-      - [0x9B1D0, asm]
+      - [0x9B1D0, asm, libultra/syncprintf.o] # libultra 2.0F 2.0G
       - [0x9B230, asm]
-      - [0x9B3A0, asm]
-      - [0x9B640, asm]
-      - [0x9B790, asm]
-      - [0x9B880, asm]
+      - [0x9B2F0, asm, libultra/sirawdma.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x9B3A0, asm, libultra/crc.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x9B520, asm, libultra/bcmp.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x9B640, asm, libultra/vi.o] # libultra 2.0F 2.0G
+      - [0x9B790, asm, libultra/ai.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x9B7C0, asm, libultra/probetlb.o] # libultra 2.0E 2.0F 2.0G 2.0H 2.0I 2.0J 2.0K 2.0L
+      - [0x9B880, asm, libultra/jammesg.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x9B9D0, asm, libultra/pigetcmdq.o] # libultra 2.0J 2.0K 2.0L
       - [0x9BA00, asm]
       - [0x9BA20, asm]
-      - [0x9BAD0, asm]
-      - [0x9BB20, asm]
+      - [0x9BAD0, asm, libultra/unmaptlball.o] # libultra 2.0E 2.0F 2.0G 2.0H
+      - [0x9BB20, asm, libultra/maptlbrdb.o] # libultra 2.0E 2.0F 2.0G 2.0H 2.0I 2.0J 2.0K 2.0L ique_v1.5
       - [0x9BB80, asm]
-      - [0x9BB90, asm]
-      - [0x9BC70, asm]
-      - [0x9C080, asm]
-      - [0x9C3E0, asm]
-      - [0x9C420, asm]
-      - [0x9C4B0, asm]
-      - [0x9C4E0, asm]
-      - [0x9C4F0, asm]
-      - [0x9C520, asm]
+      - [0x9BB90, asm, libultra/settimer.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J
+      - [0x9BC70, asm, libultra/timerintr.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J
+      - [0x9C070, asm] #vigetcurrcontext?
+      - [0x9C080, asm, libultra/viswapcontext.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x9C3E0, asm, libultra/spsetpc.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x9C420, asm, libultra/sprawdma.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x9C4B0, asm, libultra/sp.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x9C4E0, asm, libultra/spgetstat.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x9C4F0, asm, libultra/dp.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x9C520, asm, libultra/resetglobalintmask.o] # libultra 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
       - [0x9C580, asm]
       - [0x9C6E0, asm]
-      - [0x9C890, asm]
-      - [0x9C8E0, asm]
-      - [0x9D5A0, asm]
-      - [0x9D5D0, asm]
-      - [0x9D5E0, asm]
-      - [0x9D880, asm]
-      - [0x9E340, asm]
+      - [0x9C840, asm, libultra/setglobalintmask.o] # libultra 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x9C890, asm, libultra/yieldthread.o] # libultra 2.0E 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x9C8E0, asm, libultra/xprintf.o] # libultra 2.0F 2.0G
+      - [0x9D5A0, asm, libultra/si.o] # libultra 2.0E 2.0F 2.0G 2.0I
+      - [0x9D5D0, asm, libultra/setcompare.o] # libultra 2.0E 2.0F 2.0G 2.0H 2.0I 2.0J 2.0K 2.0L
+      - [0x9D5E0, asm, libultra/xlitob.o] # libultra 2.0F 2.0G 2.0I 2.0J 2.0K 2.0L
+      - [0x9D880, asm, libultra/xldtob.o] # libultra 2.0F 2.0G 2.0I
+      - [0x9E340, asm, libultra/ldiv.o] # libultra 2.0E 2.0F 2.0G 2.0I
       - [0x9E4D0, bin] # - [0x9E4D0, hasm] - This seems to call a func func_840010E0 which breaks things.
       - [0x9E620, textbin] # ucode
       - [0xA1120, data]
@@ -225,7 +249,56 @@ segments:
       - { type: bss, vram: 0x800B0A60 }
       # 801058B0 BSS Section End
 
-  - type: bin
+  - name: assets_lut
+    type: bin
     start: 0xB1660
-    follows_vram: main
+  
+  - name: assets #?
+    type: bin
+    start: 0xB1790  
+
+  # 8 bytes to contain the address that tried to load an overlay, and the index into it's overlayRomTable entry
+  - name: mainRelocTable
+    type: bin
+    start: 0x1EC65F0
+
+  # 4 bytes to describe which overlay and function to load
+  - name: overlayRomTable
+    type: bin
+    start: 0x1EC7640
+
+  - name: overlayTable
+    type: bin
+    start: 0x1EC9B60
+
+  - name: overlay_1
+    type: code
+    start: 0x1ECAF00
+    vram: 0x100000
+    bss_size: 0x1010
+    align: 0x8
+    dir: overlays_jpn/o1
+    exclusive_ram_id: overlay_1
+    symbol_name_format: $SEG_$VRAM_$ROM
+    subsegments:
+      - [0x1ECAF00, c, overlay_1]
+      - [0x1ECBB30, data, overlay_1]
+      - [0x1ECBB70, bin, overlay_1_reloc]
+  
+  - name: overlays
+    type: bin
+    start: 0x1ECBDC0
+
+  - name: symbolsTable_offsets
+    type: bin
+    start: 0x1FE23A0
+
+  - name: symbolsTable_symbol_names
+    type: bin
+    start: 0x1FE4F00
+
+  - name: padding
+    type: bin
+    start: 0x1FEFD40
+
   - [0x2000000]

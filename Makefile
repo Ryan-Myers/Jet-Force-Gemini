@@ -37,10 +37,22 @@ define print
 endef
 
 # Directories
-BIN_DIRS  = assets
-BUILD_DIR = build
-SRC_DIR   = src
-ASM_DIR   = asm
+ifeq ($(VERSION),us)
+	BIN_DIRS  = assets
+	BUILD_DIR = build
+	SRC_DIR   = src
+	ASM_DIR   = asm
+else ifeq ($(VERSION),kiosk)
+	BIN_DIRS  = assets
+	BUILD_DIR = build
+	SRC_DIR   = src
+	ASM_DIR   = asm
+else
+	BIN_DIRS  = assets_$(VERSION)
+	BUILD_DIR = build_$(VERSION)
+	SRC_DIR   = src_$(VERSION)
+	ASM_DIR   = asm_$(VERSION)
+endif
 
 ifeq ($(VERSION),us)
 SRC_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard src/overlays/*/)))
@@ -49,24 +61,12 @@ ASM_OVERLAYS_DIRS += $(patsubst %/,%,$(dir $(wildcard asm/nonmatchings/overlays/
 ASM_OVERLAYS_DIRS += $(patsubst %/,%,$(dir $(wildcard asm/data/overlays/*/)))
 BIN_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard assets/overlays/*/)))
 else
-SRC_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard src/overlays_$(VERSION)/*/)))
-ASM_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard asm/overlays_$(VERSION)/*/)))
-ASM_OVERLAYS_DIRS += $(patsubst %/,%,$(dir $(wildcard asm/nonmatchings/overlays_$(VERSION)/*/)))
-ASM_OVERLAYS_DIRS += $(patsubst %/,%,$(dir $(wildcard asm/data/overlays_$(VERSION)/*/)))
-BIN_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard assets/overlays_$(VERSION)/*/)))
+SRC_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard src_$(VERSION)/overlays_$(VERSION)/*/)))
+ASM_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard asm_$(VERSION)/overlays_$(VERSION)/*/)))
+ASM_OVERLAYS_DIRS += $(patsubst %/,%,$(dir $(wildcard asm_$(VERSION)/nonmatchings/overlays_$(VERSION)/*/)))
+ASM_OVERLAYS_DIRS += $(patsubst %/,%,$(dir $(wildcard asm_$(VERSION)/data/overlays_$(VERSION)/*/)))
+BIN_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard assets_$(VERSION)/overlays_$(VERSION)/*/)))
 endif
-
-# ifeq ($(VERSION),us)
-# 	BIN_DIRS  = assets
-# 	BUILD_DIR = build
-# 	SRC_DIR   = src
-# 	ASM_DIR   = asm
-# else
-# 	BIN_DIRS  = assets_pal
-# 	BUILD_DIR = build_pal
-# 	SRC_DIR   = src_pal
-# 	ASM_DIR   = asm_pal
-# endif
 
 MATH_DIR  = $(SRC_DIR)/math
 OLD_LIBULTRA_DIR = $(SRC_DIR)/libultra
@@ -78,7 +78,7 @@ LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/sc $(LIBULTRA_DIR)/src/flash
 
 
-ifeq ($(VERSION),pal)
+ifeq ($(VERSION),jpn)
 	TEMP_PAL_LIBULTRA_DIR = $(SRC_DIR)/libultra_c
 	ASM_DIRS += $(ASM_DIR)/math $(ASM_DIR)/data/math $(ASM_DIR)/data/hasm
 	ASM_DIRS += $(ASM_DIR)/data/libultra_c/src/libc $(ASM_DIR)/data/libultra_c/src/os
