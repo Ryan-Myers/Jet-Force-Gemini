@@ -92,11 +92,28 @@ void controlDecapitatePlayer(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/dAngle.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlMakeGravity.s")
+void controlMakeGravity(u8 *player) {
+    f32 *table1[2];
+    f32 *table2;
+
+    table1[0] = (f32 *) objGetTable(1);
+    table2 = (f32 *) objGetTable(2);
+    controlchr_gravity = table1[0][((s8 *) player)[1] & 3] * table2[((s8 *) player)[0x575]];
+    if (player[0x194] == 1) {
+        controlchr_gravity = 0.0f;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlMakeV.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlFSUvels.s")
+void controlFSUvels(s16 *rotation, u8 *player) {
+    s16 sp18[3];
+
+    sp18[0] = rotation[0];
+    sp18[1] = rotation[1];
+    sp18[2] = 0;
+    pointListRPY(3, sp18, D_800A2DB4_A39B4, (f32 *) (player + 0x18));
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlUpdateJetFlames.s")
 
