@@ -223,15 +223,25 @@ void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainChangeLevel.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetAnimGroup.s")
+void mainSetAnimGroup(s32 arg0) {
+    D_800A3254_A3E54 = arg0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetAnimGroup.s")
+s32 mainGetAnimGroup(void) {
+    return D_800A3248_A3E48;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainChangeCameras.s")
+void mainChangeCameras(s32 arg0) {
+    D_800A325C_A3E5C = arg0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetNextCharacter.s")
+s32 mainGetNextCharacter(void) {
+    return D_800A3AB0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetNextLevel.s")
+s32 mainGetNextLevel(void) {
+    return D_800A3250_A3E50;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80046070.s")
 
@@ -241,7 +251,9 @@ void mainSetAutoSave(s32 autoSave) {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainSyncNextLevel.s")
+void mainSyncNextLevel(void) {
+    D_800A326C_A3E6C = 1;
+}
 
 void mainSetMode(s32 modeToSet) {
     mainGameMode = modeToSet;
@@ -269,7 +281,9 @@ void mainSetMode(s32 modeToSet) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetDefaultCharacter.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetGame.s")
+Game *mainGetGame(void) {
+    return gameplay;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetGameCharacter.s")
 
@@ -309,7 +323,9 @@ s32 mainResetPressed(void) {
     return resetPressed;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetCurrentLevel.s")
+s32 mainGetCurrentLevel(void) {
+    return D_800A323C_A3E3C;
+}
 
 #ifdef VERSION_kiosk
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGameChanged.s")
@@ -319,7 +335,9 @@ s32 mainResetPressed(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainLoadAllGames.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetGameArrayPtr.s")
+Game *mainGetGameArrayPtr(void) {
+    return D_800FD7D8_B3B28;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSaveGame.s")
 
@@ -327,19 +345,27 @@ s32 mainResetPressed(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainDeleteGame.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainResetSaveGames.s")
+void mainResetSaveGames(void) {
+    load_save_flags = 0x10000000;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainEraseFlashRom.s")
+void mainEraseFlashRom(void) {
+    load_save_flags = 0x01000000;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainLoadGlobalFlags.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSaveGlobalFlags.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainPauseDisable.s")
+void mainPauseDisable(s32 arg0) {
+    D_800A32BC_A3EBC = arg0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainDemoOnly.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetNumberOfCameras.s")
+s32 mainGetNumberOfCameras(void) {
+    return numberOfCameras;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetNumberOfPlayers.s")
 

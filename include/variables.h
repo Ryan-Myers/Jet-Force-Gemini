@@ -17,6 +17,8 @@ extern s32 controlDkeys;
 extern s32 controlKeys;
 extern s32 controlXjoy;
 extern s32 controlYjoy;
+extern f32 controlchr_gravity;
+extern s32 D_800A2DB4_A39B4[];
 
 //objects.c
 extern s8 D_800F3860;
@@ -123,6 +125,16 @@ extern s32 D_800A3B70; //RamTest1Result
 extern s32 D_800A3B74; //RamTest2Result
 extern s32 D_800FE280;
 extern s32 load_save_flags;
+extern s16 D_800A323C_A3E3C;
+extern s16 D_800A3248_A3E48;
+extern s16 D_800A3250_A3E50;
+extern s16 D_800A3254_A3E54;
+extern s16 D_800A325C_A3E5C;
+extern u8 D_800A326C_A3E6C;
+extern s16 D_800A32BC_A3EBC;
+extern u8 numberOfCameras;
+extern Game *gameplay;
+extern Game *D_800FD7D8_B3B28;
 
 //Window Size Vars
 extern s16 mainGameWindowSizeX1;
