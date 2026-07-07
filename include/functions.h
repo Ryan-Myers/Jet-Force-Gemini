@@ -6,6 +6,7 @@
 #include "sched.h"
 #include "memory.h"
 #include "boot.h"
+#include "libc/stdarg.h"
 
 #ifdef VERSION_us
 #define nosMotorInit osMotorInit
@@ -92,7 +93,8 @@ void runlinkInitialise(void);
 void rzipInit(void);
 void viInit(OSSched *sc);
 
-s32 vsprintf(char *s, const char *fmt, ...);
+//s32 vsprintf(char *s, const char *fmt, ...);
+int vsprintf(char *s, const char *fmt, va_list args);
 s32 func_80066174(Gfx **dList, s32 asciiVal);
 void func_800665C8(void);
 void func_80066658(void);
