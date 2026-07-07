@@ -93,12 +93,13 @@ void controlDecapitatePlayer(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/dAngle.s")
 
 void controlMakeGravity(u8 *player) {
-    f32 *table1[2];
+    s32 pad;
+    f32 *table1;
     f32 *table2;
 
-    table1[0] = (f32 *) objGetTable(1);
+    table1 = (f32 *) objGetTable(1);
     table2 = (f32 *) objGetTable(2);
-    controlchr_gravity = table1[0][((s8 *) player)[1] & 3] * table2[((s8 *) player)[0x575]];
+    controlchr_gravity = table1[((s8 *) player)[1] & 3] * table2[((s8 *) player)[0x575]];
     if (player[0x194] == 1) {
         controlchr_gravity = 0.0f;
     }
