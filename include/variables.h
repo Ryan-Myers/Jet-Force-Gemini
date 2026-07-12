@@ -159,25 +159,23 @@ extern u64 globalflags;
 typedef struct TexFontCoords {
     u8 u, v;
 } TexFontCoords;
-extern s32 D_80101F6C; //gDebugFontTexture
-extern TexFontCoords D_800A6D48[3][32]; //gDebugFontCoords
-extern s32 D_80101F58; //D_80127CB8 in DKR
-extern u16 D_80101F4C; //D_80127CAC in DKR
-extern u16 D_80101F4E; //D_80127CAE in DKR
-extern TextureHeader *D_80101F40; //gTexture0
-extern TextureHeader *D_80101F44; //gTexture1
-extern TextureHeader *D_80101F48; //gTexture2
-extern s32 D_80101F5C;
-extern s32 D_80101F60;
-extern s32 D_80101F64;
-extern s32 D_80101F68;
-extern u16 D_80101F70;
-extern u16 D_80101F72;
-extern char *D_800A6D44; //gDebugPrintBufferEnd
-extern char D_80101640[]; //gDebugPrintBufferStart
+extern s32 gDebugFontTexture; //gDebugFontTexture
+extern TexFontCoords gDebugFontCoords[3][32]; //gDebugFontCoords
+extern s32 gDebugTextOn; //D_80127CB8 in DKR
+extern u16 gDebugTextX; //D_80127CAC in DKR
+extern u16 gDebugTextY; //D_80127CAE in DKR
+extern TextureHeader *gTexture[3]; //gTexture
+extern s32 gDebugBoundsX1;
+extern s32 gDebugBoundsX2;
+extern s32 gDebugBoundsY1;
+extern s32 gDebugBoundsY2;
+extern u16 gDebugScreenHeight;
+extern u16 gDebugScreenWidth;
+extern char *gDebugPrintBufferEnd; //gDebugPrintBufferEnd
+extern char gDebugPrintBufferStart[]; //gDebugPrintBufferStart
 extern s32 D_800A6D40; // spacing codes
-extern Gfx D_800A6E08[]; //dDebugFontSettings
-extern s32 D_80101F54; //D_80127CB4 in DKR
+extern Gfx dDebugFontSettings[]; //dDebugFontSettings
+extern s32 gDebugFixedWidthMode; //D_80127CB4 in DKR
 extern u16 D_80101F50; //D_80127CB0 in DKR
 extern u16 D_80101F52; //D_80127CB2 in DKR
 

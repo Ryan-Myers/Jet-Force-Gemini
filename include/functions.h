@@ -83,7 +83,7 @@ s32 fontStringWidth(char *text, s32 font, s32 convertString);
 void func_80071A0C(char *input, char *output, s32 number); //parse_string_with_number
 void *func_80071B08(u8); //returns cacheline?
 void texDPInit(Gfx **);
-void func_800660D4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry);
+void debug_text_background(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry);
 
 void RevealReturnAddresses(void);
 void piInit(void);
@@ -95,17 +95,17 @@ void viInit(OSSched *sc);
 
 //s32 vsprintf(char *s, const char *fmt, ...);
 int vsprintf(char *s, const char *fmt, va_list args);
-s32 func_80066174(Gfx **dList, s32 asciiVal);
-void func_800665C8(void);
-void func_80066658(void);
-void func_8006667C(void);
+s32 debug_text_character(Gfx **dList, s32 asciiVal);
+void debug_text_bounds(void);
+void debug_text_origin(void);
+void debug_text_newline(void);
 void sprintfSetSpacingCodes(s32 arg0);
 TextureHeader *load_texture(s32 arg0);
 
 void viGetCurrentSize(s32 *arg0, s32 *arg1);
 void rcpInitDp(Gfx **dList);
 TextureHeader *texLoadTexture(s32 arg0);
-s32 func_80065CB4(Gfx **dlist, char *buffer);
+s32 debug_text_parse(Gfx **dlist, char *buffer);
 
 
 void func_80021444(unk800DC950 *arg0, s32 arg1);
