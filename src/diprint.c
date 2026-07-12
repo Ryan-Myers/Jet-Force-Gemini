@@ -869,8 +869,104 @@ void diPrintfSetXY(u16 x, u16 y) {
     RENDER_PRINTF_CMD_SET_POSITION(x, y)
 }
 
-// Same as debug_text_parse in DKR
-#pragma GLOBAL_ASM("asm/nonmatchings/diprint/func_80065CB4.s")
+/**
+ * Read the current character in the debug text buffer.
+ * Also executes commands when they come up.
+ */
+s32 func_80065CB4(Gfx **dList, char *buffer) {
+    char *bufferCopy;
+    s32 xOffset;
+    u8 red;
+    u8 green;
+    u8 blue;
+    u8 alpha;
+    u8 bufferValue;
+
+    bufferCopy = buffer;
+    bufferValue = *buffer;
+    buffer++;
+    while (bufferValue != NULL) {
+        xOffset = 0;
+        switch (bufferValue) {
+            case 0x83: // Leave fixed-width mode
+                D_80101F54 = FALSE;
+                break;
+            case 0x84: // Enter fixed-width mode
+                D_80101F54 = TRUE;
+                break;
+            case 0x81: // Set the text color from the next 4 bytes
+                red = buffer[0];
+                green = buffer[1];
+                blue = buffer[2];
+                alpha = buffer[3];
+                buffer += 4;
+                if (D_80101F58) {
+                    gDPSetEnvColor((*dList)++, red, green, blue, alpha);
+                }
+                break;
+            case 0x85: // Set the background color from the next 4 bytes
+                red = buffer[0];
+                green = buffer[1];
+                blue = buffer[2];
+                alpha = buffer[3];
+                buffer += 4;
+                if (!D_80101F58) {
+                    gDPSetPrimColor((*dList)++, 0, 0, red, green, blue, alpha);
+                }
+                break;
+            case 0x82: // Set debug text position from the next 4 bytes
+                if (!D_80101F58) {
+                    func_800660D4(dList, D_80101F50, D_80101F52, D_80101F4C, D_80101F4E + 10);
+                }
+                D_80101F4C = buffer[0];
+                D_80101F4C |= buffer[1] << 8;
+                D_80101F4E = buffer[2];
+                D_80101F4E |= buffer[3] << 8;
+                D_80101F50 = D_80101F4C;
+                D_80101F52 = D_80101F4E;
+                buffer += 4;
+                break;
+            case ' ': // Space
+                xOffset = 6;
+                break;
+            case '\n': // Line Feed
+                if (!D_80101F58) {
+                    func_800660D4(dList, D_80101F50, D_80101F52, D_80101F4C, D_80101F4E + 10);
+                }
+                func_8006667C();
+                D_80101F50 = D_80101F4C;
+                D_80101F52 = D_80101F4E;
+                break;
+            case '\t': // HT - Horizontal Tab
+                if (!(D_80101F4C % 32)) {
+                    xOffset = 32;
+                } else {
+                    xOffset = 32 - (D_80101F4C % 32);
+                }
+                break;
+            default:
+                xOffset = func_80066174(dList, bufferValue);
+                break;
+        }
+
+        if (D_80101F54 && bufferValue >= 0x20 && bufferValue < 0x80) {
+            xOffset = 7;
+        }
+        D_80101F4C += xOffset;
+        if ((D_80101F70 - 16) < D_80101F4C) {
+            if (!D_80101F58) {
+                func_800660D4(dList, D_80101F50, D_80101F52, D_80101F4C, D_80101F4E + 10);
+            }
+            func_8006667C();
+            D_80101F50 = D_80101F4C;
+            D_80101F52 = D_80101F4E;
+        }
+        bufferValue = *buffer;
+        buffer++;
+    }
+
+    return buffer - bufferCopy;
+}
 
 void func_800660D4(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry) {
     if (!((ulx == lrx) | (uly == lry))) {
