@@ -196,15 +196,27 @@ char *_itoa(unsigned long long int n, char *buflim, unsigned int base, int upper
     return bp;
 }
 
-void sprintfSetSpacingCodes(s32 arg0) {
-    gSprintfSpacingCode = arg0;
+/**
+ * Used to determine if vsprintf should use fixed width mode or not
+ * Official Name: sprintfSetSpacingCodes
+ */
+void sprintfSetSpacingCodes(s32 setting) {
+    gSprintfSpacingCode = setting;
 }
 
-UNUSED int sprintf(char *s, const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-    vsprintf(s, fmt, args);
-    va_end(args);
+/**
+ * Exact match to glibc 1.09 version.
+ * Official name: sprintf
+ */
+UNUSED int sprintf(char *s, const char *format, ...) {
+    va_list arg;
+    int done;
+
+    va_start(arg, format);
+    done = vsprintf(s, format, arg);
+    va_end(arg);
+
+    return done;
 }
 
 #define outchar(x)  \
@@ -909,13 +921,22 @@ int vsprintf(char *s, const char *fmt, va_list args) {
     return done;
 }
 
+/**
+ * Load the font textures for the debug text, then set the buffer to the beginning.
+ * Official Name: diPrintfInit
+ */
 void diPrintfInit(void) {
-    gTexture[0] = texLoadTexture(0);
-    gTexture[1] = texLoadTexture(1);
-    gTexture[2] = texLoadTexture(2);
+    gTexture[0] = texLoadTexture(ASSET_TEX2D_SMALLFONT_0);
+    gTexture[1] = texLoadTexture(ASSET_TEX2D_SMALLFONT_1);
+    gTexture[2] = texLoadTexture(ASSET_TEX2D_SMALLFONT_2);
     gDebugPrintBufferEnd = gDebugPrintBufferStart;
 }
 
+/**
+ * Add a string to the onscreen debug text buffer.
+ * Has variable args, so can use multiple string elements.
+ * Official Name: diPrintf
+ */
 s32 diPrintf(const char *format, ...) {
     va_list args;
     s32 written;
@@ -924,9 +945,9 @@ s32 diPrintf(const char *format, ...) {
         stubbed_printf("*** diPrintf Error *** ---> Out of string space. (Print less text!)\n");
         return -1;
     }
-    sprintfSetSpacingCodes(1);
+    sprintfSetSpacingCodes(TRUE);
     written = vsprintf(gDebugPrintBufferEnd, format, args);
-    sprintfSetSpacingCodes(0);
+    sprintfSetSpacingCodes(FALSE);
     if (written > 0) {
         gDebugPrintBufferEnd = &gDebugPrintBufferEnd[written] + 1;
     }
@@ -936,6 +957,7 @@ s32 diPrintf(const char *format, ...) {
 /**
  * At the end of a frame, iterate through the debug text buffer and print it on screen.
  * Soft-clear the buffer afterwards by setting the endpoint to the start point.
+ * Official Name: diPrintfAll
  */
 void diPrintfAll(Gfx **dList) {
     s32 height;
@@ -952,7 +974,7 @@ void diPrintfAll(Gfx **dList) {
     buffer = (char *) gDebugPrintBufferStart;
     debug_text_origin();
     gDebugFontTexture = -1;
-    gDebugFixedWidthMode = 0;
+    gDebugFixedWidthMode = FALSE;
     D_80101F50 = gDebugTextX;
     D_80101F52 = gDebugTextY;
     while ((s32) buffer != (s32) gDebugPrintBufferEnd) {
@@ -963,7 +985,7 @@ void diPrintfAll(Gfx **dList) {
     buffer = (char *) gDebugPrintBufferStart;
     debug_text_origin();
     gDebugFontTexture = -1;
-    gDebugFixedWidthMode = 0;
+    gDebugFixedWidthMode = FALSE;
     while ((s32) buffer != (s32) gDebugPrintBufferEnd) {
         gDebugTextOn = TRUE;
         buffer += debug_text_parse(dList, buffer);
@@ -973,13 +995,15 @@ void diPrintfAll(Gfx **dList) {
 
 /**
  * Set the colour of the current debug text.
+ * Official Name: diPrintfSetCol
  */
-UNUSED void diPrintfSetCol(u8 red, u8 green, u8 blue, u8 alpha) {
+void diPrintfSetCol(u8 red, u8 green, u8 blue, u8 alpha) {
     RENDER_PRINTF_CMD_SET_COLOR(red, green, blue, alpha)
 }
 
 /**
  * Set the background colour of the current debug text.
+ * Official Name: diPrintfSetBG
  */
 void diPrintfSetBG(u8 red, u8 green, u8 blue, u8 alpha) {
     RENDER_PRINTF_CMD_SET_BACKGROUND_COLOR(red, green, blue, alpha)
@@ -987,10 +1011,9 @@ void diPrintfSetBG(u8 red, u8 green, u8 blue, u8 alpha) {
 
 /**
  * Sets the character position of further prints to the given coordinates.
+ * Official name: diPrintfSetXY
  */
-void diPrintfSetXY(u16 x, u16 y) {
-    RENDER_PRINTF_CMD_SET_POSITION(x, y)
-}
+void diPrintfSetXY(u16 x, u16 y){ RENDER_PRINTF_CMD_SET_POSITION(x, y) }
 
 /**
  * Read the current character in the debug text buffer.
@@ -1091,6 +1114,9 @@ s32 debug_text_parse(Gfx **dList, char *buffer) {
     return buffer - bufferCopy;
 }
 
+/**
+ * Render the background for the debug text.
+ */
 void debug_text_background(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry) {
     if (!((ulx == lrx) | (uly == lry))) {
         if (ulx >= 2) {
@@ -1102,7 +1128,11 @@ void debug_text_background(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry) {
     }
 }
 
-// Loads a font texture and returns the width of the character given.
+/**
+ * Renders a character onscreen at the current debug text position.
+ * If necessary, load the correct font texture.
+ * Return the width of the char that was just printed.
+ */
 s32 debug_text_character(Gfx **dList, s32 asciiVal) {
     s32 fontCharWidth;
     s32 fontCharU;
@@ -1112,7 +1142,7 @@ s32 debug_text_character(Gfx **dList, s32 asciiVal) {
         if (gDebugFontTexture != 0) {
             if (gDebugTextOn) {
                 gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(gTexture[0] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
-                                     0, 2, 2, 0, 0, 0, 0);
+                                    0, 2, 2, 0, 0, 0, 0);
             }
             gDebugFontTexture = 0;
         }
@@ -1122,17 +1152,17 @@ s32 debug_text_character(Gfx **dList, s32 asciiVal) {
         if (gDebugFontTexture != 1) {
             if (gDebugTextOn) {
                 gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(gTexture[1] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11,
-                                     0, 2, 2, 0, 0, 0, 0);
+                                    0, 2, 2, 0, 0, 0, 0);
             }
             gDebugFontTexture = 1;
         }
         asciiVal -= 0x40;
-    } else if (asciiVal < 0x80) {
+    } else if (asciiVal <= 0x7F) {
         // Character is a lower case letter
         if (gDebugFontTexture != 2) {
             if (gDebugTextOn) {
                 gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(gTexture[2] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
-                                     0, 2, 2, 0, 0, 0, 0);
+                                    0, 2, 2, 0, 0, 0, 0);
             }
             gDebugFontTexture = 2;
         }
@@ -1148,6 +1178,9 @@ s32 debug_text_character(Gfx **dList, s32 asciiVal) {
     return fontCharWidth;
 }
 
+/**
+ * Sets the upper and lower boundaries of the debug text.
+ */
 void debug_text_bounds(void) {
     if (gDebugScreenHeight <= 320) {
         gDebugBoundsX1 = 16;
@@ -1165,11 +1198,17 @@ void debug_text_bounds(void) {
     }
 }
 
+/**
+ * Sets the print position of the text back to top left.
+ */
 void debug_text_origin(void) {
     gDebugTextX = gDebugBoundsX1;
     gDebugTextY = gDebugBoundsY1;
 }
 
+/**
+ * Moves the print position of the text down one line.
+ */
 void debug_text_newline(void) {
     gDebugTextX = gDebugBoundsX1;
     gDebugTextY += 11;

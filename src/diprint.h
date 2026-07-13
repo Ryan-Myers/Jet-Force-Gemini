@@ -8,6 +8,12 @@ typedef struct TexFontCoords {
     u8 u, v;
 } TexFontCoords;
 
+typedef enum AssetTextures2dEnum { 
+    ASSET_TEX2D_SMALLFONT_0,
+    ASSET_TEX2D_SMALLFONT_1,
+    ASSET_TEX2D_SMALLFONT_2
+} AssetTextures2dEnum;
+
 #define RENDER_PRINTF_CMD_ARG_BYTE(val) *gDebugPrintBufferEnd = val; gDebugPrintBufferEnd++;
 #define RENDER_PRINTF_CMD_ARG_SHORT(val) RENDER_PRINTF_CMD_ARG_BYTE(val) RENDER_PRINTF_CMD_ARG_BYTE(val >> 8)
 

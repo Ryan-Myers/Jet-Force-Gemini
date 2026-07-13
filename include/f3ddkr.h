@@ -6,6 +6,83 @@
 
 // This file is an extension of PR/gbi.h
 
+/**
+ * This section explains how billboarding works from a 3D geometry perspective.
+ * Several modifications were made to the RSP to implement billboarding:
+ * 
+ * 1) For the gSPVertexDKR command, the last parameter is either 0 or 1 (G_VTX_APPEND):
+ *    - If 0: Vertices are always written to the beginning of RSP's internal vertex array, and their count is stored.
+ *    - If 1: Vertices are appended after those written with flag 0.
+ * 
+ * 2) The commands gDkrEnableBillboard and gDkrDisableBillboard control billboarding:
+ *    - When gDkrEnableBillboard is active, vertices processed by gSPVertexDKR have their coordinates added to
+ *      the coordinates of vertex 0 in RSP's vertex array.
+ *    - This addition occurs after MVP matrix transformation but before perspective division (normalization of (x,y,z,w) to (x/w,y/w,z/w,1)).
+ * 
+ * Implementation Steps:
+ * 1) First, push an anchor vertex using gSPVertexDKR. This vertex should have a standard MVP matrix applied
+ *    (with normal perspective and camera setup like other 3D objects). Inside RSP, this vertex gets transformed
+ *    to clip coordinates (x,y,z,w). Note: with standard perspective, w represents the vertex's distance from the camera.
+ * 
+ * 2) Create a billboard matrix (simplest case: identity matrix) and store it in slot G_MTX_DKR_INDEX_2.
+ *    More complex versions can tilt the sprite or scale it along two axes. This matrix will be used for subsequent
+ *    billboard vertices (without camera or projection transformations).
+ * 
+ * 3) Enable billboarding with gDkrEnableBillboard. All subsequent billboard vertices will be added to the anchor vertex.
+ * 
+ * 4) Push billboard vertices using gSPVertexDKR and render primitives with gSPPolygon. These vertices use sprite-space coordinates.
+ *    Example: For a 32×64 sprite, vertices would be (0,0,0), (32,0,0), (32,64,0), (0,64,0).
+ * 
+ * How Coordinate Addition Works (Perspective Explanation):
+ * Let the anchor vertex have coordinates (x,y,z,w) and our sprite be 32×64 as above. After normalization:
+ * anchor becomes (x/w,y/w,z/w,1). A billboard vertex would have (x+32,y,z,w) → ((x+32)/w,y/w,z/w,1).
+ * 
+ * Screen-space implications (assuming 320px viewport width):
+ * The sprite's on-screen width becomes (32/w)*160 pixels. Since w equals distance from camera, sprites
+ * farther away appear smaller (creating perspective). However, additional scaling is needed because
+ * without accounting for field of view and aspect ratio, a 32×64 sprite wouldn't match the size of
+ * a 32×64 3D object at the same location.
+ */
+
+// Color combiner values.
+
+// cycle 1 modes
+
+#define	G_CC_ENVIRONMENT   0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT
+// blend two textures, modulated by SHADE, alpha modulated between texture and 1 by PRIMITITIVE
+#define G_CC_BLENDTEX_MODULATEA_1_PRIM TEXEL1, TEXEL0, SHADE, TEXEL0, 1, TEXEL0, PRIMITIVE, TEXEL0
+
+// The following several modes, where blending with ENVIRONMENT is modulated by ENV_ALPHA,
+// are likely used to create ambient lighting defined by EnvColor (color and intensity)
+
+// Blend with ENVIRONMENT modulated by ENV_ALPHA, alpha unchanged
+#define G_CC_BLENDI_ENV_ALPHA ENVIRONMENT, SHADE, ENV_ALPHA, SHADE, 0, 0, 0, SHADE
+// Blend SHADE and ENVIRONMENT with ENV_ALPHA, alpha from PRIMITIVE
+#define G_CC_BLENDI_ENV_ALPHA_A_PRIM ENVIRONMENT, SHADE, ENV_ALPHA, SHADE, 0, 0, 0, PRIMITIVE
+
+// The following modes do not use vertex colors at all
+
+// Blend TEXEL0 and ENVIRONMENT with ENV_ALPHA, alpha from PRIMITIVE
+#define G_CC_BLENDT_ENV_ALPHA_A_PRIM ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, 0, 0, 0, PRIMITIVE
+// Blend TEXEL0 and ENVIRONMENT with ENV_ALPHA, alpha = TEXEL0 * PRIMITIVE
+#define G_CC_BLENDT_ENV_ALPHA_A_TxP ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, TEXEL0, 0, PRIMITIVE, 0
+// Like above, but alpha = TEXEL1 * PRIMITIVE
+#define G_CC_BLENDT_ENV_ALPHA_A_T1xP ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, TEXEL1, 0, PRIMITIVE, 0
+
+// Decal with alpha modulated by PRIMITIVE
+#define G_CC_DECAL_A_PRIM 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0
+// PRIMITIVE and TEXEL0 blend using SHADE_ALPHA, alpha = TEXEL0 * PRIMITIVE
+#define G_CC_BLEND_SHADEALPHA TEXEL0, PRIMITIVE, SHADE_ALPHA, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0
+// PRIM and ENV blend, alpha = TEXEL0 * PRIM
+#define G_CC_BLENDPE_A_PRIM PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0
+// TEXEL0 * SCALE, used in G_CYC_COPY, unclear purpose
+#define G_CC_DECAL_SCALE TEXEL0, 0, SCALE, 0, 0, 0, 0, TEXEL0
+// ENVIRONMENT color, alpha from TEXEL0, used for text
+#define	G_CC_ENV_DECALA 0, 0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0
+// blend two textures, modulated by PRIMITIVE
+// used for blinking lights
+#define G_CC_BLENDTEX_PRIM TEXEL1, TEXEL0, PRIMITIVE, TEXEL0, TEXEL1, TEXEL0, PRIMITIVE, TEXEL0
+
 // Color combiner values. These need better names!
 #define DKR_CC_UNK0 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0
 #define DKR_CC_UNK1 ENVIRONMENT, COMBINED, ENV_ALPHA, COMBINED, COMBINED, 0, PRIMITIVE, 0
