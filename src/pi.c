@@ -1,11 +1,19 @@
 #include "common.h"
 
+// TODO: Get a better size for the number of files
+#define NUM_FILES 1
+
+typedef struct { 
+    u32 fileCount;
+    u32 offsets[NUM_FILES];
+} Fs;
+
 OSIoMesg gAssetsDmaIoMesg;
 OSMesg gDmaMesg;
 OSMesgQueue gDmaMesgQueue;
 OSMesg gPIMesgBuf[16];
 OSMesgQueue gPIMesgQueue;
-u32 *gAssetsLookupTable;
+Fs *gAssetsLookupTable;
 
 extern u8 __ASSETS_LUT_START[], __ASSETS_LUT_END[];
 
@@ -20,7 +28,7 @@ void piInit(void) {
     osCreateMesgQueue(&gDmaMesgQueue, &gDmaMesg, 1);
     osCreatePiManager((OSPri) 150, &gPIMesgQueue, gPIMesgBuf, ARRAY_COUNT(gPIMesgBuf));
     assetTableSize = __ASSETS_LUT_END - __ASSETS_LUT_START;
-    gAssetsLookupTable = (u32 *) mmAlloc(assetTableSize, COLOUR_TAG_GREY);
+    gAssetsLookupTable = (Fs *) mmAlloc(assetTableSize, COLOUR_TAG_GREY);
     romCopy((u32) __ASSETS_LUT_START, (u32) gAssetsLookupTable, (s32) assetTableSize);
 }
 
@@ -32,19 +40,19 @@ u32 *piRomLoad(u32 assetIndex) {
     u32 *out;
     s32 size;
     u32 start;
-    if (gAssetsLookupTable[0] < assetIndex) {
-        return 0;
+    if (assetIndex > gAssetsLookupTable->fileCount) {
+        return NULL;
     }
     assetIndex++;
-    index = assetIndex + gAssetsLookupTable;
-    start = *index;
-    size = *(index + 1) - start;
+    index = assetIndex + gAssetsLookupTable->offsets - 1;
+    start = index[0];
+    size = index[1] - start;
     if (size == 0) {
-        return 0;
+        return NULL;
     }
     out = (u32 *) mmAlloc(size, COLOUR_TAG_GREY);
     if (out == 0) {
-        return 0;
+        return NULL;
     }
     romCopy((u32) (start + __ASSETS_LUT_END), (u32) out, size);
     return out;
@@ -60,11 +68,11 @@ UNUSED u8 *piRomLoadCompressed(u32 assetIndex, s32 extraMemory) {
     s32 totalSpace;
     u8 *gzipHeaderRamPos;
     u8 *out;
-    if (gAssetsLookupTable[0] < assetIndex) {
+    if (assetIndex > gAssetsLookupTable->fileCount) {
         return NULL;
     }
     assetIndex++;
-    out = (u8 *) (assetIndex + gAssetsLookupTable);
+    out = (u8 *) (assetIndex + gAssetsLookupTable->offsets - 1);
     start = ((s32 *) out)[0];
     size = ((s32 *) out)[1] - start;
     gzipHeaderRamPos = (u8 *) mmAlloc(8, COLOUR_TAG_WHITE);
@@ -90,13 +98,13 @@ s32 piRomLoadSection(u32 assetIndex, u32 address, s32 assetOffset, s32 size) {
     u32 *index;
     s32 start;
 
-    if (size == 0 || gAssetsLookupTable[0] < assetIndex) {
+    if (size == 0 || gAssetsLookupTable->fileCount < assetIndex) {
         return 0;
     }
 
     assetIndex++;
-    index = assetIndex + gAssetsLookupTable;
-    start = *index + assetOffset;
+    index = assetIndex + gAssetsLookupTable->offsets - 1;
+    start = index[0] + assetOffset;
     romCopy((u32) (start + __ASSETS_LUT_END), address, size);
     return size;
 }
@@ -108,13 +116,13 @@ u8 *piRomGetSectionPtr(u32 assetIndex, u32 assetOffset) {
     u32 *index;
     u32 start;
 
-    if (gAssetsLookupTable[0] < assetIndex) {
+    if (assetIndex > gAssetsLookupTable->fileCount) {
         return NULL;
     }
 
     assetIndex++;
-    index = assetIndex + gAssetsLookupTable;
-    start = *index + assetOffset;
+    index = assetIndex + gAssetsLookupTable->offsets - 1;
+    start = index[0] + assetOffset;
     return start + __ASSETS_LUT_END;
 }
 
@@ -123,14 +131,16 @@ u8 *piRomGetSectionPtr(u32 assetIndex, u32 assetOffset) {
  */
 s32 piRomGetFileSize(u32 assetIndex) {
     u32 *index;
+    s32 size;
 
-    if (gAssetsLookupTable[0] < assetIndex) {
+    if (assetIndex > gAssetsLookupTable->fileCount) {
         return 0;
     }
 
     assetIndex++;
-    index = assetIndex + gAssetsLookupTable;
-    return *(index + 1) - *index;
+    index = assetIndex + gAssetsLookupTable->offsets - 1;
+    size = index[1] - index[0];
+    return size;
 }
 
 #define MAX_TRANSFER_SIZE 0x5000
