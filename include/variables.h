@@ -155,30 +155,6 @@ extern UnkD_800FE217 D_800FE217[8];
 //main.c?
 extern u64 globalflags;
 
-//diprint.c
-typedef struct TexFontCoords {
-    u8 u, v;
-} TexFontCoords;
-extern s32 gDebugFontTexture; //gDebugFontTexture
-extern TexFontCoords gDebugFontCoords[3][32]; //gDebugFontCoords
-extern s32 gDebugTextOn; //D_80127CB8 in DKR
-extern u16 gDebugTextX; //D_80127CAC in DKR
-extern u16 gDebugTextY; //D_80127CAE in DKR
-extern TextureHeader *gTexture[3]; //gTexture
-extern s32 gDebugBoundsX1;
-extern s32 gDebugBoundsX2;
-extern s32 gDebugBoundsY1;
-extern s32 gDebugBoundsY2;
-extern u16 gDebugScreenHeight;
-extern u16 gDebugScreenWidth;
-extern char *gDebugPrintBufferEnd; //gDebugPrintBufferEnd
-extern char gDebugPrintBufferStart[]; //gDebugPrintBufferStart
-extern s32 D_800A6D40; // spacing codes
-extern Gfx dDebugFontSettings[]; //dDebugFontSettings
-extern s32 gDebugFixedWidthMode; //D_80127CB4 in DKR
-extern u16 D_80101F50; //D_80127CB0 in DKR
-extern u16 D_80101F52; //D_80127CB2 in DKR
-
 //sched.c
 extern char D_800AD510[];// = "(Audio task)";
 extern char D_800AD520[];// = "(Game task)";
