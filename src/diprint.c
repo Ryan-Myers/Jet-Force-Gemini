@@ -155,8 +155,8 @@ s32 gDebugBoundsX2;
 s32 gDebugBoundsY1;
 s32 gDebugBoundsY2;
 s32 gDebugFontTexture;
-u16 gDebugScreenHeight;
 u16 gDebugScreenWidth;
+u16 gDebugScreenHeight;
 
 /******************************/
 
@@ -960,15 +960,15 @@ s32 diPrintf(const char *format, ...) {
  * Official Name: diPrintfAll
  */
 void diPrintfAll(Gfx **dList) {
-    s32 height;
     s32 width;
+    s32 height;
     char *buffer;
 
     rcpInitDp(dList);
-    viGetCurrentSize(&height, &width);
-    gDebugScreenHeight = height;
+    viGetCurrentSize(&width, &height);
     gDebugScreenWidth = width;
-    gDPSetScissor((*dList)++, 0, 0, 0, gDebugScreenHeight, gDebugScreenWidth);
+    gDebugScreenHeight = height;
+    gDPSetScissor((*dList)++, 0, 0, 0, gDebugScreenWidth, gDebugScreenHeight);
     debug_text_bounds();
     gSPDisplayList((*dList)++, dDebugFontSettings);
     buffer = (char *) gDebugPrintBufferStart;
@@ -1099,7 +1099,7 @@ s32 debug_text_parse(Gfx **dList, char *buffer) {
             xOffset = 7;
         }
         gDebugTextX += xOffset;
-        if ((gDebugScreenHeight - 16) < gDebugTextX) {
+        if ((gDebugScreenWidth - 16) < gDebugTextX) {
             if (!gDebugTextOn) {
                 debug_text_background(dList, D_80101F50, D_80101F52, gDebugTextX, gDebugTextY + 10);
             }
@@ -1141,7 +1141,7 @@ s32 debug_text_character(Gfx **dList, s32 asciiVal) {
         // Character is a symbol or number and not a letter
         if (gDebugFontTexture != 0) {
             if (gDebugTextOn) {
-                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(gTexture[0] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
+                gDPLoadTextureBlockS((*dList)++, OS_K0_TO_PHYSICAL(gTexture[0] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
                                     0, 2, 2, 0, 0, 0, 0);
             }
             gDebugFontTexture = 0;
@@ -1151,7 +1151,7 @@ s32 debug_text_character(Gfx **dList, s32 asciiVal) {
         // Character is a upper case letter
         if (gDebugFontTexture != 1) {
             if (gDebugTextOn) {
-                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(gTexture[1] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11,
+                gDPLoadTextureBlockS((*dList)++, OS_K0_TO_PHYSICAL(gTexture[1] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11,
                                     0, 2, 2, 0, 0, 0, 0);
             }
             gDebugFontTexture = 1;
@@ -1161,7 +1161,7 @@ s32 debug_text_character(Gfx **dList, s32 asciiVal) {
         // Character is a lower case letter
         if (gDebugFontTexture != 2) {
             if (gDebugTextOn) {
-                gDPLoadTextureBlockS((*dList)++, OS_PHYSICAL_TO_K0(gTexture[2] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
+                gDPLoadTextureBlockS((*dList)++, OS_K0_TO_PHYSICAL(gTexture[2] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
                                     0, 2, 2, 0, 0, 0, 0);
             }
             gDebugFontTexture = 2;
@@ -1182,19 +1182,19 @@ s32 debug_text_character(Gfx **dList, s32 asciiVal) {
  * Sets the upper and lower boundaries of the debug text.
  */
 void debug_text_bounds(void) {
-    if (gDebugScreenHeight <= 320) {
+    if (gDebugScreenWidth <= 320) {
         gDebugBoundsX1 = 16;
-        gDebugBoundsX2 = gDebugScreenHeight - 16;
+        gDebugBoundsX2 = gDebugScreenWidth - 16;
     } else {
         gDebugBoundsX1 = 32;
-        gDebugBoundsX2 = gDebugScreenHeight - 32;
+        gDebugBoundsX2 = gDebugScreenWidth - 32;
     }
-    if (gDebugScreenWidth <= 240) {
+    if (gDebugScreenHeight <= 240) {
         gDebugBoundsY1 = 16;
-        gDebugBoundsY2 = gDebugScreenWidth - 16;
+        gDebugBoundsY2 = gDebugScreenHeight - 16;
     } else {
         gDebugBoundsY1 = 32;
-        gDebugBoundsY2 = gDebugScreenWidth - 32;
+        gDebugBoundsY2 = gDebugScreenHeight - 32;
     }
 }
 
