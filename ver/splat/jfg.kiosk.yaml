@@ -313,7 +313,7 @@ segments:
       - [0xA6580, data, menu] # so many variables in here are referenced in several files.
       - [0xA6F00, data, weather]
       - [0xA7320, data, particles]
-      - [0xA7940, data, diprint]
+      - [0xA7940, .data, diprint]
       - [0xA7A70, data, diRcpTrace]
       - [0xA7A80, data, diCpu]
       - [0xA7D40, data, fx]
@@ -443,7 +443,7 @@ segments:
       - { type: bss, vram: 0x800FFA30, name: menu } # so many variables in here are referenced in several files.
       - { type: bss, vram: 0x80101520, name: weather }
       - { type: bss, vram: 0x801015C0, name: particles }
-      - { type: bss, vram: 0x80101640, name: diprint }
+      - { type: .bss, vram: 0x80101640, name: diprint }
       - { type: bss, vram: 0x80101F80, name: diRcpTrace }
       - { type: bss, vram: 0x80102F90, name: diCpu }
       - { type: bss, vram: 0x80103440, name: fx }
