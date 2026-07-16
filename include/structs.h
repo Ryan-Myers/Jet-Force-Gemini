@@ -373,7 +373,6 @@ typedef struct unk800DC950 {
     f32 unk84;
 } unk800DC950;
 
-
 typedef struct PulsatingLightDataFrame {
     u16 value;
     u16 time;
@@ -691,5 +690,75 @@ typedef struct ObjectLight {
     s32 *unk6C;
     ObjectLightUnk70 *unk70;
 } ObjectLight;
+
+/* Size: 0x16 bytes */
+typedef struct MultiPlayer {
+    /* 0x00 */ s16 unk0;
+    /* 0x02 */ s16 unk2;
+    /* 0x04 */ s16 unk4;
+    /* 0x06 */ s16 unk6;
+    /* 0x08 */ s16 unk8;
+    /* 0x0A */ s16 unkA;
+    /* 0x0C */ s16 unkC;
+    /* 0x0E */ s16 unkE;
+    /* 0x10 */ u8 pad10[6];
+} MultiPlayer;
+
+/* Size: 0x76 bytes */
+typedef struct MultiCharacter {
+    /* 0x00 */ s16 unk0;
+    /* 0x02 */ s16 unk2;
+    /* 0x04 */ union {
+        s16 half;
+        u16 half_unsigned;
+        struct {
+            u16 upper11 : 11;
+            u16 lower5 : 5;
+        };
+        struct {
+            u8 upper_byte;
+            u8 lower_byte;
+        };
+    } unk4;
+    /* 0x06 */ s16 unk6;
+    /* 0x08 */ s16 unk8;
+    /* 0x0A */  union {
+        s16 half;
+        u16 half_unsigned;
+        struct {
+            u16 upper11 : 11;
+            u16 lower5 : 5;
+        };
+        struct {
+            u8 upper_byte;
+            u8 lower_byte;
+        };
+    } unkA;
+    /* 0x0C */ s16 unkC;
+    /* 0x0E */ s16 unkE;
+    /* 0x10 */ s16 unk10;
+    /* 0x12 */ s16 unk12;
+    /* 0x14 */ s16 unk14;
+    /* 0x16 */ u8 pad16[0x66-0x14];
+    /* 0x66 */ u8 unk66;
+    /* 0x67 */ u8 unk67;
+    /* 0x68 */ u8 unk68;
+    /* 0x69 */ u8 unk69;
+    /* 0x6A */ u8 pad6A[0x6F-0x6A];
+    /* 0x6F */ u8 unk6F;
+    /* 0x70 */ u8 unk70;
+    /* 0x74 */ union {
+        s16 half;
+        u16 half_unsigned;
+        struct {
+            u16 upper11 : 11;
+            u16 lower5 : 5;
+        };
+        struct {
+            u8 upper_byte;
+            u8 lower_byte;
+        };
+    } unk74;
+} MultiCharacter;
 
 #endif

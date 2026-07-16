@@ -200,7 +200,9 @@ s32 osFlashReadArray(OSIoMesg* mb, s32 priority, u32 page_num, void* dramAddr, u
 // void diRcpPrintDL(Gfx *, Gfx *, s32);
 // u32 *func_800507AC(OSSched *arg0, s32 arg1, Gfx *arg2, OSMesgQueue *arg3, u32 *arg4);
 // void diRcpTraceGetInfo(u32 arg0, s32 *arg1, s32 *arg2, s32 *arg3, s32 *arg4, s32 *arg5, s32 *arg6);
-
+void mainSetDefaultCharacter(MultiCharacter *character, s32 arg1);
+void *controlGetWeaponDef(s32);
+void mainInitMultiPlayer(void);
 
 //controller.c
 OSMesgQueue *joyMessageQ(void);

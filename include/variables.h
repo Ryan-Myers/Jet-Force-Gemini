@@ -306,4 +306,12 @@ extern s32 D_800A66D8; // gWeatherType
 extern s32 D_800A66DC; // gLightningFrequency
 extern s32 D_800A66E8; // gRainOpacity
 
+//menu.c
+extern MultiPlayer multiPlayer[4];
+extern MultiCharacter multiCharacter[4]; // Size: 0x76 - Total Size: 0x1D8
+extern u8 multiCharacterType[4];
+extern u8 multiGameLife[4];
+extern u8 multiPlayerGame; // Bool? Like isMultiPlayerGame?
+extern u8 numberOfPlayers;
+
 #endif

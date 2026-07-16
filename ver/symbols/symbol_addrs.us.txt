@@ -2371,9 +2371,9 @@ D_800FFA2B = 0x800fed4b;
 D_800FFA2C = 0x800fed4c;
 D_800FFA2D = 0x800fed4d;
 
-multiPlayer = 0x800FED50;
+multiPlayer = 0x800FED50; // size:0xA0
 multiCharacterType = 0x800FEFD0;
-multiCharacter = 0x800FEFD8;
+multiCharacter = 0x800FEFD8; // size:0x1D8
 playStatus = 0x800FF1B0;
 playChoice = 0x800FF1B4;
 gameoverFade = 0x800FF1B8;

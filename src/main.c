@@ -273,7 +273,13 @@ void mainSetMode(s32 modeToSet) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainIncreaseWeaponHits.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainInitMultiPlayer.s")
+void mainInitMultiPlayer(void) {
+    s32 i;
+    for (i = 0; i < 4; i++) {
+        mainSetDefaultCharacter(&multiCharacter[i], 0);
+        multiCharacterType[i] = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainInitMultiPlayerPoints.s")
 
