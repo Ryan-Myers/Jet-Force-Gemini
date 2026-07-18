@@ -313,5 +313,7 @@ extern u8 multiCharacterType[4];
 extern u8 multiGameLife[4];
 extern u8 multiPlayerGame; // Bool? Like isMultiPlayerGame?
 extern u8 numberOfPlayers;
+extern u8 racingInGame; // Bool? Like isRacingInGame?
+extern BitField_D_800A3240_A3E40 D_800A3240_A3E40;
 
 #endif

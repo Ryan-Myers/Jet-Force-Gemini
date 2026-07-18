@@ -701,7 +701,8 @@ typedef struct MultiPlayer {
     /* 0x0A */ s16 unkA;
     /* 0x0C */ s16 unkC;
     /* 0x0E */ s16 unkE;
-    /* 0x10 */ u8 pad10[6];
+    /* 0x10 */ u8 pad10[2];
+    /* 0x12 */ u8 characterTypes[4];
 } MultiPlayer;
 
 /* Size: 0x76 bytes */
@@ -760,5 +761,20 @@ typedef struct MultiCharacter {
         };
     } unk74;
 } MultiCharacter;
+
+typedef struct BitField_D_800A3240_A3E40 {
+    union {
+        s16 half;
+        u16 half_unsigned;
+        struct {
+            u16 upper11 : 11;
+            u16 lower5 : 5;
+        };
+        struct {
+            u8 upper_byte;
+            u8 lower_byte;
+        };
+    };
+} BitField_D_800A3240_A3E40;
 
 #endif
