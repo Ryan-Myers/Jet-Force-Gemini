@@ -375,7 +375,12 @@ s32 mainGetNumberOfCameras(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetNumberOfPlayers.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetPlayerCharacter.s")
+s32 mainGetPlayerCharacter(s32 index) {
+    if ((numberOfPlayers < 2) || (!multiPlayerGame && !racingInGame)) {
+        return D_800A3240_A3E40;
+    }
+    return multiPlayer[index & 3].playerCharacter;
+}
 
 #ifdef VERSION_kiosk
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_80047EE8.s")

@@ -691,7 +691,7 @@ typedef struct ObjectLight {
     ObjectLightUnk70 *unk70;
 } ObjectLight;
 
-/* Size: 0x16 bytes */
+/* Size: 0xA0 bytes */
 typedef struct MultiPlayer {
     /* 0x00 */ s16 unk0;
     /* 0x02 */ s16 unk2;
@@ -702,7 +702,8 @@ typedef struct MultiPlayer {
     /* 0x0C */ s16 unkC;
     /* 0x0E */ s16 unkE;
     /* 0x10 */ u8 pad10[2];
-    /* 0x12 */ u8 characterTypes[4];
+    /* 0x12 */ u8 playerCharacter;
+    /* 0x13 */ u8 pad13[0xA0 - 0x13];
 } MultiPlayer;
 
 /* Size: 0x76 bytes */
@@ -761,20 +762,5 @@ typedef struct MultiCharacter {
         };
     } unk74;
 } MultiCharacter;
-
-typedef struct BitField_D_800A3240_A3E40 {
-    union {
-        s16 half;
-        u16 half_unsigned;
-        struct {
-            u16 upper11 : 11;
-            u16 lower5 : 5;
-        };
-        struct {
-            u8 upper_byte;
-            u8 lower_byte;
-        };
-    };
-} BitField_D_800A3240_A3E40;
 
 #endif
