@@ -1,10 +1,91 @@
 #include "common.h"
+#include "gameVi.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viInit.s")
+void viChangeMode(s32);
+extern MemoryPoolSlot *D_800A3900_A4500;
+extern s32 D_800A3928_A4528;
+extern void *D_800FEB60_B1750;
+extern OSMesgQueue D_800FEB80_B1770;
+extern OSScClient D_800FEC40_B1830;
+extern s8 D_800FECA5_B1895;
+extern s8 D_800FECA6_B1896;
+extern s8 D_800FECA7_B1897;
+extern s8 D_800FECA9_B1899;
+extern f32 D_800FECC8_B18B8; // gVideoHeightRatio: Height ratio for PAL vs NTSC
+extern f32 aspectRatioFloat;
+extern s32 viFramesPerSecond;
+extern s32 viNoZbufferRealloc;
+extern s8 widescreenVOffsetMirror;
+
+void viInit(OSSched *sc) {
+    s32 screenHeight;
+
+    if (osTvType == OS_TV_TYPE_PAL) {
+        viFramesPerSecond = REFRESH_50HZ;
+        aspectRatioFloat = ASPECT_RATIO_PAL;
+        screenHeight = SCREEN_HEIGHT_PAL;
+        D_800FECC8_B18B8 = HEIGHT_RATIO_PAL;
+    } else {
+        viFramesPerSecond = REFRESH_60HZ;
+        aspectRatioFloat = ASPECT_RATIO_NTSC;
+        screenHeight = SCREEN_HEIGHT;
+        D_800FECC8_B18B8 = HEIGHT_RATIO_NTSC;
+    }
+    osCreateMesgQueue(&D_800FEB80_B1770, &D_800FEB60_B1750, 8);
+    osScAddClient(sc, &D_800FEC40_B1830, &D_800FEB80_B1770, 2);
+    D_800A3900_A4500 = mmAlloc((screenHeight * 0x500) + 0x30, COLOUR_TAG_WHITE);
+    widescreenVOffsetMirror = 0;
+    D_800FECA5_B1895 = 0;
+    D_800FECA6_B1896 = 0;
+    D_800FECA7_B1897 = 1;
+    viNoZbufferRealloc = 0;
+    viChangeMode(0);
+    D_800A3928_A4528 = 1;
+    D_800FECA9_B1899 = 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viChangeMode.s")
 
-#ifdef VERSION_us
+#ifdef NON_EQUIVALENT
+void viSetTiming(void);
+
+void viReset(void) {
+    s32 width;
+    s32 height;
+
+    viGetCurrentSize(&width, &height);
+    {
+        u32 *screen = currentScreen;
+        u32 screenSize = (u32) (width * height) >> 1;
+        s32 i;
+        for (i = screenSize - 1; i >= 0; i--) {
+            *screen = 0;
+            screen++;
+        }
+    }
+    {
+        u32 *screen = otherScreen;
+        u32 screenSize = (u32) (width * height) >> 1;
+        s32 i;
+        for (i = screenSize - 1; i >= 0; i--) {
+            *screen = 0;
+            screen++;
+        }
+    }
+    osWritebackDCacheAll();
+    if ((D_800FF988 != 0) && (D_800FF988 != 4)) {
+        if (osTvType == OS_TV_TYPE_PAL) {
+            D_800FF988 = 14;
+        } else if (osTvType == OS_TV_TYPE_MPAL) {
+            D_800FF988 = 13;
+        } else {
+            D_800FF988 = 12;
+        }
+        viSetTiming();
+    }
+    osViBlack(0);
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viReset.s")
 #endif
 

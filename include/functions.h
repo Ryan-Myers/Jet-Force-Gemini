@@ -7,6 +7,7 @@
 #include "memory.h"
 #include "boot.h"
 #include "libc/stdarg.h"
+#include "enums.h"
 
 #ifdef VERSION_us
 #define nosMotorInit osMotorInit
@@ -162,7 +163,7 @@ void func_80044938(void);
 void func_80046070(s32 arg0);
 void mainChangeLevel(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 void mainInitGame(void);
-void mainSetGameFlag(s32 arg0, s32 arg1);
+void mainSetGameFlag(GameFlags arg0, s32 arg1);
 void mainPreNMI(void);
 s32 osBootRamTest1_6105(void);
 s32 osBootRamTest2_6105(void);

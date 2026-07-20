@@ -1,0 +1,57 @@
+#ifndef _ENUMS_H_
+#define _ENUMS_H_
+
+// List from Jimmie1717. Unverified, but seems to be correct.
+
+typedef enum GameFlags {
+    VELA = 0,
+    JUNO = 1,
+    LUPUS = 2,
+    FLOYD = 3,
+    
+    INTRO_FETT_BUBB = 20,
+    INTRO_LURG = 21,
+    INTRO_MECHANTIDS = 22,
+    INTRO_TUTORIAL = 23, 
+    
+    SHIPPART_POWER_CELL = 32,
+    SHIPPART_RADAR_DISH = 33,
+    SHIPPART_FIN = 34,
+    SHIPPART_CARGO_BAY_KEY = 35,
+    SHIPPART_DEFLECTOR_SHIELD = 36,
+    SHIPPART_FUSE = 37,
+    SHIPPART_VELAS_HATCH_KEY = 38,
+    SHIPPART_JUNOS_HATCH_KEY = 39,
+    SHIPPART_LUPUS_HATCH_KEY = 40,
+    SHIPPART_NITROGEN_TANK = 41,
+    SHIPPART_OXYGEN_TANK = 42,
+    SHIPPART_STABILIZER = 43,
+    
+    ROBOT_COMPONENT_TOP = 44,
+    ROBOT_COMPONENT_RIGHT = 45,
+    ROBOT_COMPONENT_LEFT = 46,
+    
+    DEFEATED_FETT_BUBB = 77,
+    DEFEATED_LURG = 78,
+    DEFEATED_MECHANTIDS = 79,
+    
+    ALL_TRIBALS_RESCUED = 88,
+    ACTIVATED_QUARRY_GENERATOR = 89,
+    DISABLE_VELA_SELECT = 90,
+    DISABLE_JUNO_SELECT = 91,
+    DISABLE_LUPUS_SELECT = 92,
+    
+    ACTIVATED_PYRAMID = 94,
+    JETPACK = 95,
+    
+    // used to set a character in a cutscene, unset after.
+    JUNO_TO_TAWFRET_LANDING = 96,
+    VELA_TO_MIZARS_PALACE_LANDING = 97,
+    ALL_TO_MIZARS_PALACE_COURTYARD_PYRAMID = 98,
+    
+    unk_99 = 99, 
+    
+    MACHINE_GUN_LOCK_GOLDWOOD = 101,
+} GameFlags;
+
+#endif

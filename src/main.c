@@ -123,11 +123,12 @@ void mainThread(UNUSED void *unused) {
             while (1) {} // Infinite loop
         }
         func_80044938();
+        // Toggle ALL_TRIBALS_RESCUED flag on/off with L/R triggers for testing purposes
         if (joyGetPressed(1) & L_TRIG) {
-            mainSetGameFlag(0x58, 1);
+            mainSetGameFlag(ALL_TRIBALS_RESCUED, 1);
         }
         if (joyGetPressed(1) & R_TRIG) {
-            mainSetGameFlag(0x58, 0);
+            mainSetGameFlag(ALL_TRIBALS_RESCUED, 0);
         }
         bootCheckStack();
     }
@@ -141,7 +142,33 @@ void mainThread(UNUSED void *unused) {
 }
 
 #ifdef VERSION_us
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainPreNMI.s")
+void viReset();
+extern s32 D_800A3290_A3E90;
+
+void mainPreNMI(void) {
+    OSTime time;
+
+    if (mainResetPressed()) {
+        amStop();
+        if (D_800A3290_A3E90 != 0) {
+            osSetTime(0);
+            time = osGetTime();
+            while (time < 2272727) {
+                time = osGetTime();
+            }
+        }
+        __osSpSetStatus(SP_SET_HALT | SP_CLR_INTR_BREAK | SP_CLR_YIELD | SP_CLR_YIELDED | SP_CLR_TASKDONE |
+                            SP_CLR_RSPSIGNAL | SP_CLR_CPUSIGNAL | SP_CLR_SIG5 | SP_CLR_SIG6 | SP_CLR_SIG7);
+        osDpSetStatus(DPC_SET_XBUS_DMEM_DMA | DPC_CLR_FREEZE | DPC_CLR_FLUSH | DPC_CLR_TMEM_CTR | DPC_CLR_PIPE_CTR |
+                          DPC_CLR_CMD_CTR | DPC_CLR_CMD_CTR);
+        viReset();
+        rumbleKill(1);
+        rumbleTick(2);
+        rumbleTick(2);
+        rumbleTick(2);
+        while (1) {} // Infinite loop
+    }
+}
 #endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
@@ -393,13 +420,32 @@ s32 mainGetPlayerCharacter(s32 index) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainResetRegion.s")
 
-#ifdef VERSION_kiosk
+/**
+ * // C-Left, C-Right, C-Up, C-Down, R, L, L, R, C-Up, R, C-Down, R, L, C-Right
+ * s32 debugInputCode[] = {
+ *  L_CBUTTONS, R_CBUTTONS, U_CBUTTONS, D_CBUTTONS,
+ *  R_TRIG, L_TRIG, L_TRIG, R_TRIG, L_CBUTTONS, R_TRIG, D_CBUTTONS, R_TRIG, L_TRIG, R_CBUTTONS
+ * };
+ */
+
 void mainToggleDebug(void) {
-    // debugMenuEnable ^= 1;
-}
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainToggleDebug.s")
+#ifndef VERSION_kiosk
+    s32 pressedButtons;
+
+    pressedButtons = joyGetPressed(0);
+    if (pressedButtons != 0) {
+        if (pressedButtons == debugInputCode[debugInputCount]) {
+            debugInputCount++;
+            if (debugInputCode[debugInputCount] == 0) {
+                debugInputCount = 0;
+                debugMenuEnable ^= 1;
+            }
+        } else {
+            debugInputCount = 0;
+        }
+    }
 #endif
+}
 
 // Draw debug menu Lower Right section
 #pragma GLOBAL_ASM("asm/nonmatchings/main/debug_print_memory.s")

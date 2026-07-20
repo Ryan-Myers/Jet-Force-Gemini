@@ -4,6 +4,7 @@
 #include "structs.h"
 #include "libultra_internal.h"
 #include "sched.h"
+#include "enums.h"
 
 
 extern ALBankFile *sfxBankPtr;
@@ -116,7 +117,6 @@ extern s8 D_800FE26C;
 extern OSSched sc;
 extern u64 Time[1024];
 extern void *securitybuffer;
-extern u8 debugMenuEnable;
 extern s32 mainGameMode;
 extern u8 mainGameAutoSave;
 extern s16 D_800A3A80; //mainGameWindowIsChanging
@@ -135,6 +135,9 @@ extern s16 D_800A32BC_A3EBC;
 extern u8 numberOfCameras;
 extern Game *gameplay;
 extern Game *D_800FD7D8_B3B28;
+extern s32 debugMenuEnable;
+extern s32 debugInputCode[14];
+extern s32 debugInputCount;
 
 //Window Size Vars
 extern s16 mainGameWindowSizeX1;
@@ -185,7 +188,7 @@ extern s8 gNextFrameCount;
 extern u64 gRetraceCounter64;
 extern s32 gCurRSPTaskIsSet;
 extern s32 gCurRDPTaskIsSet;
-extern s32 currentScreen;
+extern s32 *currentScreen;
 extern s32 *otherScreen;
 extern s32 otherZbuf;
 
