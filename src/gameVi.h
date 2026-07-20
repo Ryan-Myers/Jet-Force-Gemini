@@ -28,7 +28,7 @@
 #define HEIGHT_RATIO_MPAL (LOW_RES_MPAL_HEIGHT / LOW_RES_NTSC_HEIGHT)
 
 // Framebuffers require 64 byte alignment.
-#define FBALIGN(a) ((u16 *) (((s32) (a) + 0x3F) & ~0x3F))
+#define FBALIGN(a) ((s32 *) (((s32) (a) + 0x3F) & ~0x3F))
 
 /**
  * This is an offset with a size of two rows of the framebuffer.

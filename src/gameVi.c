@@ -2,7 +2,7 @@
 #include "gameVi.h"
 
 void viChangeMode(s32);
-extern MemoryPoolSlot *D_800A3900_A4500;
+extern s32 *D_800A3900_A4500[4];
 extern s32 D_800A3928_A4528;
 extern void *D_800FEB60_B1750;
 extern OSMesgQueue D_800FEB80_B1770;
@@ -33,7 +33,7 @@ void viInit(OSSched *sc) {
     }
     osCreateMesgQueue(&D_800FEB80_B1770, &D_800FEB60_B1750, 8);
     osScAddClient(sc, &D_800FEC40_B1830, &D_800FEB80_B1770, 2);
-    D_800A3900_A4500 = mmAlloc((screenHeight * 0x500) + 0x30, COLOUR_TAG_WHITE);
+    D_800A3900_A4500[0] = (s32 *) mmAlloc((screenHeight * 0x500) + 0x30, COLOUR_TAG_WHITE);
     widescreenVOffsetMirror = 0;
     D_800FECA5_B1895 = 0;
     D_800FECA6_B1896 = 0;
@@ -89,7 +89,13 @@ void viReset(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viReset.s")
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viAllocateZBuffer.s")
+extern s32 framebufferSize;
+
+void viAllocateZBuffer(s32 arg0, s32 arg1) {
+    framebufferSize = (arg0 * arg1 * 2) + 0x30;
+    D_800A3900_A4500[3] = (s32 *) mmAlloc(framebufferSize, COLOUR_TAG_WHITE);
+    otherZbuf = FBALIGN(D_800A3900_A4500[3]);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viFreeZBuffer.s")
 

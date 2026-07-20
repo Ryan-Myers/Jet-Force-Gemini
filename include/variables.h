@@ -190,7 +190,7 @@ extern s32 gCurRSPTaskIsSet;
 extern s32 gCurRDPTaskIsSet;
 extern s32 *currentScreen;
 extern s32 *otherScreen;
-extern s32 otherZbuf;
+extern s32 *otherZbuf;
 
 //dicpu.c
 //These two string are the file name and extensions 
