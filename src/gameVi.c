@@ -97,7 +97,16 @@ void viAllocateZBuffer(s32 arg0, s32 arg1) {
     otherZbuf = FBALIGN(D_800A3900_A4500[3]);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viFreeZBuffer.s")
+extern s32 *D_800A390C_A450C; // UNUSED?
+
+void viFreeZBuffer(UNUSED s32 arg0, UNUSED s32 arg1) {
+    if (D_800A390C_A450C != NULL) {
+        mmFree(D_800A390C_A450C);
+        D_800A390C_A450C = NULL;
+        otherZbuf = 0;
+        framebufferSize = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viSetTiming.s")
 
