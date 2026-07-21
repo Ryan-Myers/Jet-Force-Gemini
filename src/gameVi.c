@@ -1,16 +1,17 @@
 #include "common.h"
 #include "gameVi.h"
 
+void fb_swap(void);
 void viChangeMode(s32);
 extern s32 *D_800A3900_A4500[4];
 extern s32 D_800A3928_A4528;
 extern void *D_800FEB60_B1750;
-extern OSMesgQueue D_800FEB80_B1770;
+extern OSMesgQueue gVideoMesgQueue[8];
 extern OSScClient D_800FEC40_B1830;
 extern s8 D_800FECA5_B1895;
 extern s8 D_800FECA6_B1896;
 extern s8 D_800FECA7_B1897;
-extern s8 D_800FECA9_B1899;
+extern s8 sBlackScreenTimer;
 extern f32 D_800FECC8_B18B8; // gVideoHeightRatio: Height ratio for PAL vs NTSC
 extern f32 aspectRatioFloat;
 extern s32 viFramesPerSecond;
@@ -31,8 +32,8 @@ void viInit(OSSched *sc) {
         screenHeight = SCREEN_HEIGHT;
         D_800FECC8_B18B8 = HEIGHT_RATIO_NTSC;
     }
-    osCreateMesgQueue(&D_800FEB80_B1770, &D_800FEB60_B1750, 8);
-    osScAddClient(sc, &D_800FEC40_B1830, &D_800FEB80_B1770, 2);
+    osCreateMesgQueue(gVideoMesgQueue, &D_800FEB60_B1750, 8);
+    osScAddClient(sc, &D_800FEC40_B1830, gVideoMesgQueue, 2);
     D_800A3900_A4500[0] = (s32 *) mmAlloc((screenHeight * 0x500) + 0x30, COLOUR_TAG_WHITE);
     widescreenVOffsetMirror = 0;
     D_800FECA5_B1895 = 0;
@@ -41,14 +42,14 @@ void viInit(OSSched *sc) {
     D_800FECA7_B1897 = 0;
     viNoZbufferRealloc = 0;
     viChangeMode(0);
-    osViBlack(1);
-    D_800FECA9_B1899 = 0xC;
+    osViBlack(TRUE);
+    sBlackScreenTimer = 0xC;
 #else
     D_800FECA7_B1897 = 1;
     viNoZbufferRealloc = 0;
     viChangeMode(0);
     D_800A3928_A4528 = 1;
-    D_800FECA9_B1899 = 1;
+    sBlackScreenTimer = 1;
 #endif
 }
 
@@ -204,9 +205,61 @@ void viSetTiming(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viGetScaleXY.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viFrameRateReset.s")
+extern u8 D_800FECAB_B189B;
+extern u8 gVideoDeltaTime;
+extern u8 D_800FECAD_B189D;
+extern s32 runInOneFrame;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viFrameSync.s")
+void viFrameRateReset(void) {
+    D_800FECAD_B189D = TRUE;
+    D_800FECAB_B189B = 0;
+    gVideoDeltaTime = 2;
+    runInOneFrame = FALSE;
+}
+
+s32 viFrameSync(s32 mesg) {
+    u8 tempUpdateRate;
+
+    tempUpdateRate = LOGIC_60FPS;
+    if (sBlackScreenTimer) {
+        sBlackScreenTimer--;
+        if (sBlackScreenTimer == 0) {
+            osViBlack(FALSE);
+        }
+    }
+    if (mesg != MESG_SKIP_BUFFER_SWAP) {
+        fb_swap();
+    }
+    while (osRecvMesg(gVideoMesgQueue, NULL, OS_MESG_NOBLOCK) != -1) {
+        tempUpdateRate++;
+    }
+
+    if (gVideoDeltaTime == 3) {
+        if (tempUpdateRate < 3) {
+            D_800FECAB_B189B++;
+            if (D_800FECAB_B189B > 30) {
+                gVideoDeltaTime = 2;
+            }
+        } else {
+            D_800FECAB_B189B = 0;
+        }
+    } else if ((tempUpdateRate >= 3) && (D_800FECAD_B189D == FALSE)) {
+        gVideoDeltaTime = 3;
+        D_800FECAB_B189B = 0;
+    }
+    if (runInOneFrame) {
+        gVideoDeltaTime = 1;
+    }
+    while (tempUpdateRate < gVideoDeltaTime) {
+        osRecvMesg(gVideoMesgQueue, NULL, OS_MESG_BLOCK);
+        tempUpdateRate++;
+    }
+
+    osViSwapBuffer(otherScreen);
+    osRecvMesg(gVideoMesgQueue, NULL, OS_MESG_BLOCK);
+    D_800FECAD_B189D = FALSE;
+    return tempUpdateRate;
+}
 
 s32 viGetVideoMode(void) {
     return D_800FF988 & 3;
@@ -261,7 +314,7 @@ OSViMode *func_80055DA8(u32 videoMode) {
 }
 
 //swap_framebuffer_pointers
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055E68.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/fb_swap.s")
 
 //osVimode_copy
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055F4C.s")

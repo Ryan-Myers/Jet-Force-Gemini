@@ -189,7 +189,7 @@ extern u64 gRetraceCounter64;
 extern s32 gCurRSPTaskIsSet;
 extern s32 gCurRDPTaskIsSet;
 extern s32 *currentScreen;
-extern s32 *otherScreen;
+extern u16 *otherScreen;
 extern s32 *otherZbuf;
 
 //dicpu.c
