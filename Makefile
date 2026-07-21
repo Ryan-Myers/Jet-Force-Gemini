@@ -389,6 +389,7 @@ ifeq ($(VERSION),kiosk)
 	mkdir -p asm/nonmatchings/libultra/n_cspgetstate
 	touch asm/nonmatchings/libultra/n_cspgetstate/n_alCSPGetState.s
 	touch asm/nonmatchings/libultra/n_cspgetstate/func_800899D8_8A5D8.s
+	touch asm/nonmatchings/gameVi/viReset.s
 endif
 ifeq ($(VERSION),us)
 	mkdir -p asm/nonmatchings/libultra/n_synremoveplayer

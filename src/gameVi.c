@@ -37,16 +37,24 @@ void viInit(OSSched *sc) {
     widescreenVOffsetMirror = 0;
     D_800FECA5_B1895 = 0;
     D_800FECA6_B1896 = 0;
+#ifdef VERSION_kiosk
+    D_800FECA7_B1897 = 0;
+    viNoZbufferRealloc = 0;
+    viChangeMode(0);
+    osViBlack(1);
+    D_800FECA9_B1899 = 0xC;
+#else
     D_800FECA7_B1897 = 1;
     viNoZbufferRealloc = 0;
     viChangeMode(0);
     D_800A3928_A4528 = 1;
     D_800FECA9_B1899 = 1;
+#endif
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viChangeMode.s")
 
-#ifdef NON_EQUIVALENT
+#if defined(NON_EQUIVALENT) && defined(VERSION_US)
 void viSetTiming(void);
 
 void viReset(void) {
