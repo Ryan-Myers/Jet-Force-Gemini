@@ -3,12 +3,13 @@
 
 void fb_swap(void);
 void viChangeMode(s32);
+void viSetTiming(void);
 extern s32 *D_800A3900_A4500[4];
 extern s32 D_800A3928_A4528;
 extern void *D_800FEB60_B1750;
 extern OSMesgQueue gVideoMesgQueue[8];
 extern OSScClient D_800FEC40_B1830;
-extern s8 D_800FECA5_B1895;
+extern s8 sTripleBuffer;
 extern s8 D_800FECA6_B1896;
 extern s8 D_800FECA7_B1897;
 extern s8 sBlackScreenTimer;
@@ -36,7 +37,7 @@ void viInit(OSSched *sc) {
     osScAddClient(sc, &D_800FEC40_B1830, gVideoMesgQueue, 2);
     D_800A3900_A4500[0] = (s32 *) mmAlloc((screenHeight * 0x500) + 0x30, COLOUR_TAG_WHITE);
     widescreenVOffsetMirror = 0;
-    D_800FECA5_B1895 = 0;
+    sTripleBuffer = 0;
     D_800FECA6_B1896 = 0;
 #ifdef VERSION_kiosk
     D_800FECA7_B1897 = 0;
@@ -82,13 +83,13 @@ void viReset(void) {
         }
     }
     osWritebackDCacheAll();
-    if ((D_800FF988 != 0) && (D_800FF988 != 4)) {
+    if ((D_800FECA8_B1898 != 0) && (D_800FECA8_B1898 != 4)) {
         if (osTvType == OS_TV_TYPE_PAL) {
-            D_800FF988 = 14;
+            D_800FECA8_B1898 = 14;
         } else if (osTvType == OS_TV_TYPE_MPAL) {
-            D_800FF988 = 13;
+            D_800FECA8_B1898 = 13;
         } else {
-            D_800FF988 = 12;
+            D_800FECA8_B1898 = 12;
         }
         viSetTiming();
     }
@@ -118,8 +119,8 @@ void viFreeZBuffer(UNUSED s32 arg0, UNUSED s32 arg1) {
 }
 
 #ifdef NON_EQUIVALENT
-OSViMode *func_80055DA8(u32 videoMode);
-s32 func_80055F4C(OSViMode *arg0, OSViMode *arg1, s32 arg2);
+OSViMode *viGetOsViMode(u32 videoMode);
+void fb_memcpy(u8 *arg0, u8 *arg1, s32 arg2);
 extern s32 D_800A3924_A4524; // gSetCustomViMode: Flag to indicate if a custom VI mode has been set
 typedef struct Unk_800FEC58_B1848 {
     s32 unk0;
@@ -165,14 +166,14 @@ void viSetTiming(void) {
     ResolutionSettings *new_var;
     u32 temp_t8;
 
-    temp_v1 = &resolutionSettings[D_800FF988];
-    viMode = func_80055DA8(temp_v1->videoMode);
-    func_80055F4C(viMode, &osViMode_custom, sizeof(OSViMode));
+    temp_v1 = &resolutionSettings[D_800FECA8_B1898];
+    viMode = viGetOsViMode(temp_v1->videoMode);
+    fb_memcpy((u8 *)viMode, (u8 *)&osViMode_custom, sizeof(OSViMode));
     osViMode_custom.comRegs.width =  temp_v1->width;
     osViMode_custom.comRegs.xScale = ((s32) (temp_v1->width << 9) / (s32) temp_v1->unk8);
     var_a0 = temp_v1->unk10;
     var_a1 = var_a0 << 17;
-    if ((D_800FF988 & 1)) {
+    if ((D_800FECA8_B1898 & 1)) {
         if (someResVar.bit30 != 0) {
             //if (!temp_t8){}
             var_a0 += widescreenVOffsetMirror;
@@ -262,54 +263,70 @@ s32 viFrameSync(s32 mesg) {
 }
 
 s32 viGetVideoMode(void) {
-    return D_800FF988 & 3;
+    return D_800FECA8_B1898 & 3;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viGetWideAdjust.s")
+s8 viGetWideAdjust(void) {
+    return widescreenVOffsetMirror;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viSetWideAdjust.s")
+void viSetWideAdjust(s32 offset) {
+    CLAMP(offset, -30, 30);
+    widescreenVOffsetMirror = offset;
+    viSetTiming();
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viSetTrippleBuffer.s")
+void viSetTrippleBuffer(s32 arg0) {
+    D_800FECA6_B1896 = arg0 & 1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viGetTrippleBuffer.s")
+s8 viGetTrippleBuffer(void) {
+    return sTripleBuffer;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viChangeBuffers.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viNoClear.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viDisplayingScreen0.s")
+extern u16 *framebufferPointers;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055D44.s")
+s32 viDisplayingScreen0(void) {
+    if (framebufferPointers == otherScreen) {
+        return TRUE;
+    }
+    return FALSE;
+}
 
-//get_osViMode
-OSViMode *func_80055DA8(u32 videoMode) {
+#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055260_55E60.s")
+
+OSViMode *viGetOsViMode(u32 videoMode) {
     switch (videoMode) {
-    case 0:
-        return &osViModeNtscLpn1;
-    case 1:
-        return &osViModeNtscLan1;
-    case 2:
-        return &osViModeNtscHpn1;
-    case 3:
-        return &osViModeNtscHaf1;
-    case 4:
-        return &osViModeMpalLpn1;
-    case 5:
-        return &osViModeMpalLan1;
-    case 6:
-        return &osViModeMpalHpn1;
-    case 7:
-        return &osViModeMpalHaf1;
-    case 8:
-        return &osViModePalLpn1;
-    case 9:
-        return &osViModePalLan1;
-    case 10:
-        return &osViModePalHpn1;
-    case 11:
-        return &osViModePalHaf1;
-    default:
-        return NULL;
+        case 0:
+            return &osViModeNtscLpn1;
+        case 1:
+            return &osViModeNtscLan1;
+        case 2:
+            return &osViModeNtscHpn1;
+        case 3:
+            return &osViModeNtscHaf1;
+        case 4:
+            return &osViModeMpalLpn1;
+        case 5:
+            return &osViModeMpalLan1;
+        case 6:
+            return &osViModeMpalHpn1;
+        case 7:
+            return &osViModeMpalHaf1;
+        case 8:
+            return &osViModePalLpn1;
+        case 9:
+            return &osViModePalLan1;
+        case 10:
+            return &osViModePalHpn1;
+        case 11:
+            return &osViModePalHaf1;
+        default:
+            return NULL;
     }
 }
 
@@ -317,4 +334,12 @@ OSViMode *func_80055DA8(u32 videoMode) {
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/fb_swap.s")
 
 //osVimode_copy
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055F4C.s")
+
+/**
+ * Copy byte-by-byte a region from one address to another.
+ */
+void fb_memcpy(u8 *src, u8 *dest, s32 len) {
+    while (len--) {
+        *dest++ = *src++;
+    }
+}

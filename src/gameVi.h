@@ -51,6 +51,14 @@
 #define GET_VIDEO_HEIGHT(width_and_height) (width_and_height >> 16)
 
 /**
+ * Keeps the value within the range.
+ */
+#define CLAMP(x, low, high) {       \
+    if ((x) < (low)) (x) = (low);   \
+    if ((x) > (high)) (x) = (high); \
+}
+
+/**
  * Values for the rate game logic will work depending on the framerate. Vanilla DKR will default to LOGIC_30FPS (2)
  */
 

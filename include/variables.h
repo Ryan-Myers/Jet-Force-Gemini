@@ -297,7 +297,7 @@ extern RomDefHeader *GlobalStartOfRomdefList;
 extern s32 PlayersDisguise;
 
 //gameVi.c
-extern s8 D_800FF988; //videoMode
+extern s8 D_800FECA8_B1898; //videoMode
 
 // audio_manager_36D0.c
 extern Matrix D_800F3608; //.data
