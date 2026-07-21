@@ -108,7 +108,87 @@ void viFreeZBuffer(UNUSED s32 arg0, UNUSED s32 arg1) {
     }
 }
 
+#ifdef NON_EQUIVALENT
+OSViMode *func_80055DA8(u32 videoMode);
+s32 func_80055F4C(OSViMode *arg0, OSViMode *arg1, s32 arg2);
+extern s32 D_800A3924_A4524; // gSetCustomViMode: Flag to indicate if a custom VI mode has been set
+typedef struct Unk_800FEC58_B1848 {
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+    s32 unkC;
+    s32 unk10;
+    s32 unk14;
+} Unk_800FEC58_B1848;
+extern Unk_800FEC58_B1848 D_800FEC58_B1848; // Size: 0x18
+extern s32 D_800FEC70_B1860;
+
+
+extern OSViMode osViMode_custom;
+// Size: 0x28
+typedef struct ResolutionSettings {
+    u32 width;
+    s32 unk4;
+    s32 unk8;
+    s32 unkC;
+    s32 unk10;
+    u32 videoMode;
+    s32 unk18;
+    s32 unk1C;
+    s32 unk20;    
+    s32 unk24;
+} ResolutionSettings;
+extern ResolutionSettings resolutionSettings[15]; // Size: 0x258
+typedef struct Resbitfield {
+    u32 bi31 : 1;
+    u32 bit30 : 1;
+    u32 rest : 30;
+} Resbitfield;
+extern Resbitfield someResVar;
+extern s8 widescreenVOffsetMirror;
+
+void viSetTiming(void) {
+    OSViMode *viMode;
+    ResolutionSettings *temp_v1;
+    s32 var_a0;
+    u32 var_a1;
+    s32 i;
+    ResolutionSettings *new_var;
+    u32 temp_t8;
+
+    temp_v1 = &resolutionSettings[D_800FF988];
+    viMode = func_80055DA8(temp_v1->videoMode);
+    func_80055F4C(viMode, &osViMode_custom, sizeof(OSViMode));
+    osViMode_custom.comRegs.width =  temp_v1->width;
+    osViMode_custom.comRegs.xScale = ((s32) (temp_v1->width << 9) / (s32) temp_v1->unk8);
+    var_a0 = temp_v1->unk10;
+    var_a1 = var_a0 << 17;
+    if ((D_800FF988 & 1)) {
+        if (someResVar.bit30 != 0) {
+            //if (!temp_t8){}
+            var_a0 += widescreenVOffsetMirror;
+            var_a1 = var_a0 << 17;
+        }
+    }
+    new_var = temp_v1; // Why does this improve the score so much?
+    for (i = 0; i < 2; i++) {
+        temp_t8 = osViMode_custom.fldRegs[i].vStart;
+        temp_t8 += var_a1;
+        osViMode_custom.fldRegs[i].origin = new_var->width * 2;
+        osViMode_custom.comRegs.leap = ((s32) (new_var->unk4 << 10) / (s32) new_var->unkC);
+        osViMode_custom.fldRegs[i].vStart = temp_t8;
+        osViMode_custom.comRegs.hStart = temp_t8 - (((SCREEN_HEIGHT - var_a0) - new_var->unkC) << 1);
+    }
+    if (D_800A3924_A4524 != 0) {
+        osViSetMode(&osViMode_custom);
+    }
+    osViSetSpecialFeatures(OS_VI_DIVOT_ON | OS_VI_DITHER_FILTER_ON | OS_VI_GAMMA_OFF);
+    D_800A3924_A4524 = 1;
+}
+
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viSetTiming.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viGetCurrentSize.s")
 
@@ -141,7 +221,36 @@ s32 viGetVideoMode(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055D44.s")
 
 //get_osViMode
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055DA8.s")
+OSViMode *func_80055DA8(u32 videoMode) {
+    switch (videoMode) {
+    case 0:
+        return &osViModeNtscLpn1;
+    case 1:
+        return &osViModeNtscLan1;
+    case 2:
+        return &osViModeNtscHpn1;
+    case 3:
+        return &osViModeNtscHaf1;
+    case 4:
+        return &osViModeMpalLpn1;
+    case 5:
+        return &osViModeMpalLan1;
+    case 6:
+        return &osViModeMpalHpn1;
+    case 7:
+        return &osViModeMpalHaf1;
+    case 8:
+        return &osViModePalLpn1;
+    case 9:
+        return &osViModePalLan1;
+    case 10:
+        return &osViModePalHpn1;
+    case 11:
+        return &osViModePalHaf1;
+    default:
+        return NULL;
+    }
+}
 
 //swap_framebuffer_pointers
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055E68.s")

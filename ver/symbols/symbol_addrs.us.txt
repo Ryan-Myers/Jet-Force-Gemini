@@ -1790,7 +1790,7 @@ AllowSelfDestructing = 0x800A38FC;
 framebufferPointers_ = 0x800a3910;
 hScale = 0x800a391c;
 vScale = 0x800a3920;
-resolutionSettings = 0x800a392c;
+resolutionSettings = 0x800a392c; // size:0x258
 
 D_800A4560 = 0x800a3b90;
 D_800A4570 = 0x800a3ba0;
@@ -2327,7 +2327,7 @@ gUnresolvedSymbolAddr = 0x800FEAD4;
 gPendingOverlayLoads = 0x800FEAD8;
 D_800FF830 = 0x800FEB50;
 D_800FF838 = 0x800FEB58;
-osViMode_custom = 0x800fec50;
+osViMode_custom = 0x800fec50; // size:0x50 type:OSViMode
 framebufferSize = 0x800feca0;
 framebufferChoice = 0x800feca4;
 D_800FF988 = 0x800FECA8;
