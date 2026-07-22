@@ -442,7 +442,7 @@ segments:
       - { type: bss, vram: 0x800FE950, name: sched }
       - { type: .bss, vram: 0x800FE9A0, name: squads }
       - { type: bss, vram: 0x800FEAA0, name: runLink }
-      - { type: bss, vram: 0x800FEB60, name: gameVi }
+      - { type: .bss, vram: 0x800FEB60, name: gameVi }
       - { type: bss, vram: 0x800FECE0, name: textures }
       - { type: bss, vram: 0x800FED50, name: menu }
       - { type: bss, vram: 0x80100840, name: weather }

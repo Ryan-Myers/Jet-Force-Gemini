@@ -1,6 +1,35 @@
 #include "common.h"
 #include "gameVi.h"
 
+/**
+ * BSS
+ */
+OSMesg gVideoMesgBuf[8];
+OSMesgQueue gVideoMesgQueue[8];
+OSScClient gVideoSched;
+OSViMode osViMode_custom;
+s32 framebufferSize;
+s8 framebufferChoice;
+s8 sTripleBuffer;
+s8 D_800FECA6_B1896;
+s8 sShouldClearVi;
+s8 D_800FECA8_B1898;
+s8 sBlackScreenTimer;
+s8 widescreenVOffsetMirror;
+u8 D_800FECAB_B189B;
+u8 gVideoDeltaTime;
+u8 D_800FECAD_B189D;
+s32 *currentScreen;
+s32 *extraScreen;
+s32 *otherScreen;
+s32 *otherZbuf;
+s32 viFramesPerSecond;
+f32 aspectRatioFloat;
+f32 heightRatioFloat; // gVideoHeightRatio: Height ratio for PAL vs NTSC
+s32 runInOneFrame;
+s32 viNoZbufferRealloc;
+
+
 void fb_swap(void);
 void viChangeMode(s32);
 void viSetTiming(void);
@@ -8,28 +37,9 @@ OSViMode *viGetOsViMode(u32 videoMode);
 void fb_memcpy(u8 *src, u8 *dest, s32 len);
 extern s32 *D_800A3900_A4500[4];
 extern s32 D_800A3928_A4528;
-extern void *D_800FEB60_B1750;
-extern OSMesgQueue gVideoMesgQueue[8];
-extern OSScClient D_800FEC40_B1830;
-extern s8 sTripleBuffer;
-extern s8 D_800FECA6_B1896;
-extern s8 sShouldClearVi;
-extern s8 sBlackScreenTimer;
-extern f32 D_800FECC8_B18B8; // gVideoHeightRatio: Height ratio for PAL vs NTSC
-extern f32 aspectRatioFloat;
-extern s32 viFramesPerSecond;
-extern s32 viNoZbufferRealloc;
-extern s8 widescreenVOffsetMirror;
 extern s32 *framebufferPointers[3];
 extern u8 D_800A32A0_A3EA0;
 extern s32 *extraScreen;
-extern s8 framebufferChoice;
-extern s8 sTripleBuffer;
-extern u8 D_800FECAB_B189B;
-extern u8 gVideoDeltaTime;
-extern u8 D_800FECAD_B189D;
-extern s32 runInOneFrame;
-extern s32 framebufferSize;
 extern s32 *D_800A390C_A450C; // UNUSED?
 
 // Size: 0x28
@@ -46,12 +56,10 @@ typedef struct ResolutionSettings {
     s32 unk24;
 } ResolutionSettings;
 extern ResolutionSettings resolutionSettings[15]; // Size: 0x258
-extern s8 D_800FECA8_B1898;
 extern f32 hScale;
 extern f32 vScale;
 extern s32 sShouldSetCustomViMode; // Flag to indicate if a custom VI mode has been set
 
-extern OSViMode osViMode_custom;
 typedef struct Resbitfield {
     u32 bi31 : 1;
     u32 bit30 : 1;
@@ -73,15 +81,15 @@ void viInit(OSSched *sc) {
         viFramesPerSecond = REFRESH_50HZ;
         aspectRatioFloat = ASPECT_RATIO_PAL;
         screenHeight = SCREEN_HEIGHT_PAL;
-        D_800FECC8_B18B8 = HEIGHT_RATIO_PAL;
+        heightRatioFloat = HEIGHT_RATIO_PAL;
     } else {
         viFramesPerSecond = REFRESH_60HZ;
         aspectRatioFloat = ASPECT_RATIO_NTSC;
         screenHeight = SCREEN_HEIGHT;
-        D_800FECC8_B18B8 = HEIGHT_RATIO_NTSC;
+        heightRatioFloat = HEIGHT_RATIO_NTSC;
     }
-    osCreateMesgQueue(gVideoMesgQueue, &D_800FEB60_B1750, 8);
-    osScAddClient(sc, &D_800FEC40_B1830, gVideoMesgQueue, 2);
+    osCreateMesgQueue(gVideoMesgQueue, gVideoMesgBuf, ARRAY_COUNT(gVideoMesgBuf));
+    osScAddClient(sc, &gVideoSched, gVideoMesgQueue, OS_SC_ID_VIDEO);
     D_800A3900_A4500[0] = (s32 *) mmAlloc((screenHeight * 0x500) + 0x30, COLOUR_TAG_WHITE);
     widescreenVOffsetMirror = 0;
     sTripleBuffer = 0;

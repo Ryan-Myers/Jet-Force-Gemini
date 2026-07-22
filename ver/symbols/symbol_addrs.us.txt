@@ -2328,7 +2328,9 @@ gUnresolvedSymbolAddr = 0x800FEAD4;
 gPendingOverlayLoads = 0x800FEAD8;
 D_800FF830 = 0x800FEB50;
 D_800FF838 = 0x800FEB58;
+gVideoMesgBuf = 0x800FEB60;
 gVideoMesgQueue = 0x800FEB80;
+gVideoSched = 0x800FEC40;
 osViMode_custom = 0x800fec50; // size:0x50 type:OSViMode
 framebufferSize = 0x800feca0;
 framebufferChoice = 0x800feca4;
@@ -2345,6 +2347,7 @@ otherScreen = 0x800FECB8;
 otherZbuf = 0x800FECBC;
 viFramesPerSecond = 0x800FECC0;
 aspectRatioFloat = 0x800fecc4;
+heightRatioFloat = 0x800fecc8;
 runInOneFrame = 0x800FECCC;
 viNoZbufferRealloc = 0x800FECD0;
 

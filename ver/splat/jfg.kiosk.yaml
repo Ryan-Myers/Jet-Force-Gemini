@@ -438,7 +438,7 @@ segments:
       - { type: bss, vram: 0x800FF660, name: sched }
       - { type: .bss, vram: 0x800FF6B0, name: squads }
       - { type: bss, vram: 0x800FF780, name: runLink }
-      - { type: bss, vram: 0x800FF840, name: gameVi }
+      - { type: .bss, vram: 0x800FF840, name: gameVi }
       - { type: bss, vram: 0x800FF9C0, name: textures }
       - { type: bss, vram: 0x800FFA30, name: menu } # so many variables in here are referenced in several files.
       - { type: bss, vram: 0x80101520, name: weather }
