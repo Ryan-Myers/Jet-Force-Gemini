@@ -18,6 +18,8 @@ extern f32 aspectRatioFloat;
 extern s32 viFramesPerSecond;
 extern s32 viNoZbufferRealloc;
 extern s8 widescreenVOffsetMirror;
+extern s32 *framebufferPointers[3];
+extern u8 D_800A32A0_A3EA0;
 
 void viInit(OSSched *sc) {
     s32 screenHeight;
@@ -288,8 +290,6 @@ s8 viGetTrippleBuffer(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viNoClear.s")
 
-extern s32 *framebufferPointers[3];
-
 s32 viDisplayingScreen0(void) {
     if (framebufferPointers[0] == otherScreen) {
         return TRUE;
@@ -297,7 +297,30 @@ s32 viDisplayingScreen0(void) {
     return FALSE;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/func_80055260_55E60.s")
+/**
+ * Fill a region of memory with either 0 or -1, depending on the value of D_800A32A0_A3EA0.
+ * If D_800A32A0_A3EA0 is non-zero, fill with 0. Otherwise, fill with -1.
+ * The length is specified in bytes, but the function operates on 4-byte chunks.
+ */
+void func_80055260_55E60(u8 *src, s32 length) {
+    s32 *dest;
+    s32 fourByteLength;
+
+    dest = (s32 *) src;
+    fourByteLength = (length >> 2);
+    if (D_800A32A0_A3EA0 != 0) {
+        while(fourByteLength--) {
+            *dest++ = 0;
+        }
+    } else {
+        while(fourByteLength--) {
+            *dest++ = -1;
+        }
+    }
+#ifdef VERSION_us
+    osWritebackDCacheAll();
+#endif
+}
 
 OSViMode *viGetOsViMode(u32 videoMode) {
     switch (videoMode) {
