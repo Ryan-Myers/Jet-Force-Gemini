@@ -271,11 +271,20 @@ void viSetTiming(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viSetTiming.s")
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viGetCurrentSize.s")
+void viGetCurrentSize(s32 *width, s32 *height) {
+    *width = resolutionSettings[D_800FECA8_B1898].width;
+    *height = resolutionSettings[D_800FECA8_B1898].height;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viConvertXY.s")
+void viConvertXY(s32 *x, s32 *y) {
+    *x = *x * hScale;
+    *y = *y * vScale;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viGetScaleXY.s")
+void viGetScaleXY(f32 *_hScale, f32 *_vScale) {
+    *_hScale = hScale;
+    *_vScale = vScale;
+}
 
 extern u8 D_800FECAB_B189B;
 extern u8 gVideoDeltaTime;
@@ -355,7 +364,9 @@ s8 viGetTrippleBuffer(void) {
     return sTripleBuffer;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viChangeBuffers.s")
+s32 viChangeBuffers(void) {
+    return sTripleBuffer != D_800FECA6_B1896;
+}
 
 void viNoClear(void) {
     sShouldClearVi = FALSE;
