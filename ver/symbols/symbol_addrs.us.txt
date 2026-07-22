@@ -2333,6 +2333,7 @@ framebufferSize = 0x800feca0;
 framebufferChoice = 0x800feca4;
 sTripleBuffer = 0x800FECA5;
 D_800FECA6_B1896 = 0x800FECA6;
+sShouldClearVi = 0x800FECA7;
 D_800FECA8_B1898 = 0x800FECA8;
 sBlackScreenTimer = 0x800FECA9;
 widescreenVOffsetMirror = 0x800fecaa;

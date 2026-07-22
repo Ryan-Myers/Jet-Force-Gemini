@@ -11,7 +11,7 @@ extern OSMesgQueue gVideoMesgQueue[8];
 extern OSScClient D_800FEC40_B1830;
 extern s8 sTripleBuffer;
 extern s8 D_800FECA6_B1896;
-extern s8 D_800FECA7_B1897;
+extern s8 sShouldClearVi;
 extern s8 sBlackScreenTimer;
 extern f32 D_800FECC8_B18B8; // gVideoHeightRatio: Height ratio for PAL vs NTSC
 extern f32 aspectRatioFloat;
@@ -45,13 +45,13 @@ void viInit(OSSched *sc) {
     sTripleBuffer = 0;
     D_800FECA6_B1896 = 0;
 #ifdef VERSION_kiosk
-    D_800FECA7_B1897 = FALSE;
+    sShouldClearVi = FALSE;
     viNoZbufferRealloc = 0;
     viChangeMode(0);
     osViBlack(TRUE);
     sBlackScreenTimer = 0xC;
 #else
-    D_800FECA7_B1897 = TRUE;
+    sShouldClearVi = TRUE;
     viNoZbufferRealloc = 0;
     viChangeMode(0);
     D_800A3928_A4528 = 1;
@@ -126,22 +126,22 @@ void viChangeMode(s32 arg0) {
         if (1){} // Fake
         framebufferPointers[1] = (s32 *) ((u8 *)framebufferPointers[0] + bufferSize);
     } else {
-        D_800A3900_A4500[1] = mmAlloc(bufferSize + 0x30, COLOUR_TAG_WHITE);
+        D_800A3900_A4500[1] = (s32 *) mmAlloc(bufferSize + 0x30, COLOUR_TAG_WHITE);
         framebufferPointers[1] = FBALIGN(D_800A3900_A4500[1]);
     }
     if (D_800FECA6_B1896 != 0) {
-        D_800A3900_A4500[2] = mmAlloc(bufferSize + 0x30, COLOUR_TAG_WHITE);;
+        D_800A3900_A4500[2] = (s32 *) mmAlloc(bufferSize + 0x30, COLOUR_TAG_WHITE);;
         framebufferPointers[2] = FBALIGN(D_800A3900_A4500[2]);
     }
     sTripleBuffer = D_800FECA6_B1896;
-    if (D_800FECA7_B1897) {
+    if (sShouldClearVi) {
         func_80055260_55E60((u8 *) framebufferPointers[0], bufferSize);
         func_80055260_55E60((u8 *) framebufferPointers[1], bufferSize);
         if (sTripleBuffer) {
             func_80055260_55E60((u8 *) framebufferPointers[2], bufferSize);
         }
     }
-    D_800FECA7_B1897 = TRUE;
+    sShouldClearVi = TRUE;
     if (viNoZbufferRealloc == 0) {
         viAllocateZBuffer(resolution->width, resolution->height);
     }
@@ -153,7 +153,7 @@ void viChangeMode(s32 arg0) {
 
 #ifdef VERSION_us
 void viReset(void) {
-    u32 *screen;
+    s32 *screen;
     u32 screenSize;
     s32 width;
     s32 height;
@@ -180,7 +180,7 @@ void viReset(void) {
         }
         viSetTiming();
     }
-    osViBlack(0);
+    osViBlack(FALSE);
 }
 #endif
 
@@ -357,7 +357,9 @@ s8 viGetTrippleBuffer(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viChangeBuffers.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viNoClear.s")
+void viNoClear(void) {
+    sShouldClearVi = FALSE;
+}
 
 s32 viDisplayingScreen0(void) {
     if (framebufferPointers[0] == otherScreen) {
