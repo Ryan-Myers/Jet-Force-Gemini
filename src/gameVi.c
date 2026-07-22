@@ -288,10 +288,10 @@ s8 viGetTrippleBuffer(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viNoClear.s")
 
-extern u16 *framebufferPointers;
+extern s32 *framebufferPointers[3];
 
 s32 viDisplayingScreen0(void) {
-    if (framebufferPointers == otherScreen) {
+    if (framebufferPointers[0] == otherScreen) {
         return TRUE;
     }
     return FALSE;
@@ -330,10 +330,32 @@ OSViMode *viGetOsViMode(u32 videoMode) {
     }
 }
 
-//swap_framebuffer_pointers
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/fb_swap.s")
+extern s32 *extraScreen;
+extern s8 framebufferChoice;
+extern s8 sTripleBuffer;
 
-//osVimode_copy
+//swap_framebuffer_pointers
+void fb_swap(void) {
+    otherScreen = (s32 *) framebufferPointers[framebufferChoice];
+    framebufferChoice++;
+    if (sTripleBuffer) {
+        if (framebufferChoice >= 3) {
+            framebufferChoice = 0;
+        }
+        extraScreen = (s32 *) framebufferPointers[framebufferChoice];
+        if (framebufferChoice < 2) {
+            currentScreen = (s32 *) framebufferPointers[framebufferChoice + 1];
+        } else {
+            currentScreen = (s32 *) framebufferPointers[0];
+        }
+    } else {
+        if (framebufferChoice >= 2) {
+            framebufferChoice = 0;
+        }
+        currentScreen = (s32 *) framebufferPointers[framebufferChoice];
+        extraScreen = (s32 *) &currentScreen[0];
+    }
+}
 
 /**
  * Copy byte-by-byte a region from one address to another.
