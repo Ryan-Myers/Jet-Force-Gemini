@@ -25,6 +25,46 @@ extern u8 D_800A32A0_A3EA0;
 extern s32 *extraScreen;
 extern s8 framebufferChoice;
 extern s8 sTripleBuffer;
+extern u8 D_800FECAB_B189B;
+extern u8 gVideoDeltaTime;
+extern u8 D_800FECAD_B189D;
+extern s32 runInOneFrame;
+extern s32 framebufferSize;
+extern s32 *D_800A390C_A450C; // UNUSED?
+
+// Size: 0x28
+typedef struct ResolutionSettings {
+    s32 width;
+    s32 height;
+    s32 unk8;
+    s32 unkC;
+    s32 unk10;
+    u32 videoMode;
+    s32 unk18;
+    s32 unk1C;
+    s32 unk20;    
+    s32 unk24;
+} ResolutionSettings;
+extern ResolutionSettings resolutionSettings[15]; // Size: 0x258
+extern s8 D_800FECA8_B1898;
+extern f32 hScale;
+extern f32 vScale;
+extern s32 sShouldSetCustomViMode; // Flag to indicate if a custom VI mode has been set
+
+extern OSViMode osViMode_custom;
+typedef struct Resbitfield {
+    u32 bi31 : 1;
+    u32 bit30 : 1;
+    u32 rest : 30;
+} Resbitfield;
+extern Resbitfield someResVar;
+
+void fontSetWindow0(s32 width, s32 height);
+void func_80055260_55E60(u8 *src, s32 length);
+void viAllocateZBuffer(s32 width, s32 height);
+void viFrameRateReset(void);
+void viFreeZBuffer(s32 width, s32 height);
+void viSetTiming(void);
 
 void viInit(OSSched *sc) {
     s32 screenHeight;
@@ -60,31 +100,6 @@ void viInit(OSSched *sc) {
     sBlackScreenTimer = 1;
 #endif
 }
-
-// Size: 0x28
-typedef struct ResolutionSettings {
-    s32 width;
-    s32 height;
-    s32 unk8;
-    s32 unkC;
-    s32 unk10;
-    u32 videoMode;
-    s32 unk18;
-    s32 unk1C;
-    s32 unk20;    
-    s32 unk24;
-} ResolutionSettings;
-extern ResolutionSettings resolutionSettings[15]; // Size: 0x258
-extern s8 D_800FECA8_B1898;
-extern f32 hScale;
-extern f32 vScale;
-
-void fontSetWindow0(s32 width, s32 height);
-void func_80055260_55E60(u8 *src, s32 length);
-void viAllocateZBuffer(s32 width, s32 height);
-void viFrameRateReset(void);
-void viFreeZBuffer(s32 width, s32 height);
-void viSetTiming(void);
 
 void viChangeMode(s32 arg0) {
     s32 bufferSize;
@@ -186,15 +201,12 @@ void viReset(void) {
 }
 #endif
 
-extern s32 framebufferSize;
-
 void viAllocateZBuffer(s32 width, s32 height) {
     framebufferSize = (width * height * 2) + 0x30;
     D_800A3900_A4500[3] = (s32 *) mmAlloc(framebufferSize, COLOUR_TAG_WHITE);
     otherZbuf = FBALIGN(D_800A3900_A4500[3]);
 }
 
-extern s32 *D_800A390C_A450C; // UNUSED?
 
 void viFreeZBuffer(UNUSED s32 width, UNUSED s32 height) {
     if (D_800A390C_A450C != NULL) {
@@ -206,16 +218,6 @@ void viFreeZBuffer(UNUSED s32 width, UNUSED s32 height) {
 }
 
 #ifdef NON_EQUIVALENT
-extern s32 sShouldSetCustomViMode; // Flag to indicate if a custom VI mode has been set
-
-extern OSViMode osViMode_custom;
-typedef struct Resbitfield {
-    u32 bi31 : 1;
-    u32 bit30 : 1;
-    u32 rest : 30;
-} Resbitfield;
-extern Resbitfield someResVar;
-
 void viSetTiming(void) {
     OSViMode *viMode;
     ResolutionSettings *temp_v1;
@@ -228,25 +230,24 @@ void viSetTiming(void) {
     temp_v1 = &resolutionSettings[D_800FECA8_B1898];
     viMode = viGetOsViMode(temp_v1->videoMode);
     fb_memcpy((u8 *) viMode, (u8 *) &osViMode_custom, sizeof(OSViMode));
-    osViMode_custom.comRegs.width =  temp_v1->width;
+    osViMode_custom.comRegs.width = WIDTH(temp_v1->width);
     osViMode_custom.comRegs.xScale = ((s32) (temp_v1->width << 9) / (s32) temp_v1->unk8);
     var_a0 = temp_v1->unk10;
-    var_a1 = var_a0 << 17;
     if ((D_800FECA8_B1898 & 1)) {
         if (someResVar.bit30 != 0) {
-            //if (!temp_t8){}
             var_a0 += widescreenVOffsetMirror;
-            var_a1 = var_a0 << 17;
         }
     }
+    var_a1 = var_a0 << 17;
+    if (!temp_t8){}
     new_var = temp_v1; // Why does this improve the score so much?
     for (i = 0; i < 2; i++) {
         temp_t8 = osViMode_custom.fldRegs[i].vStart;
         temp_t8 += var_a1;
-        osViMode_custom.fldRegs[i].origin = new_var->width * 2;
+        osViMode_custom.fldRegs[i].origin = ORIGIN(new_var->width * 2);
         osViMode_custom.comRegs.leap = ((s32) (new_var->height << 10) / (s32) new_var->unkC);
-        osViMode_custom.fldRegs[i].vStart = temp_t8;
         osViMode_custom.comRegs.hStart = temp_t8 - (((SCREEN_HEIGHT - var_a0) - new_var->unkC) << 1);
+        osViMode_custom.fldRegs[i].vStart = temp_t8;
     }
 #ifdef VERSION_us
     if (sShouldSetCustomViMode) 
@@ -259,7 +260,6 @@ void viSetTiming(void) {
     sShouldSetCustomViMode = TRUE;
 #endif
 }
-
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viSetTiming.s")
 #endif
@@ -278,11 +278,6 @@ void viGetScaleXY(f32 *_hScale, f32 *_vScale) {
     *_hScale = hScale;
     *_vScale = vScale;
 }
-
-extern u8 D_800FECAB_B189B;
-extern u8 gVideoDeltaTime;
-extern u8 D_800FECAD_B189D;
-extern s32 runInOneFrame;
 
 void viFrameRateReset(void) {
     D_800FECAD_B189D = TRUE;
@@ -428,7 +423,6 @@ OSViMode *viGetOsViMode(u32 videoMode) {
     }
 }
 
-//swap_framebuffer_pointers
 void fb_swap(void) {
     otherScreen = (s32 *) framebufferPointers[framebufferChoice];
     framebufferChoice++;
