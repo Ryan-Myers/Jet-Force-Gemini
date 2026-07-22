@@ -42,15 +42,6 @@
 #define VI_OFFSET (SCREEN_WIDTH * sizeof(u16) * 2)
 
 /**
- * The video width is the lower 16 bits of the returned 32 bit value
- */
-#define GET_VIDEO_WIDTH(width_and_height) (width_and_height & 0xFFFF)
-/**
- * The video width is the higher 16 bits of the returned 32 bit value
- */
-#define GET_VIDEO_HEIGHT(width_and_height) (width_and_height >> 16)
-
-/**
  * Keeps the value within the range.
  */
 #define CLAMP(x, low, high) {       \

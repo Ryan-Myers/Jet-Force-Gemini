@@ -81,6 +81,7 @@ void fontPrintWindowXY(Gfx **displayList, s32 windowId, s32 xpos, s32 ypos, char
 void camSetScissor(Gfx **dlist);
 void fontConvertString(char *inString, char *outString);
 s32 fontStringWidth(char *text, s32 font, s32 convertString);
+void fontSetWindow0(s32 width, s32 height);
 void func_80071A0C(char *input, char *output, s32 number); //parse_string_with_number
 void *func_80071B08(u8); //returns cacheline?
 void texDPInit(Gfx **);

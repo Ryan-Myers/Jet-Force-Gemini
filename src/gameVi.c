@@ -20,6 +20,9 @@ extern s32 viNoZbufferRealloc;
 extern s8 widescreenVOffsetMirror;
 extern s32 *framebufferPointers[3];
 extern u8 D_800A32A0_A3EA0;
+extern s32 *extraScreen;
+extern s8 framebufferChoice;
+extern s8 sTripleBuffer;
 
 void viInit(OSSched *sc) {
     s32 screenHeight;
@@ -42,13 +45,13 @@ void viInit(OSSched *sc) {
     sTripleBuffer = 0;
     D_800FECA6_B1896 = 0;
 #ifdef VERSION_kiosk
-    D_800FECA7_B1897 = 0;
+    D_800FECA7_B1897 = FALSE;
     viNoZbufferRealloc = 0;
     viChangeMode(0);
     osViBlack(TRUE);
     sBlackScreenTimer = 0xC;
 #else
-    D_800FECA7_B1897 = 1;
+    D_800FECA7_B1897 = TRUE;
     viNoZbufferRealloc = 0;
     viChangeMode(0);
     D_800A3928_A4528 = 1;
@@ -56,7 +59,97 @@ void viInit(OSSched *sc) {
 #endif
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viChangeMode.s")
+// Size: 0x28
+typedef struct ResolutionSettings {
+    s32 width;
+    s32 height;
+    s32 unk8;
+    s32 unkC;
+    s32 unk10;
+    u32 videoMode;
+    s32 unk18;
+    s32 unk1C;
+    s32 unk20;    
+    s32 unk24;
+} ResolutionSettings;
+extern ResolutionSettings resolutionSettings[15]; // Size: 0x258
+extern s8 D_800FECA8_B1898;
+extern f32 hScale;
+extern f32 vScale;
+
+void fontSetWindow0(s32 width, s32 height);
+void func_80055260_55E60(u8 *src, s32 length);
+void viAllocateZBuffer(s32 width, s32 height);
+void viFrameRateReset(void);
+void viFreeZBuffer(s32 width, s32 height);
+void viSetTiming(void);
+
+void viChangeMode(s32 arg0) {
+    s32 bufferSize;
+    ResolutionSettings *resolution;
+    s32 temp_t6;
+
+#ifdef VERSION_kiosk
+    D_800FECA8_B1898 = arg0 & 3;
+#else
+    D_800FECA8_B1898 = arg0 & 3 & ~D_800A3928_A4528;
+    D_800A3928_A4528 = 0;
+#endif
+
+    if (osTvType == OS_TV_TYPE_MPAL) {
+        D_800FECA8_B1898 += 4;
+    } else if (osTvType == OS_TV_TYPE_PAL) {
+        D_800FECA8_B1898 += 8;
+    }
+    resolution = &resolutionSettings[D_800FECA8_B1898];
+    hScale = resolution->width / LOW_RES_WIDTH;
+    vScale = resolution->height / LOW_RES_NTSC_HEIGHT;
+    fontSetWindow0(resolution->width, resolution->height);
+    if (viNoZbufferRealloc == 0) {
+        viFreeZBuffer(resolution->width, resolution->height);
+    }
+    if (D_800A3900_A4500[1] != NULL) {
+        mmFree(D_800A3900_A4500[1]);
+        D_800A3900_A4500[1] = NULL;
+    }
+    if (D_800A3900_A4500[2] != NULL) {
+        mmFree(D_800A3900_A4500[2]);
+        D_800A3900_A4500[2] = NULL;
+    }
+    bufferSize = resolution->width * resolution->height * 2;
+    framebufferChoice = 0;
+    framebufferPointers[0] = FBALIGN(D_800A3900_A4500[0]);
+    framebufferPointers[1] = NULL;
+    framebufferPointers[2] = NULL;
+    temp_t6 = D_800FECA8_B1898 & 3;
+    if ((temp_t6 != 2) && (temp_t6 != 3)) {
+        if (1){} // Fake
+        framebufferPointers[1] = (s32 *) ((u8 *)framebufferPointers[0] + bufferSize);
+    } else {
+        D_800A3900_A4500[1] = mmAlloc(bufferSize + 0x30, COLOUR_TAG_WHITE);
+        framebufferPointers[1] = FBALIGN(D_800A3900_A4500[1]);
+    }
+    if (D_800FECA6_B1896 != 0) {
+        D_800A3900_A4500[2] = mmAlloc(bufferSize + 0x30, COLOUR_TAG_WHITE);;
+        framebufferPointers[2] = FBALIGN(D_800A3900_A4500[2]);
+    }
+    sTripleBuffer = D_800FECA6_B1896;
+    if (D_800FECA7_B1897) {
+        func_80055260_55E60((u8 *) framebufferPointers[0], bufferSize);
+        func_80055260_55E60((u8 *) framebufferPointers[1], bufferSize);
+        if (sTripleBuffer) {
+            func_80055260_55E60((u8 *) framebufferPointers[2], bufferSize);
+        }
+    }
+    D_800FECA7_B1897 = TRUE;
+    if (viNoZbufferRealloc == 0) {
+        viAllocateZBuffer(resolution->width, resolution->height);
+    }
+    viFrameRateReset();
+    fb_swap();
+    viSetTiming();
+    viNoZbufferRealloc = 0;
+}
 
 #if defined(NON_EQUIVALENT) && defined(VERSION_US)
 void viSetTiming(void);
@@ -103,15 +196,15 @@ void viReset(void) {
 
 extern s32 framebufferSize;
 
-void viAllocateZBuffer(s32 arg0, s32 arg1) {
-    framebufferSize = (arg0 * arg1 * 2) + 0x30;
+void viAllocateZBuffer(s32 width, s32 height) {
+    framebufferSize = (width * height * 2) + 0x30;
     D_800A3900_A4500[3] = (s32 *) mmAlloc(framebufferSize, COLOUR_TAG_WHITE);
     otherZbuf = FBALIGN(D_800A3900_A4500[3]);
 }
 
 extern s32 *D_800A390C_A450C; // UNUSED?
 
-void viFreeZBuffer(UNUSED s32 arg0, UNUSED s32 arg1) {
+void viFreeZBuffer(UNUSED s32 width, UNUSED s32 height) {
     if (D_800A390C_A450C != NULL) {
         mmFree(D_800A390C_A450C);
         D_800A390C_A450C = NULL;
@@ -137,20 +230,6 @@ extern s32 D_800FEC70_B1860;
 
 
 extern OSViMode osViMode_custom;
-// Size: 0x28
-typedef struct ResolutionSettings {
-    u32 width;
-    s32 unk4;
-    s32 unk8;
-    s32 unkC;
-    s32 unk10;
-    u32 videoMode;
-    s32 unk18;
-    s32 unk1C;
-    s32 unk20;    
-    s32 unk24;
-} ResolutionSettings;
-extern ResolutionSettings resolutionSettings[15]; // Size: 0x258
 typedef struct Resbitfield {
     u32 bi31 : 1;
     u32 bit30 : 1;
@@ -352,10 +431,6 @@ OSViMode *viGetOsViMode(u32 videoMode) {
             return NULL;
     }
 }
-
-extern s32 *extraScreen;
-extern s8 framebufferChoice;
-extern s8 sTripleBuffer;
 
 //swap_framebuffer_pointers
 void fb_swap(void) {
