@@ -138,6 +138,14 @@ extern Game *D_800FD7D8_B3B28;
 extern s32 debugMenuEnable;
 extern s32 debugInputCode[14];
 extern s32 debugInputCount;
+extern u8 D_800A32A0_A3EA0;
+
+typedef struct Resbitfield {
+    u32 bi31 : 1;
+    u32 bit30 : 1;
+    u32 rest : 30;
+} Resbitfield;
+extern Resbitfield someResVar;
 
 //Window Size Vars
 extern s16 mainGameWindowSizeX1;

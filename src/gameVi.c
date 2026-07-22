@@ -25,22 +25,21 @@ s32 *otherScreen;
 s32 *otherZbuf;
 s32 viFramesPerSecond;
 f32 aspectRatioFloat;
-f32 heightRatioFloat; // gVideoHeightRatio: Height ratio for PAL vs NTSC
+f32 heightRatioFloat; // Height ratio for PAL vs NTSC
 s32 runInOneFrame;
 s32 viNoZbufferRealloc;
 
-
-void fb_swap(void);
-void viChangeMode(s32);
-void viSetTiming(void);
-OSViMode *viGetOsViMode(u32 videoMode);
-void fb_memcpy(u8 *src, u8 *dest, s32 len);
-extern s32 *D_800A3900_A4500[4];
-extern s32 D_800A3928_A4528;
-extern s32 *framebufferPointers[3];
-extern u8 D_800A32A0_A3EA0;
-extern s32 *extraScreen;
-extern s32 *D_800A390C_A450C; // UNUSED?
+/**
+ * Data
+ */
+s32 *D_800A3900_A4500[4] = { NULL, NULL, NULL, NULL }; // Triple buffer framebuffer pointer and the last element is the Z buffer
+s32 *framebufferPointers[3] = { NULL, NULL, NULL };
+f32 hScale = 1.0f;
+f32 vScale = 1.0f;
+#ifdef VERSION_us
+s32 sShouldSetCustomViMode = FALSE; // Flag to indicate if a custom VI mode has been set
+s32 D_800A3928_A4528 = 1;
+#endif
 
 // Size: 0x28
 typedef struct ResolutionSettings {
@@ -50,23 +49,34 @@ typedef struct ResolutionSettings {
     s32 unkC;
     s32 unk10;
     u32 videoMode;
-    s32 unk18;
-    s32 unk1C;
-    s32 unk20;    
-    s32 unk24;
+    char name[16];
 } ResolutionSettings;
-extern ResolutionSettings resolutionSettings[15]; // Size: 0x258
-extern f32 hScale;
-extern f32 vScale;
-extern s32 sShouldSetCustomViMode; // Flag to indicate if a custom VI mode has been set
 
-typedef struct Resbitfield {
-    u32 bi31 : 1;
-    u32 bit30 : 1;
-    u32 rest : 30;
-} Resbitfield;
-extern Resbitfield someResVar;
+ResolutionSettings resolutionSettings[] = {
+    { 320, 240, 320, 240, 0, 0, "Ntsc LowRes" },
+    { 320, 240, 320, 180, 30, 1, "Ntsc Widescreen" },
+    { 448, 336, 320, 240, 0, 3, "Ntsc MediumRes" },
+    { 448, 336, 320, 180, 30, 3, "Ntsc HiResWide" },
+    { 320, 240, 320, 240, 0, 4, "Mpal LowRes" },
+    { 320, 240, 320, 180, 30, 5, "Mpal Widescreen" },
+    { 448, 336, 320, 240, 0, 7, "Mpal MediumRes" },
+    { 448, 336, 320, 180, 30, 7, "Mpal HiResWide" },
+    { 320, 240, 320, 280, 0xFFFFFFEC, 8, "Pal LowRes" },
+    { 320, 240, 320, 204, 10, 9, "Pal Widescreen" },
+    { 448, 336, 320, 280, 0xFFFFFFEC, 11, "Pal MediumRes" },
+    { 448, 336, 320, 204, 10, 11, "Pal HiResWide" },
+#ifdef VERSION_us
+    { 320, 240, 320, 240, 0, 0, "Ntsc Reset Mode" },
+    { 320, 240, 320, 240, 0, 0, "Mpal Reset Mode" },
+    { 320, 240, 320, 240, 0, 8, "Pal Reset Mode" }
+#endif
+};
 
+void fb_swap(void);
+void viChangeMode(s32);
+void viSetTiming(void);
+OSViMode *viGetOsViMode(u32 videoMode);
+void fb_memcpy(u8 *src, u8 *dest, s32 len);
 void fontSetWindow0(s32 width, s32 height);
 void func_80055260_55E60(u8 *src, s32 length);
 void viAllocateZBuffer(s32 width, s32 height);
@@ -217,9 +227,9 @@ void viAllocateZBuffer(s32 width, s32 height) {
 
 
 void viFreeZBuffer(UNUSED s32 width, UNUSED s32 height) {
-    if (D_800A390C_A450C != NULL) {
-        mmFree(D_800A390C_A450C);
-        D_800A390C_A450C = NULL;
+    if (D_800A3900_A4500[3] != NULL) {
+        mmFree(D_800A3900_A4500[3]);
+        D_800A3900_A4500[3] = NULL;
         otherZbuf = 0;
         framebufferSize = 0;
     }

@@ -307,7 +307,7 @@ segments:
       - [0xA4F00, data, sched]
       - [0xA4F30, .data, squads]
       - [0xA4F40, data, runLink]
-      - [0xA4F50, data, gameVi]
+      - [0xA4F50, .data, gameVi]
       - [0xA5160, data, textures]
       - [0xA64F0, data, screen]
       - [0xA6580, data, menu] # so many variables in here are referenced in several files.
