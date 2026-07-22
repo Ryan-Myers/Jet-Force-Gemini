@@ -4,6 +4,8 @@
 void fb_swap(void);
 void viChangeMode(s32);
 void viSetTiming(void);
+OSViMode *viGetOsViMode(u32 videoMode);
+void fb_memcpy(u8 *src, u8 *dest, s32 len);
 extern s32 *D_800A3900_A4500[4];
 extern s32 D_800A3928_A4528;
 extern void *D_800FEB60_B1750;
@@ -204,20 +206,7 @@ void viFreeZBuffer(UNUSED s32 width, UNUSED s32 height) {
 }
 
 #ifdef NON_EQUIVALENT
-OSViMode *viGetOsViMode(u32 videoMode);
-void fb_memcpy(u8 *arg0, u8 *arg1, s32 arg2);
-extern s32 D_800A3924_A4524; // gSetCustomViMode: Flag to indicate if a custom VI mode has been set
-typedef struct Unk_800FEC58_B1848 {
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
-    s32 unkC;
-    s32 unk10;
-    s32 unk14;
-} Unk_800FEC58_B1848;
-extern Unk_800FEC58_B1848 D_800FEC58_B1848; // Size: 0x18
-extern s32 D_800FEC70_B1860;
-
+extern s32 sShouldSetCustomViMode; // Flag to indicate if a custom VI mode has been set
 
 extern OSViMode osViMode_custom;
 typedef struct Resbitfield {
@@ -226,7 +215,6 @@ typedef struct Resbitfield {
     u32 rest : 30;
 } Resbitfield;
 extern Resbitfield someResVar;
-extern s8 widescreenVOffsetMirror;
 
 void viSetTiming(void) {
     OSViMode *viMode;
@@ -239,7 +227,7 @@ void viSetTiming(void) {
 
     temp_v1 = &resolutionSettings[D_800FECA8_B1898];
     viMode = viGetOsViMode(temp_v1->videoMode);
-    fb_memcpy((u8 *)viMode, (u8 *)&osViMode_custom, sizeof(OSViMode));
+    fb_memcpy((u8 *) viMode, (u8 *) &osViMode_custom, sizeof(OSViMode));
     osViMode_custom.comRegs.width =  temp_v1->width;
     osViMode_custom.comRegs.xScale = ((s32) (temp_v1->width << 9) / (s32) temp_v1->unk8);
     var_a0 = temp_v1->unk10;
@@ -256,15 +244,20 @@ void viSetTiming(void) {
         temp_t8 = osViMode_custom.fldRegs[i].vStart;
         temp_t8 += var_a1;
         osViMode_custom.fldRegs[i].origin = new_var->width * 2;
-        osViMode_custom.comRegs.leap = ((s32) (new_var->unk4 << 10) / (s32) new_var->unkC);
+        osViMode_custom.comRegs.leap = ((s32) (new_var->height << 10) / (s32) new_var->unkC);
         osViMode_custom.fldRegs[i].vStart = temp_t8;
         osViMode_custom.comRegs.hStart = temp_t8 - (((SCREEN_HEIGHT - var_a0) - new_var->unkC) << 1);
     }
-    if (D_800A3924_A4524 != 0) {
+#ifdef VERSION_us
+    if (sShouldSetCustomViMode) 
+#endif
+    {
         osViSetMode(&osViMode_custom);
     }
     osViSetSpecialFeatures(OS_VI_DIVOT_ON | OS_VI_DITHER_FILTER_ON | OS_VI_GAMMA_OFF);
-    D_800A3924_A4524 = 1;
+#ifdef VERSION_us
+    sShouldSetCustomViMode = TRUE;
+#endif
 }
 
 #else

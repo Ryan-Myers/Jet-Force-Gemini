@@ -1790,6 +1790,7 @@ AllowSelfDestructing = 0x800A38FC;
 framebufferPointers = 0x800a3910;
 hScale = 0x800a391c;
 vScale = 0x800a3920;
+sShouldSetCustomViMode = 0x800A3924;
 resolutionSettings = 0x800a392c; // size:0x258
 
 D_800A4560 = 0x800a3b90;
