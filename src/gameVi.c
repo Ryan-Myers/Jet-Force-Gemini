@@ -151,31 +151,23 @@ void viChangeMode(s32 arg0) {
     viNoZbufferRealloc = 0;
 }
 
-#if defined(NON_EQUIVALENT) && defined(VERSION_US)
-void viSetTiming(void);
-
+#ifdef VERSION_us
 void viReset(void) {
+    u32 *screen;
+    u32 screenSize;
     s32 width;
     s32 height;
 
     viGetCurrentSize(&width, &height);
-    {
-        u32 *screen = currentScreen;
-        u32 screenSize = (u32) (width * height) >> 1;
-        s32 i;
-        for (i = screenSize - 1; i >= 0; i--) {
-            *screen = 0;
-            screen++;
-        }
+    screen = currentScreen;
+    screenSize = (u32) (width * height) >> 1;
+    while (screenSize--) {
+        *screen++ = 0;
     }
-    {
-        u32 *screen = otherScreen;
-        u32 screenSize = (u32) (width * height) >> 1;
-        s32 i;
-        for (i = screenSize - 1; i >= 0; i--) {
-            *screen = 0;
-            screen++;
-        }
+    screen = otherScreen;
+    screenSize = (u32) (width * height) >> 1;
+    while (screenSize--) {
+        *screen++ = 0;
     }
     osWritebackDCacheAll();
     if ((D_800FECA8_B1898 != 0) && (D_800FECA8_B1898 != 4)) {
@@ -190,8 +182,6 @@ void viReset(void) {
     }
     osViBlack(0);
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viReset.s")
 #endif
 
 extern s32 framebufferSize;
