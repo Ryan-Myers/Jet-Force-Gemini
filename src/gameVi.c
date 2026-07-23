@@ -27,14 +27,14 @@ s32 runInOneFrame;
 s32 viNoZbufferRealloc;
 
 // Triple buffer framebuffer pointer and the last element is the Z buffer
-s32 *D_800A3900_A4500[4] = { NULL, NULL, NULL, NULL };
+s32 *videoBufferAllocs[4] = { NULL, NULL, NULL, NULL };
 s32 *framebufferPointers[3] = { NULL, NULL, NULL };
 f32 hScale = 1.0f;
 f32 vScale = 1.0f;
 
 #ifdef VERSION_us
 s32 sShouldSetCustomViMode = FALSE; // Flag to indicate if a custom VI mode has been set
-s32 D_800A3928_A4528 = 1;
+s32 gSuppressWidescreen = TRUE; // Basically suppresses widescreen for the first initialization.
 #endif
 
 ResolutionSettings resolutionSettings[] = {
@@ -73,7 +73,7 @@ void viInit(OSSched *sc) {
     }
     osCreateMesgQueue(gVideoMesgQueue, gVideoMesgBuf, ARRAY_COUNT(gVideoMesgBuf));
     osScAddClient(sc, &gVideoSched, gVideoMesgQueue, OS_SC_ID_VIDEO);
-    D_800A3900_A4500[0] = (s32 *) mmAlloc(BUFFER_SIZE_ALIGNED(screenHeight, SCREEN_WIDTH * 2), COLOUR_TAG_WHITE);
+    videoBufferAllocs[0] = (s32 *) mmAlloc(BUFFER_SIZE_ALIGNED(screenHeight, SCREEN_WIDTH * 2), COLOUR_TAG_WHITE);
     widescreenOffset = 0;
     sTripleBuffer = FALSE;
     sTripleBufferRequested = FALSE;
@@ -87,7 +87,7 @@ void viInit(OSSched *sc) {
     sShouldClearVi = TRUE;
     viNoZbufferRealloc = FALSE;
     viChangeMode(VIDEO_MODE_LOW_RES);
-    D_800A3928_A4528 = 1;
+    gSuppressWidescreen = TRUE;
     sBlackScreenTimer = 1;
 #endif
 }
@@ -99,8 +99,8 @@ void viChangeMode(s32 videoMode) {
 #ifdef VERSION_kiosk
     sResolutionIndex = VIDEO_MODE_SET(videoMode);
 #else
-    sResolutionIndex = VIDEO_MODE_SET(videoMode) & ~D_800A3928_A4528;
-    D_800A3928_A4528 = 0;
+    sResolutionIndex = VIDEO_MODE_SET(videoMode) & ~gSuppressWidescreen;
+    gSuppressWidescreen = FALSE;
 #endif
 
     if (osTvType == OS_TV_TYPE_MPAL) {
@@ -115,17 +115,17 @@ void viChangeMode(s32 videoMode) {
     if (viNoZbufferRealloc == FALSE) {
         viFreeZBuffer(resolution->width, resolution->height);
     }
-    if (D_800A3900_A4500[1] != NULL) {
-        mmFree(D_800A3900_A4500[1]);
-        D_800A3900_A4500[1] = NULL;
+    if (videoBufferAllocs[1] != NULL) {
+        mmFree(videoBufferAllocs[1]);
+        videoBufferAllocs[1] = NULL;
     }
-    if (D_800A3900_A4500[2] != NULL) {
-        mmFree(D_800A3900_A4500[2]);
-        D_800A3900_A4500[2] = NULL;
+    if (videoBufferAllocs[2] != NULL) {
+        mmFree(videoBufferAllocs[2]);
+        videoBufferAllocs[2] = NULL;
     }
     bufferSize = BUFFER_SIZE(resolution->width, resolution->height);
     framebufferChoice = 0;
-    framebufferPointers[0] = FBALIGN(D_800A3900_A4500[0]);
+    framebufferPointers[0] = FBALIGN(videoBufferAllocs[0]);
     framebufferPointers[1] = NULL;
     framebufferPointers[2] = NULL;
     if ((RESOLUTION_RESOLUTION_CHECK(sResolutionIndex) != VIDEO_MODE_MED_RES) &&
@@ -133,12 +133,12 @@ void viChangeMode(s32 videoMode) {
         if (1) {} // Fake
         framebufferPointers[1] = (s32 *) ((u8 *) framebufferPointers[0] + bufferSize);
     } else {
-        D_800A3900_A4500[1] = (s32 *) mmAlloc(bufferSize + BUFFER_SIZE_ALIGNMENT, COLOUR_TAG_WHITE);
-        framebufferPointers[1] = FBALIGN(D_800A3900_A4500[1]);
+        videoBufferAllocs[1] = (s32 *) mmAlloc(bufferSize + BUFFER_SIZE_ALIGNMENT, COLOUR_TAG_WHITE);
+        framebufferPointers[1] = FBALIGN(videoBufferAllocs[1]);
     }
     if (sTripleBufferRequested) {
-        D_800A3900_A4500[2] = (s32 *) mmAlloc(bufferSize + BUFFER_SIZE_ALIGNMENT, COLOUR_TAG_WHITE);
-        framebufferPointers[2] = FBALIGN(D_800A3900_A4500[2]);
+        videoBufferAllocs[2] = (s32 *) mmAlloc(bufferSize + BUFFER_SIZE_ALIGNMENT, COLOUR_TAG_WHITE);
+        framebufferPointers[2] = FBALIGN(videoBufferAllocs[2]);
     }
     sTripleBuffer = sTripleBufferRequested;
     if (sShouldClearVi) {
@@ -193,14 +193,14 @@ void viReset(void) {
 
 void viAllocateZBuffer(s32 width, s32 height) {
     framebufferSize = BUFFER_SIZE_ALIGNED(width, height);
-    D_800A3900_A4500[3] = (s32 *) mmAlloc(framebufferSize, COLOUR_TAG_WHITE);
-    otherZbuf = FBALIGN(D_800A3900_A4500[3]);
+    videoBufferAllocs[3] = (s32 *) mmAlloc(framebufferSize, COLOUR_TAG_WHITE);
+    otherZbuf = FBALIGN(videoBufferAllocs[3]);
 }
 
 void viFreeZBuffer(UNUSED s32 width, UNUSED s32 height) {
-    if (D_800A3900_A4500[3] != NULL) {
-        mmFree(D_800A3900_A4500[3]);
-        D_800A3900_A4500[3] = NULL;
+    if (videoBufferAllocs[3] != NULL) {
+        mmFree(videoBufferAllocs[3]);
+        videoBufferAllocs[3] = NULL;
         otherZbuf = 0;
         framebufferSize = 0;
     }

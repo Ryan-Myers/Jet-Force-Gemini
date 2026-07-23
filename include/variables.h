@@ -139,6 +139,7 @@ extern s32 debugMenuEnable;
 extern s32 debugInputCode[14];
 extern s32 debugInputCount;
 extern u8 D_800A32A0_A3EA0;
+extern s32 gSuppressWidescreen;
 
 typedef struct Resbitfield {
     u32 bi31 : 1;
