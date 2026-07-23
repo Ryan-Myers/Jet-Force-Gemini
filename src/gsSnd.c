@@ -38,7 +38,8 @@ u16 getSoundStateCounts(u16 *numFree, u16 *numAllocated) {
 
     for (allocatedCounter = 0; allocatedPtr != NULL; allocatedCounter++, allocatedPtr = allocatedPtr->next) {}
     for (freeCounter = 0; freePtr != NULL; freeCounter++, freePtr = freePtr->next) {}
-    for (allocatedRevCounter = 0; allocatedRevPtr != NULL; allocatedRevCounter++, allocatedRevPtr = allocatedRevPtr->prev) {}
+    for (allocatedRevCounter = 0; allocatedRevPtr != NULL;
+         allocatedRevCounter++, allocatedRevPtr = allocatedRevPtr->prev) {}
 
     *numFree = freeCounter;
     *numAllocated = allocatedCounter;

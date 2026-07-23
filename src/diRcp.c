@@ -177,7 +177,6 @@ const char D_800AE6CC[] = "     %x: ";
 // const char D_800AF1F0[] = "G_LOD";
 // const char D_800AF1F8[] = ");\n";
 
-
 #pragma GLOBAL_ASM("asm/nonmatchings/diRcp/diRcpPrintDL.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diRcp/func_80066F64.s")

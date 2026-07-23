@@ -7,7 +7,7 @@ const char D_800AFB30[] = "Before Level Number %d (%d)\n";
 const char D_800AFB50[] = "After  Level Number %d\n";
 
 extern s32 *D_80105498;
-extern u8 * D_8010549C;
+extern u8 *D_8010549C;
 extern u32 D_801054A0;
 
 void func_800767A0(s32 *arg0) {

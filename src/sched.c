@@ -42,7 +42,7 @@ void __scYield(OSSched *s);
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
 void func_80050670(OSSched *sc);
 
-extern OSViMode osViModePalLpn1; // PAL
+extern OSViMode osViModePalLpn1;  // PAL
 extern OSViMode osViModeMpalLpn1; // MPAL
 extern OSViMode osViModeNtscLpn1; // NTSC
 
@@ -113,10 +113,11 @@ void osScRemoveClient(OSSched *sc, OSScClient *c) {
 
     while (client != 0) {
         if (client == c) {
-            if (prev)
+            if (prev) {
                 prev->next = c->next;
-            else
+            } else {
                 sc->clientList = c->next;
+            }
             break;
         }
         prev = client;
@@ -184,8 +185,9 @@ static void __scMain(void *arg) {
             default:
                 __scAppendList(sc, (OSScTask *) msg);
                 state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
-                if (__scSchedule(sc, &sp, &dp, state) != state)
+                if (__scSchedule(sc, &sp, &dp, state) != state) {
                     __scExec(sc, sp, dp);
+                }
                 break;
         }
     }
@@ -566,12 +568,14 @@ void __scHandleRetrace(OSSched *sc) {
         sc->curRDPTask = NULL;
     }
 
-    while (osRecvMesg(&sc->cmdQ, (OSMesg *) &rspTask, OS_MESG_NOBLOCK) != -1)
+    while (osRecvMesg(&sc->cmdQ, (OSMesg *) &rspTask, OS_MESG_NOBLOCK) != -1) {
         __scAppendList(sc, rspTask);
+    }
 
     state = ((sc->curRSPTask == NULL) << 1) | (sc->curRDPTask == NULL);
-    if (__scSchedule(sc, &sp, &dp, state) != state)
+    if (__scSchedule(sc, &sp, &dp, state) != state) {
         __scExec(sc, sp, dp);
+    }
 
     gRetraceCounter64 = D_800A4324 + 1;
 
@@ -638,8 +642,9 @@ void __scHandleRSP(OSSched *sc) {
     }
 
     state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
-    if ((__scSchedule(sc, &sp, &dp, state)) != state)
+    if ((__scSchedule(sc, &sp, &dp, state)) != state) {
         __scExec(sc, sp, dp);
+    }
 }
 
 void __scHandleRDP(OSSched *sc) {
@@ -654,8 +659,9 @@ void __scHandleRDP(OSSched *sc) {
     __scTaskComplete(sc, t);
 
     state = ((sc->curRSPTask == 0) << 1) | (sc->curRDPTask == 0);
-    if ((__scSchedule(sc, &sp, &dp, state)) != state)
+    if ((__scSchedule(sc, &sp, &dp, state)) != state) {
         __scExec(sc, sp, dp);
+    }
 }
 
 OSScTask *__scTaskReady(OSScTask *t) {
@@ -710,17 +716,19 @@ void __scAppendList(OSSched *sc, OSScTask *t) {
     long type = t->list.t.type;
 
     if (type == M_AUDTASK) {
-        if (sc->audioListTail)
+        if (sc->audioListTail) {
             sc->audioListTail->next = t;
-        else
+        } else {
             sc->audioListHead = t;
+        }
 
         sc->audioListTail = t;
     } else {
-        if (sc->gfxListTail)
+        if (sc->gfxListTail) {
             sc->gfxListTail->next = t;
-        else
+        } else {
             sc->gfxListHead = t;
+        }
 
         sc->gfxListTail = t;
     }
@@ -743,8 +751,9 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
         gCurRDPTaskCounter = 0;
         sc->curRSPTask = sp;
 
-        if (sp == dp)
+        if (sp == dp) {
             sc->curRDPTask = dp;
+        }
     }
 
     if (dp && (dp != sp)) {
@@ -790,8 +799,9 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
             avail &= ~OS_SC_SP;
             sc->doAudio = 0;
             sc->audioListHead = sc->audioListHead->next;
-            if (sc->audioListHead == NULL)
+            if (sc->audioListHead == NULL) {
                 sc->audioListTail = NULL;
+            }
         }
     } else {
 #ifdef SC_LOGGING
@@ -828,16 +838,18 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
                             }
 
                             sc->gfxListHead = sc->gfxListHead->next;
-                            if (sc->gfxListHead == NULL)
+                            if (sc->gfxListHead == NULL) {
                                 sc->gfxListTail = NULL;
+                            }
                         }
                     } else {
                         if (avail == (OS_SC_SP | OS_SC_DP)) {
                             *sp = *dp = gfx;
                             avail &= ~(OS_SC_SP | OS_SC_DP);
                             sc->gfxListHead = sc->gfxListHead->next;
-                            if (sc->gfxListHead == NULL)
+                            if (sc->gfxListHead == NULL) {
                                 sc->gfxListTail = NULL;
+                            }
                         }
                     }
 
@@ -858,8 +870,9 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
                             *dp = gfx;
                             avail &= ~OS_SC_DP;
                             sc->gfxListHead = sc->gfxListHead->next;
-                            if (sc->gfxListHead == NULL)
+                            if (sc->gfxListHead == NULL) {
                                 sc->gfxListTail = NULL;
+                            }
                         }
                     }
                     break;
@@ -872,8 +885,9 @@ s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP) {
         }
     }
 
-    if (avail != availRCP)
+    if (avail != availRCP) {
         avail = __scSchedule(sc, sp, dp, avail);
+    }
 
     return avail;
 }

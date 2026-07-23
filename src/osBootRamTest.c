@@ -35,8 +35,6 @@ s32 osBootRamTest1_6105(void) {
 }
 #endif
 
-
-
 #ifdef VERSION_kiosk
 #ifdef NON_MATCHING
 extern s32 D_800A9F68;

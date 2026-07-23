@@ -2,6 +2,7 @@
 #define _GAME_VI_H_
 
 #include <ultra64.h>
+#include "PR/sched.h"
 
 #define REFRESH_50HZ 50
 #define REFRESH_60HZ 60

@@ -1,7 +1,7 @@
-#include "common.h"
-#include "stdarg.h"
-#include "libc/string.h"
 #include "diprint.h"
+#include "common.h"
+#include "libc/string.h"
+#include "stdarg.h"
 
 /************ .data ************/
 
@@ -1142,7 +1142,7 @@ s32 debug_text_character(Gfx **dList, s32 asciiVal) {
         if (gDebugFontTexture != 0) {
             if (gDebugTextOn) {
                 gDPLoadTextureBlockS((*dList)++, OS_K0_TO_PHYSICAL(gTexture[0] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
-                                    0, 2, 2, 0, 0, 0, 0);
+                                     0, 2, 2, 0, 0, 0, 0);
             }
             gDebugFontTexture = 0;
         }
@@ -1152,7 +1152,7 @@ s32 debug_text_character(Gfx **dList, s32 asciiVal) {
         if (gDebugFontTexture != 1) {
             if (gDebugTextOn) {
                 gDPLoadTextureBlockS((*dList)++, OS_K0_TO_PHYSICAL(gTexture[1] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 248, 11,
-                                    0, 2, 2, 0, 0, 0, 0);
+                                     0, 2, 2, 0, 0, 0, 0);
             }
             gDebugFontTexture = 1;
         }
@@ -1162,7 +1162,7 @@ s32 debug_text_character(Gfx **dList, s32 asciiVal) {
         if (gDebugFontTexture != 2) {
             if (gDebugTextOn) {
                 gDPLoadTextureBlockS((*dList)++, OS_K0_TO_PHYSICAL(gTexture[2] + 1), G_IM_FMT_IA, G_IM_SIZ_8b, 192, 11,
-                                    0, 2, 2, 0, 0, 0, 0);
+                                     0, 2, 2, 0, 0, 0, 0);
             }
             gDebugFontTexture = 2;
         }

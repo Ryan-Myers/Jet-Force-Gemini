@@ -3,7 +3,7 @@
 // TODO: Get a better size for the number of files
 #define NUM_FILES 1
 
-typedef struct { 
+typedef struct {
     u32 fileCount;
     u32 offsets[NUM_FILES];
 } Fs;

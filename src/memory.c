@@ -196,7 +196,7 @@ MemoryPoolSlot *mempool_slot_find(MemoryPools poolIndex, s32 size, u32 colourTag
         nextIndex = curSlot->nextIndex;
     } while (nextIndex != MEMSLOT_NONE);
 #ifdef VERSION_us
-    if (!currIndex && !currIndex){}
+    if (!currIndex && !currIndex) {}
 #endif
     if (currIndex != MEMSLOT_NONE) {
         mempool_slot_assign(poolIndex, currIndex, size, TRUE, FALSE, colourTag);

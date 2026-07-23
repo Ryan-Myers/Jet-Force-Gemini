@@ -1,9 +1,9 @@
+#include "audio.h"
 #include "common.h"
-#include "PR/n_libaudio.h"
-#include "PR/os_reg.h"
 #include "naudio/n_seqp.h"
 #include "naudio/n_sndp.h"
-#include "audio.h"
+#include "PR/n_libaudio.h"
+#include "PR/os_reg.h"
 
 #ifdef VERSION_us
 const char D_800A9FB0[] = "No I'm not playing MIDI sequence %d, its over 32K\n";
@@ -20,8 +20,8 @@ const char D_800AAA2C[] = "amTuneRestart:Jump failed - not previously pushed ont
 #endif
 
 void n_alCSPVoiceLimit(N_ALCSPlayer *seqp, u8 value);
-u32 gsSndpGetGlobalVolume(void); //sndp_get_global_volume
-void gsSndpSetMasterVolume(u8 channel, u16 volume); //sndp_set_group_volume
+u32 gsSndpGetGlobalVolume(void);                    // sndp_get_global_volume
+void gsSndpSetMasterVolume(u8 channel, u16 volume); // sndp_set_group_volume
 void amSndPlay(u16 soundID, SoundHandle *handlePtr);
 void amAmbientSetVolume(u8 volume);
 extern u8 sfxRelativeVolume;
@@ -38,7 +38,7 @@ extern s32 gBlockMusicChange;
 extern s32 audioPrevCount;
 extern s32 gMusicTempo;
 extern u32 gDynamicMusicChannelMask;
-extern N_ALSeqPlayer *tuneSeqPlayer; // Official Name: tuneSeqPlayer
+extern N_ALSeqPlayer *tuneSeqPlayer;   // Official Name: tuneSeqPlayer
 extern N_ALSeqPlayer **tuneSeqPlayers; // Official Name: tuneSeqPlayers
 extern u8 gBlockVoiceLimitChange;
 #define AUDIO_CHANNELS 16
@@ -109,7 +109,7 @@ void amTuneVoiceLimit(u8 voiceLimit) {
 
 void amTuneSetVolume(u8 volume);
 
-extern u8 D_800A0EFC; //gMusicBaseVolume?
+extern u8 D_800A0EFC; // gMusicBaseVolume?
 extern s32 gTuneFade;
 extern s32 D_800EA090;
 extern s32 D_800EA094;
@@ -164,7 +164,7 @@ void amAmbientResetFade(void) {
     gAmbientFade = 0;
 }
 
-//void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
+// void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
 void func_80001990(N_ALCSPlayer *arg0, u8 *arg1, ALCSeq *arg2);
 extern ALCSeq *tuneCSeqp;
 extern ALCSeq **tuneCSeqs;
@@ -181,14 +181,13 @@ extern u8 gJingleNextSeqID;
 extern u8 D_800A0F34;
 extern s32 D_800A0F40;
 extern s8 D_800A0F4C;
-extern s16 sMusicTempo; //sMusicTempo
+extern s16 sMusicTempo; // sMusicTempo
 extern ALCSeq D_800EA2D8;
 extern s32 D_800EA3D4;
 extern OSMesgQueue animCtrlQueue;
 
-extern u32 D_800A0F24; //gTuneGlobalVol?
+extern u32 D_800A0F24; // gTuneGlobalVol?
 extern u8 D_800A0F48;
-
 
 #ifdef NON_EQUIVALENT
 /**
@@ -198,7 +197,7 @@ extern u8 D_800A0F48;
  * Official Name: amAudioTick
  */
 void amAudioTick(u8 updateRate) {
-    s32 i,j;
+    s32 i, j;
     N_ALVoiceState *voiceState;
     ALChanState *chanState;
     OSMesg *unused;
@@ -245,11 +244,11 @@ void amAudioTick(u8 updateRate) {
 
     if (D_800A0F34 != 0 || gMusicNextSeqID != 0) {
         voiceState = tuneSeqPlayer->vAllocHead;
-        while (voiceState != NULL) { 
+        while (voiceState != NULL) {
             chanState = &tuneSeqPlayer->chanState[voiceState->channel];
             if (chanState->usechanparams) {
                 __n_seqpReleaseVoice(tuneSeqPlayer, &voiceState->voice, chanState->releaseTime);
-            } else if (voiceState->sound != NULL) { 
+            } else if (voiceState->sound != NULL) {
                 if (voiceState->sound->envelope != NULL) {
                     __n_seqpReleaseVoice(tuneSeqPlayer, &voiceState->voice, voiceState->sound->envelope->releaseTime);
                 }
@@ -334,7 +333,6 @@ void amTuneSetGlobalVolume(u32 volume) {
     vol = D_800A0F24 * D_800A0EFC;
     n_alCSPSetVol(tuneSeqPlayer, vol);
 }
-
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amTuneGetVolume.s")
 

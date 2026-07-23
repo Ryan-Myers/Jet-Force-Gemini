@@ -23,7 +23,6 @@ typedef enum Language { LANGUAGE_0, LANGUAGE_1, LANGUAGE_2, LANGUAGE_3, LANGUAGE
 #define nosMotorStart osMotorStart
 #define nosMotorStop osMotorStop
 
-
 s32 mainGetPauseMode();
 extern u8 D_800A3470_A4070;
 
@@ -58,16 +57,16 @@ UNUSED void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
 #ifdef VERSION_us
     if (func_8004B070_4BC70() != 0) {
 #endif
-    if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
-        controllerNum = joyGetController(controllerIndex);
-        rumblePak = &rumbleStructArray[controllerNum];
-        if (rumblePak->state.upper != 2) {
-            rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
-            rumblePak->unk2 = ((arg1 * arg1) * 0.1000000015f);
-            rumblePak->unk4 = rumblePak->unk2;
-            rumblePak->rumbleTime = (arg2 * 60.0f);
+        if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
+            controllerNum = joyGetController(controllerIndex);
+            rumblePak = &rumbleStructArray[controllerNum];
+            if (rumblePak->state.upper != 2) {
+                rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
+                rumblePak->unk2 = ((arg1 * arg1) * 0.1000000015f);
+                rumblePak->unk4 = rumblePak->unk2;
+                rumblePak->rumbleTime = (arg2 * 60.0f);
+            }
         }
-    }
 #ifdef VERSION_us
     }
 #endif
@@ -98,22 +97,21 @@ void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
     s32 controllerNum;
     RumbleStruct *rumblePak;
 
-
 #ifdef VERSION_us
     if (func_8004B070_4BC70() != 0) {
 #endif
-    if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
-        controllerNum = joyGetController(controllerIndex);
-        rumblePak = &D_800FEC6A[controllerNum];
-        if (arg1 != 0) {
-            rumblePak->state.half = ((arg1 * arg1) * 0.1000000015f);
+        if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
+            controllerNum = joyGetController(controllerIndex);
+            rumblePak = &D_800FEC6A[controllerNum];
+            if (arg1 != 0) {
+                rumblePak->state.half = ((arg1 * arg1) * 0.1000000015f);
+            }
+            rumblePak = &rumbleStructArray[controllerNum];
+            if (rumblePak->state.upper != 2 && arg2 != 0.0f) {
+                rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
+                rumblePak->rumbleTime = (arg2 * 60.0f);
+            }
         }
-        rumblePak = &rumbleStructArray[controllerNum];
-        if (rumblePak->state.upper != 2 && arg2 != 0.0f) {
-            rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
-            rumblePak->rumbleTime = (arg2 * 60.0f);
-        }
-    }
 #ifdef VERSION_us
     }
 #endif
@@ -127,28 +125,28 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
 #ifdef VERSION_us
     if (func_8004B070_4BC70() != 0) {
 #endif
-    if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
-        controllerNum = joyGetController(controllerIndex);
-        rumblePak = &rumbleStructArray[controllerNum];
+        if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
+            controllerNum = joyGetController(controllerIndex);
+            rumblePak = &rumbleStructArray[controllerNum];
 #ifdef VERSION_us
-        if (rumblePak->rumbleTime <= 0) {
-            rumblePak->unk2 = 0;
-        }
+            if (rumblePak->rumbleTime <= 0) {
+                rumblePak->unk2 = 0;
+            }
 #endif
-        if (arg1 != 0) {
-            arg1 = ((arg1 * arg1) * 0.1000000015f);
-            if (rumblePak->unk2 < arg1) {
-                rumblePak->unk2 = arg1;
+            if (arg1 != 0) {
+                arg1 = ((arg1 * arg1) * 0.1000000015f);
+                if (rumblePak->unk2 < arg1) {
+                    rumblePak->unk2 = arg1;
+                }
+            }
+            if (rumblePak->state.upper != 2) {
+                rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
+                temp_f16 = (arg2 * 60.0f);
+                if (rumblePak->rumbleTime < temp_f16) {
+                    rumblePak->rumbleTime = temp_f16;
+                }
             }
         }
-        if (rumblePak->state.upper != 2) {
-            rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
-            temp_f16 = (arg2 * 60.0f);
-            if (rumblePak->rumbleTime < temp_f16) {
-                rumblePak->rumbleTime = temp_f16;
-            }
-        }
-    }
 #ifdef VERSION_us
     }
 #endif

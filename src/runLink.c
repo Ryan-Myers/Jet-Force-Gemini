@@ -6,14 +6,13 @@ const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";
 const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
 #endif
 
-
 /**
  * Overlays work by having functions that call the overlay actually load TrapDanglingJump
  * That function then uses the overlayRomTable to figure out which overlay to load
  * and where the function is within that overlay. It then uses runlink to load the overlay
  * into memory if it is not already loaded, and then jumps to the function within that overlay.
- * 
- * When a function calls TrapDanglingJump, the return address is shifted back by 8 bytes 
+ *
+ * When a function calls TrapDanglingJump, the return address is shifted back by 8 bytes
  * to point to the exact VRAM address of the instruction that called the function.
  * That function address is used to lookup in mainRelocTable and see if it can find that address.
  * If it finds it, it then loads the index value next to it, which is an index into overlayRomTable.
@@ -22,39 +21,39 @@ const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
  * and then jumps to the function offset within that overlay.
  */
 
-
- /**
-  * Complete Analysis: How rcpWaitDP Uses TrapDanglingJump
-  * 
-  * At VRAM address 0x8004DD50, rcpWaitDP has a jal TrapDanglingJump instruction.
-  * TrapDanglingJump has the ra register set to ra = 0x8004DD58
-  * It then stores the address of the calling jal to t5 with: t5 = ra - 8 = 0x8004DD50
-  * Then is substracted by the base address the start of the text segment: 0x8004DD50 - 0x80000450 = 0x4D900
-  * 
-  * Searches assets/mainRelocTable.bin for an entry matching 0x4D900, which it finds at: offset 0xD00
-  * The index value next to it is 0x69E (1684)
-  * That index is then used to lookup in assets/overlayRomTable.bin which is 4 bytes per entry.
-  * So it reads the entry at offset 0x69E * 4 = 0x1A78 and finds 0x00315E34
-  * 
-  * ______________________________________________
-  * |Field              | Value                   |
-  * |_____________________________________________|
-  * |Overlay entry      | 0x00315E34              |
-  * |Overlay number	    | 3 (bits 31-20: 0x003)   |
-  * |Function offset	| 0x15E34 (bits 19-0)     |
-  * |_____________________________________________|
-  * 
-  * So according to our symbols, overlay 3 at function offset 0x15E34 is BindRegionsToObjects
-  * 
-  * It triggers the dynamic linker to load overlay 3 (if not already loaded)
-  * The actual function called is BindRegionsToObjects at offset 0x15E34 within that overlay
-  */
+/**
+ * Complete Analysis: How rcpWaitDP Uses TrapDanglingJump
+ *
+ * At VRAM address 0x8004DD50, rcpWaitDP has a jal TrapDanglingJump instruction.
+ * TrapDanglingJump has the ra register set to ra = 0x8004DD58
+ * It then stores the address of the calling jal to t5 with: t5 = ra - 8 = 0x8004DD50
+ * Then is substracted by the base address the start of the text segment: 0x8004DD50 - 0x80000450 = 0x4D900
+ *
+ * Searches assets/mainRelocTable.bin for an entry matching 0x4D900, which it finds at: offset 0xD00
+ * The index value next to it is 0x69E (1684)
+ * That index is then used to lookup in assets/overlayRomTable.bin which is 4 bytes per entry.
+ * So it reads the entry at offset 0x69E * 4 = 0x1A78 and finds 0x00315E34
+ *
+ * ______________________________________________
+ * |Field              | Value                   |
+ * |_____________________________________________|
+ * |Overlay entry      | 0x00315E34              |
+ * |Overlay number	    | 3 (bits 31-20: 0x003)   |
+ * |Function offset	| 0x15E34 (bits 19-0)     |
+ * |_____________________________________________|
+ *
+ * So according to our symbols, overlay 3 at function offset 0x15E34 is BindRegionsToObjects
+ *
+ * It triggers the dynamic linker to load overlay 3 (if not already loaded)
+ * The actual function called is BindRegionsToObjects at offset 0x15E34 within that overlay
+ */
 
 typedef struct RelocTableEntry {
-    /* 0x00 */ u32 functionAddress; // This is the address of the calling function less 0x80000450 (0x8004DD50 - 0x80000450 = 0x4D900)
+    /* 0x00 */ u32 functionAddress; // This is the address of the calling function less 0x80000450 (0x8004DD50 -
+                                    // 0x80000450 = 0x4D900)
     /* 0x04 */ u32 overlayIndex;    // This is an index into overlayRomTable
 } RelocTableEntry;
-extern RelocTableEntry D_1ECF220[]; // mainRelocTable ROM address
+extern RelocTableEntry D_1ECF220[];     // mainRelocTable ROM address
 extern RelocTableEntry *mainRelocTable; // mainRelocTable RAM pointer
 
 typedef struct RomTableEntry {
@@ -78,17 +77,16 @@ typedef struct OverlayHeader {
     /* 0x10 */ s32 RodataSize;
     /* 0x14 */ u16 RelocationTableSize;
     /* 0x16 */ u16 SecondaryRelocationTableSize; // ?
-    /* 0x18 */ s32 InitFunction; // -1 if none, offset from VramBase
-    /* 0x1C */ s32 ResumeFunction; // -1 if none, offset from VramBase
+    /* 0x18 */ s32 InitFunction;                 // -1 if none, offset from VramBase
+    /* 0x1C */ s32 ResumeFunction;               // -1 if none, offset from VramBase
 } OverlayHeader;
-extern OverlayHeader D_1ED2780[]; // overlayTable
+extern OverlayHeader D_1ED2780[];   // overlayTable
 extern OverlayHeader *overlayTable; // overlayTable
-
 
 extern s32 mainRelocCount;
 extern s32 overlayCount;
 extern void amSetMuteMode(s32 behaviour); // 0x80000450 Start of .text
-extern void *tuneSeqPlayer; // 0x800A0660 Start of .data
+extern void *tuneSeqPlayer;               // 0x800A0660 Start of .data
 
 // Placeholder address returned when a symbol cannot be resolved (overlay not loaded)
 extern u32 gUnresolvedSymbolAddr;
@@ -110,32 +108,32 @@ extern u8 D_1FED550[];  // Symbol string table base
  * @return Pointer to the symbol name string (in stack buffer - use immediately!)
  */
 char *GetSymbolName(u32 symbolIndex) {
-    char stringBuffer[96];    // Buffer for string data
+    char stringBuffer[96]; // Buffer for string data
     u32 offsetAddr;
     u32 stringOffset;
     u32 stringAddr;
     u32 bufferOffset;
-    u32 offsetTableEntry[2];  // 8-byte aligned buffer for offset table read
+    u32 offsetTableEntry[2]; // 8-byte aligned buffer for offset table read
 
     // Calculate ROM address of offset table entry
-    offsetAddr = (u32)&D_1FEB040[symbolIndex];
-    
+    offsetAddr = (u32) &D_1FEB040[symbolIndex];
+
     // Read 8 bytes aligned (ROM requires 8-byte aligned reads)
-    romCopy(offsetAddr & ~7, (u32)offsetTableEntry, 8);
-    
+    romCopy(offsetAddr & ~7, (u32) offsetTableEntry, 8);
+
     // Extract the 4-byte offset value using low bits to index into buffer
-    stringOffset = ((((*((u32 *) (((u8 *) offsetTableEntry) + (offsetAddr & 7))))) ) & 0xFFFFFFFFFFFFFFFF);
-    
+    stringOffset = ((((*((u32 *) (((u8 *) offsetTableEntry) + (offsetAddr & 7)))))) & 0xFFFFFFFFFFFFFFFF);
+
     // Calculate string ROM address
-    stringAddr = stringOffset + (u32)D_1FED550;
-    
+    stringAddr = stringOffset + (u32) D_1FED550;
+
     // Save offset within aligned block
     bufferOffset = stringAddr & 7;
-    if (((!stringBuffer) && (!stringBuffer)) && (!stringBuffer)) { }
-    if (!bufferOffset){}
+    if (((!stringBuffer) && (!stringBuffer)) && (!stringBuffer)) {}
+    if (!bufferOffset) {}
     // Read 96 bytes of string data (aligned)
-    romCopy(stringAddr & ~7, (u32)stringBuffer, 96);
-    
+    romCopy(stringAddr & ~7, (u32) stringBuffer, 96);
+
     // Return pointer to string within buffer
     return stringBuffer + bufferOffset;
 }
@@ -148,20 +146,20 @@ char *GetSymbolName(u32 symbolIndex) {
  * Each entry is 8 bytes and describes how to patch an address reference.
  */
 typedef struct RelocationEntry {
-    /* 0x00 */ u32 symbolIndex;    // Index into overlayRomTable, OR local offset for type 1
+    /* 0x00 */ u32 symbolIndex; // Index into overlayRomTable, OR local offset for type 1
     /* 0x04 */ union {
         u32 info;
         struct {
             u32 targetOffset : 24; // Offset into section where relocation should be applied
             u32 unused : 4;
-            u32 relocType : 4;     // Relocation type (R_MIPS_32=0, LOCAL=1, R_MIPS_26=2, SPECIAL=3, HI16=5, LO16=6)
+            u32 relocType : 4; // Relocation type (R_MIPS_32=0, LOCAL=1, R_MIPS_26=2, SPECIAL=3, HI16=5, LO16=6)
         };
         struct {
-            u8 typeByte;           // Low nibble: relocType, High nibble written back after processing
-            u8 offsetHi;           // Upper bits of targetOffset
+            u8 typeByte; // Low nibble: relocType, High nibble written back after processing
+            u8 offsetHi; // Upper bits of targetOffset
             u8 offsetMid;
             union {
-                u8 flags;          // Upper nibble: additional flags (2=addend, 4=stub if unloaded)
+                u8 flags; // Upper nibble: additional flags (2=addend, 4=stub if unloaded)
                 struct {
                     u8 flagsHi : 4;
                     u8 flagsLo : 4;
@@ -178,12 +176,12 @@ typedef struct RelocationEntry {
 typedef union MipsInstruction {
     u32 word;
     struct {
-        u32 opcode : 6;     // Instruction opcode (bits 26-31)
-        u32 target : 26;    // J/JAL target address >> 2 (bits 0-25)
+        u32 opcode : 6;  // Instruction opcode (bits 26-31)
+        u32 target : 26; // J/JAL target address >> 2 (bits 0-25)
     } jump;
     struct {
-        u16 immediate;      // immediate value (bits 0-15)
-        u16 upper;          // rs/rt/opcode (bits 16-31)
+        u16 immediate; // immediate value (bits 0-15)
+        u16 upper;     // rs/rt/opcode (bits 16-31)
     } itype;
 } MipsInstruction; /* 4 bytes */
 
@@ -203,7 +201,7 @@ void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry
     overlayNumber = romTableEntry->entry.OverlayNumber;
     addressOffset = 0;
     switch (relocEntry->relocType) { // Extract relocType from low 4 bits
-        case 0: // R_MIPS_32: Absolute symbol reference
+        case 0:                      // R_MIPS_32: Absolute symbol reference
             switch (overlayNumber) {
                 case 0xFFD: // Data section
                     overlayNumber = 0;
@@ -281,8 +279,8 @@ void PatchInstruction(MipsInstruction *instr, u32 address, u8 relocType) {
 // Could be NON_MATCHING, but not 100% sure.
 #ifdef NON_EQUIVALENT
 // Relocation section base addresses (set by runlinkDownloadCode when loading an overlay)
-extern u8 *gRelocTextBase;  // Base address of overlay's .text section being relocated
-extern u8 *gRelocDataBase;  // Base address for type-3 relocations (alternate section)
+extern u8 *gRelocTextBase; // Base address of overlay's .text section being relocated
+extern u8 *gRelocDataBase; // Base address for type-3 relocations (alternate section)
 
 // Returns how many entries were consumed (important for the HI16/LO16 pair case where it processes 2 entries at once).
 s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
@@ -296,7 +294,6 @@ s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
     u32 nextLoImmediate;
     u32 currLoImmediate;
 
-    
     flagsHi = relocEntry->flagsHi;
     flagsLo = relocEntry->flagsLo;
     if (relocEntry->relocType == 3) {
@@ -321,7 +318,7 @@ s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
             nextLoImmediate |= 0xFFFF0000;
         }
         combinedAddr = (currLoImmediate << 16) + nextLoImmediate;
-        //combinedAddr = ((currLoImmediate << 2) << 14) + nextLoImmediate;
+        // combinedAddr = ((currLoImmediate << 2) << 14) + nextLoImmediate;
         if (combinedAddr != (u32) &gUnresolvedSymbolAddr) {
             resolvedAddr += combinedAddr;
         }
@@ -356,17 +353,17 @@ s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex);
 void runlinkResumeCode(s32 overlayIndex);
 
 typedef struct RelocContext {
-    u32 unk0;              // 0x00 - unused?
-    u8 *textBase;          // 0x04 - gRelocTextBase
-    u8 *dataBase;          // 0x08 - gRelocDataBase  
-    u8 *bssBase;           // 0x0C
-    u8 *relocBase;         // 0x10 - relocation table base
+    u32 unk0;      // 0x00 - unused?
+    u8 *textBase;  // 0x04 - gRelocTextBase
+    u8 *dataBase;  // 0x08 - gRelocDataBase
+    u8 *bssBase;   // 0x0C
+    u8 *relocBase; // 0x10 - relocation table base
 } RelocContext;
 extern RelocContext gRelocContext;
 
 typedef struct PendingOverlayLoad {
-    u32 unk0;           // 0x00 - possibly status/flags
-    s32 overlayIndex;   // 0x04 - overlay number being loaded
+    u32 unk0;         // 0x00 - possibly status/flags
+    s32 overlayIndex; // 0x04 - overlay number being loaded
 } PendingOverlayLoad; // 8 bytes
 
 extern PendingOverlayLoad gPendingOverlayLoads[16];
@@ -402,7 +399,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
     if (relocCount != 0) { // check count *just in case*
         while (relocCount--) {
             if (overlayIndex == overlayLoad->overlayIndex) {
-                return 0;  // Already in progress
+                return 0; // Already in progress
             }
             overlayLoad++;
         }
@@ -413,14 +410,12 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
 
     // Allocate memory for overlay (text + data + rodata + relocation table)
     overlay->VramBase = (s32) mmAlloc(
-        overlay->TextSize + overlay->DataSize + overlay->RodataSize + overlay->RelocationTableSize,
-        0x7F7F7FFF
-    );
+        overlay->TextSize + overlay->DataSize + overlay->RodataSize + overlay->RelocationTableSize, 0x7F7F7FFF);
 
     mmColourTagUnk2 = -1;
 
     if (overlay->VramBase == 0) {
-        return 0;  // Allocation failed
+        return 0; // Allocation failed
     }
 
     // If there's a secondary relocation table, allocate and load it
@@ -431,11 +426,8 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
             return 0;
         }
         // Load secondary relocation table from ROM
-        romCopy(
-            overlay->RomAddress + overlay->TextSize + overlay->DataSize + overlay->RelocationTableSize,
-            (u32) relocTable,
-            overlay->SecondaryRelocationTableSize
-        );
+        romCopy(overlay->RomAddress + overlay->TextSize + overlay->DataSize + overlay->RelocationTableSize,
+                (u32) relocTable, overlay->SecondaryRelocationTableSize);
     }
 
     // Set up relocation context with section base addresses
@@ -447,23 +439,16 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
     // Load overlay code and data from ROM
     if (overlay->RodataSize == 0) {
         // No BSS - copy everything including relocation table
-        romCopy(
-            overlay->RomAddress,
-            overlay->VramBase,
-            overlay->TextSize + overlay->DataSize + overlay->RelocationTableSize
-        );
+        romCopy(overlay->RomAddress, overlay->VramBase,
+                overlay->TextSize + overlay->DataSize + overlay->RelocationTableSize);
     } else {
         // Has BSS - copy text and data only
-        romCopy(
-            overlay->RomAddress,
-            overlay->VramBase,
-            overlay->TextSize + overlay->DataSize
-        );
+        romCopy(overlay->RomAddress, overlay->VramBase, overlay->TextSize + overlay->DataSize);
 
         // Zero out BSS section
         {
             s32 *bssPtr = (s32 *) gRelocContext.bssBase;
-            relocCount = (u32)overlay->RodataSize >> 2;
+            relocCount = (u32) overlay->RodataSize >> 2;
             while (relocCount--) {
                 bssPtr[0] = 0;
                 bssPtr++;
@@ -471,11 +456,8 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
         }
 
         // Load relocation table after BSS
-        romCopy(
-            overlay->RomAddress + overlay->TextSize + overlay->DataSize,
-            (u32) gRelocContext.relocBase,
-            overlay->RelocationTableSize
-        );
+        romCopy(overlay->RomAddress + overlay->TextSize + overlay->DataSize, (u32) gRelocContext.relocBase,
+                overlay->RelocationTableSize);
     }
 
     // Invalidate instruction cache for the new code
@@ -485,7 +467,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
     if (relocTable != NULL) {
         savedDelay = mmGetDelay();
         relocCount = overlay->SecondaryRelocationTableSize;
-        relocCount = ((u32)relocCount >> 3);
+        relocCount = ((u32) relocCount >> 3);
         relocEntry = relocTable;
 
         while (relocCount-- > 0) {
@@ -503,7 +485,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
 
     // Process main relocation table
     relocCount = overlay->RelocationTableSize;
-    relocCount = ((u32)relocCount >> 3);
+    relocCount = ((u32) relocCount >> 3);
     relocEntry = (RelocationEntry *) gRelocContext.relocBase;
 
     while (relocCount-- > 0) {
@@ -520,7 +502,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
         if (overlay->VramBase != 0 && otherIndex != overlayIndex) {
             if (otherIndex == 0) {
                 // Main module - use special relocation context
-                gRelocContext.textBase = (u8 *) &__CODE_SECTION_START;  // Start of .text
+                gRelocContext.textBase = (u8 *) &__CODE_SECTION_START; // Start of .text
                 gRelocContext.dataBase = (u8 *) &__DATA_SECTION_START; // Start of .data
                 gRelocContext.bssBase = (u8 *) &__BSS_SECTION_START;
                 relocEntry = (RelocationEntry *) mainRelocTable;
@@ -533,7 +515,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
                 gRelocContext.bssBase = (u8 *) gRelocContext.dataBase + overlay->DataSize;
                 gRelocContext.relocBase = (u8 *) gRelocContext.bssBase + overlay->RodataSize;
                 relocEntry = (RelocationEntry *) gRelocContext.relocBase;
-                relocCount = (u32)overlay->RelocationTableSize >> 3;
+                relocCount = (u32) overlay->RelocationTableSize >> 3;
             }
 
             while (relocCount-- > 0) {
@@ -562,7 +544,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
     // Call overlay's init function if present
     overlay = &overlayTable[overlayIndex];
     if (overlay->InitFunction != -1) {
-        ((void (*)(void)) (overlay->VramBase + overlay->InitFunction))();
+        ((void (*)(void))(overlay->VramBase + overlay->InitFunction))();
     }
 
     return 1;
@@ -616,19 +598,19 @@ void runlinkCallResumeFunction(s32 overlayIndex) {
 /**
  * Timer/state entry for overlay self-destruct system.
  * D_800FF838 points to an array indexed by overlay number.
- * 
+ *
  * The 16-bit word layout:
  *   - selfDestructTimer (10 bits, bits 6-15): Ticks until overlay auto-unloads, 0 = disabled
  *   - refCount (6 bits, bits 0-5): Reference counter or usage flags
- * 
+ *
  * runlinkTick() decrements both timers each frame.
  * When selfDestructTimer reaches 0 and refCount is also 0, runlinkFreeCode() is called.
- * 
+ *
  * runlinkSetDestructTimer(overlayIndex, selfDestructTimer, refCount) sets both fields.
  */
 typedef struct OverlayTimerEntry {
     union {
-        u16 packed;              // Full 16-bit access: selfDestructTimer[9:0] << 6 | refCount[5:0]
+        u16 packed; // Full 16-bit access: selfDestructTimer[9:0] << 6 | refCount[5:0]
         struct {
             u16 selfDestructTimer : 10;
             u16 refCount : 6;
@@ -678,15 +660,15 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
         }
 
         // Free the pending load's memory (base + textSize offset)
-        mmFree((void *)(pendingLoad->unk0 + overlay->TextSize));
-        pendingLoad->overlayIndex = 0xFFB;  // Mark slot as unused
+        mmFree((void *) (pendingLoad->unk0 + overlay->TextSize));
+        pendingLoad->overlayIndex = 0xFFB; // Mark slot as unused
         return;
     }
 
     // Overlay is loaded - free it
     mmFree((void *) address);
     overlay->VramBase = 0;
-    
+
     // Clear overlay timer entry - reset selfDestructTimer and refCount
     D_800FF838[overlayIndex].selfDestructTimer = 0;
     D_800FF838[overlayIndex].refCount = 0;
@@ -706,11 +688,11 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
             // This entry references the overlay being unloaded
             if (relocEntry->relocType == 3) {
                 // Type 3: data section relocation
-                patchLocation = (MipsInstruction *)((u8 *)&__DATA_SECTION_START + (relocEntry->targetOffset));
-                relocEntry->flags &= 0xFFF0;  // Clear low nibble of flags
+                patchLocation = (MipsInstruction *) ((u8 *) &__DATA_SECTION_START + (relocEntry->targetOffset));
+                relocEntry->flags &= 0xFFF0; // Clear low nibble of flags
             } else {
                 // Other types: text section relocation
-                patchLocation = (MipsInstruction *)((u8 *)&__CODE_SECTION_START + (relocEntry->targetOffset));
+                patchLocation = (MipsInstruction *) ((u8 *) &__CODE_SECTION_START + (relocEntry->targetOffset));
             }
 
             // Get flagsHi and determine what to patch
@@ -725,17 +707,16 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
             PatchInstruction(patchLocation, address, flagsHi);
         }
 
-        relocEntry->flags = ((u8) relocType & 0xF) |  (relocEntry->flags & 0xFFF0);
+        relocEntry->flags = ((u8) relocType & 0xF) | (relocEntry->flags & 0xFFF0);
 
         relocEntry++;
     }
 }
 
-
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkFlushModules.s")
 
-extern s32 D_800A4344;      // Some flag cleared at init
-extern s32 D_800A4348;      // Symbol table size (D_1FED550 - D_1FEB040)
+extern s32 D_800A4344; // Some flag cleared at init
+extern s32 D_800A4348; // Symbol table size (D_1FED550 - D_1FEB040)
 
 // ROM addresses for runlink tables
 extern u8 symbolsTable_offsets_ROM_START[];
@@ -773,7 +754,7 @@ void runlinkInitialise(void) {
     // Extra 0x20 bytes at start for main module header (overlay 0)
     overlayTableSize = overlayTable_ROM_END - overlayTable_ROM_START;
     overlayTable = mmAlloc(overlayTableSize + 0x20, COLOUR_TAG_WHITE);
-    romCopy(overlayTable_ROM_START, (u32)(overlayTable + 1), overlayTableSize);
+    romCopy(overlayTable_ROM_START, (u32) (overlayTable + 1), overlayTableSize);
 
     // Allocate and copy overlayRomTable from ROM
     tableSize = overlayRomTable_ROM_END - overlayRomTable_ROM_START;
@@ -792,7 +773,7 @@ void runlinkInitialise(void) {
 
     // Calculate overlay count from table size (each entry is 0x20 bytes)
     // +1 for the main module (overlay 0)
-    overlayCount = ((u32)overlayTableSize >> 5) + 1;
+    overlayCount = ((u32) overlayTableSize >> 5) + 1;
 
     // Initialize pending overlay load slots to unused (0xFFB)
     // Loop from end to start
@@ -809,19 +790,19 @@ void runlinkInitialise(void) {
     bzero(timerArray, overlayCount * 2);
 
     // Initialize main module header (overlay 0) with section addresses
-    overlayTable->VramBase = (s32)&__CODE_SECTION_START;
+    overlayTable->VramBase = (s32) &__CODE_SECTION_START;
     overlayTable->RomAddress = 0;
-    overlayTable->TextSize = (s32)((u8 *)&__DATA_SECTION_START - (u8 *)&__CODE_SECTION_START);
-    overlayTable->DataSize = (s32)((u8 *)&__BSS_SECTION_START - (u8 *)&__DATA_SECTION_START);
-    overlayTable->RodataSize = (s32)((u8 *)&__BSS_SECTION_END - (u8 *)&__BSS_SECTION_START);
+    overlayTable->TextSize = (s32) ((u8 *) &__DATA_SECTION_START - (u8 *) &__CODE_SECTION_START);
+    overlayTable->DataSize = (s32) ((u8 *) &__BSS_SECTION_START - (u8 *) &__DATA_SECTION_START);
+    overlayTable->RodataSize = (s32) ((u8 *) &__BSS_SECTION_END - (u8 *) &__BSS_SECTION_START);
     overlayTable->RelocationTableSize = mainRelocCount * 8;
     overlayTable->SecondaryRelocationTableSize = 0;
 
     // Convert relative ROM addresses to absolute for all overlay entries
-    overlayEntry = overlayTable + 1;  // Start from overlay 1
+    overlayEntry = overlayTable + 1; // Start from overlay 1
     i = overlayCount - 1;
     while (i--) {
-        overlayEntry->RomAddress = (s32)(overlayCode_ROM_START + overlayEntry->RomAddress);
+        overlayEntry->RomAddress = (s32) (overlayCode_ROM_START + overlayEntry->RomAddress);
         overlayEntry++;
     }
 
@@ -856,8 +837,8 @@ void runlinkLowMemoryPanic(void) {
     overlayIndex = overlayCount;
     while (overlayIndex--) {
         timerEntry = &D_800FF838[overlayIndex];
-        if (timerEntry->selfDestructTimer != 0) {  // Has selfDestructTimer set?
-            if (timerEntry->refCount == 0) {       // No references
+        if (timerEntry->selfDestructTimer != 0) { // Has selfDestructTimer set?
+            if (timerEntry->refCount == 0) {      // No references
                 runlinkFreeCode(overlayIndex);
                 timerEntry->selfDestructTimer = 0;
                 timerEntry->refCount = 0;

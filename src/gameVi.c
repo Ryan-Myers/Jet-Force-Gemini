@@ -1,5 +1,5 @@
-#include "common.h"
 #include "gameVi.h"
+#include "common.h"
 
 OSMesg gVideoMesgBuf[8];
 OSMesgQueue gVideoMesgQueue[8];
@@ -25,8 +25,8 @@ f32 aspectRatioFloat;
 f32 heightRatioFloat; // Height ratio for PAL vs NTSC
 s32 runInOneFrame;
 s32 viNoZbufferRealloc;
-
-s32 *D_800A3900_A4500[4] = { NULL, NULL, NULL, NULL }; // Triple buffer framebuffer pointer and the last element is the Z buffer
+// Triple buffer framebuffer pointer and the last element is the Z buffer
+s32 *D_800A3900_A4500[4] = { NULL, NULL, NULL, NULL };
 s32 *framebufferPointers[3] = { NULL, NULL, NULL };
 f32 hScale = 1.0f;
 f32 vScale = 1.0f;
@@ -52,7 +52,7 @@ ResolutionSettings resolutionSettings[] = {
 #ifdef VERSION_us
     { 320, 240, 320, 240, 0, VIDEO_MODE_NTSC_LPN, "Ntsc Reset Mode" },
     { 320, 240, 320, 240, 0, VIDEO_MODE_NTSC_LPN, "Mpal Reset Mode" },
-    { 320, 240, 320, 240, 0, VIDEO_MODE_PAL_LPN, "Pal Reset Mode" }
+    { 320, 240, 320, 240, 0, VIDEO_MODE_PAL_LPN, "Pal Reset Mode" },
 #endif
 };
 
@@ -130,14 +130,14 @@ void viChangeMode(s32 arg0) {
     framebufferPointers[2] = NULL;
     temp_t6 = D_800FECA8_B1898 & 3;
     if ((temp_t6 != 2) && (temp_t6 != 3)) {
-        if (1){} // Fake
-        framebufferPointers[1] = (s32 *) ((u8 *)framebufferPointers[0] + bufferSize);
+        if (1) {} // Fake
+        framebufferPointers[1] = (s32 *) ((u8 *) framebufferPointers[0] + bufferSize);
     } else {
         D_800A3900_A4500[1] = (s32 *) mmAlloc(bufferSize + 0x30, COLOUR_TAG_WHITE);
         framebufferPointers[1] = FBALIGN(D_800A3900_A4500[1]);
     }
     if (D_800FECA6_B1896 != 0) {
-        D_800A3900_A4500[2] = (s32 *) mmAlloc(bufferSize + 0x30, COLOUR_TAG_WHITE);;
+        D_800A3900_A4500[2] = (s32 *) mmAlloc(bufferSize + 0x30, COLOUR_TAG_WHITE);
         framebufferPointers[2] = FBALIGN(D_800A3900_A4500[2]);
     }
     sTripleBuffer = D_800FECA6_B1896;
@@ -197,7 +197,6 @@ void viAllocateZBuffer(s32 width, s32 height) {
     otherZbuf = FBALIGN(D_800A3900_A4500[3]);
 }
 
-
 void viFreeZBuffer(UNUSED s32 width, UNUSED s32 height) {
     if (D_800A3900_A4500[3] != NULL) {
         mmFree(D_800A3900_A4500[3]);
@@ -229,7 +228,7 @@ void viSetTiming(void) {
         osViMode_custom.fldRegs[i].vStart -= (((SCREEN_HEIGHT - verticalOffset) - resolution->displayHeight) * 2);
     }
 #ifdef VERSION_us
-    if (sShouldSetCustomViMode) 
+    if (sShouldSetCustomViMode)
 #endif
     {
         osViSetMode(&osViMode_custom);
@@ -355,11 +354,11 @@ void func_80055260_55E60(u8 *src, s32 length) {
     dest = (s32 *) src;
     fourByteLength = (length >> 2);
     if (D_800A32A0_A3EA0 != 0) {
-        while(fourByteLength--) {
+        while (fourByteLength--) {
             *dest++ = 0;
         }
     } else {
-        while(fourByteLength--) {
+        while (fourByteLength--) {
             *dest++ = -1;
         }
     }
