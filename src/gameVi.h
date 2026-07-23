@@ -1,7 +1,7 @@
 #ifndef _GAME_VI_H_
 #define _GAME_VI_H_
 
-
+#include <ultra64.h>
 
 #define REFRESH_50HZ 50
 #define REFRESH_60HZ 60
@@ -31,17 +31,6 @@
 #define FBALIGN(a) ((s32 *) (((s32) (a) + 0x3F) & ~0x3F))
 
 /**
- * This is an offset with a size of two rows of the framebuffer.
- * It's likely they were trying to offset the framebuffer in order to
- * undo what Libultra does, where in order to sample pixels from the top and
- * bottom of the screen for anti aliasing and dedithering, they shift the framebuffer
- * to hide some visible rows.
- * A small mistake is present though, where they offset by two rows instead of one.
- * This will cause there to be visible noise on the bottom row.
-*/
-#define VI_OFFSET (SCREEN_WIDTH * sizeof(u16) * 2)
-
-/**
  * Keeps the value within the range.
  */
 #define CLAMP(x, low, high) {       \
@@ -52,7 +41,6 @@
 /**
  * Values for the rate game logic will work depending on the framerate. Vanilla DKR will default to LOGIC_30FPS (2)
  */
-
 enum LogicUpdateRates {
     LOGIC_NULL,
     LOGIC_60FPS,
@@ -64,19 +52,54 @@ enum LogicUpdateRates {
     LOGIC_5FPS = 12
 };
 
-enum VideoModes {
-    VIDEO_MODE_LOWRES_LAN,
-    VIDEO_MODE_LOWRES_LPN,
-    VIDEO_MODE_MEDRES_LPN,
-    VIDEO_MODE_MEDRES_LAN,
-    VIDEO_MODE_HIGHRES_HPN,
-    VIDEO_MODE_HIGHRES_HAN,
-    VIDEO_MODE_HIGHRES_HPF,
-    VIDEO_MODE_HIGHRES_HAF,
+typedef enum VideoModes {
+    VIDEO_MODE_NTSC_LPN,
+    VIDEO_MODE_NTSC_LAN,
+    VIDEO_MODE_NTSC_HPN,
+    VIDEO_MODE_NTSC_HAF,
+    VIDEO_MODE_MPAL_LPN,
+    VIDEO_MODE_MPAL_LAN,
+    VIDEO_MODE_MPAL_HPN,
+    VIDEO_MODE_MPAL_HAF,
+    VIDEO_MODE_PAL_LPN,
+    VIDEO_MODE_PAL_LAN,
+    VIDEO_MODE_PAL_HPN,
+    VIDEO_MODE_PAL_HAF,
+} VideoModes;
 
-    VIDEO_MODE_LOWRES_MASK = 0,
-    VIDEO_MODE_MIDRES_MASK = 2,
-    VIDEO_MODE_HIGHRES_MASK = 4
-};
+// Size: 0x28
+typedef struct ResolutionSettings {
+    s32 width;          // source framebuffer width
+    s32 height;         // source framebuffer height
+    s32 displayWidth;   // horizontal active region (xScale reference)
+    s32 displayHeight;  // vertical active region  (yScale reference)
+    s32 verticalOffset; // vertical offset
+    VideoModes videoMode;
+    char name[16];
+} ResolutionSettings;
+
+void viInit(OSSched *sc);
+void viChangeMode(s32 arg0);
+void viReset(void);
+void viAllocateZBuffer(s32 width, s32 height);
+void viFreeZBuffer(s32 width, s32 height);
+void viSetTiming(void);
+void viGetCurrentSize(s32 *width, s32 *height);
+void viConvertXY(s32 *x, s32 *y);
+void viGetScaleXY(f32 *_hScale, f32 *_vScale);
+void viFrameRateReset(void);
+s32 viFrameSync(s32 mesg);
+s32 viGetVideoMode(void);
+s8 viGetWideAdjust(void);
+void viSetWideAdjust(s32 offset);
+void viSetTrippleBuffer(s32 arg0);
+s8 viGetTrippleBuffer(void);
+s32 viChangeBuffers(void);
+void viNoClear(void);
+s32 viDisplayingScreen0(void);
+void func_80055260_55E60(u8 *src, s32 length);
+OSViMode *viGetOsViMode(VideoModes videoMode);
+void fb_swap(void);
+void fb_memcpy(u8 *src, u8 *dest, s32 len);
 
 #endif

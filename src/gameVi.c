@@ -1,9 +1,6 @@
 #include "common.h"
 #include "gameVi.h"
 
-/**
- * BSS
- */
 OSMesg gVideoMesgBuf[8];
 OSMesgQueue gVideoMesgQueue[8];
 OSScClient gVideoSched;
@@ -29,60 +26,35 @@ f32 heightRatioFloat; // Height ratio for PAL vs NTSC
 s32 runInOneFrame;
 s32 viNoZbufferRealloc;
 
-/**
- * Data
- */
 s32 *D_800A3900_A4500[4] = { NULL, NULL, NULL, NULL }; // Triple buffer framebuffer pointer and the last element is the Z buffer
 s32 *framebufferPointers[3] = { NULL, NULL, NULL };
 f32 hScale = 1.0f;
 f32 vScale = 1.0f;
+
 #ifdef VERSION_us
 s32 sShouldSetCustomViMode = FALSE; // Flag to indicate if a custom VI mode has been set
 s32 D_800A3928_A4528 = 1;
 #endif
 
-// Size: 0x28
-typedef struct ResolutionSettings {
-    s32 width;
-    s32 height;
-    s32 unk8;
-    s32 unkC;
-    s32 unk10;
-    u32 videoMode;
-    char name[16];
-} ResolutionSettings;
-
 ResolutionSettings resolutionSettings[] = {
-    { 320, 240, 320, 240, 0, 0, "Ntsc LowRes" },
-    { 320, 240, 320, 180, 30, 1, "Ntsc Widescreen" },
-    { 448, 336, 320, 240, 0, 3, "Ntsc MediumRes" },
-    { 448, 336, 320, 180, 30, 3, "Ntsc HiResWide" },
-    { 320, 240, 320, 240, 0, 4, "Mpal LowRes" },
-    { 320, 240, 320, 180, 30, 5, "Mpal Widescreen" },
-    { 448, 336, 320, 240, 0, 7, "Mpal MediumRes" },
-    { 448, 336, 320, 180, 30, 7, "Mpal HiResWide" },
-    { 320, 240, 320, 280, 0xFFFFFFEC, 8, "Pal LowRes" },
-    { 320, 240, 320, 204, 10, 9, "Pal Widescreen" },
-    { 448, 336, 320, 280, 0xFFFFFFEC, 11, "Pal MediumRes" },
-    { 448, 336, 320, 204, 10, 11, "Pal HiResWide" },
+    { 320, 240, 320, 240, 0, VIDEO_MODE_NTSC_LPN, "Ntsc LowRes" },
+    { 320, 240, 320, 180, 30, VIDEO_MODE_NTSC_LAN, "Ntsc Widescreen" },
+    { 448, 336, 320, 240, 0, VIDEO_MODE_NTSC_HAF, "Ntsc MediumRes" },
+    { 448, 336, 320, 180, 30, VIDEO_MODE_NTSC_HAF, "Ntsc HiResWide" },
+    { 320, 240, 320, 240, 0, VIDEO_MODE_MPAL_LPN, "Mpal LowRes" },
+    { 320, 240, 320, 180, 30, VIDEO_MODE_MPAL_LAN, "Mpal Widescreen" },
+    { 448, 336, 320, 240, 0, VIDEO_MODE_MPAL_HAF, "Mpal MediumRes" },
+    { 448, 336, 320, 180, 30, VIDEO_MODE_MPAL_HAF, "Mpal HiResWide" },
+    { 320, 240, 320, 280, -20, VIDEO_MODE_PAL_LPN, "Pal LowRes" },
+    { 320, 240, 320, 204, 10, VIDEO_MODE_PAL_LAN, "Pal Widescreen" },
+    { 448, 336, 320, 280, -20, VIDEO_MODE_PAL_HAF, "Pal MediumRes" },
+    { 448, 336, 320, 204, 10, VIDEO_MODE_PAL_HAF, "Pal HiResWide" },
 #ifdef VERSION_us
-    { 320, 240, 320, 240, 0, 0, "Ntsc Reset Mode" },
-    { 320, 240, 320, 240, 0, 0, "Mpal Reset Mode" },
-    { 320, 240, 320, 240, 0, 8, "Pal Reset Mode" }
+    { 320, 240, 320, 240, 0, VIDEO_MODE_NTSC_LPN, "Ntsc Reset Mode" },
+    { 320, 240, 320, 240, 0, VIDEO_MODE_NTSC_LPN, "Mpal Reset Mode" },
+    { 320, 240, 320, 240, 0, VIDEO_MODE_PAL_LPN, "Pal Reset Mode" }
 #endif
 };
-
-void fb_swap(void);
-void viChangeMode(s32);
-void viSetTiming(void);
-OSViMode *viGetOsViMode(u32 videoMode);
-void fb_memcpy(u8 *src, u8 *dest, s32 len);
-void fontSetWindow0(s32 width, s32 height);
-void func_80055260_55E60(u8 *src, s32 length);
-void viAllocateZBuffer(s32 width, s32 height);
-void viFrameRateReset(void);
-void viFreeZBuffer(s32 width, s32 height);
-void viSetTiming(void);
 
 void viInit(OSSched *sc) {
     s32 screenHeight;
@@ -109,7 +81,7 @@ void viInit(OSSched *sc) {
     viNoZbufferRealloc = 0;
     viChangeMode(0);
     osViBlack(TRUE);
-    sBlackScreenTimer = 0xC;
+    sBlackScreenTimer = 12;
 #else
     sShouldClearVi = TRUE;
     viNoZbufferRealloc = 0;
@@ -235,37 +207,26 @@ void viFreeZBuffer(UNUSED s32 width, UNUSED s32 height) {
     }
 }
 
-#ifdef NON_EQUIVALENT
 void viSetTiming(void) {
     OSViMode *viMode;
-    ResolutionSettings *temp_v1;
-    s32 var_a0;
-    u32 var_a1;
+    s32 verticalOffset;
     s32 i;
-    ResolutionSettings *new_var;
-    u32 temp_t8;
+    ResolutionSettings *resolution;
 
-    temp_v1 = &resolutionSettings[D_800FECA8_B1898];
-    viMode = viGetOsViMode(temp_v1->videoMode);
+    resolution = &resolutionSettings[D_800FECA8_B1898];
+    viMode = viGetOsViMode(resolution->videoMode);
     fb_memcpy((u8 *) viMode, (u8 *) &osViMode_custom, sizeof(OSViMode));
-    osViMode_custom.comRegs.width = WIDTH(temp_v1->width);
-    osViMode_custom.comRegs.xScale = ((s32) (temp_v1->width << 9) / (s32) temp_v1->unk8);
-    var_a0 = temp_v1->unk10;
-    if ((D_800FECA8_B1898 & 1)) {
-        if (someResVar.bit30 != 0) {
-            var_a0 += widescreenVOffsetMirror;
-        }
+    osViMode_custom.comRegs.width = WIDTH(resolution->width);
+    osViMode_custom.comRegs.xScale = ((resolution->width << 9) / resolution->displayWidth);
+    verticalOffset = resolution->verticalOffset;
+    if ((D_800FECA8_B1898 & 1) && (someResVar.bit30)) {
+        verticalOffset += widescreenVOffsetMirror;
     }
-    var_a1 = var_a0 << 17;
-    if (!temp_t8){}
-    new_var = temp_v1; // Why does this improve the score so much?
-    for (i = 0; i < 2; i++) {
-        temp_t8 = osViMode_custom.fldRegs[i].vStart;
-        temp_t8 += var_a1;
-        osViMode_custom.fldRegs[i].origin = ORIGIN(new_var->width * 2);
-        osViMode_custom.comRegs.leap = ((s32) (new_var->height << 10) / (s32) new_var->unkC);
-        osViMode_custom.comRegs.hStart = temp_t8 - (((SCREEN_HEIGHT - var_a0) - new_var->unkC) << 1);
-        osViMode_custom.fldRegs[i].vStart = temp_t8;
+    for (i = 0; i < ARRAY_COUNT(osViMode_custom.fldRegs); i++) {
+        osViMode_custom.fldRegs[i].origin = ORIGIN(resolution->width * 2);
+        osViMode_custom.fldRegs[i].yScale = ((resolution->height << 10) / resolution->displayHeight);
+        osViMode_custom.fldRegs[i].vStart += (verticalOffset << 17); //((verticalOffset * 2) << 16);
+        osViMode_custom.fldRegs[i].vStart -= (((SCREEN_HEIGHT - verticalOffset) - resolution->displayHeight) * 2);
     }
 #ifdef VERSION_us
     if (sShouldSetCustomViMode) 
@@ -278,9 +239,6 @@ void viSetTiming(void) {
     sShouldSetCustomViMode = TRUE;
 #endif
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/gameVi/viSetTiming.s")
-#endif
 
 void viGetCurrentSize(s32 *width, s32 *height) {
     *width = resolutionSettings[D_800FECA8_B1898].width;
@@ -410,31 +368,31 @@ void func_80055260_55E60(u8 *src, s32 length) {
 #endif
 }
 
-OSViMode *viGetOsViMode(u32 videoMode) {
+OSViMode *viGetOsViMode(VideoModes videoMode) {
     switch (videoMode) {
-        case 0:
+        case VIDEO_MODE_NTSC_LPN:
             return &osViModeNtscLpn1;
-        case 1:
+        case VIDEO_MODE_NTSC_LAN:
             return &osViModeNtscLan1;
-        case 2:
+        case VIDEO_MODE_NTSC_HPN:
             return &osViModeNtscHpn1;
-        case 3:
+        case VIDEO_MODE_NTSC_HAF:
             return &osViModeNtscHaf1;
-        case 4:
+        case VIDEO_MODE_MPAL_LPN:
             return &osViModeMpalLpn1;
-        case 5:
+        case VIDEO_MODE_MPAL_LAN:
             return &osViModeMpalLan1;
-        case 6:
+        case VIDEO_MODE_MPAL_HPN:
             return &osViModeMpalHpn1;
-        case 7:
+        case VIDEO_MODE_MPAL_HAF:
             return &osViModeMpalHaf1;
-        case 8:
+        case VIDEO_MODE_PAL_LPN:
             return &osViModePalLpn1;
-        case 9:
+        case VIDEO_MODE_PAL_LAN:
             return &osViModePalLan1;
-        case 10:
+        case VIDEO_MODE_PAL_HPN:
             return &osViModePalHpn1;
-        case 11:
+        case VIDEO_MODE_PAL_HAF:
             return &osViModePalHaf1;
         default:
             return NULL;
@@ -442,24 +400,24 @@ OSViMode *viGetOsViMode(u32 videoMode) {
 }
 
 void fb_swap(void) {
-    otherScreen = (s32 *) framebufferPointers[framebufferChoice];
+    otherScreen = framebufferPointers[framebufferChoice];
     framebufferChoice++;
     if (sTripleBuffer) {
         if (framebufferChoice >= 3) {
             framebufferChoice = 0;
         }
-        extraScreen = (s32 *) framebufferPointers[framebufferChoice];
+        extraScreen = framebufferPointers[framebufferChoice];
         if (framebufferChoice < 2) {
-            currentScreen = (s32 *) framebufferPointers[framebufferChoice + 1];
+            currentScreen = framebufferPointers[framebufferChoice + 1];
         } else {
-            currentScreen = (s32 *) framebufferPointers[0];
+            currentScreen = framebufferPointers[0];
         }
     } else {
         if (framebufferChoice >= 2) {
             framebufferChoice = 0;
         }
-        currentScreen = (s32 *) framebufferPointers[framebufferChoice];
-        extraScreen = (s32 *) &currentScreen[0];
+        currentScreen = framebufferPointers[framebufferChoice];
+        extraScreen = &currentScreen[0];
     }
 }
 
