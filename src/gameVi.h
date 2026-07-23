@@ -28,8 +28,31 @@
 #define HEIGHT_RATIO_NTSC (LOW_RES_NTSC_HEIGHT / LOW_RES_NTSC_HEIGHT)
 #define HEIGHT_RATIO_MPAL (LOW_RES_MPAL_HEIGHT / LOW_RES_NTSC_HEIGHT)
 
+#define BUFFER_SIZE_ALIGNMENT 0x30
+#define BUFFER_SIZE(width, height) (((width) * (height) * 2)) // Framebuffers are 16-bit (2 bytes) per pixel.
+#define BUFFER_SIZE_ALIGNED(width, height) (BUFFER_SIZE(width, height) + BUFFER_SIZE_ALIGNMENT) // Framebuffers require 64 byte alignment.
+
 // Framebuffers require 64 byte alignment.
 #define FBALIGN(a) ((s32 *) (((s32) (a) + 0x3F) & ~0x3F))
+
+#ifdef VERSION_kiosk
+#define MAX_RESOLUTION_SETTINGS ARRAY_COUNT(resolutionSettings)
+#else
+// US Version has 3 extra resolutions for reset modes, so we need to subtract those from the count.
+#define MAX_RESOLUTION_SETTINGS (ARRAY_COUNT(resolutionSettings) - 3)
+#endif
+
+#define VIDEO_MODE_SET(index) ((index) & 3) // Keeps the value within the range of 0-3, which is the number of video modes per TV type.
+#define RESOLUTION_INDEX_MPAL_OFFSET (MAX_RESOLUTION_SETTINGS / 3)
+#define RESOLUTION_INDEX_PAL_OFFSET (2 * (MAX_RESOLUTION_SETTINGS / 3))
+#define RESOLUTION_IS_WIDESCREEN(index) ((index) & 1) // Widescreen resolutions are odd indexed in the resolutionSettings array.
+#define RESOLUTION_RESOLUTION_CHECK(index) ((index) & 3) // Higher resolutions are even indexed in the resolutionSettings array as the 3rd and 4th setting for each TV Type.
+
+// The last 3 resolutions in the resolutionSettings array are reset modes
+#define RESOLUTION_RESET_NTSC 12
+#define RESOLUTION_RESET_MPAL 13
+#define RESOLUTION_RESET_PAL 14
+
 
 /**
  * Keeps the value within the range.
@@ -66,6 +89,10 @@ typedef enum VideoModes {
     VIDEO_MODE_PAL_LAN,
     VIDEO_MODE_PAL_HPN,
     VIDEO_MODE_PAL_HAF,
+    VIDEO_MODE_LOW_RES = 0,
+    VIDEO_MODE_WIDESCREEN = 1,
+    VIDEO_MODE_MED_RES = 2,
+    VIDEO_MODE_HIGH_RES_WIDESCREEN = 3
 } VideoModes;
 
 // Size: 0x28

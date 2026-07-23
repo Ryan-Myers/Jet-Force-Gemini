@@ -8,14 +8,14 @@ OSViMode osViMode_custom;
 s32 framebufferSize;
 s8 framebufferChoice;
 s8 sTripleBuffer;
-s8 D_800FECA6_B1896;
+s8 sTripleBufferRequested;
 s8 sShouldClearVi;
-s8 D_800FECA8_B1898;
+s8 sResolutionIndex;
 s8 sBlackScreenTimer;
-s8 widescreenVOffsetMirror;
-u8 D_800FECAB_B189B;
+s8 widescreenOffset;
+u8 gVideoDeltaCounter;
 u8 gVideoDeltaTime;
-u8 D_800FECAD_B189D;
+u8 gSkipVideoDeltaAdjust;
 s32 *currentScreen;
 s32 *extraScreen;
 s32 *otherScreen;
@@ -25,6 +25,7 @@ f32 aspectRatioFloat;
 f32 heightRatioFloat; // Height ratio for PAL vs NTSC
 s32 runInOneFrame;
 s32 viNoZbufferRealloc;
+
 // Triple buffer framebuffer pointer and the last element is the Z buffer
 s32 *D_800A3900_A4500[4] = { NULL, NULL, NULL, NULL };
 s32 *framebufferPointers[3] = { NULL, NULL, NULL };
@@ -72,47 +73,46 @@ void viInit(OSSched *sc) {
     }
     osCreateMesgQueue(gVideoMesgQueue, gVideoMesgBuf, ARRAY_COUNT(gVideoMesgBuf));
     osScAddClient(sc, &gVideoSched, gVideoMesgQueue, OS_SC_ID_VIDEO);
-    D_800A3900_A4500[0] = (s32 *) mmAlloc((screenHeight * 0x500) + 0x30, COLOUR_TAG_WHITE);
-    widescreenVOffsetMirror = 0;
-    sTripleBuffer = 0;
-    D_800FECA6_B1896 = 0;
+    D_800A3900_A4500[0] = (s32 *) mmAlloc(BUFFER_SIZE_ALIGNED(screenHeight, SCREEN_WIDTH * 2), COLOUR_TAG_WHITE);
+    widescreenOffset = 0;
+    sTripleBuffer = FALSE;
+    sTripleBufferRequested = FALSE;
 #ifdef VERSION_kiosk
     sShouldClearVi = FALSE;
-    viNoZbufferRealloc = 0;
-    viChangeMode(0);
+    viNoZbufferRealloc = FALSE;
+    viChangeMode(VIDEO_MODE_LOW_RES);
     osViBlack(TRUE);
     sBlackScreenTimer = 12;
 #else
     sShouldClearVi = TRUE;
-    viNoZbufferRealloc = 0;
-    viChangeMode(0);
+    viNoZbufferRealloc = FALSE;
+    viChangeMode(VIDEO_MODE_LOW_RES);
     D_800A3928_A4528 = 1;
     sBlackScreenTimer = 1;
 #endif
 }
 
-void viChangeMode(s32 arg0) {
+void viChangeMode(s32 videoMode) {
     s32 bufferSize;
     ResolutionSettings *resolution;
-    s32 temp_t6;
 
 #ifdef VERSION_kiosk
-    D_800FECA8_B1898 = arg0 & 3;
+    sResolutionIndex = VIDEO_MODE_SET(videoMode);
 #else
-    D_800FECA8_B1898 = arg0 & 3 & ~D_800A3928_A4528;
+    sResolutionIndex = VIDEO_MODE_SET(videoMode) & ~D_800A3928_A4528;
     D_800A3928_A4528 = 0;
 #endif
 
     if (osTvType == OS_TV_TYPE_MPAL) {
-        D_800FECA8_B1898 += 4;
+        sResolutionIndex += RESOLUTION_INDEX_MPAL_OFFSET;
     } else if (osTvType == OS_TV_TYPE_PAL) {
-        D_800FECA8_B1898 += 8;
+        sResolutionIndex += RESOLUTION_INDEX_PAL_OFFSET;
     }
-    resolution = &resolutionSettings[D_800FECA8_B1898];
+    resolution = &resolutionSettings[sResolutionIndex];
     hScale = resolution->width / LOW_RES_WIDTH;
     vScale = resolution->height / LOW_RES_NTSC_HEIGHT;
     fontSetWindow0(resolution->width, resolution->height);
-    if (viNoZbufferRealloc == 0) {
+    if (viNoZbufferRealloc == FALSE) {
         viFreeZBuffer(resolution->width, resolution->height);
     }
     if (D_800A3900_A4500[1] != NULL) {
@@ -123,24 +123,24 @@ void viChangeMode(s32 arg0) {
         mmFree(D_800A3900_A4500[2]);
         D_800A3900_A4500[2] = NULL;
     }
-    bufferSize = resolution->width * resolution->height * 2;
+    bufferSize = BUFFER_SIZE(resolution->width, resolution->height);
     framebufferChoice = 0;
     framebufferPointers[0] = FBALIGN(D_800A3900_A4500[0]);
     framebufferPointers[1] = NULL;
     framebufferPointers[2] = NULL;
-    temp_t6 = D_800FECA8_B1898 & 3;
-    if ((temp_t6 != 2) && (temp_t6 != 3)) {
+    if ((RESOLUTION_RESOLUTION_CHECK(sResolutionIndex) != VIDEO_MODE_MED_RES) &&
+        (RESOLUTION_RESOLUTION_CHECK(sResolutionIndex) != VIDEO_MODE_HIGH_RES_WIDESCREEN)) {
         if (1) {} // Fake
         framebufferPointers[1] = (s32 *) ((u8 *) framebufferPointers[0] + bufferSize);
     } else {
-        D_800A3900_A4500[1] = (s32 *) mmAlloc(bufferSize + 0x30, COLOUR_TAG_WHITE);
+        D_800A3900_A4500[1] = (s32 *) mmAlloc(bufferSize + BUFFER_SIZE_ALIGNMENT, COLOUR_TAG_WHITE);
         framebufferPointers[1] = FBALIGN(D_800A3900_A4500[1]);
     }
-    if (D_800FECA6_B1896 != 0) {
-        D_800A3900_A4500[2] = (s32 *) mmAlloc(bufferSize + 0x30, COLOUR_TAG_WHITE);
+    if (sTripleBufferRequested) {
+        D_800A3900_A4500[2] = (s32 *) mmAlloc(bufferSize + BUFFER_SIZE_ALIGNMENT, COLOUR_TAG_WHITE);
         framebufferPointers[2] = FBALIGN(D_800A3900_A4500[2]);
     }
-    sTripleBuffer = D_800FECA6_B1896;
+    sTripleBuffer = sTripleBufferRequested;
     if (sShouldClearVi) {
         func_80055260_55E60((u8 *) framebufferPointers[0], bufferSize);
         func_80055260_55E60((u8 *) framebufferPointers[1], bufferSize);
@@ -149,13 +149,13 @@ void viChangeMode(s32 arg0) {
         }
     }
     sShouldClearVi = TRUE;
-    if (viNoZbufferRealloc == 0) {
+    if (viNoZbufferRealloc == FALSE) {
         viAllocateZBuffer(resolution->width, resolution->height);
     }
     viFrameRateReset();
     fb_swap();
     viSetTiming();
-    viNoZbufferRealloc = 0;
+    viNoZbufferRealloc = FALSE;
 }
 
 #ifdef VERSION_us
@@ -177,13 +177,13 @@ void viReset(void) {
         *screen++ = 0;
     }
     osWritebackDCacheAll();
-    if ((D_800FECA8_B1898 != 0) && (D_800FECA8_B1898 != 4)) {
+    if ((sResolutionIndex != VIDEO_MODE_NTSC_LPN) && (sResolutionIndex != VIDEO_MODE_MPAL_LPN)) {
         if (osTvType == OS_TV_TYPE_PAL) {
-            D_800FECA8_B1898 = 14;
+            sResolutionIndex = RESOLUTION_RESET_PAL;
         } else if (osTvType == OS_TV_TYPE_MPAL) {
-            D_800FECA8_B1898 = 13;
+            sResolutionIndex = RESOLUTION_RESET_MPAL;
         } else {
-            D_800FECA8_B1898 = 12;
+            sResolutionIndex = RESOLUTION_RESET_NTSC;
         }
         viSetTiming();
     }
@@ -192,7 +192,7 @@ void viReset(void) {
 #endif
 
 void viAllocateZBuffer(s32 width, s32 height) {
-    framebufferSize = (width * height * 2) + 0x30;
+    framebufferSize = BUFFER_SIZE_ALIGNED(width, height);
     D_800A3900_A4500[3] = (s32 *) mmAlloc(framebufferSize, COLOUR_TAG_WHITE);
     otherZbuf = FBALIGN(D_800A3900_A4500[3]);
 }
@@ -212,14 +212,14 @@ void viSetTiming(void) {
     s32 i;
     ResolutionSettings *resolution;
 
-    resolution = &resolutionSettings[D_800FECA8_B1898];
+    resolution = &resolutionSettings[sResolutionIndex];
     viMode = viGetOsViMode(resolution->videoMode);
     fb_memcpy((u8 *) viMode, (u8 *) &osViMode_custom, sizeof(OSViMode));
     osViMode_custom.comRegs.width = WIDTH(resolution->width);
     osViMode_custom.comRegs.xScale = ((resolution->width << 9) / resolution->displayWidth);
     verticalOffset = resolution->verticalOffset;
-    if ((D_800FECA8_B1898 & 1) && (someResVar.bit30)) {
-        verticalOffset += widescreenVOffsetMirror;
+    if (RESOLUTION_IS_WIDESCREEN(sResolutionIndex) && (someResVar.bit30)) {
+        verticalOffset += widescreenOffset;
     }
     for (i = 0; i < ARRAY_COUNT(osViMode_custom.fldRegs); i++) {
         osViMode_custom.fldRegs[i].origin = ORIGIN(resolution->width * 2);
@@ -240,8 +240,8 @@ void viSetTiming(void) {
 }
 
 void viGetCurrentSize(s32 *width, s32 *height) {
-    *width = resolutionSettings[D_800FECA8_B1898].width;
-    *height = resolutionSettings[D_800FECA8_B1898].height;
+    *width = resolutionSettings[sResolutionIndex].width;
+    *height = resolutionSettings[sResolutionIndex].height;
 }
 
 void viConvertXY(s32 *x, s32 *y) {
@@ -255,9 +255,9 @@ void viGetScaleXY(f32 *_hScale, f32 *_vScale) {
 }
 
 void viFrameRateReset(void) {
-    D_800FECAD_B189D = TRUE;
-    D_800FECAB_B189B = 0;
-    gVideoDeltaTime = 2;
+    gSkipVideoDeltaAdjust = TRUE;
+    gVideoDeltaCounter = 0;
+    gVideoDeltaTime = LOGIC_30FPS;
     runInOneFrame = FALSE;
 }
 
@@ -278,21 +278,21 @@ s32 viFrameSync(s32 mesg) {
         tempUpdateRate++;
     }
 
-    if (gVideoDeltaTime == 3) {
-        if (tempUpdateRate < 3) {
-            D_800FECAB_B189B++;
-            if (D_800FECAB_B189B > 30) {
-                gVideoDeltaTime = 2;
+    if (gVideoDeltaTime == LOGIC_20FPS) {
+        if (tempUpdateRate < LOGIC_20FPS) {
+            gVideoDeltaCounter++;
+            if (gVideoDeltaCounter > 30) {
+                gVideoDeltaTime = LOGIC_30FPS;
             }
         } else {
-            D_800FECAB_B189B = 0;
+            gVideoDeltaCounter = 0;
         }
-    } else if ((tempUpdateRate >= 3) && (D_800FECAD_B189D == FALSE)) {
-        gVideoDeltaTime = 3;
-        D_800FECAB_B189B = 0;
+    } else if ((tempUpdateRate >= LOGIC_20FPS) && (gSkipVideoDeltaAdjust == FALSE)) {
+        gVideoDeltaTime = LOGIC_20FPS;
+        gVideoDeltaCounter = 0;
     }
     if (runInOneFrame) {
-        gVideoDeltaTime = 1;
+        gVideoDeltaTime = LOGIC_60FPS;
     }
     while (tempUpdateRate < gVideoDeltaTime) {
         osRecvMesg(gVideoMesgQueue, NULL, OS_MESG_BLOCK);
@@ -301,26 +301,26 @@ s32 viFrameSync(s32 mesg) {
 
     osViSwapBuffer(otherScreen);
     osRecvMesg(gVideoMesgQueue, NULL, OS_MESG_BLOCK);
-    D_800FECAD_B189D = FALSE;
+    gSkipVideoDeltaAdjust = FALSE;
     return tempUpdateRate;
 }
 
 s32 viGetVideoMode(void) {
-    return D_800FECA8_B1898 & 3;
+    return VIDEO_MODE_SET(sResolutionIndex);
 }
 
 s8 viGetWideAdjust(void) {
-    return widescreenVOffsetMirror;
+    return widescreenOffset;
 }
 
 void viSetWideAdjust(s32 offset) {
     CLAMP(offset, -30, 30);
-    widescreenVOffsetMirror = offset;
+    widescreenOffset = offset;
     viSetTiming();
 }
 
-void viSetTrippleBuffer(s32 arg0) {
-    D_800FECA6_B1896 = arg0 & 1;
+void viSetTrippleBuffer(s32 resolutionIndex) {
+    sTripleBufferRequested = RESOLUTION_IS_WIDESCREEN(resolutionIndex);
 }
 
 s8 viGetTrippleBuffer(void) {
@@ -328,7 +328,7 @@ s8 viGetTrippleBuffer(void) {
 }
 
 s32 viChangeBuffers(void) {
-    return sTripleBuffer != D_800FECA6_B1896;
+    return sTripleBuffer != sTripleBufferRequested;
 }
 
 void viNoClear(void) {
