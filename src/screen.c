@@ -2,7 +2,7 @@
 #include "gameVi.h"
 #include "memory.h"
 
-#define SCREEN_HEIGHT_PART 6
+#define SCREEN_HEIGHT_PART (SCREEN_HEIGHT / 40)
 
 extern Gfx D_800A4F20_A5B20[];
 extern Gfx D_800A4F48_A5B48[];
@@ -68,18 +68,18 @@ void screenDraw(Gfx** dList, u8* screenAddress, s32 arg2) {
     if (((width == SCREEN_WIDTH) && (height == SCREEN_HEIGHT)) || arg2 == 0) {
         yl = (height - SCREEN_HEIGHT) << 0xF;
         xl = (width - SCREEN_WIDTH) << 1;
-        dy = 0x60000;
-        xh = xl + 0x500;
-        dsdx = 0x50000 / SCREEN_WIDTH;
-        dtdy = 0x3C000 / SCREEN_HEIGHT;
+        dy = (SCREEN_HEIGHT << 0x10) / 40;
+        xh = xl + (SCREEN_WIDTH << 2);
+        dsdx = (SCREEN_WIDTH << 10) / SCREEN_WIDTH;
+        dtdy = (SCREEN_HEIGHT << 10) / SCREEN_HEIGHT;
         gSPDisplayList((*dList)++, D_800A4F20_A5B20);
     } else {
         yl = 0;
         xl = 0;
         dy = (height << 0x10) / 40;
         xh = width << 2;
-        dsdx = 0x50000 / width;
-        dtdy = 0x3C000 / height;
+        dsdx = (SCREEN_WIDTH << 10) / width;
+        dtdy = (SCREEN_HEIGHT << 10) / height;
         gSPDisplayList((*dList)++, D_800A4F48_A5B48);
     }
 
