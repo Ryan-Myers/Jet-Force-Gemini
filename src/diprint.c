@@ -1171,7 +1171,7 @@ s32 debug_text_character(Gfx **dList, s32 asciiVal) {
     fontCharU = gDebugFontCoords[gDebugFontTexture][asciiVal].u;
     fontCharWidth = (gDebugFontCoords[gDebugFontTexture][asciiVal].v - fontCharU) + 1;
     if (gDebugTextOn) {
-        gDPSetCombineMode((*dList)++, DKR_CC_UNK14, DKR_CC_UNK14);
+        gDPSetCombineMode((*dList)++, G_CC_UNKJFG, G_CC_UNKJFG);
         gSPTextureRectangle((*dList)++, (gDebugTextX << 2), (gDebugTextY << 2), ((gDebugTextX + fontCharWidth) << 2),
                             ((gDebugTextY + 10) << 2), 0, (fontCharU << 5), 0, 1024, 1024);
     }

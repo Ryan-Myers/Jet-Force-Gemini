@@ -156,11 +156,11 @@ void camInit(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camPushModelMtx.s")
 
 void camRestoreModelMtx(Gfx **dlist) {
-    gDkrInsertMatrix((*dlist)++, G_MWO_MATRIX_XX_XY_I, G_MTX_DKR_INDEX_0);
+    gSPSelectMatrixDKR((*dlist)++, G_MTX_DKR_INDEX_0);
 }
 
 void camPopModelMtx(Gfx **dlist) {
-    gDkrInsertMatrix((*dlist)++, G_MWO_MATRIX_XX_XY_I, G_MTX_DKR_INDEX_0);
+    gSPSelectMatrixDKR((*dlist)++, G_MTX_DKR_INDEX_0);
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camGetPtr.s")

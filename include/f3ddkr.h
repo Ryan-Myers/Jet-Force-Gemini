@@ -83,29 +83,28 @@
 // used for blinking lights
 #define G_CC_BLENDTEX_PRIM TEXEL1, TEXEL0, PRIMITIVE, TEXEL0, TEXEL1, TEXEL0, PRIMITIVE, TEXEL0
 
-// Color combiner values. These need better names!
-#define DKR_CC_UNK0 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0
-#define DKR_CC_UNK1 ENVIRONMENT, COMBINED, ENV_ALPHA, COMBINED, COMBINED, 0, PRIMITIVE, 0
-#define DKR_CC_UNK2 ENVIRONMENT, COMBINED, ENV_ALPHA, COMBINED, 0, 0, 0, COMBINED
-#define DKR_CC_UNK3 ENVIRONMENT, SHADE, ENV_ALPHA, SHADE, 0, 0, 0, SHADE
-#define DKR_CC_UNK4 ENVIRONMENT, SHADE, ENV_ALPHA, SHADE, 0, 0, 0, PRIMITIVE
-#define DKR_CC_UNK5 TEXEL0, PRIMITIVE, SHADE_ALPHA, PRIMITIVE, TEXEL0, 0, PRIMITIVE, 0
-#define DKR_CC_UNK6 ENVIRONMENT, COMBINED, SHADE, COMBINED, 0, 0, 0, COMBINED
-#define DKR_CC_UNK7 TEXEL1, TEXEL0, PRIMITIVE, TEXEL0, TEXEL1, TEXEL0, PRIMITIVE, TEXEL0
-#define DKR_CC_UNK8 COMBINED, 0, SHADE, 0, 0, 0, 0, COMBINED
-#define DKR_CC_UNK9 PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0
-#define DKR_CC_UNK10 TEXEL0, 0, SCALE, 0, 0, 0, 0, TEXEL0
-#define DKR_CC_UNK11 ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, TEXEL0, 0, PRIMITIVE, 0
-#define	DKR_CC_UNK12 0, 0, 0, ENVIRONMENT, 0, 0, 0, TEXEL0
-#define DKR_CC_UNK13 ENVIRONMENT, TEXEL0, ENV_ALPHA, TEXEL0, TEXEL1, 0, PRIMITIVE, 0
+// cycle 2 modes
+
+// Alpha = COMBINED * PRIM
+#define G_CC_MODULATEA_PRIM2 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0
+// Blend with ENV using ENV_ALPHA, alpha = COMBINED * PRIM
+#define G_CC_BLENDI_ENV_ALPHA_PRIM2 ENVIRONMENT, COMBINED, ENV_ALPHA, COMBINED, COMBINED, 0, PRIMITIVE, 0
+// Blend with ENV using ENV_ALPHA, alpha unchanged
+#define G_CC_BLEND_ENV_ALPHA2 ENVIRONMENT, COMBINED, ENV_ALPHA, COMBINED, 0, 0, 0, COMBINED
+// Blend with ENV using SHADE, alpha unchanged; used after G_CC_BLEND_SHADEALPHA
+#define G_CC_BLENDI_SHADE ENVIRONMENT, COMBINED, SHADE, COMBINED, 0, 0, 0, COMBINED
+// Blend with ENV using ENV_ALPHA, alpha = COMBINED * SHADE; used for water
+#define G_CC_BLENDI_ENV_ALPHA_MODULATEA2 ENVIRONMENT, COMBINED, ENV_ALPHA, COMBINED, COMBINED, 0, SHADE, 0
+#define G_CC_MODULATEIDECALA2 COMBINED, 0, SHADE, 0, 0, 0, 0, COMBINED
+
 #ifdef JFGDIFFS
-#define	DKR_CC_UNK14  0, 0, 0, ENVIRONMENT, TEXEL0, 0, ENVIRONMENT, 0
+#define	G_CC_UNKJFG  0, 0, 0, ENVIRONMENT, TEXEL0, 0, ENVIRONMENT, 0
 #endif
 
-#define	DKR_CC_ENVIRONMENT   0, 0, 0, ENVIRONMENT, 0, 0, 0, ENVIRONMENT
-#define DKR_CC_DECALFADEPRIM 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0
-
-// For some reason DKR has a value for G_MDSFT_BLENDMASK, despite the fact that it is unsupported.
+// Inside the RSP, when we change otherMode, it sends the new mode to the RDP with the lower 4 bits set to 1.
+// If we use the standard g*SPSetOtherMode macros, this doesn't matter to us.
+// But in DKR, direct command transmission to the RDP is often used, bypassing processing in the RSP,
+// so in custom code we also need to set those 4 bits to 1.
 #define G_DKR_BLENDMASK 15
 
 // OtherMode_H values.
@@ -133,18 +132,14 @@
 // OtherMode_L values.
 #define DKR_OML_COMMON G_AC_NONE | G_ZS_PIXEL
 
-// Render mode values. These need better names!
-#define DKR_RM_UNKNOWN0   Z_UPD | GBL_c1(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_IN, G_BL_1MA)
-#define DKR_RM_UNKNOWN1   GBL_c1(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_IN, G_BL_1MA)
-#define DKR_RM_UNKNOWN2   AA_EN | IM_RD | CLR_ON_CVG | FORCE_BL | CVG_DST_WRAP | ZMODE_OPA
-#define DKR_RM_UNKNOWN2_1 DKR_RM_UNKNOWN2 | GBL_c1(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
-#define DKR_RM_UNKNOWN2_2 DKR_RM_UNKNOWN2 | GBL_c2(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
-#define DKR_RM_UNKNOWN3   AA_EN | Z_CMP | Z_UPD | IM_RD | CVG_X_ALPHA | ALPHA_CVG_SEL | CVG_DST_CLAMP | ZMODE_OPA
-#define DKR_RM_UNKNOWN3_1 DKR_RM_UNKNOWN3 | GBL_c1(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
-#define DKR_RM_UNKNOWN3_2 DKR_RM_UNKNOWN3 | GBL_c2(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_A_MEM)
-#define DKR_RM_UNKNOWN4   AA_EN | Z_CMP | IM_RD | CVG_X_ALPHA | FORCE_BL | CVG_DST_CLAMP | ZMODE_XLU
-#define DKR_RM_UNKNOWN4_1 DKR_RM_UNKNOWN4 | GBL_c1(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
-#define DKR_RM_UNKNOWN4_2 DKR_RM_UNKNOWN4 | GBL_c2(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+// modified version of RM_AA_ZB_XLU_LINE, with ALPHA_CVG_SEL disabled
+#define	RM_AA_ZB_XLU_LINE_MOD(clk) \
+    AA_EN | Z_CMP | IM_RD | CVG_X_ALPHA | \
+    FORCE_BL | CVG_DST_CLAMP | ZMODE_XLU | \
+    GBL_c##clk(G_BL_CLR_IN, G_BL_A_IN, G_BL_CLR_MEM, G_BL_1MA)
+
+#define G_RM_AA_ZB_XLU_LINE_MOD RM_AA_ZB_XLU_LINE_MOD(1)
+#define G_RM_AA_ZB_XLU_LINE_MOD2 RM_AA_ZB_XLU_LINE_MOD(2)
 
 // Temporary until all commands are properly defined.
 #define fast3d_cmd(pkt, word0, word1) \
@@ -158,14 +153,12 @@
 
 #define G_TRIN  5
 #define G_DMADL 7
-#define G_MTX_DKR_INDEX_0 0x00
-#define G_MTX_DKR_INDEX_1 0x40
-#define G_MTX_DKR_INDEX_2 0x80
+#define G_MTX_DKR_INDEX_0 0
+#define G_MTX_DKR_INDEX_1 1
+#define G_MTX_DKR_INDEX_2 2
 #define G_MW_BILLBOARD 0x02 //0x01 = billboarding enabled, 0x00 = disabled
-#define G_MW_MVMATRIX 0x0A  //Specifies the index of the modelview matrix. 
-
-#define gDkrInsertMatrix(pkt, where, num)   \
-	gMoveWd(pkt, G_MW_MVMATRIX, where, num)
+#define G_MW_MVPMATRIX 0x0A  //Specifies the index of the mvp matrix. 
+#define G_VTX_APPEND 1
 
 #define gDkrEnableBillboard(pkt)            \
 	gMoveWd(pkt, G_MW_BILLBOARD, 0, 1)  
@@ -174,7 +167,12 @@
 	gMoveWd(pkt, G_MW_BILLBOARD, 0, 0)
 
 #define gSPVertexDKR(pkt, v, n, v0) \
-    gDma1p(pkt, G_VTX, v, (((n) * 8 + (n)) << 1) + 8,((n)-1)<<3|(((u32)(v) & 6))|(v0))
+    gDma1p(pkt, G_VTX, v, (((n) * 8 + (n)) << 1) + 8, ((n)-1)<<3|(((u32)(v) & 6))|(v0))
+
+#define gSPMatrixDKR(pkt, m, i) \
+    gSPMatrix(pkt, m, (i) << 6)
+#define gSPSelectMatrixDKR(pkt, num)   \
+	gMoveWd(pkt, G_MW_MVPMATRIX, 0, (num) << 6)
 
 #define TRIN_DISABLE_TEXTURE 0
 #define TRIN_ENABLE_TEXTURE 1
@@ -185,7 +183,7 @@
     _g->words.w1 = (unsigned int)(ptr);                                                                                             \
 }
 
-#define numberOfGfxCommands(gfxCmds) (sizeof(gfxCmds) / sizeof(Gwords))
+#define numberOfGfxCommands(gfxCmds) (sizeof(gfxCmds) / sizeof(Gfx))
 
 #define gDkrDmaDisplayList(pkt, address, numberOfCommands)                         \
 {                                                                                  \
@@ -233,10 +231,19 @@
 }
 #endif
 
-#if defined(F3DDKR_GBI)
- // ?????? - Needed to modify this to work with matching build_tex_display_list
-#undef TXL2WORDS_4b
-#define TXL2WORDS_4b(txls) ((txls)/16)
-#endif
+// DKR and JFG Uses these macros, from later gbi.h files
+#define	gDPSetOtherMode(pkt, mode0, mode1)				\
+{									\
+	Gfx *_g = (Gfx *)(pkt);						\
+									\
+	_g->words.w0 = _SHIFTL(G_RDPSETOTHERMODE,24,8)|_SHIFTL(mode0,0,24);\
+	_g->words.w1 = (unsigned int)(mode1);				\
+}
+
+#define	gsDPSetOtherMode(mode0, mode1)					\
+{{									\
+	_SHIFTL(G_RDPSETOTHERMODE,24,8)|_SHIFTL(mode0,0,24),		\
+	(unsigned int)(mode1)						\
+}}
 
 #endif
