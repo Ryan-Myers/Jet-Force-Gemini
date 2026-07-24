@@ -11,17 +11,17 @@ extern Gfx D_A4F78[];
 
 const char D_800ADF00[] = "SCREEN: No out of range!!\n";
 
-void* screenLoad(s32 screenIndex) {
-    s32* screenTable;
+void *screenLoad(s32 screenIndex) {
+    s32 *screenTable;
     s32 start;
     s32 size;
     s32 count;
     s32 uncompressedSize;
-    u8* decompressedAddr;
-    u8* sp1C;
+    u8 *decompressedAddr;
+    u8 *sp1C;
     u32 compressedAddr;
 
-    screenTable = (s32*)piRomLoad(0x14);
+    screenTable = (s32 *) piRomLoad(0x14);
     for (count = 0; screenTable[count] != -1; count++) {}
     count--;
     if (count == 0) {
@@ -35,24 +35,24 @@ void* screenLoad(s32 screenIndex) {
     size = screenTable[screenIndex + 1] - screenTable[screenIndex];
     start = screenTable[screenIndex];
     decompressedAddr = NULL;
-    sp1C = (u8*)mmAlloc(0x10, COLOUR_TAG_BLUE);
+    sp1C = (u8 *) mmAlloc(0x10, COLOUR_TAG_BLUE);
     if (sp1C != NULL) {
         piRomLoadSection(0x13, (u32) sp1C, start, 0x10);
         uncompressedSize = rzipUncompressSize(sp1C) + 0x80;
         mmFree(sp1C);
-        decompressedAddr = (u8*)mmAlloc(uncompressedSize, COLOUR_TAG_BLUE);
+        decompressedAddr = (u8 *) mmAlloc(uncompressedSize, COLOUR_TAG_BLUE);
         if (decompressedAddr != NULL) {
-            compressedAddr = (u32)((decompressedAddr + uncompressedSize) - size);
+            compressedAddr = (u32) ((decompressedAddr + uncompressedSize) - size);
             compressedAddr -= (compressedAddr & 0xF);
             piRomLoadSection(0x13, compressedAddr, start, size);
-            rzipUncompress((u8* ) (compressedAddr & 0xFFFFFFFF), decompressedAddr); // fakematch
+            rzipUncompress((u8 *) (compressedAddr & 0xFFFFFFFF), decompressedAddr); // fakematch
         }
     }
     mmFree(screenTable);
     return decompressedAddr;
 }
 
-void screenDraw(Gfx** dList, u8* screenAddress, s32 arg2) {
+void screenDraw(Gfx **dList, u8 *screenAddress, s32 arg2) {
     s32 yl;
     s32 yPos;
     s32 xh;
@@ -64,7 +64,7 @@ void screenDraw(Gfx** dList, u8* screenAddress, s32 arg2) {
     u32 height;
 
     screenAddress += 0x10;
-    viGetCurrentSize((s32*)&width, (s32*)&height);
+    viGetCurrentSize((s32 *) &width, (s32 *) &height);
     if (((width == SCREEN_WIDTH) && (height == SCREEN_HEIGHT)) || arg2 == 0) {
         yl = (height - SCREEN_HEIGHT) << 0xF;
         xl = (width - SCREEN_WIDTH) << 1;
@@ -85,10 +85,10 @@ void screenDraw(Gfx** dList, u8* screenAddress, s32 arg2) {
 
     for (yPos = 0; yPos != SCREEN_HEIGHT; yPos += SCREEN_HEIGHT_PART) {
         (*dList)->words.w0 = D_800A4F70_A5B70;
-        (*dList)->words.w1 = (u32)screenAddress;
+        (*dList)->words.w1 = (u32) screenAddress;
         (*dList)++;
-        gDkrDmaDisplayList((*dList)++, (u32)D_A4F78, 6);
-        gSPTextureRectangle((*dList)++, xl, yl >> 0xE, xh, (s32)(yl + dy) >> 0xE, 0, 0, 0, dsdx, dtdy);
+        gDkrDmaDisplayList((*dList)++, (u32) D_A4F78, 6);
+        gSPTextureRectangle((*dList)++, xl, yl >> 0xE, xh, (s32) (yl + dy) >> 0xE, 0, 0, 0, dsdx, dtdy);
         screenAddress += SCREEN_WIDTH * SCREEN_HEIGHT_PART * 2;
         yl += dy;
     }

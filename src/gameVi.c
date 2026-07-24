@@ -34,7 +34,7 @@ f32 vScale = 1.0f;
 
 #ifdef VERSION_us
 s32 sShouldSetCustomViMode = FALSE; // Flag to indicate if a custom VI mode has been set
-s32 gSuppressWidescreen = TRUE; // Basically suppresses widescreen for the first initialization.
+s32 gSuppressWidescreen = TRUE;     // Basically suppresses widescreen for the first initialization.
 #endif
 
 ResolutionSettings resolutionSettings[] = {

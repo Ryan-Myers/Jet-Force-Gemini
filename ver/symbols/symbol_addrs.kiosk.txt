@@ -1512,6 +1512,9 @@ hScale = 0x800A436C;
 vScale = 0x800A4370;
 resolutionSettings = 0x800A4374; // size:0x258
 blinkMode = 0x800A5848;
+D_800A4F20_A5B20 = 0x800A58F0;
+D_800A4F48_A5B48 = 0x800A5918;
+D_800A4F70_A5B70 = 0x800A5940;
 racingInGame = 0x800A5984;
 racingReturnLevel = 0x800A5988;
 racingReturnSetup = 0x800A598C;
@@ -2048,3 +2051,6 @@ rspF3DDKRDramStart = 0x8009FC60;
 // ucode_data
 aspMainDataStart = 0x800B0770;
 rspF3DDKRDataDramStart = 0x800B0EB0;
+
+// assets
+D_A4F78 = 0xA5948;
