@@ -312,7 +312,7 @@ segments:
       - [0xA44F0, data, runLink]
       - [0xA4500, .data, gameVi]
       - [0xA4790, data, textures]
-      - [0xA5B20, data, screen]
+      - [0xA5B20, .data, screen]
       - [0xA5BB0, data, menu] # so many variables in here are referenced in several files.
       - [0xA6540, data, weather]
       - [0xA6960, data, particles]

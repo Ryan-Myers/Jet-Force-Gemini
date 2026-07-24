@@ -125,6 +125,10 @@
 #define DKR_OMH_COPY_POINT_NOPERSP G_DKR_BLENDMASK | G_PM_NPRIMITIVE | G_TD_CLAMP | G_TL_TILE | G_TC_FILT \
                                  | G_CK_NONE | G_CD_DISABLE | G_AD_PATTERN | G_CYC_COPY | G_TT_NONE       \
                                  | G_TF_POINT  | G_TP_NONE
+
+#define JFG_OMH_COPY_POINT_NOPERSP G_DKR_BLENDMASK | G_PM_NPRIMITIVE | G_TD_CLAMP | G_TL_TILE | G_TC_FILT \
+                                 | G_CK_NONE | G_CD_DISABLE | G_AD_PATTERN | G_TT_NONE       \
+                                 | G_TF_POINT  | G_TP_NONE
     
 // OtherMode_L values.
 #define DKR_OML_COMMON G_AC_NONE | G_ZS_PIXEL
