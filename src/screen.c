@@ -23,8 +23,9 @@ Gfx D_800A4F48_A5B48[] = {
     gsSPEndDisplayList(),
 };
 
+// D_800A4F70_A5B70 has no texture loaded by default. It looks like it's dynamically replaced later.
 Gfx D_800A4F70_A5B70[] = {
-    gsDPLoadTextureBlockS(OS_K0_TO_PHYSICAL(0x80000000), G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, SCREEN_HEIGHT_PART,
+    gsDPLoadTextureBlockS(NULL, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, SCREEN_HEIGHT_PART,
                           0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
                           G_TX_NOLOD, G_TX_NOLOD),
 };
@@ -95,7 +96,7 @@ void screenDraw(Gfx **dList, u8 *screenAddress, s32 arg2) {
     } else {
         yl = 0;
         xl = 0;
-        dy = (height << 0x10) / 40;
+        dy = (height << 16) / 40;
         xh = width << 2;
         dsdx = (SCREEN_WIDTH << 10) / width;
         dtdy = (SCREEN_HEIGHT << 10) / height;
@@ -103,7 +104,7 @@ void screenDraw(Gfx **dList, u8 *screenAddress, s32 arg2) {
     }
 
     for (yPos = 0; yPos != SCREEN_HEIGHT; yPos += SCREEN_HEIGHT_PART) {
-        // fast3d_cmd((*dList)++, *((u32 *) D_800A4F70_A5B70, (u32) screenAddress);
+        // fast3d_cmd((*dList)++, *((u32 *) D_800A4F70_A5B70), (u32) screenAddress);
         (*dList)->words.w0 = *((u32 *) D_800A4F70_A5B70);
         (*dList)->words.w1 = (u32) screenAddress;
         (*dList)++;
