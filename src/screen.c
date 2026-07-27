@@ -4,7 +4,7 @@
 
 #define SCREEN_HEIGHT_PART (SCREEN_HEIGHT / 40)
 
-//TODO: This is likely loading `OS_K0_TO_PHYSICAL(D_800A4D20[5])` but we need to migrate that first.
+// TODO: This is likely loading `OS_K0_TO_PHYSICAL(D_800A4D20[5])` but we need to migrate that first.
 extern Gfx D_A4F78[];
 
 Gfx D_800A4F20_A5B20[] = {
@@ -25,9 +25,9 @@ Gfx D_800A4F48_A5B48[] = {
 
 // D_800A4F70_A5B70 has no texture loaded by default. It looks like it's dynamically replaced later.
 Gfx D_800A4F70_A5B70[] = {
-    gsDPLoadTextureBlockS(NULL, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, SCREEN_HEIGHT_PART,
-                          0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK,
-                          G_TX_NOLOD, G_TX_NOLOD),
+    gsDPLoadTextureBlockS(NULL, G_IM_FMT_RGBA, G_IM_SIZ_16b, SCREEN_WIDTH, SCREEN_HEIGHT_PART, 0,
+                          G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD,
+                          G_TX_NOLOD),
 };
 
 void *screenLoad(s32 screenIndex) {

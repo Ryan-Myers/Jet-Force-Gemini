@@ -146,7 +146,7 @@ void diRcpPrintDL(Gfx *dList, UNUSED s32 arg1, s32 count) {
             case G_TEXRECT:
                 gListIt += diRcpStrName((Gfx *) gListIt, "G_TEXRECT");
                 break;
-            case 241:
+            case 0xF1: // Right between G_SETTILESIZE and G_LOADTLUT. Custom command for JFG, not in DKR?
             default:
                 switch ((s8) gListIt[0]) {
                     case G_DMAOFFSETS:
@@ -520,52 +520,51 @@ static s32 diRcpGeometryMode(Gfx *dList, char *str, UNUSED char *arg2) {
     word1 = dList->words.w1;
     sprintf(sp38, "%20s", str);
     do {
+        stubbed_printf(sp38, "%20s: %s(");
+        stubbed_printf(sp38, "|");
         if (word1 & bitMask) {
             if (sp28) {
                 sp28 = FALSE;
             }
             switch (bitMask) {
-                case 0x1:
+                case G_ZBUFFER:
+                    stubbed_printf(sp38, "G_ZBUFFER");
                     break;
-                case 0x2:
+                case G_TEXTURE_ENABLE:
+                    stubbed_printf(sp38, "G_TEXTURE_ENABLE");
                     break;
-                case 0x4:
+                case G_SHADE:
+                    stubbed_printf(sp38, "G_SHADE");
                     break;
-                case 0x200:
+                case G_SHADING_SMOOTH:
+                    stubbed_printf(sp38, "G_SHADING_SMOOTH");
                     break;
-                case 0x1000:
+                case G_CULL_FRONT:
+                    stubbed_printf(sp38, "G_CULL_FRONT");
                     break;
-                case 0x2000:
+                case G_CULL_BACK:
+                    stubbed_printf(sp38, "G_CULL_BACK");
                     break;
-                case 0x10000:
+                case G_FOG:
+                    stubbed_printf(sp38, "G_FOG");
                     break;
-                case 0x20000:
+                case G_LIGHTING:
+                    stubbed_printf(sp38, "G_LIGHTING");
                     break;
-                case 0x40000:
+                case G_TEXTURE_GEN:
+                    stubbed_printf(sp38, "G_TEXTURE_GEN");
                     break;
-                case 0x80000:
+                case G_TEXTURE_GEN_LINEAR:
+                    stubbed_printf(sp38, "G_TEXTURE_GEN_LINEAR");
                     break;
-                case 0x100000:
+                case G_LOD:
+                    stubbed_printf(sp38, "G_LOD");
                     break;
             }
         } else {
         }
+        stubbed_printf(sp38, ");\n");
         bitMask <<= 1;
     } while (bitMask <= 0x100000);
     return 8;
 }
-
-const char D_800AF14C[] = "%20s: %s(";
-const char D_800AF158[] = "|";
-const char D_800AF15C[] = "G_ZBUFFER";
-const char D_800AF168[] = "G_TEXTURE_ENABLE";
-const char D_800AF17C[] = "G_SHADE";
-const char D_800AF184[] = "G_SHADING_SMOOTH";
-const char D_800AF198[] = "G_CULL_FRONT";
-const char D_800AF1A8[] = "G_CULL_BACK";
-const char D_800AF1B4[] = "G_FOG";
-const char D_800AF1BC[] = "G_LIGHTING";
-const char D_800AF1C8[] = "G_TEXTURE_GEN";
-const char D_800AF1D8[] = "G_TEXTURE_GEN_LINEAR";
-const char D_800AF1F0[] = "G_LOD";
-const char D_800AF1F8[] = ");\n";
