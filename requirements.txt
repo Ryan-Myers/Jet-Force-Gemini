@@ -1,10 +1,10 @@
-splat64[mips]==0.37.0
-spimdisasm==1.39.2
+splat64[mips]==0.50.0
+spimdisasm==1.42.3
 pycparser>=2.22
 colorama>=0.4.6
 watchdog>=6.0.0
 Levenshtein>=0.26.1
 cxxfilt>=0.3.0
-mapfile-parser>=2.9.4
+mapfile-parser>=2.13.0
 PyYAML>=6.0.2
 colour>=0.1.5

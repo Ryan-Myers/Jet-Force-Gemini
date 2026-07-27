@@ -28,6 +28,7 @@ options:
   section_order: [".text", ".data", ".rodata", ".bss"]
   migrate_rodata_to_functions: True
   hasm_in_src_path: True
+  libultra_symbols: True
 segments:
   - name: header
     type: header

@@ -1,0 +1,4 @@
+/* Specific addresses for kiosk addresses that differ from US */
+/* These are fake symbols we just need until things are properly matched */
+D_A4F78 = 0xA5948;
+

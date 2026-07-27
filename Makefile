@@ -228,7 +228,9 @@ endif
 TARGET     = $(BUILD_DIR)/$(BASENAME).$(VERSION)
 LD_SCRIPT  = ver/$(BASENAME).$(VERSION).ld
 
-LD_FLAGS   = -T $(LD_SCRIPT) -T $(SYMBOLS_DIR)/undefined_syms.txt -T $(SYMBOLS_DIR)/undefined_funcs_auto.$(VERSION).txt  -T $(SYMBOLS_DIR)/undefined_syms_auto.$(VERSION).txt -T $(SYMBOLS_DIR)/libultra_undefined_syms.$(VERSION).txt
+LD_FLAGS   = -T $(LD_SCRIPT) -T $(SYMBOLS_DIR)/undefined_syms.txt -T $(SYMBOLS_DIR)/undefined_funcs_auto.$(VERSION).txt 
+LD_FLAGS  += -T $(SYMBOLS_DIR)/undefined_syms_auto.$(VERSION).txt -T $(SYMBOLS_DIR)/libultra_undefined_syms.$(VERSION).txt
+LD_FLAGS  += -T $(SYMBOLS_DIR)/undefined_syms.$(VERSION).txt
 LD_FLAGS  += -Map $(TARGET).map
 
 ASM_PROCESSOR_DIR := $(TOOLS_DIR)/asm-processor
@@ -397,9 +399,9 @@ endif
 
 extractall:
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).kiosk.yaml
-	# $(PYTHON) $(SPLAT) ver/splat/$(BASENAME).us.yaml
-	# $(PYTHON) $(SPLAT) ver/splat/$(BASENAME).pal.yaml
-	# $(PYTHON) $(SPLAT) ver/splat/$(BASENAME).jpn.yaml
+	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).us.yaml
+	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).pal.yaml
+	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).jpn.yaml
 
 setup:
 #Set up a python venv so we don't get warnings about breaking system packages.

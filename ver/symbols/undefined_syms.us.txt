@@ -1,0 +1,2 @@
+/* Specific addresses for us addresses that differ from others */
+D_A4F78 = 0xA4F78;

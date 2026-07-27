@@ -1,4 +1,3 @@
-osTvType = 0x80000300;
 entrypoint = 0x80000400;
 amSetMuteMode = 0x80000450;
 amTunePlay = 0x80000510;
@@ -2566,4 +2565,3 @@ D_800AF3E4 = 0x800AE834;
 D_800AF3F4 = 0x800AE844;
 D_800AF400 = 0x800AE850; // force_not_migration:True
 D_800AF408 = 0x800AE858; // force_not_migration:True
-gMainMemoryPool = 0x801059A0;
