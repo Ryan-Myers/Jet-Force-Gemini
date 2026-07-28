@@ -113,7 +113,9 @@ typedef struct FontCharDataAlt {
 extern FontCharDataAlt *Font;
 
 //main.c
-extern s8 D_800FE26C;
+extern s8 D_800FD7BC_B3B0C;
+extern s32 D_800A3290_A3E90;
+extern s32 D_800A3530_A4130;
 extern OSSched sc;
 extern u64 Time[1024];
 extern void *securitybuffer;
