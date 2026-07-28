@@ -38,6 +38,7 @@ jobs:
           SECRET_VERSION: ${{ matrix.version }}
 
     - name: Test
+      working-directory: secret_repo
       run: |
         pwd
         ls -al
