@@ -37,8 +37,13 @@ jobs:
           SECRET_BASENAME: baserom
           SECRET_VERSION: ${{ matrix.version }}
 
+    - Name: Test
+      run: |
+        pwd
+        ls -al
+
     - name: Move Baserom
-      run:  mv secrets/baserom.${{ matrix.version }}.z64 ./baseroms/
+      run:  mv baserom.${{ matrix.version }}.z64 ./baseroms/
   
     - name: Install Packages
       run: sudo apt-get install -y sudo apt install build-essential pkg-config git python3 wget python3-pip binutils-mips-linux-gnu python3-venv
