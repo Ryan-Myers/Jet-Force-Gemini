@@ -45,7 +45,7 @@ jobs:
       run:  mv baserom.${{ matrix.version }}.z64 ../baseroms/
   
     - name: Install Packages
-      run: sudo apt-get install -y sudo apt install build-essential pkg-config git python3 wget python3-pip binutils-mips-linux-gnu python3-venv
+      run: sudo apt-get install -y build-essential pkg-config git python3 wget python3-pip binutils-mips-linux-gnu python3-venv
 
     - name: Make Setup
       run: make setup
