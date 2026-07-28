@@ -54,7 +54,7 @@ jobs:
       run: make extract VERSION=${{ matrix.version }}
 
     - name: Make Build
-      run: make -j4
+      run: make -j4 VERSION=${{ matrix.version }}
 
     - name: Verify
       run: sha1sum -c ver/verification/jfg.${{ matrix.version }}.sha1
