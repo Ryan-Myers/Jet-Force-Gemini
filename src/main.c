@@ -181,7 +181,7 @@ void mainInitGame(void) {
     mmInit();
     securitybuffer = mmAlloc(16, COLOUR_TAG_GREY);
     rzipInit();
-    D_800FE26C = 0;
+    D_800FD7BC_B3B0C = 0;
 
     if (osTvType == OS_TV_TYPE_PAL) {
         viMode = OS_VI_PAL_LPN1;
@@ -199,7 +199,37 @@ void mainInitGame(void) {
     runlinkFreeCode(0x24);
 }
 #else
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainInitGame.s")
+void mainInitGame(void) {
+    s32 viMode;
+
+    if (osTvType == OS_TV_TYPE_PAL) {
+        viMode = OS_VI_PAL_LPN1;
+    } else if (osTvType == OS_TV_TYPE_NTSC) {
+        viMode = OS_VI_NTSC_LPN1;
+    } else if (osTvType == OS_TV_TYPE_MPAL) {
+        viMode = OS_VI_MPAL_LPN1;
+    }
+    osCreateScheduler(&sc, &Time, 13, viMode, 1);
+    RevealReturnAddresses();
+    mmInit();
+    rzipInit();
+    securitybuffer = mmAlloc(64, COLOUR_TAG_GREY);
+    D_800FD7BC_B3B0C = 0;
+    D_800A3530_A4130 = 1;
+    viInit(&sc);
+    mainPreNMI();
+    piInit();
+    mainPreNMI();
+    rcpInit(&sc);
+    mainPreNMI();
+    runlinkInitialise();
+    mainPreNMI();
+    D_800A3290_A3E90 = 1;
+    TrapDanglingJump();
+    mainPreNMI();
+    runlinkFreeCode(0x24);
+    D_800A3530_A4130 = 0;
+}
 #endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/func_800448B0.s")
