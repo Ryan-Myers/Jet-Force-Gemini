@@ -1998,3 +1998,5 @@ rspF3DDKRDramStart = 0x8009FC60;
 // ucode_data
 aspMainDataStart = 0x800B0770;
 rspF3DDKRDataDramStart = 0x800B0EB0;
+
+D_A4F78 = 0xA5948; // absolute:True defined:False
