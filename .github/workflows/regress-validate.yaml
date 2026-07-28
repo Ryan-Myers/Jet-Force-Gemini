@@ -1,0 +1,59 @@
+name: regress-validate
+on:
+  workflow_call:
+    secrets:
+      SECRET_PASSPHRASE: { required: true }
+      SECRET_REPO: { required: true }
+      SECRET_TOKEN: { required: true }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        version: [ kiosk, us ]
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.sha || github.ref }}
+  
+    - name: Update Submodules
+      run: git submodule update --init --recursive
+
+    - name: Fetch Secrets
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ secrets.SECRET_REPO }}
+        token: ${{ secrets.SECRET_TOKEN }}
+        path: secret_repo
+  
+    - name: Decrypt Secrets
+      working-directory: secret_repo
+      run: |
+        ./decrypt_secret.sh
+      env:
+          SECRET_PASSPHRASE: ${{ secrets.SECRET_PASSPHRASE }}
+          SECRET_BASENAME: baserom
+          SECRET_VERSION: ${{ matrix.version }}
+
+    - name: Move Baserom
+      run:  mv secrets/baserom.${{ matrix.version }}.z64 ./baseroms/
+  
+    - name: Install Packages
+      run: sudo apt-get install -y sudo apt install build-essential pkg-config git python3 wget python3-pip binutils-mips-linux-gnu python3-venv
+
+    - name: Make Setup
+      run: make setup
+
+    - name: Make Extract
+      run: make extract VERSION=${{ matrix.version }}
+
+    - name: Make Build
+      run: make -j4
+
+    - name: Verify
+      run: sha1sum -c ver/verification/jfg.${{ matrix.version }}.sha1
+
+    - name: Cleanup
+      run: make clean VERSION=${{ matrix.version }}
