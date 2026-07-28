@@ -37,7 +37,7 @@ jobs:
           SECRET_BASENAME: baserom
           SECRET_VERSION: ${{ matrix.version }}
 
-    - Name: Test
+    - name: Test
       run: |
         pwd
         ls -al
