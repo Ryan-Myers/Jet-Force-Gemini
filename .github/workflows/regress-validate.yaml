@@ -37,6 +37,9 @@ jobs:
           SECRET_BASENAME: baserom
           SECRET_VERSION: ${{ matrix.version }}
 
+    - name: Make baserom directory
+      run: mkdir baseroms
+
     - name: Move Baserom
       working-directory: secret_repo
       run:  mv baserom.${{ matrix.version }}.z64 ../baseroms/
