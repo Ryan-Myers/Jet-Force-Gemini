@@ -63,7 +63,19 @@ s32 levelGetBlurEffect(s32 arg0) {
     return 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetGfxIndex.s")
+u32 levelGetGfxIndex(s32 arg0) {
+    u32 temp_t0;
+    u32 var_v0;
+
+    var_v0 = mainGetNumberOfCameras() - 1;
+    if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
+        temp_t0 = (u32)D_800FB12C_B176C[0][arg0].unk3 >> 5;
+        if (temp_t0 != 0) {
+            var_v0 = temp_t0;
+        }
+    }
+    return var_v0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetWorldRegions.s")
 
