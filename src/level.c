@@ -19,7 +19,12 @@ s32 levelNGetType(s32 arg0) {
 }
 
 #ifdef VERSION_us
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetTune.s")
+s32 levelGetTune(s32 arg0) {
+    if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
+        return D_800FB12C_B176C[0][arg0 * 5 + 4];
+    }
+    return -1;
+}
 #endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetWorld.s")
