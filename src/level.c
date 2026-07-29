@@ -11,6 +11,7 @@
 #include "weather.h"
 
 extern LevelHeader *D_800FB118_B5958;
+
 typedef struct {
     u8 unk0;
     s8 unk1;
@@ -23,6 +24,11 @@ typedef struct {
     s32 unk0;
     u8 pad4[0x10 - 0x4];
 } Unk_800FB170;
+
+typedef struct {
+    u8 unk0;
+    u8 unk1[0x10];
+} Unk_800FB1E0_B1820;
 
 
 const char D_800ACD20[] = "LOADLEVEL Error: Level out of range\n";
@@ -37,6 +43,8 @@ extern s32 D_800FB114_B1754; // gLevelNumber
 extern s32 D_800FB124_B1764;
 extern Level_B176C* D_800FB12C_B176C[];
 extern Unk_800FB170 D_800FB170_B17B0[];
+extern Unk_800FB1E0_B1820 D_800FB1E0_B1820[0x20];
+
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetCounts.s")
 
@@ -246,8 +254,17 @@ s32 levelGetPrevOfWorld(s32 arg0, s8 arg1) {
     return var_v1;
 }
 
-// The reference to gfxBase is false, as it's checking the end of the D_800FBCA0 array
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelInitRegionFlags.s")
+void levelInitRegionFlags(void) {
+    s32 j;
+    s32 i;
+    
+    for (i = 0; i < ARRAY_COUNT(D_800FB1E0_B1820); i++) {
+        for (j = 0; j < ARRAY_COUNT(D_800FB1E0_B1820[i].unk1); j++) {
+            D_800FB1E0_B1820[i].unk1[j] = 0;
+        }
+        D_800FB1E0_B1820[i].unk0 = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetRegionFlags.s")
 
