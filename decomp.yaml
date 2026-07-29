@@ -1,0 +1,62 @@
+name: Jet Force Gemini
+repo: https://github.com/Ryan-Myers/Jet-Force-Gemini
+platform: n64
+versions:
+- name: us
+  fullname: US
+  sha1: 493ced9008dbe932d6e91179b68e8630cf23a023
+  paths:
+    target: "baserom.us.z64"
+    build_dir: "build"
+    map: "build/jfg.us.map"
+    compiled_target: "build/jfg.us.z64"
+    elf: "build/jfg.us.elf"
+    expected_dir: "expected"
+    asm: "asm"
+    nonmatchings: "asm/nonmatchings"
+- name: kiosk
+  fullname: kiosk
+  sha1: f00f7c7fb085d0df57dcb649793aced5be4e8562
+  paths:
+    target: "baserom.kiosk.z64"
+    build_dir: "build"
+    map: "build/jfg.kiosk.map"
+    compiled_target: "build/jfg.kiosk.z64"
+    elf: "build/jfg.kiosk.elf"
+    expected_dir: "expected"
+    asm: "asm"
+    nonmatchings: "asm/nonmatchings"
+
+tools:
+  decompme:
+    preset: 248
+  permuter:
+    decompme_compilers:
+      tools/ido-recomp/linux/cc: ido5.3
+  mapfile_parser:
+    progress_report:
+      output: build/progress.json
+      check_asm_paths: False
+      report_data: True
+      prefixes_to_trim:
+        # - build/libultra/
+        # - build/src/libultra/
+        # - build/src/overlays/
+        # - build/src/
+        - build/
+      categories:
+        - id: libultra
+          name: libultra
+          paths:
+            - libultra
+            - src/libultra
+
+        - id: overlays
+          name: Overlays
+          paths:
+            - src/overlays
+
+        - id: src
+          name: src
+          paths:
+            - src
