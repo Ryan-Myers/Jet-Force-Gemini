@@ -41,7 +41,12 @@ s32 levelGetWorld(s32 arg0) {
     return 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetRegionNo.s")
+s32 levelGetRegionNo(s32 arg0) {
+    if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
+        return (*D_800FB12C_B176C)[arg0].unk2;
+    }
+    return 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetScreenMode.s")
 
