@@ -151,7 +151,9 @@ s32 levelGetNumber(void) {
     return D_800FB114_B1754;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetType.s")
+u8 levelGetType(void) {
+    return D_800FBBD8->unk6C;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetCamera.s")
 
