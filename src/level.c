@@ -21,6 +21,7 @@ const char D_800ACD20[] = "LOADLEVEL Error: Level out of range\n";
 const char D_800ACD48[] = "levelGetRegionFlags: Ran out of levelRegionFlag structures!!\n";
 const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
 
+extern s32 D_800FB114_B1754; // gLevelNumber
 extern s32 D_800FB124_B1764;
 extern Level_B176C* D_800FB12C_B176C[];
 extern Unk_800FB170 D_800FB170_B17B0[];
@@ -146,7 +147,9 @@ Unk_800FB170* levelGetColourCycling(void) {
     return D_800FB170_B17B0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetNumber.s")
+s32 levelGetNumber(void) {
+    return D_800FB114_B1754;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetType.s")
 
