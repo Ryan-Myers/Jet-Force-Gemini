@@ -56,5 +56,14 @@ jobs:
     - name: Verify
       run: sha1sum -c ver/verification/jfg.${{ matrix.version }}.sha1
 
+    - name: Generate objdiff report
+      run: python3 -m mapfile_parser objdiff_report --version ${{ matrix.version }}
+
+    - name: Upload progress report artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.version }}_progress
+        path: build/progress.json
+
     - name: Cleanup
       run: make clean VERSION=${{ matrix.version }}
