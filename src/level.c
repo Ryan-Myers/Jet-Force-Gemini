@@ -27,7 +27,12 @@ s32 levelGetTune(s32 arg0) {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetWorld.s")
+s32 levelGetWorld(s32 arg0) {
+    if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
+        return (s8)D_800FB12C_B176C[0][arg0 * 5 + 1];
+    }
+    return 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetRegionNo.s")
 
