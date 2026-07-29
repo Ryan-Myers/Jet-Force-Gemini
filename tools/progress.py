@@ -7,9 +7,9 @@ import sys
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 root_dir = os.path.join(script_dir, "..")
-asm_dir = os.path.join(root_dir, "asm")
+asm_dir = os.path.join(root_dir, "asm", "nonmatchings")
 build_dir = os.path.join(root_dir, "build")
-elf_path = os.path.join(build_dir, "jfg.kiosk.elf")
+elf_path = os.path.join(build_dir, "jfg.us.elf")
 
 def get_func_sizes():
     try:
@@ -55,6 +55,7 @@ def get_funcs_sizes(sizes, matchings, nonmatchings):
 
     for func in nonmatchings:
         if func not in sizes:
+            print(f"Warning: {func} not found in elf")
             pass
             # print(func)
         else:

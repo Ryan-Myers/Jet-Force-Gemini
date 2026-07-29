@@ -410,7 +410,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
 
     // Allocate memory for overlay (text + data + rodata + relocation table)
     overlay->VramBase = (s32) mmAlloc(
-        overlay->TextSize + overlay->DataSize + overlay->RodataSize + overlay->RelocationTableSize, 0x7F7F7FFF);
+        overlay->TextSize + overlay->DataSize + overlay->RodataSize + overlay->RelocationTableSize, COLOUR_TAG_GREY);
 
     mmColourTagUnk2 = -1;
 
@@ -420,7 +420,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
 
     // If there's a secondary relocation table, allocate and load it
     if (overlay->SecondaryRelocationTableSize) {
-        relocTable = (RelocationEntry *) mmAlloc(overlay->SecondaryRelocationTableSize, 0x7F7F7FFF);
+        relocTable = (RelocationEntry *) mmAlloc(overlay->SecondaryRelocationTableSize, COLOUR_TAG_GREY);
         if (relocTable == NULL) {
             mmFree((void *) overlay->VramBase);
             return 0;
