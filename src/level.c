@@ -1,5 +1,6 @@
 #include "common.h"
 #include "audio.h"
+#include "memory.h"
 #include "textures.h"
 
 extern LevelHeader *D_800FB118_B5958;
@@ -21,6 +22,9 @@ const char D_800ACD20[] = "LOADLEVEL Error: Level out of range\n";
 const char D_800ACD48[] = "levelGetRegionFlags: Ran out of levelRegionFlag structures!!\n";
 const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
 
+extern u8* D_800A31A0_A3DA0;
+
+extern u32* D_800FB110_B1750;
 extern s32 D_800FB114_B1754; // gLevelNumber
 extern s32 D_800FB124_B1764;
 extern Level_B176C* D_800FB12C_B176C[];
@@ -167,7 +171,17 @@ LevelHeader *levelGetLevel(void) {
     return D_800FB118_B5958;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetName.s")
+u8* levelGetName(s32 arg0) {
+    *D_800A31A0_A3DA0 = 0;
+    if (arg0 < D_800FB124_B1764) {
+        D_800FB110_B1750 = piRomLoad(0x1E);
+        if (D_800FB110_B1750 != NULL) {
+            piRomLoadSection(0x1F, (u32) D_800A31A0_A3DA0, (s32) D_800FB110_B1750[arg0], 0x20);
+            mmFree(D_800FB110_B1750);
+        }
+    }
+    return D_800A31A0_A3DA0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelFreeAll.s")
 
