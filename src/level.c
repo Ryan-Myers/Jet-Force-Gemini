@@ -55,7 +55,13 @@ s32 levelGetScreenMode(s32 arg0) {
     return 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetBlurEffect.s")
+s32 levelGetBlurEffect(s32 arg0) {
+    if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
+        // TODO: weird casting and shifting to get instructions. might be bitfields?
+        return ((u32)D_800FB12C_B176C[0][arg0].unk3 << 0x1B) >> 0x1E;
+    }
+    return 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetGfxIndex.s")
 
