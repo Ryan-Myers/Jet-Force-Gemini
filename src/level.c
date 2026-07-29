@@ -37,6 +37,7 @@ const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
 
 extern s32 D_800A089C_A149C;
 extern u8* D_800A31A0_A3DA0;
+extern Unk_800FB1E0_B1820* D_800A31C4_A3DC4;
 
 extern u32* D_800FB110_B1750;
 extern s32 D_800FB114_B1754; // gLevelNumber
@@ -266,7 +267,19 @@ void levelInitRegionFlags(void) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetRegionFlags.s")
+void levelGetRegionFlags(void) {
+    Unk_800FB1E0_B1820* temp_t9;
+    u8 temp_v0;
+
+    // TODO: expand D_800FBBD8 instead of [1]?
+    temp_v0 = D_800FBBD8[1].fogR;
+    if (temp_v0 >= 0x20) {
+        D_800A31C4_A3DC4 = NULL;
+    } else {
+        D_800A31C4_A3DC4 = &D_800FB1E0_B1820[temp_v0];
+        D_800A31C4_A3DC4->unk0 = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetObjectID.s")
 
