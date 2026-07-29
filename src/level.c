@@ -155,7 +155,13 @@ u8 levelGetType(void) {
     return D_800FBBD8->unk6C;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetCamera.s")
+u8 levelGetCamera(void) {
+    if (D_800FBBD8 != NULL) {
+        // TODO: make struct bigger instead of [1]?
+        return D_800FBBD8[1].unk16[9];
+    }
+    return 0;
+}
 
 LevelHeader *levelGetLevel(void) {
     return D_800FB118_B5958;
