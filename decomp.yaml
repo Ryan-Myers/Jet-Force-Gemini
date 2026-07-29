@@ -35,7 +35,7 @@ tools:
       tools/ido-recomp/linux/cc: ido5.3
   mapfile_parser:
     progress_report:
-      output: build/progress.json
+      output: build/report.json
       check_asm_paths: False
       report_data: True
       prefixes_to_trim:
