@@ -230,7 +230,21 @@ s32 levelGetNextOfWorld(s32 arg0, s8 arg1) {
     return var_v1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetPrevOfWorld.s")
+s32 levelGetPrevOfWorld(s32 arg0, s8 arg1) {
+    s32 var_v1;
+
+    var_v1 = arg0 - 1;
+    if (var_v1 < 0) {
+        var_v1 = D_800FB124_B1764 - 1;
+    }
+    while ((var_v1 != arg0) && (arg1 != D_800FB12C_B176C[0][var_v1].unk1)) {
+        var_v1 -= 1;
+        if (var_v1 < 0) {
+            var_v1 = D_800FB124_B1764 - 1;
+        }
+    }
+    return var_v1;
+}
 
 // The reference to gfxBase is false, as it's checking the end of the D_800FBCA0 array
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelInitRegionFlags.s")
