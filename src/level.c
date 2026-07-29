@@ -77,7 +77,34 @@ u32 levelGetGfxIndex(s32 arg0) {
     return var_v0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetWorldRegions.s")
+s32 levelGetWorldRegions(s32 arg0, u8* arg1) {
+    s32 found;
+    s32 j;
+    s32 i;
+    s32 var_v1;
+
+    var_v1 = 0;
+    for (i = 0; i < D_800FB124_B1764; i++) {
+        if (arg0 == D_800FB12C_B176C[0][i].unk1) {
+            if (D_800FB12C_B176C[0][i].unk2 != 0) {
+                found = FALSE;
+                if (D_800FB12C_B176C[0][i].unk2 != 0xFF) {
+                    for(j = 0; j < var_v1; j++) {
+                        if (arg1[j] == D_800FB12C_B176C[0][i].unk2) {
+                            found = TRUE;
+                            j = var_v1;
+                        }
+                    }
+                    if (!found) {
+                        arg1[var_v1] = D_800FB12C_B176C[0][i].unk2;
+                        var_v1++;
+                    }
+                }
+            }
+        }
+    }
+    return var_v1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelInit.s")
 
