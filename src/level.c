@@ -142,7 +142,9 @@ void levelUpdateColourCycling(s32 arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetColourCycling.s")
+Unk_800FB170* levelGetColourCycling(void) {
+    return D_800FB170_B17B0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetNumber.s")
 
