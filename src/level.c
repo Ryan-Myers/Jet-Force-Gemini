@@ -214,7 +214,21 @@ void levelFreeAll(void) {
     fxCpuTextureFlush();
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetNextOfWorld.s")
+s32 levelGetNextOfWorld(s32 arg0, s8 arg1) {
+    s32 var_v1;
+
+    var_v1 = arg0 + 1;
+    if (var_v1 >= D_800FB124_B1764) {
+        var_v1 = 0;
+    }
+    while ((var_v1 != arg0) && (arg1 != (*D_800FB12C_B176C)[var_v1].unk1)) {
+        var_v1 += 1;
+        if (var_v1 >= D_800FB124_B1764) {
+            var_v1 = 0;
+        }
+    }
+    return var_v1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetPrevOfWorld.s")
 
