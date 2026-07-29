@@ -1,7 +1,7 @@
 name: regress-internal
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
     types: [ opened, synchronize ]
 jobs:
