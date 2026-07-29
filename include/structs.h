@@ -653,7 +653,13 @@ typedef struct LevelHeader {
     /* 0x62 */ s16 wavePower; // always 256
     /* 0x64 */ s16 unk64; // Always 153 except in Smokey Castle where it's 0 and the title screen where it's 256 (Some form of secondary power)
     /* 0x66 */ s16 unk66; // values between 908 and 2560
+    union {
     /* 0x68 */ s16 textureId; // always 62 except in the trophy race where it's 205
+        struct {
+            u8 pad68;
+            s8 unk69;
+        };
+    };
     /* 0x6A */ u8 unk6A; // values between 1 and 6
     /* 0x6B */ u8 unk6B; // values between 1 and 6
     /* 0x6C */ s8 unk6C; // values between 0 and 4
@@ -701,10 +707,15 @@ typedef struct LevelHeader {
     /* 0xB0 */ s16 unkB0;
     /* 0xB2 */ u8 unkB2;
     /* 0xB3 */ u8 voiceLimit;
+    union {
+        TextureHeader* unkB4_ptr;
+        struct {
     /* 0xB4 */ u8 unkB4;
     /* 0xB5 */ u8 unkB5;
     /* 0xB6 */ u8 unkB6;
     /* 0xB7 */ u8 unkB7;
+        };
+    };
     /* 0xB8 */ s8 bossRaceID;
     /* 0xB9 */ u8 unkB9;
     /* 0xBA */ s16 unkBA;

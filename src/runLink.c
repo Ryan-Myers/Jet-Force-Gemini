@@ -1,5 +1,6 @@
 #include "common.h"
 #include "mips.h"
+#include "runLink.h"
 
 const char D_800ADC90[] = "WARNING: Unimplemented linkage operation %d\n";
 const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";

@@ -15,6 +15,9 @@ typedef struct UnkScreenStruct {
 extern s32 D_800A6784_A7384;
 
 s32 fxFadeOn(void);
+void fxFreeNightVision(s32); // guess
+void fxClearLevelEffects(void);
+void fxCpuTextureFlush(void);
 void setupClearScreen(UnkScreenStruct*);
 
 #endif

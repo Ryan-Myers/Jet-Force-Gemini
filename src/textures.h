@@ -22,6 +22,7 @@ typedef struct TextureSprite {
 void texDPTextureX(Gfx **dList, TextureHeader *texhead, s32 flags, s32 texOffset);
 TextureSprite* texLoadSprite(s32 id, s32 arg1);
 void texFreeSprite(TextureSprite*);
+void texFreeTexture(TextureHeader *tex);
 void updateColourCycle(void*, s32);
 
 #endif

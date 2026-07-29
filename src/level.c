@@ -1,7 +1,14 @@
 #include "common.h"
 #include "audio.h"
+#include "camlight.h"
+#include "fx.h"
+#include "hit.h"
 #include "memory.h"
+#include "rcpFast3d.h"
+#include "runLink.h"
 #include "textures.h"
+#include "track.h"
+#include "weather.h"
 
 extern LevelHeader *D_800FB118_B5958;
 typedef struct {
@@ -22,6 +29,7 @@ const char D_800ACD20[] = "LOADLEVEL Error: Level out of range\n";
 const char D_800ACD48[] = "levelGetRegionFlags: Ran out of levelRegionFlag structures!!\n";
 const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
 
+extern s32 D_800A089C_A149C;
 extern u8* D_800A31A0_A3DA0;
 
 extern u32* D_800FB110_B1750;
@@ -183,7 +191,28 @@ u8* levelGetName(s32 arg0) {
     return D_800A31A0_A3DA0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelFreeAll.s")
+void levelFreeAll(void) {
+    fxFreeNightVision(1);
+    fxClearLevelEffects();
+    rcpSetScreenColour(0, 0, 0);
+    mmFree(D_800FBBD8);
+    amAmbientStop();
+    freeLights();
+    camlightFlush();
+    trackFreeAll();
+    hitFree();
+    amResetAudioMap();
+    D_800A089C_A149C = 0;
+    amSetMuteMode(0);
+    if (D_800FBBD8->unkA0 > 0) {
+        freeWeather();
+    }
+    if (D_800FBBD8->unk69 == -1) {
+        texFreeTexture(D_800FBBD8->unkB4_ptr);
+    }
+    runlinkFlushModules();
+    fxCpuTextureFlush();
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetNextOfWorld.s")
 
