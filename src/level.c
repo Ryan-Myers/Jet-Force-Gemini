@@ -1,19 +1,26 @@
 #include "common.h"
 
 extern LevelHeader *D_800FB118_B5958;
+typedef struct {
+    u8 unk0;
+    s8 unk1;
+    u8 unk2;
+    u8 unk3;
+    u8 unk4;
+} Level_B176C;
 
 const char D_800ACD20[] = "LOADLEVEL Error: Level out of range\n";
 const char D_800ACD48[] = "levelGetRegionFlags: Ran out of levelRegionFlag structures!!\n";
 const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
 
 extern s32 D_800FB124_B1764;
-extern u8* D_800FB12C_B176C[];
+extern Level_B176C* D_800FB12C_B176C[];
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetCounts.s")
 
 s32 levelNGetType(s32 arg0) {
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        return D_800FB12C_B176C[0][arg0 * 5];
+        return D_800FB12C_B176C[0][arg0].unk0;
     }
     return -1;
 }
@@ -21,7 +28,7 @@ s32 levelNGetType(s32 arg0) {
 #ifdef VERSION_us
 s32 levelGetTune(s32 arg0) {
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        return D_800FB12C_B176C[0][arg0 * 5 + 4];
+        return D_800FB12C_B176C[0][arg0].unk4;
     }
     return -1;
 }
@@ -29,7 +36,7 @@ s32 levelGetTune(s32 arg0) {
 
 s32 levelGetWorld(s32 arg0) {
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        return (s8)D_800FB12C_B176C[0][arg0 * 5 + 1];
+        return D_800FB12C_B176C[0][arg0].unk1;
     }
     return 0;
 }
