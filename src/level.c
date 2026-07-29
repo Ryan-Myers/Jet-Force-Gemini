@@ -1,5 +1,6 @@
 #include "common.h"
 #include "audio.h"
+#include "textures.h"
 
 extern LevelHeader *D_800FB118_B5958;
 typedef struct {
@@ -10,12 +11,19 @@ typedef struct {
     u8 unk4;
 } Level_B176C;
 
+typedef struct {
+    s32 unk0;
+    u8 pad4[0x10 - 0x4];
+} Unk_800FB170;
+
+
 const char D_800ACD20[] = "LOADLEVEL Error: Level out of range\n";
 const char D_800ACD48[] = "levelGetRegionFlags: Ran out of levelRegionFlag structures!!\n";
 const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
 
 extern s32 D_800FB124_B1764;
 extern Level_B176C* D_800FB12C_B176C[];
+extern Unk_800FB170 D_800FB170_B17B0[];
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetCounts.s")
 
@@ -123,7 +131,16 @@ void levelTunePlay(f32 tempo) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelUpdateColourCycling.s")
+void levelUpdateColourCycling(s32 arg0) {
+    s32 i;
+
+    for (i = 0; i < 7; i++) {
+        // TODO: array on `weatherType`?
+        if ((&D_800FBBD8->weatherType)[i] != -1) {
+            updateColourCycle(&D_800FB170_B17B0[i], arg0);
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetColourCycling.s")
 
