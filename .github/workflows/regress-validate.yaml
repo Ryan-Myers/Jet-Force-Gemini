@@ -63,7 +63,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.version }}_report
-        path: build/progress.json
+        path: build/report.json
 
     - name: Cleanup
       run: make clean VERSION=${{ matrix.version }}
