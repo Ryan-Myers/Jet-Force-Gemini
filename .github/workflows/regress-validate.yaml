@@ -62,7 +62,7 @@ jobs:
     - name: Upload progress report artifact
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ matrix.version }}_progress
+        name: ${{ matrix.version }}_report
         path: build/progress.json
 
     - name: Cleanup
