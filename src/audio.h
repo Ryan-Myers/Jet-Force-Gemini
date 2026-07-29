@@ -50,5 +50,12 @@ void amSndStopXYZ(SoundMask *soundMask);
 void amSndPlayXYZ(u16 soundId, f32 x, f32 y, f32 z, u8 arg4, SoundMask **soundMask);
 void amSndPlay(u16 soundID, SoundHandle *handlePtr);
 void amTuneSetGlobalVolume(u32 volume);
+u8 amTuneGetSeqNo(void);
+void amTunePlay(u8 seqID);
+void amTuneResetChls(void);
+void amTuneResetFade(void);
+void amTuneScaleTempo(f32);
+void amTuneSetChlMask(u16);
+void amTuneStop(void);
 
 #endif

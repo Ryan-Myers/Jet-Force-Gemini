@@ -666,10 +666,16 @@ typedef struct LevelHeader {
         struct {
     /* 0x70 */ u8 darkVertexColours; // always 1 except in Hot Top Volcano where it's 0
     /* 0x71 */ u8 unk71; // possible values: 0,1
+    /* 0x72 */ u8 seqNum;
         };
     };
   
+    union {
     /* 0x74 */ LevelHeader_70 *unk74[7];
+        struct {
+    /* 0x74 */ u16 chlMask; // used in levelTunePlay
+        };
+    };
   
     // Weather related?
     /* 0x90 */ s16 weatherEnable; // This affects snow density, but for rain, it simply needs to be nonzero.

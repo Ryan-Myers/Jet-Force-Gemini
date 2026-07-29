@@ -1,4 +1,5 @@
 #include "common.h"
+#include "audio.h"
 
 extern LevelHeader *D_800FB118_B5958;
 typedef struct {
@@ -108,7 +109,19 @@ s32 levelGetWorldRegions(s32 arg0, u8* arg1) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelInit.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelTunePlay.s")
+void levelTunePlay(f32 tempo) {
+    if (D_800FBBD8->seqNum != 0) {
+        if (D_800FBBD8->seqNum != amTuneGetSeqNo()) {
+            amTuneResetChls();
+            amTunePlay(D_800FBBD8->seqNum);
+            amTuneResetFade();
+            amTuneScaleTempo(tempo);
+            amTuneSetChlMask(D_800FBBD8->chlMask);
+        }
+    } else {
+        amTuneStop();
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelUpdateColourCycling.s")
 
