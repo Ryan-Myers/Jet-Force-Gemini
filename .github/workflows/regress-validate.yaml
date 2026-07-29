@@ -14,7 +14,7 @@ jobs:
         version: [ kiosk, us ]
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         ref: ${{ github.event.pull_request.head.sha || github.ref }}
   
@@ -22,7 +22,7 @@ jobs:
       run: git submodule update --init --recursive
 
     - name: Fetch Secrets
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
         repository: ${{ secrets.SECRET_REPO }}
         token: ${{ secrets.SECRET_TOKEN }}
@@ -36,9 +36,6 @@ jobs:
           SECRET_PASSPHRASE: ${{ secrets.SECRET_PASSPHRASE }}
           SECRET_BASENAME: baserom
           SECRET_VERSION: ${{ matrix.version }}
-
-    - name: Make baserom directory
-      run: mkdir baseroms
 
     - name: Move Baserom
       working-directory: secret_repo
