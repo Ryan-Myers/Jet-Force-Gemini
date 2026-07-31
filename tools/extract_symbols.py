@@ -285,6 +285,16 @@ def format_symbols_names(symbols: list) -> str:
     """Format symbols as names only (one per line)."""
     return '\n'.join(name for _, name, _, _ in symbols)
 
+def format_symbols_fake(symbols: list) -> str:
+    """Format symbols as linker script entries to link to TrapDanglingJump."""
+    lines = []
+    
+    for address, name, section, offset in symbols:
+        if is_overlay_section(section):
+            lines.append(f"{name}_Trap = TrapDanglingJump;")
+    
+    return '\n'.join(lines)
+
 def format_symbols_linker(symbols: list) -> str:
     """Format symbols as linker script entries."""
     lines = []
@@ -453,7 +463,7 @@ def main():
     parser.add_argument('rom_file', help='Path to the ROM file')
     parser.add_argument('-o', '--output', help='Output file (default: stdout)')
     parser.add_argument('-f', '--format', 
-                        choices=['map', 'names', 'linker', 'sections', 'splat'],
+                        choices=['map', 'names', 'linker', 'sections', 'splat', 'fake'],
                         default='map',
                         help='Output format (default: map)')
     parser.add_argument('-v', '--version',
@@ -520,6 +530,7 @@ def main():
         'linker': format_symbols_linker,
         'sections': format_symbols_sections,
         'splat': format_symbols_splat,
+        'fake': format_symbols_fake,
     }
     
     output = formatters[args.format](symbols)
