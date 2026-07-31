@@ -22,6 +22,14 @@ OVERLAY_DATA_BASE = 0x1ED3B20
 SYMBOL_TABLE_OFFSETS = 0x1FEB040
 SYMBOL_TABLE_NAMES = 0x1FED550
 
+# ROM addresses for Kiosk version
+# MAIN_RELOC_TABLE = 0x1A7C4D0
+# OVERLAY_ROM_TABLE = 0x1A7D500
+# OVERLAY_TABLE  = 0x1A7B2E0
+# OVERLAY_DATA_BASE = 0x1A7C6A0
+# SYMBOL_TABLE_OFFSETS = 0x1B94430
+# SYMBOL_TABLE_NAMES = 0x1B96910
+
 def read_reloc_table_entry(rom_data, index):
     """Read a single relocation table entry."""
     offset = MAIN_RELOC_TABLE + ((index) * 8)

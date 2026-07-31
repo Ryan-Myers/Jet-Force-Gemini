@@ -367,7 +367,7 @@ void mmFreeTick(void) {
     if (FreeRAM < 0x14000) {
         runlinkLowMemoryPanic();
         if (FreeRAM < 0xC000 && runlinkIsModuleLoaded(3) != 0) {
-            sparkUpdate_Trap(); //0x8004AEEC in kiosk // TODO: This seems like the wrong function. //0x8004AB2C in US
+            sparkUpdate_Trap(); // Odd function to call here. This isn't even in Overlay 3.
         }
     }
 #endif
