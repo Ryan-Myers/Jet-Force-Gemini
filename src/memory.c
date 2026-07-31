@@ -351,6 +351,8 @@ void mmFree(void *data) {
 #endif
 }
 
+void sparkUpdate_Trap(void);
+
 /**
  * Frees all the addresses in the free queue.
  * Official Name: mmFreeTick
@@ -365,7 +367,7 @@ void mmFreeTick(void) {
     if (FreeRAM < 0x14000) {
         runlinkLowMemoryPanic();
         if (FreeRAM < 0xC000 && runlinkIsModuleLoaded(3) != 0) {
-            TrapDanglingJump();
+            sparkUpdate_Trap(); //0x8004AEEC in kiosk // TODO: This seems like the wrong function. //0x8004AB2C in US
         }
     }
 #endif
