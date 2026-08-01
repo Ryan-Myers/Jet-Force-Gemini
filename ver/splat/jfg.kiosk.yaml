@@ -321,7 +321,7 @@ segments:
       - [0xA83F0, data, font]
       - [0xA8530, .data, ../libultra/src/io/pimgr]
       - [0xA8560, .data, rzip]
-      - [0xA8570, data, subtitles]
+      - [0xA8570, .data, subtitles]
       - [0xA8580, .data, hasm/gen_anim_data] # Has a jump table that's data, and not rodata. Splat likes to warn about this.
       - [0xA8A40, .data, ../libultra/src/os/exceptasm]
       - [0xA8A70, data, anim]
@@ -451,7 +451,8 @@ segments:
       - { type: bss, vram: 0x80104870, name: font }
       - { type: .bss, vram: 0x80104DE0, name: ../libultra/src/io/pimgr }
       - { type: .bss, vram: 0x80105220, name: rzip }
-      - { type: bss, vram: 0x80105230, name: subtitles }
+      - { type: .bss, vram: 0x80105230, name: subtitles }
+      - { type: .bss, vram: 0x80105270, name: ../libultra/src/io/leointerrupt }
       - { type: bss, vram: 0x80105280, name: anim }
       - { type: bss, vram: 0x801054B0, name: hit }
       - { type: .bss, vram: 0x80105B20, name: fmvInit }

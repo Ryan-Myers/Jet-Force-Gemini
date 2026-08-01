@@ -53,11 +53,11 @@ typedef struct RelocTableEntry {
         u32 bytes;
         struct {
             u32 functionAddress : 24; // This is the address of the calling function less 0x80000450 (0x8004DD50 -
-                                       // 0x80000450 = 0x4D900)
+                                      // 0x80000450 = 0x4D900)
             u32 unknown : 8;          // Unknown, almost always seems to be 0x40
         };
     } entry;
-    /* 0x04 */ u32 overlayIndex;    // This is an index into overlayRomTable
+    /* 0x04 */ u32 overlayIndex; // This is an index into overlayRomTable
 } RelocTableEntry;
 extern RelocTableEntry D_1ECF220[];     // mainRelocTable ROM address
 extern RelocTableEntry *mainRelocTable; // mainRelocTable RAM pointer

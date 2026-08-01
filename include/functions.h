@@ -284,4 +284,8 @@ s32 rcpWaitDP(void);
 // This empty signature seems to be the way to handle it.
 s32 TrapDanglingJump();
 
+s32 objTvTimes(s32 timer);
+
+s32 piRomGetFileSize(u32 assetIndex);
+
 #endif

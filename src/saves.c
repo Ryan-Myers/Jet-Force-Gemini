@@ -16,8 +16,6 @@
 // page, and write back the whole sector.
 #define SECTOR_SIZE 128
 
-typedef enum Language { LANGUAGE_0, LANGUAGE_1, LANGUAGE_2, LANGUAGE_3, LANGUAGE_JAPANESE } Language;
-
 #ifdef VERSION_us
 #define nosMotorInit osMotorInit
 #define nosMotorStart osMotorStart
