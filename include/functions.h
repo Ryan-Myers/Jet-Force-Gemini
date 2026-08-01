@@ -286,4 +286,6 @@ s32 TrapDanglingJump();
 
 s32 objTvTimes(s32 timer);
 
+s32 piRomGetFileSize(u32 assetIndex);
+
 #endif

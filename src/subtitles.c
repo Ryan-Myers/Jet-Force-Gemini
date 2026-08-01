@@ -1,31 +1,50 @@
 #include "common.h"
 #include "font.h"
 
-typedef struct GameTextTableStruct  {
- char *entries[128];
- s32 *somethingElse;
+typedef struct GameTextTableStruct {
+    char *entries[128];
+    s32 *somethingElse;
 } GameTextTableStruct;
 
-s32 piRomGetFileSize(u32 assetIndex);
-extern s8 gTextTableExists;
-extern GameTextTableStruct *gGameTextTable[1];
-extern s16 gTextTableEntries;
-extern s16 gTextAlphaVelocity;
-extern s16 gShowSubtitles;
-extern char *gGameTextTableEntries[2];
-extern s32 D_80104594_B1784;
-extern s16 gDialogueAlpha;
-extern s16 gDialogueXPos1;
-extern s16 gDialogueYPos1;
-extern s16 gDialogueXPos2;
-extern s16 gDialogueYPos2;
-extern s16 gSubtitleLineCount;
-extern char *gSubtitleProperties[1];
-extern s32 gSubtitleSetting;
-extern char *gCurrentTextProperties;
-extern s16 gShowSubtitles;
-extern s16 gSubtitleTimer;
-extern s16 gCurrentTextID;
+enum TextProperties {
+    TEXT_NONE,
+    TEXT_COL_R,
+    TEXT_COL_G,
+    TEXT_COL_B,
+    TEXT_ALPHA,
+    TEXT_FONT,
+    TEXT_FLAGS,
+};
+
+/************ .data ************/
+
+s8 gTextTableExists = FALSE;
+UNUSED s32 D_800A7974_A8574 = 0;
+s32 gSubtitleSetting = TRUE;
+
+/*******************************/
+
+/************ .bss ************/
+
+GameTextTableStruct *gGameTextTable[1];
+s16 gTextTableEntries;
+s16 gDialogueAlpha;
+s16 gTextAlphaVelocity;
+s16 gSubtitleTimer;
+s16 gDialogueXPos1; // The Upper Left X Coord of the Dialogue Box.
+s16 gDialogueYPos1; // The Upper Left Y Coord of the Dialogue Box.
+s16 gDialogueXPos2; // The Lower Right X Coord of the Dialogue Box.
+s16 gDialogueYPos2; // The Lower Right Y Coord of the Dialogue Box.
+s16 gShowSubtitles;
+s16 gSubtitleLineCount;
+s16 gCurrentTextID;
+UNUSED s32 D_80104578_B1768;
+char *gSubtitleProperties[1];
+char *gGameTextTableEntries[2];
+char *gCurrentTextProperties;
+s32 D_80104594_B1784;
+
+/*****************************/
 
 /**
  * Initializes the subtitle system.
@@ -68,16 +87,6 @@ void subtitlesFree(void) {
 void subtitlesEnable(s32 setting) {
     gSubtitleSetting = setting;
 }
-
-enum TextProperties {
-    TEXT_NONE,
-    TEXT_COL_R,
-    TEXT_COL_G,
-    TEXT_COL_B,
-    TEXT_ALPHA,
-    TEXT_FONT,
-    TEXT_FLAGS,
-};
 
 void render_subtitles(void) {
     s32 textX;
