@@ -189,4 +189,35 @@ void subtitlesTick(s32 updateRate) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/subtitles/subtitleStart.s")
+void subtitleStart(s32 textID) {
+    char **entries;
+    s32 language;
+    s32 temp;
+    s32 size;
+
+    if (D_800A6FB0_A7BB0 && textID >= 0 && textID < gTextTableEntries) {
+        language = frontGetLanguage();
+        switch (language) {
+            case 2:
+                textID += 48;
+                break;
+            case 1:
+                textID += 47;
+                break;
+            case 3:
+                textID += 49;
+                break;
+            case 4:
+                textID += 50;
+                break;
+        }
+        piRomLoadSection(5, (u32) D_80104560_B1750, (textID & ~1) << 2, 16);
+        entries = (char **) D_80104560_B1750;
+        temp = ((s32) entries[textID & 1]) & 0xFF000000;
+        size = (((s32) entries[(textID & 1) + 1]) & 0xFFFFFF) - (((s32) entries[textID & 1]) & 0xFFFFFF);
+        piRomLoadSection(4, (u32) gGameTextTableEntries[D_80104594_B1784], ((s32) entries[textID & 1]) ^ temp, size);
+        gCurrentTextProperties = gGameTextTableEntries[D_80104594_B1784];
+        find_next_subtitle();
+        D_80104594_B1784 = (D_80104594_B1784 + 1) & 1;
+    }
+}
