@@ -2,6 +2,8 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/rcpFast3d/rcpFast3d.s")
 
+void cloneTasksQueueAndWait_Trap(void);
+
 s32 rcpWaitDP(void) {
     s32 *unkMsg = NULL;
     s32 *refractDoneMsg = NULL;
@@ -20,7 +22,7 @@ s32 rcpWaitDP(void) {
         refractTaskActive = FALSE;
     }
     if (cloneTaskActive) {
-        TrapDanglingJump();
+        cloneTasksQueueAndWait_Trap();
         cloneTaskActive = FALSE;
     }
     D_800A4034 = FALSE;

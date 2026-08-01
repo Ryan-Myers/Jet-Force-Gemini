@@ -182,15 +182,19 @@ void trackSetFog(s32 fogIdx, s16 near, s16 far, s16 arg3, u8 red, u8 green, u8 b
     fogData->intendedFog.b = blue;
 }
 
+void mantisLightingGetFog_Trap(s16 *near, s16 *far, u8 *r, u8 *g, u8 *b);
+void dayGetFog_Trap(s16 *near, s16 *far, u8 *r, u8 *g, u8 *b);
+void girlMagicFog_Trap(u8 *r, u8 *g, u8 *b, s16 *near, s16 *far, s8 *unk33);
+
 void trackGetFog(s32 playerID, s16 *near, s16 *far, s16 *unk18, u8 *r, u8 *g, u8 *b, s8 *unk33) {
     FogData *fogData;
 
     if (runlinkIsModuleLoaded(39) != 0) {
-        TrapDanglingJump(near, far, r, g, b);
+        mantisLightingGetFog_Trap(near, far, r, g, b);
         *unk18 = 0;
         *unk33 = 0;
     } else if (runlinkIsModuleLoaded(23) != 0) {
-        TrapDanglingJump(near, far, r, g, b);
+        dayGetFog_Trap(near, far, r, g, b);
         *unk18 = 0;
         *unk33 = 0;
     } else {
@@ -204,7 +208,7 @@ void trackGetFog(s32 playerID, s16 *near, s16 *far, s16 *unk18, u8 *r, u8 *g, u8
         *unk33 = fogData->intendedFog.unk33 & 0x7F;
     }
     if (runlinkIsModuleLoaded(29) != 0) {
-        TrapDanglingJump(r, g, b, near, far, unk33);
+        girlMagicFog_Trap(r, g, b, near, far, unk33);
     }
 }
 

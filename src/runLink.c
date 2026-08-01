@@ -30,7 +30,7 @@ const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
  * Then is substracted by the base address the start of the text segment: 0x8004DD50 - 0x80000450 = 0x4D900
  *
  * Searches assets/mainRelocTable.bin for an entry matching 0x4D900, which it finds at: offset 0xD00
- * The index value next to it is 0x69E (1684)
+ * The index value next to it is 0x69E (1694)
  * That index is then used to lookup in assets/overlayRomTable.bin which is 4 bytes per entry.
  * So it reads the entry at offset 0x69E * 4 = 0x1A78 and finds 0x00315E34
  *
@@ -42,15 +42,21 @@ const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
  * |Function offset	| 0x15E34 (bits 19-0)     |
  * |_____________________________________________|
  *
- * So according to our symbols, overlay 3 at function offset 0x15E34 is BindRegionsToObjects
+ * So according to our symbols, overlay 3 at function offset 0x15E34 is cloneTasksQueueAndWait
  *
  * It triggers the dynamic linker to load overlay 3 (if not already loaded)
- * The actual function called is BindRegionsToObjects at offset 0x15E34 within that overlay
+ * The actual function called is cloneTasksQueueAndWait at offset 0x15E34 within that overlay
  */
 
 typedef struct RelocTableEntry {
-    /* 0x00 */ u32 functionAddress; // This is the address of the calling function less 0x80000450 (0x8004DD50 -
-                                    // 0x80000450 = 0x4D900)
+    union {
+        u32 bytes;
+        struct {
+            u32 functionAddress : 24; // This is the address of the calling function less 0x80000450 (0x8004DD50 -
+                                       // 0x80000450 = 0x4D900)
+            u32 unknown : 8;          // Unknown, almost always seems to be 0x40
+        };
+    } entry;
     /* 0x04 */ u32 overlayIndex;    // This is an index into overlayRomTable
 } RelocTableEntry;
 extern RelocTableEntry D_1ECF220[];     // mainRelocTable ROM address
@@ -768,7 +774,7 @@ void runlinkInitialise(void) {
     romCopy(mainRelocTable_ROM_START, mainRelocTable, tableSize);
 
     // Extract mainRelocCount from first word, then advance pointer past it
-    mainRelocCount = mainRelocTable->functionAddress;
+    mainRelocCount = mainRelocTable->bytes;
     mainRelocTable = &mainRelocTable[1];
 
     // Calculate overlay count from table size (each entry is 0x20 bytes)

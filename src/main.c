@@ -173,6 +173,8 @@ void mainPreNMI(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
 
+void mainInitRlo_Trap(void);
+
 #ifdef VERSION_kiosk
 void mainInitGame(void) {
     s32 viMode;
@@ -195,7 +197,7 @@ void mainInitGame(void) {
     piInit();
     rcpInit(&sc);
     runlinkInitialise();
-    TrapDanglingJump();
+    mainInitRlo_Trap();
     runlinkFreeCode(0x24);
 }
 #else
@@ -225,7 +227,7 @@ void mainInitGame(void) {
     runlinkInitialise();
     mainPreNMI();
     D_800A3290_A3E90 = 1;
-    TrapDanglingJump();
+    mainInitRlo_Trap();
     mainPreNMI();
     runlinkFreeCode(0x24);
     D_800A3530_A4130 = 0;

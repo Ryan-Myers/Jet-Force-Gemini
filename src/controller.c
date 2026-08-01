@@ -233,14 +233,18 @@ void joySetSecurity(void) {
 }
 
 #ifdef VERSION_us
+void osCic6105SendData_Trap(OSMesgQueue *arg0, OSMesgQueue *arg1);
+void osCic6105StartGetData_Trap(OSMesgQueue *arg0);
+void osCic6105GetReadData_Trap(OSMesgQueue *arg0);
+
 void arithmeticFunction(OSMesgQueue *queue1, OSMesgQueue *queue2) {
     osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
-    TrapDanglingJump(queue1, &joyMessageQueue);
+    osCic6105SendData_Trap(queue1, &joyMessageQueue);
     osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
-    TrapDanglingJump(&joyMessageQueue);
+    osCic6105StartGetData_Trap(&joyMessageQueue);
     osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
     osContStartReadData(&joyMessageQueue);
-    TrapDanglingJump(queue2);
+    osCic6105GetReadData_Trap(queue2);
 }
 #endif
 
