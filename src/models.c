@@ -14,7 +14,15 @@ const char D_800ACAB4[] = "modLoadAnimEvent: Overflowed AnimEventTab!\n";
 const char D_800ACAE0[] = "modFreeAnimEvents : NULL anim event table!!\n";
 const char D_800ACB10[] = "Anim Event Error: Tryed to deallocate non-existent anim event!\n";
 
-#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003B640.s")
+/**
+ * Two Byte memcpy
+ */
+void func_8003B640(u16 *src, u16 *dest, s32 len) {
+    len = (len + 1) >> 1;
+    while (len--) {
+        *dest++ = *src++;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/modInitModels.s")
 
