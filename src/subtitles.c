@@ -5,7 +5,7 @@ s32 piRomGetFileSize(u32 assetIndex);
 extern s8 D_800A6FB0_A7BB0;
 extern s32 D_80104560_B1750;
 extern s16 gTextTableEntries;
-extern s16 D_80104568_B1758;
+extern s16 gTextAlphaVelocity;
 extern s16 gShowSubtitles;
 extern char *gGameTextTableEntries[2];
 extern s32 D_80104594_B1784;
@@ -36,7 +36,7 @@ void subtitlesInit(void) {
     D_80104594_B1784 = 0;
     gShowSubtitles = FALSE;
     gDialogueAlpha = 0;
-    D_80104568_B1758 = 0x20;
+    gTextAlphaVelocity = 0x20;
     gCurrentTextID = 0;
     gDialogueXPos1 = 0x20;
     gDialogueXPos2 = 0x120;
@@ -47,15 +47,15 @@ void subtitlesInit(void) {
         gDialogueYPos1 = 202;
         gDialogueYPos2 = 222;
     }
-    D_800A6FB0_A7BB0 = 1;
+    D_800A6FB0_A7BB0 = TRUE;
 }
 
 void subtitlesFree(void) {
-    if (D_800A6FB0_A7BB0 != 0) {
+    if (D_800A6FB0_A7BB0) {
         mmFree(gGameTextTableEntries[0]);
         fontWindowDisable(6);
         fontWindowFlushStrings(6);
-        D_800A6FB0_A7BB0 = 0;
+        D_800A6FB0_A7BB0 = FALSE;
         gShowSubtitles = FALSE;
     }
 }
@@ -153,6 +153,40 @@ void find_next_subtitle(void) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/subtitles/subtitlesTick.s")
+/**
+ * Handle the subtitle system from here.
+ * Slowly show the text, tick down the timer, find the next message or close the box, then render.
+ * Official Name: subtitlesTick
+ */
+void subtitlesTick(s32 updateRate) {
+    if (D_800A6FB0_A7BB0) {
+        if (gSubtitleSetting == FALSE) {
+            gShowSubtitles = FALSE;
+        }
+        if (gShowSubtitles) {
+            if (gSubtitleTimer <= 0) {
+                gDialogueAlpha -= updateRate * gTextAlphaVelocity;
+                if (gDialogueAlpha < 0) {
+                    gDialogueAlpha = 0;
+                    gShowSubtitles = FALSE;
+                    fontWindowDisable(6);
+                    fontWindowFlushStrings(6);
+                }
+            } else {
+                gDialogueAlpha += updateRate * gTextAlphaVelocity;
+                if (gDialogueAlpha > 256) {
+                    gDialogueAlpha = 256;
+                }
+                gSubtitleTimer -= updateRate;
+                if (gSubtitleTimer <= 0) {
+                    find_next_subtitle();
+                }
+            }
+        }
+        if (gShowSubtitles) {
+            render_subtitles();
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/subtitles/subtitleStart.s")
