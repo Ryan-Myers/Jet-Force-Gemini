@@ -6,8 +6,7 @@ extern s8 D_800A6FB0_A7BB0;
 extern s32 D_80104560_B1750;
 extern s16 gTextTableEntries;
 extern s16 D_80104568_B1758;
-extern s16 D_80104574_B1764;
-extern s16 D_80104578_B1768;
+extern s16 gShowSubtitles;
 extern char *gGameTextTableEntries[2];
 extern s32 D_80104594_B1784;
 extern s16 gDialogueAlpha;
@@ -17,7 +16,11 @@ extern s16 gDialogueXPos2;
 extern s16 gDialogueYPos2;
 extern s16 gSubtitleLineCount;
 extern char *gSubtitleProperties[1];
-extern s32 D_800A6FB8_A7BB8;
+extern s32 gSubtitleSetting;
+extern char *gCurrentTextProperties;
+extern s16 gShowSubtitles;
+extern s16 gSubtitleTimer;
+extern s16 gCurrentTextID;
 
 /**
  * Initializes the subtitle system.
@@ -31,10 +34,10 @@ void subtitlesInit(void) {
     gGameTextTableEntries[1] = &gGameTextTableEntries[0][960];
     D_80104560_B1750 = (s32) &gGameTextTableEntries[1][960];
     D_80104594_B1784 = 0;
-    D_80104574_B1764 = 0;
+    gShowSubtitles = FALSE;
     gDialogueAlpha = 0;
     D_80104568_B1758 = 0x20;
-    D_80104578_B1768 = 0;
+    gCurrentTextID = 0;
     gDialogueXPos1 = 0x20;
     gDialogueXPos2 = 0x120;
     if (osTvType == OS_TV_TYPE_PAL) {
@@ -53,12 +56,12 @@ void subtitlesFree(void) {
         fontWindowDisable(6);
         fontWindowFlushStrings(6);
         D_800A6FB0_A7BB0 = 0;
-        D_80104574_B1764 = 0;
+        gShowSubtitles = FALSE;
     }
 }
 
-void subtitlesEnable(s32 arg0) {
-    D_800A6FB8_A7BB8 = arg0;
+void subtitlesEnable(s32 setting) {
+    gSubtitleSetting = setting;
 }
 
 enum TextProperties {
@@ -106,7 +109,49 @@ void render_subtitles(void) {
     fontWindowEnable(6);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/subtitles/func_800741AC.s")
+/**
+ * Get the line count and text timer from the next message of the subtitle.
+ * Close the subtitles if none can be found.
+ */
+void find_next_subtitle(void) {
+    u32 new_var3;
+    u8 new_var;
+    s32 new_var2;
+    s32 done;
+
+    gSubtitleLineCount = 0;
+    gSubtitleTimer = 0;
+    done = FALSE;
+    while (gCurrentTextProperties[0] != NULL && done == FALSE) {
+        gCurrentTextID = gCurrentTextProperties[0] - 1;
+        gSubtitleProperties[gSubtitleLineCount] = gCurrentTextProperties;
+        gSubtitleTimer = objTvTimes(gCurrentTextProperties[7] * 6);
+        gCurrentTextProperties += 8;
+        do {
+            new_var = gCurrentTextProperties[0];
+            if (new_var & 0x80) {
+                gCurrentTextProperties += 2;
+            } else {
+                gCurrentTextProperties++;
+            }
+        } while (gCurrentTextProperties[0] != NULL);
+        gSubtitleLineCount++;
+        if (gSubtitleLineCount >= 2) {
+            done = TRUE;
+        }
+        gCurrentTextProperties++;
+        new_var2 = gCurrentTextProperties[0];
+        if (gCurrentTextProperties[0] == 10) {
+            gCurrentTextProperties++;
+        } else if (new_var2 == 12) {
+            gCurrentTextProperties++;
+            done = TRUE;
+        }
+    }
+    if (gSubtitleLineCount > 0) {
+        gShowSubtitles = TRUE;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/subtitles/subtitlesTick.s")
 
