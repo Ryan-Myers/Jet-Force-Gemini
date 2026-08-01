@@ -114,9 +114,10 @@ MemoryPoolSlot *mempool_init(MemoryPoolSlot *slots, s32 poolSize, s32 numSlots) 
 #endif
     return gMemoryPools[poolCount].slots;
 }
-
+/**
+ * Reserves and returns memory from the main memory pool.
+ */
 MemoryPoolSlot *mmAlloc(s32 size, u32 colourTag) {
-#ifdef JFGDIFFS
     UNUSED s32 pad;
     s32 moduleId;
     s32 moduleAddress;
@@ -131,12 +132,13 @@ MemoryPoolSlot *mmAlloc(s32 size, u32 colourTag) {
         runlinkGetAddressInfo(address - 8, &moduleId, &moduleAddress, NULL);
         newColourTag = (moduleId << 24) | moduleAddress;
     }
-#endif
     return mempool_slot_find(POOL_MAIN, size, newColourTag);
 }
 
-// Only differs from above by not returning a value.
-void mmAlloc2(s32 size, u32 colourTag) {
+/**
+ * Reserves and returns memory from the main memory pool. No idea why it's duplicated.
+ */
+MemoryPoolSlot *mmAlloc2(s32 size, u32 colourTag) {
     UNUSED s32 pad;
     s32 moduleId;
     s32 moduleAddress;
@@ -151,7 +153,7 @@ void mmAlloc2(s32 size, u32 colourTag) {
         runlinkGetAddressInfo(address - 8, &moduleId, &moduleAddress, NULL);
         newColourTag = (moduleId << 24) | moduleAddress;
     }
-    mempool_slot_find(POOL_MAIN, size, newColourTag);
+    return mempool_slot_find(POOL_MAIN, size, newColourTag);
 }
 
 /**
