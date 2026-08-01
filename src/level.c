@@ -271,7 +271,7 @@ void levelGetRegionFlags(void) {
     Unk_800FB1E0_B1820* temp_t9;
     u8 temp_v0;
 
-    // TODO: expand D_800FBBD8 instead of [1]?
+    // TODO: expand D_800FBBD8 to cover unk103 instead of [1] ?
     temp_v0 = D_800FBBD8[1].fogR;
     if (temp_v0 >= 0x20) {
         D_800A31C4_A3DC4 = NULL;
@@ -308,4 +308,16 @@ void levelSetObjectFlag(s32 indexFlag) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelObjectFlagSet.s")
+s32 levelObjectFlagSet(s32 arg0) {
+    s32 index;
+    s32 flag;
+
+    // TODO: expand D_800FBBD8 to cover unk102 instead of [1] ?
+    if ((D_800FBBD8[1].unk16[0x28] == 0) || (D_800FBBD8[1].unk16[0x28] == 0xFF) || (D_800A31C4_A3DC4 == NULL)) {
+        return 0;
+    }
+    index = arg0 >> 3;
+    flag = arg0 & 7;
+    return (D_800A31C4_A3DC4->unk1[index] & (1 << flag)) != 0;
+}
+
