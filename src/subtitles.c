@@ -1,4 +1,5 @@
 #include "common.h"
+#include "font.h"
 
 s32 piRomGetFileSize(u32 assetIndex);
 extern s8 D_800A6FB0_A7BB0;
@@ -15,7 +16,6 @@ extern s16 D_80104578_B1768;
 extern char *D_80104588_B1778[2]; //gGameTextTableEntries?
 extern s32 D_80104594_B1784;
 
-#if 1
 /**
  * Initializes the subtitle system.
  * Allocates memory for the subtitle buffers and sets up the default values.
@@ -43,11 +43,16 @@ void subtitlesInit(void) {
     }
     D_800A6FB0_A7BB0 = 1;
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/subtitles/subtitlesInit.s")
-#endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/subtitles/subtitlesFree.s")
+void subtitlesFree(void) {
+    if (D_800A6FB0_A7BB0 != 0) {
+        mmFree(D_80104588_B1778[0]);
+        fontWindowDisable(6);
+        fontWindowFlushStrings(6);
+        D_800A6FB0_A7BB0 = 0;
+        D_80104574_B1764 = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/subtitles/subtitlesEnable.s")
 

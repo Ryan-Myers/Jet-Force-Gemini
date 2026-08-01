@@ -763,4 +763,15 @@ typedef struct MultiCharacter {
     } unk74;
 } MultiCharacter;
 
+/* Size: 10 bytes */
+typedef struct Vertex {
+    /* 0x00 */ s16 x;
+    /* 0x02 */ s16 y;
+    /* 0x04 */ s16 z;
+    /* 0x06 */ u8 r;
+    /* 0x07 */ u8 g;
+    /* 0x08 */ u8 b;
+    /* 0x09 */ u8 a;
+} Vertex;
+
 #endif

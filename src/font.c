@@ -1,41 +1,5 @@
 #include "common.h"
-
-enum WindowFlags {
-    DIALOGUE_BOX_UNUSED_01 = 0x0001,
-    DIALOGUE_BOX_VERTS = 0x4000,
-    WINDOW_CLOSED = 0x7FFF,
-    WINDOW_OPEN = 0x8000,
-    DIALOGUE_BOX_UNK_02 = 0xBFFF,
-    DIALOGUE_BOX_UNUSED_02 = 0xFFFE
-};
-
-// typedef enum HorizontalAlignmentFlags {
-//     HORZ_ALIGN_LEFT   = 0,
-//     HORZ_ALIGN_RIGHT  = 1,
-//     HORZ_ALIGN_CENTER = 4
-// } HorizontalAlignmentFlags;
-
-// typedef enum VerticalAlignmentFlags {
-//     VERT_ALIGN_TOP    = 0,
-//     VERT_ALIGN_BOTTOM = 2,
-//     VERT_ALIGN_MIDDLE = 8
-// } VerticalAlignmentFlags;
-
-// typedef enum AlignmentFlags {
-//     ALIGN_TOP_LEFT      = VERT_ALIGN_TOP    | HORZ_ALIGN_LEFT,
-//     ALIGN_TOP_CENTER    = VERT_ALIGN_TOP    | HORZ_ALIGN_CENTER,
-//     ALIGN_TOP_RIGHT     = VERT_ALIGN_TOP    | HORZ_ALIGN_RIGHT,
-//     ALIGN_MIDDLE_LEFT   = VERT_ALIGN_MIDDLE | HORZ_ALIGN_LEFT,
-//     ALIGN_MIDDLE_CENTER = VERT_ALIGN_MIDDLE | HORZ_ALIGN_CENTER,
-//     ALIGN_MIDDLE_RIGHT  = VERT_ALIGN_MIDDLE | HORZ_ALIGN_RIGHT,
-//     ALIGN_BOTTOM_LEFT   = VERT_ALIGN_BOTTOM | HORZ_ALIGN_LEFT,
-//     ALIGN_BOTTOM_CENTER = VERT_ALIGN_BOTTOM | HORZ_ALIGN_CENTER,
-//     ALIGN_BOTTOM_RIGHT  = VERT_ALIGN_BOTTOM | HORZ_ALIGN_RIGHT
-// } AlignmentFlags;
-
-#define WINDOW_COUNT 8
-#define POS_CENTRED -0x8000
-#define DIALOGUE_NUM_NULL 0xFF
+#include "font.h"
 
 void fontSetWindow0(s32 width, s32 height) {
     Window->x2 = width - 1;
@@ -580,6 +544,6 @@ void fontConvertString(char *inString, char *outString) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontGetLine.s")
 
-u8 fontYSpacing(s32 arg0) {
-    return Font[arg0].height;
+u8 fontYSpacing(s32 font) {
+    return Font[font].height;
 }
