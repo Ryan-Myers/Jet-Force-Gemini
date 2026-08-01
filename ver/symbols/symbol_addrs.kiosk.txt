@@ -953,6 +953,7 @@ inflate_codes = 0x80073AF0;
 subtitlesInit = 0x80073DF0;
 subtitlesFree = 0x80073ED8;
 subtitlesEnable = 0x80073F2C;
+render_subtitles = 0x80073F38;
 subtitlesTick = 0x8007435C;
 subtitleStart = 0x80074494;
 __osLeoInterrupt = 0x800745F0;

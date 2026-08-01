@@ -4,19 +4,19 @@
 s32 piRomGetFileSize(u32 assetIndex);
 extern s8 D_800A6FB0_A7BB0;
 extern s32 D_80104560_B1750;
-extern s16 gTextTableEntries; //gTextTableEntries?
+extern s16 gTextTableEntries;
 extern s16 D_80104568_B1758;
 extern s16 D_80104574_B1764;
 extern s16 D_80104578_B1768;
-extern char *gGameTextTableEntries[2]; //gGameTextTableEntries?
+extern char *gGameTextTableEntries[2];
 extern s32 D_80104594_B1784;
-extern s16 gDialogueAlpha; // gDialogueAlpha
-extern s16 gDialogueXPos1; // gDialogueXPos1
-extern s16 gDialogueYPos1; // gDialogueYPos1
-extern s16 gDialogueXPos2; // gDialogueXPos2
-extern s16 gDialogueYPos2; // gDialogueYPos2
-extern s16 gSubtitleLineCount; // gSubtitleLineCount
-extern char *gSubtitleProperties[1]; // gSubtitleProperties
+extern s16 gDialogueAlpha;
+extern s16 gDialogueXPos1;
+extern s16 gDialogueYPos1;
+extern s16 gDialogueXPos2;
+extern s16 gDialogueYPos2;
+extern s16 gSubtitleLineCount;
+extern char *gSubtitleProperties[1];
 extern s32 D_800A6FB8_A7BB8;
 
 /**
@@ -68,17 +68,15 @@ enum TextProperties {
     TEXT_COL_B,
     TEXT_ALPHA,
     TEXT_FONT,
-    TEXT_FLAGS
+    TEXT_FLAGS,
 };
 
-//render_subtitles in DKR
-void func_80073F38(void) {
+void render_subtitles(void) {
     s32 textX;
     s32 textY;
     s32 i;
     s32 textFlags;
     char **textData;
-    #define SUBTITLE_Y_OFFSET 14
 
     fontWindowFlushStrings(6);
     fontWindowSize(6, gDialogueXPos1, gDialogueYPos1, gDialogueXPos2, gDialogueYPos2);
@@ -98,11 +96,12 @@ void func_80073F38(void) {
                 textX = 8;
             }
         }
-        fontWindowFontColour(6, textData[i][TEXT_COL_R], textData[i][TEXT_COL_G], textData[i][TEXT_COL_B], 255, (textData[i][TEXT_ALPHA] * gDialogueAlpha) >> 8);
+        fontWindowFontColour(6, textData[i][TEXT_COL_R], textData[i][TEXT_COL_G], textData[i][TEXT_COL_B], 255,
+                             (textData[i][TEXT_ALPHA] * gDialogueAlpha) >> 8);
         fontWindowAddStringXY(6, textX, textY, textData[i] + 8, 1, textFlags);
         fontWindowFontColour(6, 0, 0, 0, 255, (gDialogueAlpha * 255) >> 8);
         fontWindowAddStringXY(6, textX + 1, textY + 1, textData[i] + 8, 1, textFlags);
-        textY += SUBTITLE_Y_OFFSET;
+        textY += 14;
     }
     fontWindowEnable(6);
 }
