@@ -157,7 +157,7 @@ void find_next_subtitle(void) {
         new_var2 = gCurrentTextProperties[0];
         if (gCurrentTextProperties[0] == 10) {
             gCurrentTextProperties++;
-        } else if (new_var2 == 12) {
+        } else if (new_var2 == '\f') { // FORM FEED
             gCurrentTextProperties++;
             done = TRUE;
         }
