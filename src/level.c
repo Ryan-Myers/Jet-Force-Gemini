@@ -281,7 +281,21 @@ void levelGetRegionFlags(void) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetObjectID.s")
+s32 levelGetObjectID(s32 arg0) {
+    s32 newId;
+    u8 prevId;
+
+    if (D_800A31C4_A3DC4 == NULL) {
+        return -1;
+    }
+    prevId = D_800A31C4_A3DC4->unk0;
+    newId = prevId + arg0;
+    if (newId > 0x80) {
+        return -1;
+    }
+    D_800A31C4_A3DC4->unk0 = (u8) newId;
+    return prevId;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelSetObjectFlag.s")
 
