@@ -1,9 +1,14 @@
 #include "common.h"
 #include "font.h"
 
+typedef struct GameTextTableStruct  {
+ char *entries[128];
+ s32 *somethingElse;
+} GameTextTableStruct;
+
 s32 piRomGetFileSize(u32 assetIndex);
-extern s8 D_800A6FB0_A7BB0;
-extern s32 D_80104560_B1750;
+extern s8 gTextTableExists;
+extern GameTextTableStruct *gGameTextTable[1];
 extern s16 gTextTableEntries;
 extern s16 gTextAlphaVelocity;
 extern s16 gShowSubtitles;
@@ -32,7 +37,7 @@ void subtitlesInit(void) {
     gTextTableEntries = (piRomGetFileSize(5) >> 2) - 2;
     gGameTextTableEntries[0] = (char *) mmAlloc(0x790, COLOUR_TAG_GREEN);
     gGameTextTableEntries[1] = &gGameTextTableEntries[0][960];
-    D_80104560_B1750 = (s32) &gGameTextTableEntries[1][960];
+    gGameTextTable[0] = (GameTextTableStruct *) &gGameTextTableEntries[1][960];
     D_80104594_B1784 = 0;
     gShowSubtitles = FALSE;
     gDialogueAlpha = 0;
@@ -47,15 +52,15 @@ void subtitlesInit(void) {
         gDialogueYPos1 = 202;
         gDialogueYPos2 = 222;
     }
-    D_800A6FB0_A7BB0 = TRUE;
+    gTextTableExists = TRUE;
 }
 
 void subtitlesFree(void) {
-    if (D_800A6FB0_A7BB0) {
+    if (gTextTableExists) {
         mmFree(gGameTextTableEntries[0]);
         fontWindowDisable(6);
         fontWindowFlushStrings(6);
-        D_800A6FB0_A7BB0 = FALSE;
+        gTextTableExists = FALSE;
         gShowSubtitles = FALSE;
     }
 }
@@ -159,7 +164,7 @@ void find_next_subtitle(void) {
  * Official Name: subtitlesTick
  */
 void subtitlesTick(s32 updateRate) {
-    if (D_800A6FB0_A7BB0) {
+    if (gTextTableExists) {
         if (gSubtitleSetting == FALSE) {
             gShowSubtitles = FALSE;
         }
@@ -195,7 +200,7 @@ void subtitleStart(s32 textID) {
     s32 temp;
     s32 size;
 
-    if (D_800A6FB0_A7BB0 && textID >= 0 && textID < gTextTableEntries) {
+    if (gTextTableExists && textID >= 0 && textID < gTextTableEntries) {
         language = frontGetLanguage();
         switch (language) {
             case LANGUAGE_2:
@@ -211,8 +216,8 @@ void subtitleStart(s32 textID) {
                 textID += 50;
                 break;
         }
-        piRomLoadSection(5, (u32) D_80104560_B1750, (textID & ~1) << 2, 16);
-        entries = (char **) D_80104560_B1750;
+        piRomLoadSection(5, (u32) (*gGameTextTable)->entries, (textID & ~1) << 2, 16);
+        entries = (*gGameTextTable)->entries;
         temp = ((s32) entries[textID & 1]) & 0xFF000000;
         size = (((s32) entries[(textID & 1) + 1]) & 0xFFFFFF) - (((s32) entries[textID & 1]) & 0xFFFFFF);
         piRomLoadSection(4, (u32) gGameTextTableEntries[D_80104594_B1784], ((s32) entries[textID & 1]) ^ temp, size);
