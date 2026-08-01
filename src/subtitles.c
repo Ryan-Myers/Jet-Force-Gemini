@@ -191,23 +191,23 @@ void subtitlesTick(s32 updateRate) {
 
 void subtitleStart(s32 textID) {
     char **entries;
-    s32 language;
+    Language language;
     s32 temp;
     s32 size;
 
     if (D_800A6FB0_A7BB0 && textID >= 0 && textID < gTextTableEntries) {
         language = frontGetLanguage();
         switch (language) {
-            case 2:
+            case LANGUAGE_2:
                 textID += 48;
                 break;
-            case 1:
+            case LANGUAGE_1:
                 textID += 47;
                 break;
-            case 3:
+            case LANGUAGE_3:
                 textID += 49;
                 break;
-            case 4:
+            case LANGUAGE_JAPANESE:
                 textID += 50;
                 break;
         }

@@ -54,4 +54,12 @@ typedef enum GameFlags {
     MACHINE_GUN_LOCK_GOLDWOOD = 101,
 } GameFlags;
 
+typedef enum Language { 
+    LANGUAGE_0,
+    LANGUAGE_1,
+    LANGUAGE_2,
+    LANGUAGE_3,
+    LANGUAGE_JAPANESE,
+} Language;
+
 #endif
