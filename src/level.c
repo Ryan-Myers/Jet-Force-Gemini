@@ -297,6 +297,15 @@ s32 levelGetObjectID(s32 arg0) {
     return prevId;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelSetObjectFlag.s")
+void levelSetObjectFlag(s32 indexFlag) {
+    s32 index;
+    s32 flag;
+
+    index = indexFlag >> 3;
+    flag = indexFlag & 0x7;
+    if (D_800A31C4_A3DC4 != NULL) {
+        D_800A31C4_A3DC4->unk1[index] |= 1 << flag;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelObjectFlagSet.s")
