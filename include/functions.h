@@ -105,7 +105,6 @@ TextureHeader *load_texture(s32 arg0);
 
 void rcpInitDp(Gfx **dList);
 TextureHeader *texLoadTexture(s32 arg0);
-s32 debug_text_parse(Gfx **dlist, char *buffer);
 
 
 void func_80021444(unk800DC950 *arg0, s32 arg1);

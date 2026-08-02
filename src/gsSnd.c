@@ -29,7 +29,7 @@
 
 // ALSoundStateLists gSoundStateLists = { NULL, NULL, NULL };
 extern ALSoundStateLists gSoundStateLists;
-typedef struct ALSoundState* SoundHandle;
+typedef struct ALSoundState *SoundHandle;
 
 /**
  * Takes two pointers as arguments and writes the number of free and allocated sound states to them.

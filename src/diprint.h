@@ -58,7 +58,7 @@ void diPrintfAll(Gfx **dList);
 void diPrintfSetCol(u8 red, u8 green, u8 blue, u8 alpha);
 void diPrintfSetBG(u8 red, u8 green, u8 blue, u8 alpha);
 void diPrintfSetXY(u16 x, u16 y);
-s32 debug_text_parse(Gfx**, char*);
+s32 debug_text_parse(Gfx **dList, char *buffer);
 void debug_text_background(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry);
 s32 debug_text_character(Gfx **dList, s32 asciiVal);
 void debug_text_bounds(void);

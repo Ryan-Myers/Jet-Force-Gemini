@@ -1,5 +1,5 @@
-#include "common.h"
 #include "models.h"
+#include "common.h"
 
 const char D_800AC900[] = "Error: Model no. out of range on load. !!\n";
 const char D_800AC92C[] = "TEXTURE ERROR!!\n%d,%d\n";
@@ -80,7 +80,7 @@ void modFreeAnim(s8 *arg0);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/modFreeModel.s")
 
-//void free_model_data(ObjectModel *mdl);
+// void free_model_data(ObjectModel *mdl);
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003C6D0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003C8A8.s")
