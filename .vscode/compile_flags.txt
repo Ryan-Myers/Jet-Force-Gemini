@@ -1,5 +1,6 @@
 -xc
 -std=gnu99
+-fno-builtin
 -D_LANGUAGE_C
 -D_FINALROM
 -DNDEBUG

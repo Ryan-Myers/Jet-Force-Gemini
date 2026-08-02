@@ -2,6 +2,7 @@
 #include "PR/rdb.h"
 #include "PRinternal/rmonint.h"
 #include "stdarg.h"
+#include "gameVi.h"
 
 extern OSThread *__osGetActiveQueue(void);
 

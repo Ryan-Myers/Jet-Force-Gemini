@@ -10,6 +10,9 @@ u16 acoss(s16 x);
 s16 asins(s16 x);
 f32 atan2f(f32 x, f32 z);
 f32 acosf(f32 value);
-f32 sqrtf(f32 x);
+
+extern float sinf(float angle); //official name: fsin
+extern float cosf(float angle);
+extern float sqrtf(float value);
 
 #endif

@@ -2,6 +2,7 @@
 #include "common.h"
 #include "libc/string.h"
 #include "stdarg.h"
+#include "gameVi.h"
 
 /************ .data ************/
 
