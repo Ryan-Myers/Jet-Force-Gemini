@@ -104,7 +104,6 @@ typedef struct ModelInstance_JFG {
 #define ASSETCACHE_PTR(x)   ((x << 1) + 1)
 void func_8003C6D0(ObjectModel_JFG *mdl);
 
-#ifdef NON_MATCHING
 void modFreeModel(ModelInstance_JFG *modInst) {
     ObjectModel_JFG *model;
     s32 i;
@@ -121,7 +120,8 @@ void modFreeModel(ModelInstance_JFG *modInst) {
         mmFree(modInst->unkC);
     }
 
-    if (model->unk64 != 0) {
+    // Yeah, this is so fake lol
+    if ((model->unk64 & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF)) {
         for (i = 0; i < 2; i++) {
             if (modInst->unk80[i] != NULL) {
                 modFreeAnim(modInst->unk80[i]);
@@ -149,9 +149,6 @@ void modFreeModel(ModelInstance_JFG *modInst) {
         }
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/models/modFreeModel.s")
-#endif
 
 // void func_8003C6D0(ObjectModel *mdl);
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003C6D0.s")
