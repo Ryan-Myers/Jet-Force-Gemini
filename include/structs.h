@@ -948,4 +948,20 @@ typedef struct ObjectModel {
     /* 0x54 */ u8 pad[0x2C];
 } ObjectModel;
 
+/* Size: 0x24 bytes */
+typedef struct ModelInstance {
+    /* 0x00 */ ObjectModel *objModel;
+    /* 0x04 */ Vertex *vertices[3];
+    /* 0x10 */ s16 animationID;
+    /* 0x12 */ s16 animationFrame;
+    /* 0x14 */ s16 animationFrameCount;
+    /* 0x16 */ s16 offsetX;
+    /* 0x18 */ s16 offsetY;
+    /* 0x1A */ s16 offsetZ;
+    /* 0x1C */ s16 headTilt;
+    /* 0x1E */ s8 modelType;
+    /* 0x1F */ s8 animationTaskNum;
+    /* 0x20 */ s8 animUpdateTimer;
+} ModelInstance;
+
 #endif

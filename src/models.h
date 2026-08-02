@@ -36,6 +36,6 @@ typedef struct {
 
 void func_8003B640(u16 *src, u16 *dest, s32 len);
 void *func_8003BED0(struct_8003BED0_arg0 *arg0);
-void func_8003C6D0(ObjectModel *mdl);
+void modFreeAnim(s8 *arg0);
 
 #endif

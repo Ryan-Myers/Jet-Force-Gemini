@@ -78,9 +78,82 @@ void *func_8003BED0(struct_8003BED0_arg0 *arg0) {
 void modFreeAnim(s8 *arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003BF58.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/models/modFreeModel.s")
+typedef struct ObjectModel_JFG {
+    /* 0x00 */ u8 pad00[0x4C];
+    /* 0x4C */ s16 references;
+    /* 0x4E */ u8 pad4E[0x16];
+    /* 0x64 */ u8 unk64;
+} ObjectModel_JFG;
 
-// void free_model_data(ObjectModel *mdl);
+typedef struct ModInst_UnkC {
+    u8 pad;
+} ModInst_UnkC;
+
+/* Size: 0x24 bytes */
+typedef struct ModelInstance_JFG {
+    /* 0x00 */ ObjectModel_JFG *objModel;
+    /* 0x04 */ u8 pad4[0x8];
+    /* 0x0C */ ModInst_UnkC *unkC;
+    /* 0x10 */ u8 unk10[0x70];
+    /* 0x80 */ s8 *unk80[2];
+} ModelInstance_JFG;
+
+// A few systems in the game use an array as a cache table. This gives you the asset ID
+#define ASSETCACHE_ID(x)    ((x << 1) + 0)
+// A few systems in the game use an array as a cache table. This gives you the pointer to the asset
+#define ASSETCACHE_PTR(x)   ((x << 1) + 1)
+void func_8003C6D0(ObjectModel_JFG *mdl);
+
+#ifdef NON_MATCHING
+void modFreeModel(ModelInstance_JFG *modInst) {
+    ObjectModel_JFG *model;
+    s32 i;
+    s32 modelIndex;
+    u8 unk64;
+
+    if (modInst == NULL) {
+        // stubbed_printf("ModFreeModel : NULL mod_inst!!\n");
+        return;
+    }
+
+    model = modInst->objModel;
+    if (modInst->unkC != NULL) {
+        mmFree(modInst->unkC);
+    }
+
+    if (model->unk64 != 0) {
+        for (i = 0; i < 2; i++) {
+            if (modInst->unk80[i] != NULL) {
+                modFreeAnim(modInst->unk80[i]);
+            }
+        }
+    }
+    mmFree(modInst);
+    model->references--;
+    if (model->references <= 0) {
+        i = 0;
+        modelIndex = -1;
+        while (i < gModelCacheCount) {
+            if (model == (ObjectModel_JFG *) gModelCache[ASSETCACHE_PTR(i)]) {
+                modelIndex = i;
+            }
+            i++;
+        }
+
+        if (modelIndex != -1) {
+            func_8003C6D0(model);
+            D_800F6F18_B1758[D_800F6F24_B1764] = modelIndex;
+            D_800F6F24_B1764++;
+            gModelCache[ASSETCACHE_ID(modelIndex)] = -1;
+            gModelCache[ASSETCACHE_PTR(modelIndex)] = -1;
+        }
+    }
+}
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/models/modFreeModel.s")
+#endif
+
+// void func_8003C6D0(ObjectModel *mdl);
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003C6D0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003C8A8.s")
