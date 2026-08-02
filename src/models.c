@@ -72,12 +72,45 @@ void modInitModels(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003BE68.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003BED0.s")
+typedef struct {
+    u8 pad0[0x12];
+    s16 unk12;
+    u8 pad14[6];
+    u16 *unk1C;
+} struct_8003BED0_arg0;
 
+typedef struct {
+    struct_8003BED0_arg0 *unk0;
+    u16 *unk4;
+    u8 pad8[2];
+    u8 unkA;
+    u8 unkB;
+    s32 unkC;
+} struct_8003BED0_alloc;
+
+void *func_8003BED0(struct_8003BED0_arg0 *arg0) {
+    u16 *temp_a1;
+    struct_8003BED0_alloc *temp_v0;
+
+    temp_v0 = (struct_8003BED0_alloc *) mmAlloc2(arg0->unk12 * 0xA + 0x10, COLOUR_TAG_BLUE);
+    if (temp_v0 != NULL) {
+        temp_a1 = (u16 *) ((u8 *) temp_v0 + 0x10);
+        temp_v0->unk0 = arg0;
+        temp_v0->unk4 = temp_a1;
+        temp_v0->unkA = 2;
+        temp_v0->unkB = 0;
+        temp_v0->unkC = 0;
+        func_8003B640(arg0->unk1C, temp_a1, arg0->unk12 * 0xA);
+    }
+    return temp_v0;
+}
+
+void modFreeAnim(s8 *arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003BF58.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/modFreeModel.s")
 
+//void free_model_data(ObjectModel *mdl);
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003C6D0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003C8A8.s")
