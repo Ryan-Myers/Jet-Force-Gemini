@@ -120,7 +120,7 @@ void modFreeModel(ModelInstance_JFG *modInst) {
         mmFree(modInst->unkC);
     }
 
-    // Yeah, this is so fake lol
+    // Yeah, this is so fake lol. I blame Bl00D4NGEL.
     if ((model->unk64 & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF)) {
         for (i = 0; i < 2; i++) {
             if (modInst->unk80[i] != NULL) {
