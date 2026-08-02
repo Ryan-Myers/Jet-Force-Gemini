@@ -25,16 +25,16 @@ void func_8003B640(u16 *src, u16 *dest, s32 len) {
 }
 
 #ifdef VERSION_kiosk
-#define SIZEOF_D_800F6F14_B1754 0x230
+#define SIZEOF_gModelCache 0x230
 #else
-#define SIZEOF_D_800F6F14_B1754 0x2A8
+#define SIZEOF_gModelCache 0x2A8
 #endif
 
-extern u32 *D_800F6F10_B1750;
-extern u32 *D_800F6F14_B1754; // Size: 0x230 in kiosk, 0x2A8 in other versions
-extern u32 *D_800F6F18_B1758;
-extern s32 D_800F6F1C_B175C;
-extern s32 D_800F6F20_B1760;
+extern s32 *gObjectModelTable;
+extern s32 *gModelCache; // Size: 0x230 in kiosk, 0x2A8 in other versions
+extern s32 *D_800F6F18_B1758;
+extern s32 gModelCacheCount;
+extern s32 gNumModelIDs;
 extern s32 D_800F6F24_B1764;
 extern s32 *D_800F6F28_B1768;
 extern s32 *D_800F6F2C_B176C;
@@ -46,26 +46,25 @@ extern s32 D_800F6F40_B1780;
 extern s32 *D_800F6F58_B1798;
 
 void modInitModels(void) {
-    u32 *temp;
+    s32 *temp;
 
-    D_800F6F14_B1754 = mmAlloc(SIZEOF_D_800F6F14_B1754, COLOUR_TAG_GREEN);
-    D_800F6F18_B1758 = mmAlloc(0x190, COLOUR_TAG_GREEN);
-    D_800F6F1C_B175C = 0;
+    gModelCache = (s32 *) mmAlloc(SIZEOF_gModelCache, COLOUR_TAG_GREEN);
+    D_800F6F18_B1758 = (s32 *) mmAlloc(0x190, COLOUR_TAG_GREEN);
+    gModelCacheCount = 0;
     D_800F6F24_B1764 = 0;
-    D_800F6F58_B1798 = mmAlloc(0x2000, COLOUR_TAG_GREEN);
-    D_800F6F10_B1750 = piRomLoad(0x26);
-    D_800F6F20_B1760 = 0;
-    D_800F6F20_B1760 = 0;
-    while (D_800F6F10_B1750[D_800F6F20_B1760] != -1) {
-        D_800F6F20_B1760++;
+    D_800F6F58_B1798 = (s32 *) mmAlloc(0x2000, COLOUR_TAG_GREEN);
+    gObjectModelTable = (s32 *) piRomLoad(0x26);
+    gNumModelIDs = 0;
+    while (gObjectModelTable[gNumModelIDs] != -1) {
+        gNumModelIDs++;
     }
-    D_800F6F20_B1760--;
+    gNumModelIDs--;
     temp = (s32 *) mmAlloc(0xA0, COLOUR_TAG_GREEN);
     D_800F6F28_B1768 = temp;
     D_800F6F38_B1778 = D_800F6F2C_B176C = (s32 *) ((u8 *) temp + 0x80);
     D_800F6F34_B1774 = (s32 *) ((u8 *) temp + 0x90);
-    D_800F6F30_B1770 = mmAlloc(0x800, COLOUR_TAG_GREEN);
-    D_800F6F3C_B177C = mmAlloc(0x100, COLOUR_TAG_GREEN);
+    D_800F6F30_B1770 = (s32 *) mmAlloc(0x800, COLOUR_TAG_GREEN);
+    D_800F6F3C_B177C = (s32 *) mmAlloc(0x100, COLOUR_TAG_GREEN);
     D_800F6F40_B1780 = 0;
 }
 
