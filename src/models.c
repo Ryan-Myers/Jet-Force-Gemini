@@ -79,10 +79,28 @@ void modFreeAnim(s8 *arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003BF58.s")
 
 typedef struct ObjectModel_JFG {
-    /* 0x00 */ u8 pad00[0x4C];
+    /* 0x00 */ u8 pad0[0x10];
+    /* 0x10 */ u8 numberOfTextures;
+    /* 0x11 */ u8 pad11[0x18 - 0x11];
+    /* 0x18 */ TextureInfo *textures;
+    /* 0x1C */ u8 pad1C[0x28 - 0x1C];
+    /* 0x28 */ void *unk28;
+    /* 0x2C */ u8 pad2C[0x4C - 0x2C];
     /* 0x4C */ s16 references;
-    /* 0x4E */ u8 pad4E[0x16];
+    /* 0x4E */ s8 unk4E;
+    /* 0x4F */ u8 unk4F;
+    /* 0x50 */ s8 *unk50;
+    /* 0x54 */ u8 pad54[0x58 - 0x54];
+    /* 0x58 */ void *unk58;
+    /* 0x5C */ void *unk5C;
+    /* 0x60 */ void *unk60;
     /* 0x64 */ u8 unk64;
+    /* 0x65 */ u8 pad65[0x74 - 0x65];
+    /* 0x74 */ void *unk74;
+    /* 0x78 */ void *unk78;
+    /* 0x7C */ s32 numberOfAnimations;
+    /* 0x7E */ u8 pad7E[0x84 - 0x7E];
+    /* 0x84 */ ObjectModel_44 *animations;
 } ObjectModel_JFG;
 
 typedef struct ModInst_UnkC {
@@ -104,7 +122,6 @@ void modFreeModel(ModelInstance_JFG *modInst) {
     ObjectModel_JFG *model;
     s32 i;
     s32 modelIndex;
-    u8 unk64;
 
     if (modInst != NULL) {
         model = modInst->objModel;
@@ -142,8 +159,106 @@ void modFreeModel(ModelInstance_JFG *modInst) {
     }
 }
 
-// void func_8003C6D0(ObjectModel *mdl);
+#if 0
+void texFreeTexture(TextureHeader *tex);
+void func_8003C6D0(ObjectModel_JFG *mdl) {
+    s32 sp2C;
+    TextureHeader *temp_a0;
+    s32 temp_s0;
+    s32 var_s0;
+    s32 var_s0_2;
+    s32 var_s0_3;
+    s32 var_s1;
+    s32 var_s1_2;
+    s32 var_v0;
+    u8 numTextures;
+    void *temp_a0_2;
+    void *temp_a0_3;
+    void *temp_a0_4;
+    void *temp_a0_5;
+    void *temp_a0_6;
+    s32 i;
+
+    numTextures = mdl->numberOfTextures;
+    if (numTextures > 0) {
+        s32 texturesFreed = 0;
+        s32 textureIndex = 0;
+        do {
+            TextureHeader *header = mdl->textures[textureIndex].texture;
+            if (header != NULL) {
+                texFreeTexture(header);
+                numTextures = mdl->numberOfTextures;
+            }
+            texturesFreed++;
+            textureIndex++;
+        } while (texturesFreed < numTextures);
+    }
+
+    if (mdl->unk60 != NULL) {
+        mmFree(mdl->unk60);
+    }
+
+    if (mdl->unk28 != NULL) {
+        mmFree(mdl->unk28);
+    }
+
+    if (mdl->unk74 != NULL) {
+        mmFree(mdl->unk74);
+    }
+
+    if (mdl->unk78 != NULL) {
+        mmFree(mdl->unk78);
+    }
+    if (mdl->unk4E != 0) {
+        if (mdl->unk64 == 0) {
+            var_s0_2 = 0;
+            var_s1 = 0;
+            if (mdl->unk50 != NULL) {
+                do {
+                    modFreeAnim(&mdl->unk50[var_s1]);
+                    var_s0_2 += 1;
+                    var_s1 += 4;
+                } while (var_s0_2 < (s8) mdl->unk4E);
+                mmFree(mdl->unk50);
+            }
+        }
+        temp_a0_6 = mdl->unk5C;
+        if (temp_a0_6 != NULL) {
+            mmFree(temp_a0_6);
+        }
+        mmFree(mdl->unk58);
+    }
+        // free the animations
+    if (mdl->animations != NULL) {
+        s32 animsFreed = 0;
+        s32 animIndex = 0;
+        if (mdl->numberOfAnimations != 0) {
+            do {
+                mmFree(mdl->animations[animIndex].anim);
+                animsFreed++;
+                animIndex++;
+            } while (animsFreed < mdl->numberOfAnimations);
+            mmFree(mdl->animations);
+        }
+    }
+    // if (mdl->animations != NULL) {
+    //     temp_s0 = mdl->numberOfAnimations + 1;
+    //     var_s0_3 = temp_s0 - 1;
+    //     if (temp_s0 != 0) {
+    //         var_s1_2 = var_s0_3 * 4;
+    //         do {
+    //             mmFree(mdl->animations[var_s1_2].anim);
+    //             var_s1_2 -= 4;
+    //             var_s0_3 -= 1;
+    //         } while (var_s0_3 != 0);
+    //     }
+    //     mmFree(mdl->animations);
+    // }
+    mmFree(mdl);
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003C6D0.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003C8A8.s")
 

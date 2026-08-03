@@ -1724,6 +1724,7 @@ securitybuffer = 0x800A3324;
 refractThisObject = 0x800A3334;
 blurOn = 0x800A3338;
 errorStringPointers = 0x800a334c;
+functionsForRevealReturnAddresses = 0x800A3360; // size:0x14
 delayDat = 0x800a3374;
 debugInputCount = 0x800a3398;
 debugInputCode = 0x800a339c;

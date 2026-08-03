@@ -1,5 +1,6 @@
 #include "common.h"
 #include "sched.h"
+#include "mips.h"
 
 #ifdef VERSION_kiosk
 const char D_800ACDB0[] = "1.1723";
@@ -171,7 +172,51 @@ void mainPreNMI(void) {
 }
 #endif
 
+
+#ifdef NON_MATCHING
+// u32 *functionsForRevealReturnAddresses[] = {
+//     mmAlloc, mmAlloc2, mmFree, mmAllocAtAddr, modMakeLimbModel
+// };
+
+extern MipsInstruction *functionsForRevealReturnAddresses[5];
+
+/**
+    Search through a given list of functions for an instruction that has the value 0x666 in the immediate field of an addiu instruction.
+    For example, it will find: `addiu $t6, zero, 0x666` and replace it with `or $t6, $ra, $zero`
+    The 0x666 value is defined as a volatile value in the functions and is used to send the return address to `runlinkGetAddressInfo`
+    This is used to get data like address, module ID, module address, and symbol name for the overlay that has allocated the memory.
+
+    This is doing live runtime patching of the code in memory. Verified with debugger.
+ */
+void RevealReturnAddresses(void) {
+    MipsInstruction **functionPtr;
+    MipsInstruction *instr;
+    s32 i;
+    s32 j;
+
+    // Seems to loop through backwards through the list of functions.
+    for (i = 4, functionPtr = &functionsForRevealReturnAddresses[4]; i > 0; functionPtr--, i--) {
+        instr = *functionPtr;
+        // Loop through the first several instructions of the function looking for an addiu instruction that is adding 0x666
+        for (j = 63; j > 0; j--) {
+            if (instr->addiu.opcode == ADDIU_OPCODE && instr->addiu.immediate == ADDRESS_CANARY) {
+                instr->shiftEncoding.opcode = SLL_OPCODE;
+                instr->shiftEncoding.sourceRegister = RA_REG;
+                instr->shiftEncoding.destinationRegister = instr->addiu.targetRegister;
+                instr->shiftEncoding.targetRegister = ZERO_REG;
+                instr->shiftEncoding.shiftAmount = 0;
+                instr->shiftEncoding.function = OR_OPCODE;
+                osWritebackDCache(instr, 4);
+                osInvalICache(instr, 4);
+                break;
+            }
+            instr++;
+        }
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
+#endif
 
 void mainInitRlo_Trap(void);
 

@@ -1434,6 +1434,7 @@ gPolOverflowed = 0x800A3B34;
 securitybuffer = 0x800A3B78;
 refractThisObject = 0x800A3B94;
 blurOn = 0x800A3B98;
+functionsForRevealReturnAddresses = 0x800A3BC0; // size:0x14
 rngSeed = 0x800A3E44;
 gPrevRNGSeed = 0x800A3E48; // type:s32
 mmExtendedRam = 0x800A3E50;
