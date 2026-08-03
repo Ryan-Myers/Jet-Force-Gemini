@@ -246,7 +246,7 @@ typedef struct huft {
   } v;
 } huft;
 
-/* Size: 0x20 bytes */
+// Copied from DKR, not all fields verified yet. It has been modified.
 typedef struct TextureHeader {
     /* 0x00 */ u8 width;
     /* 0x01 */ u8 height;
@@ -262,7 +262,9 @@ typedef struct TextureHeader {
         // 8 = CI8 (64 colors)
     /* 0x03 */ s8 posX; // X coordinate of the texture in the sprite's 2D space
     /* 0x04 */ s8 posY; // Y coordinate of the texture in the sprite's 2D space
-    /* 0x05 */ u8 numberOfInstances; // Always 1 in the ROM.
+    // /* 0x05 */ u8 pad[0x3]; // TODO: This could be earlier.
+    // /* 0x08 */ u16 numberOfInstances;
+    /* 0x05 */ u8 numberOfInstances; // Needs to be u16
     /* 0x06 */ s16 flags;
         // 0x04 = Interlaced texture
         // 0x40 = U clamp flag. 0 = Wrap, 1 = Clamp

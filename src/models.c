@@ -98,10 +98,6 @@ typedef struct ModelInstance_JFG {
     /* 0x80 */ s8 *unk80[2];
 } ModelInstance_JFG;
 
-// A few systems in the game use an array as a cache table. This gives you the asset ID
-#define ASSETCACHE_ID(x)    ((x << 1) + 0)
-// A few systems in the game use an array as a cache table. This gives you the pointer to the asset
-#define ASSETCACHE_PTR(x)   ((x << 1) + 1)
 void func_8003C6D0(ObjectModel_JFG *mdl);
 
 void modFreeModel(ModelInstance_JFG *modInst) {
