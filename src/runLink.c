@@ -231,15 +231,15 @@ void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry
                     return &gUnresolvedSymbolAddr;
                 }
             }
-            return addressBase + (romTableEntry->entry.FunctionOffset) + addressOffset;
+            return (void *) (addressBase + (romTableEntry->entry.FunctionOffset) + addressOffset);
         case 1: // Local offset relocation (relative to section base)
             var_v1 = overlayTable[otIndex].VramBase + relocEntry->symbolIndex;
             if (relocEntry->flagsHi == 2) {
                 var_v1 += patchLocation->word;
             }
-            return var_v1;
+            return (void *) var_v1;
         case 2: // R_MIPS_26: Jump target relocation
-            return (patchLocation->jump.target << 2) + overlayTable[otIndex].VramBase;
+            return (void *) ((patchLocation->jump.target << 2) + overlayTable[otIndex].VramBase);
         default:
             return NULL;
     }
@@ -705,7 +705,7 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
             flagsHi = relocEntry->flagsHi;
             if ((flagsHi ^ 0) == 4) { // FAKE MATCH
                 // Patch back to TrapDanglingJump
-                address = TrapDanglingJump;
+                address = (u32) TrapDanglingJump;
             } else {
                 // Clear the reference
                 address = NULL;

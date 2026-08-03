@@ -46,6 +46,22 @@
 #define ALIGNED16
 #endif
 
+// Use built-in pseudocode where possible in NON_MATCHING builds
+#if defined(__GNUC__) && !defined(CC_CHECK)
+#define abs(x)      __builtin_abs(x)
+#define fabsf(x)    __builtin_fabsf(x)
+#define sqrtf(f)    __builtin_sqrtf(f)
+#undef ABS
+#undef ABSF
+#define ABS(x)      __builtin_abs(x)
+#define ABSF(x)     __builtin_fabsf(x)
+#else
+#define inline
+#define ABSF(x) (x < 0.f ? -x : x)
+#define ABS(x) ((x) >= 0 ? (x) : -(x))
+#endif
+
+
 // convert a virtual address to physical.
 #define VIRTUAL_TO_PHYSICAL(addr)   ((uintptr_t)(addr) & 0x1FFFFFFF)
 
@@ -55,13 +71,11 @@
 // another way of converting virtual to physical
 #define VIRTUAL_TO_PHYSICAL2(addr)  ((u8 *)(addr) - 0x80000000U)
 
-#define ABSF(x) (x < 0.f ? -x : x)
-
 // Used to suppress warnings in the ./generate_ctx.sh script.
 #define INCONSISTENT 
 
 // Used to make a u32 colour value look clearer. Transforms 0xFF0000FF to 255, 0, 0, 255
-#define COLOUR_RGBA32(r, g, b, a) (((r << 24) | (g << 16) |  (b << 8) | a))
+#define COLOUR_RGBA32(r, g, b, a) ((u32)((r << 24) | (g << 16) |  (b << 8) | a))
 
 // A few systems in the game use an array as a cache table. This gives you the asset ID
 #define ASSETCACHE_ID(x)    ((x << 1) + 0)
