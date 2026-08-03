@@ -426,7 +426,22 @@ void mainPauseDisable(s32 arg0) {
     D_800A32BC_A3EBC = arg0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainDemoOnly.s")
+extern s32 joyfail;
+
+#define CONTROLLER_MISSING -1
+#define CONTROLLER_EXISTS   0
+
+/**
+ * Returns TRUE if the game doesn't detect any controllers.
+ * Official name: mainDemoOnly
+ */
+s32 mainDemoOnly(void) {
+    if (joyfail == CONTROLLER_MISSING) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
+}
 
 s32 mainGetNumberOfCameras(void) {
     return numberOfCameras;
