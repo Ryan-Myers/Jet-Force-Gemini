@@ -106,42 +106,38 @@ void modFreeModel(ModelInstance_JFG *modInst) {
     s32 modelIndex;
     u8 unk64;
 
-    if (modInst == NULL) {
-        // stubbed_printf("ModFreeModel : NULL mod_inst!!\n");
-        return;
-    }
-
-    model = modInst->objModel;
-    if (modInst->unkC != NULL) {
-        mmFree(modInst->unkC);
-    }
-
-    // Yeah, this is so fake lol. I blame Bl00D4NGEL.
-    if ((model->unk64 & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF & 0xFF)) {
-        for (i = 0; i < 2; i++) {
-            if (modInst->unk80[i] != NULL) {
-                modFreeAnim(modInst->unk80[i]);
-            }
-        }
-    }
-    mmFree(modInst);
-    model->references--;
-    if (model->references <= 0) {
-        i = 0;
-        modelIndex = -1;
-        while (i < gModelCacheCount) {
-            if (model == (ObjectModel_JFG *) gModelCache[ASSETCACHE_PTR(i)]) {
-                modelIndex = i;
-            }
-            i++;
+    if (modInst != NULL) {
+        model = modInst->objModel;
+        if (modInst->unkC != NULL) {
+            mmFree(modInst->unkC);
         }
 
-        if (modelIndex != -1) {
-            func_8003C6D0(model);
-            D_800F6F18_B1758[D_800F6F24_B1764] = modelIndex;
-            D_800F6F24_B1764++;
-            gModelCache[ASSETCACHE_ID(modelIndex)] = -1;
-            gModelCache[ASSETCACHE_PTR(modelIndex)] = -1;
+        if (model->unk64) {
+            for (i = 0; i < 2; i++) {
+                if (modInst->unk80[i] != NULL) {
+                    modFreeAnim(modInst->unk80[i]);
+                }
+            }
+        }
+        mmFree(modInst);
+        model->references--;
+        if (model->references <= 0) {
+            i = 0;
+            modelIndex = -1;
+            while (i < gModelCacheCount) {
+                if (model == (ObjectModel_JFG *) gModelCache[ASSETCACHE_PTR(i)]) {
+                    modelIndex = i;
+                }
+                i++;
+            }
+
+            if (modelIndex != -1) {
+                func_8003C6D0(model);
+                D_800F6F18_B1758[D_800F6F24_B1764] = modelIndex;
+                D_800F6F24_B1764++;
+                gModelCache[ASSETCACHE_ID(modelIndex)] = -1;
+                gModelCache[ASSETCACHE_PTR(modelIndex)] = -1;
+            }
         }
     }
 }
