@@ -12,7 +12,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/staticcamera/lobbycamGetFocalPoint.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/staticcamera/func_80042368.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/staticcamera/func_800427E8_433E8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/staticcamera/lobbycamPosition.s")
 

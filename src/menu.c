@@ -30,9 +30,9 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontPlayerScreenLimits.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/func_8005A4B4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/menu/func_80059A04_5A604.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/func_8005A548.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/menu/func_80059A98_5A698.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/freeFrontEndList.s")
 
@@ -40,7 +40,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/loadFrontEndList.s")
 
-const char D_800ADF40[] = "loadFrontEndItem() - Item no %d out of range 0-%d\n";
+const char D_800AD390_ADF90[] = "loadFrontEndItem() - Item no %d out of range 0-%d\n";
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/loadFrontEndItem.s")
 

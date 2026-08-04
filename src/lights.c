@@ -1,30 +1,30 @@
 #include "common.h"
 #include "math.h"
 
-extern void *D_800A18A0;
-extern ObjectLightUnk70 *D_800F65E0;
+extern void *D_800A1010_A1C10;
+extern ObjectLightUnk70 *D_800F5B20_F6720;
 
 void freeLights(void) {
-    if (D_800A1898 != NULL) {
-        mmFree(D_800A1898);
-        D_800A1898 = NULL;
-        D_800A189C = 0;
+    if (D_800A1008_A1C08 != NULL) {
+        mmFree(D_800A1008_A1C08);
+        D_800A1008_A1C08 = NULL;
+        D_800A100C_A1C0C = 0;
     }
-    if (D_800F65E0 != NULL) {
-        mmFree(D_800F65E0);
-        D_800F65E0 = NULL;
+    if (D_800F5B20_F6720 != NULL) {
+        mmFree(D_800F5B20_F6720);
+        D_800F5B20_F6720 = NULL;
     }
-    if (D_800A18A0 != NULL) {
-        mmFree(D_800A18A0);
-        D_800A18A0 = NULL;
+    if (D_800A1010_A1C10 != NULL) {
+        mmFree(D_800A1010_A1C10);
+        D_800A1010_A1C10 = NULL;
     }
-    D_800A1894 = 0;
-    D_800A1890 = 0;
+    D_800A1004_A1C04 = 0;
+    D_800A1000_A1C00 = 0;
 }
 
 #ifdef NON_MATCHING
-extern s32 D_800A1890; // gMaxLights
-extern void *D_800A18A0;
+extern s32 D_800A1000_A1C00; // gMaxLights
+extern void *D_800A1010_A1C10;
 
 // Reasonably certain this 0x200 is the size of ObjectLightUnk70
 #define SIZE_0X200 sizeof(ObjectLightUnk70)
@@ -34,17 +34,17 @@ void setupLights(s32 count, UNUSED s32 arg1, UNUSED s32 arg2) {
     ObjectLight **buffer;
 
     freeLights();
-    D_800A1890 = count;
-    buffer = mmAlloc(D_800A1890 * (sizeof(s32 *) + sizeof(ObjectLight)), COLOUR_TAG_MAGENTA);
-    D_800F65E0 = mmAlloc((D_800A1890 * SIZE_0X200) + SIZE_0X200, COLOUR_TAG_MAGENTA);
-    D_800A18A0 = mmAlloc(SIZE_0X200 + 0x40, COLOUR_TAG_MAGENTA);
-    D_800A1898 = buffer;
-    D_800A189C = (ObjectLight *) &buffer[D_800A1890];
-    for (i = 0; i < D_800A1890; i++) {
-        D_800A1898[i] = &D_800A189C[i];
-        D_800A189C[i].unk70 = &D_800F65E0[(i * SIZE_0X200)];
+    D_800A1000_A1C00 = count;
+    buffer = mmAlloc(D_800A1000_A1C00 * (sizeof(s32 *) + sizeof(ObjectLight)), COLOUR_TAG_MAGENTA);
+    D_800F5B20_F6720 = mmAlloc((D_800A1000_A1C00 * SIZE_0X200) + SIZE_0X200, COLOUR_TAG_MAGENTA);
+    D_800A1010_A1C10 = mmAlloc(SIZE_0X200 + 0x40, COLOUR_TAG_MAGENTA);
+    D_800A1008_A1C08 = buffer;
+    D_800A100C_A1C0C = (ObjectLight *) &buffer[D_800A1000_A1C00];
+    for (i = 0; i < D_800A1000_A1C00; i++) {
+        D_800A1008_A1C08[i] = &D_800A100C_A1C0C[i];
+        D_800A100C_A1C0C[i].unk70 = &D_800F5B20_F6720[(i * SIZE_0X200)];
     }
-    lightCreateLightTable(0xFF, 0xFF, 0xFF, D_800F65E0);
+    lightCreateLightTable(0xFF, 0xFF, 0xFF, D_800F5B20_F6720);
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/setupLights.s")
@@ -52,7 +52,7 @@ void setupLights(s32 count, UNUSED s32 arg1, UNUSED s32 arg2) {
 
 extern f32 D_800AC360; // = 0.3000000119f
 void *trackLightAdd(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, s32 arg5, s32 arg6, s32 arg7);
-void func_80020D94(ObjectLight *arg0) {
+void func_80020D84_21984(ObjectLight *arg0) {
     if (!(arg0->type & 0x40)) {
         arg0->unk6C = trackLightAdd(arg0->pos.z, arg0->unk1C, arg0->unk20, arg0->unk24 * 1.25f,
                                     arg0->unk24 * 0.3000000119f, (s32) (arg0->unk40 * arg0->unk43) >> 8,
@@ -100,26 +100,26 @@ void changeLightIntensity(UnkLight *light, u8 intensity) {
 
 void lightUpdateLights(s32 arg0) {
     s32 i;
-    for (i = 0; i < D_800A1894; i++) {
-        func_80021444(D_800A1898[i], arg0);
+    for (i = 0; i < D_800A1004_A1C04; i++) {
+        func_80021434_22034(D_800A1008_A1C08[i], arg0);
     }
 }
 
 // Same as func_80032424 in DKR
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021444.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021434_22034.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/killLight.s")
 
 UNUSED unk800DC950 **lightGetLights(s32 *arg0) {
-    *arg0 = D_800A1894;
-    return D_800A1898;
+    *arg0 = D_800A1004_A1C04;
+    return D_800A1008_A1C08;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightGetStrongestEffect.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/lightUpdateObjects.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021B9C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021B8C_2278C.s")
 
 #ifdef NON_EQUIVALENT
 // Matching, but needs rodata migration for the jump table.

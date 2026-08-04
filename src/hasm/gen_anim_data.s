@@ -115,13 +115,13 @@ glabel gen_anim_data
     lui        $s5, %hi(D_800A7BCC)
     div.s      $f28, $f20, $f21
     lui        $t5, %hi(D_800A798C)
-    lui        $s2, %hi(D_800A8754)
+    lui        $s2, %hi(D_800A7D94_A8994)
     sll        $t2, $t1, 4
     sub.s      $f15, $f12, $f24
     mtc1       $at, $f29
     addiu      $s5, $s5, %lo(D_800A7BCC)
     addiu      $t5, $t5, %lo(D_800A798C)
-    addiu      $s2, $s2, %lo(D_800A8754)
+    addiu      $s2, $s2, %lo(D_800A7D94_A8994)
     addiu      $t3, $zero, 0xFFC
     addiu      $s6, $zero, 0x1000
     addu       $s4, $t2, $t0
@@ -671,8 +671,8 @@ glabel func_80074B50
     mtc1       $at, $f21
     addiu      $t3, $zero, 0xFFC
     addiu      $s6, $zero, 0x1000
-    lui        $t5, %hi(D_800A8754)
-    addiu      $t5, $t5, %lo(D_800A8754)
+    lui        $t5, %hi(D_800A7D94_A8994)
+    addiu      $t5, $t5, %lo(D_800A7D94_A8994)
     lui        $t8, %hi(D_800A7BCC)
     addiu      $t8, $t8, %lo(D_800A7BCC)
   .L80074F2C:

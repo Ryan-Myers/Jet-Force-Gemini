@@ -109,23 +109,23 @@ void amTuneVoiceLimit(u8 voiceLimit) {
 
 void amTuneSetVolume(u8 volume);
 
-extern u8 D_800A0EFC; // gMusicBaseVolume?
+extern u8 D_800A0668_A1268; // gMusicBaseVolume?
 extern s32 gTuneFade;
-extern s32 D_800EA090;
-extern s32 D_800EA094;
+extern s32 D_800E9524_EA124;
+extern s32 D_800E9528_EA128;
 
 void amTuneSetFade(f32 fade, u8 volume) {
     if (volume > 0x7F) {
         volume = 0x7F;
     }
-    D_800EA090 = volume;
+    D_800E9524_EA124 = volume;
     if (osTvType == OS_TV_TYPE_PAL) {
         gTuneFade = fade * 50.0f;
     } else {
         gTuneFade = fade * 60.0f;
     }
     if (gTuneFade > 0) {
-        D_800EA094 = ((D_800A0EFC - volume) << 16) / gTuneFade;
+        D_800E9528_EA128 = ((D_800A0668_A1268 - volume) << 16) / gTuneFade;
     } else {
         amTuneSetVolume(volume);
     }
@@ -140,21 +140,21 @@ void amTuneResetFade(void) {
 }
 
 extern s32 gAmbientFade;
-extern s32 D_800EA098;
-extern s32 D_800EA09C;
+extern s32 D_800E952C_EA12C;
+extern s32 D_800E9530_EA130;
 
 void amAmbientSetFade(f32 fade, u8 volume) {
     if (volume > 0x7F) {
         volume = 0x7F;
     }
-    D_800EA098 = volume;
+    D_800E952C_EA12C = volume;
     if (osTvType == OS_TV_TYPE_PAL) {
         gAmbientFade = fade * 50.0f;
     } else {
         gAmbientFade = fade * 60.0f;
     }
     if (gAmbientFade > 0) {
-        D_800EA09C = ((D_800A0EFC - volume) << 16) / gAmbientFade;
+        D_800E9530_EA130 = ((D_800A0668_A1268 - volume) << 16) / gAmbientFade;
     } else {
         amTuneSetVolume(volume);
     }
@@ -165,7 +165,7 @@ void amAmbientResetFade(void) {
 }
 
 // void music_sequence_init(N_ALCSPlayer *seqp, void *sequence, u8 *seqID, ALCSeq *seq);
-void func_80001990(N_ALCSPlayer *arg0, u8 *arg1, ALCSeq *arg2);
+void func_8000167C_227C(N_ALCSPlayer *arg0, u8 *arg1, ALCSeq *arg2);
 extern ALCSeq *tuneCSeqp;
 extern ALCSeq **tuneCSeqs;
 
@@ -186,8 +186,8 @@ extern ALCSeq D_800EA2D8;
 extern s32 D_800EA3D4;
 extern OSMesgQueue animCtrlQueue;
 
-extern u32 D_800A0F24; // gTuneGlobalVol?
-extern u8 D_800A0F48;
+extern u32 D_800A0690_A1290; // gTuneGlobalVol?
+extern u8 D_800A06B0_A12B0;
 
 #ifdef NON_EQUIVALENT
 /**
@@ -211,14 +211,14 @@ void amAudioTick(u8 updateRate) {
         if (gTuneFade < 0) {
             gTuneFade = 0;
         }
-        amTuneSetVolume((((D_800EA094 * gTuneFade) >> 16) + D_800EA090) & 0xFF);
+        amTuneSetVolume((((D_800E9528_EA128 * gTuneFade) >> 16) + D_800E9524_EA124) & 0xFF);
     }
     if (gAmbientFade > 0) {
         gAmbientFade -= updateRate;
         if (gAmbientFade < 0) {
             gAmbientFade = 0;
         }
-        amAmbientSetVolume((((D_800EA09C * gAmbientFade) >> 16) + D_800EA098) & 0xFF);
+        amAmbientSetVolume((((D_800E9530_EA130 * gAmbientFade) >> 16) + D_800E952C_EA12C) & 0xFF);
     }
 
     if (gDelayedSoundsCount > 0) {
@@ -263,7 +263,7 @@ void amAudioTick(u8 updateRate) {
     }
 
     if (D_800A0F34 != 0) {
-        func_80001990(tuneSeqPlayer, &D_800A0F34, tuneCSeqp);
+        func_8000167C_227C(tuneSeqPlayer, &D_800A0F34, tuneCSeqp);
     } else {
         music_sequence_init(tuneSeqPlayer, &gMusicSequenceData, &gMusicNextSeqID, tuneCSeqp);
     }
@@ -274,7 +274,7 @@ void amAudioTick(u8 updateRate) {
         sMusicTempo = (s16) (60000000 / n_alCSPGetTempo(tuneSeqPlayer));
     }
 
-    D_800A0F48 = 0;
+    D_800A06B0_A12B0 = 0;
     D_800A0F4C = 0;
 }
 #else
@@ -318,10 +318,10 @@ void amTuneSetVolume(u8 volume) {
     if (volume > 0x7F) {
         volume = 0x7F;
     }
-    D_800A0EFC = volume;
-    vol = D_800A0F24 * D_800A0EFC;
+    D_800A0668_A1268 = volume;
+    vol = D_800A0690_A1290 * D_800A0668_A1268;
     n_alCSPSetVol(tuneSeqPlayer, vol);
-    D_800A0F48 = 1;
+    D_800A06B0_A12B0 = 1;
 }
 
 void amTuneSetGlobalVolume(u32 volume) {
@@ -329,8 +329,8 @@ void amTuneSetGlobalVolume(u32 volume) {
     if (volume > 0x100) {
         volume = 0x100;
     }
-    D_800A0F24 = volume;
-    vol = D_800A0F24 * D_800A0EFC;
+    D_800A0690_A1290 = volume;
+    vol = D_800A0690_A1290 * D_800A0668_A1268;
     n_alCSPSetVol(tuneSeqPlayer, vol);
 }
 
@@ -407,8 +407,8 @@ u8 amSoundIsLooped(u16 soundID) {
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/music_sequence_init.s")
 
 // Could be an alternate version of the above without the sequence
-void func_80001990(N_ALCSPlayer *arg0, u8 *arg1, ALCSeq *arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_80001990.s")
+void func_8000167C_227C(N_ALCSPlayer *arg0, u8 *arg1, ALCSeq *arg2);
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/func_8000167C_227C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/stop_ALSeqp.s")
 

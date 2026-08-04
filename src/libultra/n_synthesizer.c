@@ -8,15 +8,15 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_synthesizer/_n_freeParam.s")
 
-void func_8008C6B8(void) {
+void func_8008B00C_8BC0C(void) {
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_synthesizer/_n_collectPVoices.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_synthesizer/_n_freePVoice.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_synthesizer/func_8008C76C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_synthesizer/func_8008B0C0_8BCC0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_synthesizer/_n_timeToSamples.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_synthesizer/func_8008C80C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_synthesizer/func_8008B160_8BD60.s")

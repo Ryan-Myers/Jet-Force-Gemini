@@ -588,7 +588,7 @@ void runlinkCallResumeFunction(s32 overlayIndex) {
 
 /**
  * Timer/state entry for overlay self-destruct system.
- * D_800FF838 points to an array indexed by overlay number.
+ * D_800FEB58_B9398 points to an array indexed by overlay number.
  *
  * The 16-bit word layout:
  *   - selfDestructTimer (10 bits, bits 6-15): Ticks until overlay auto-unloads, 0 = disabled
@@ -609,7 +609,7 @@ typedef struct OverlayTimerEntry {
     };
 } OverlayTimerEntry;
 
-extern OverlayTimerEntry *D_800FF838;
+extern OverlayTimerEntry *D_800FEB58_B9398;
 
 /**
  * Unloads an overlay and patches all references back to TrapDanglingJump.
@@ -661,8 +661,8 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
     overlay->VramBase = 0;
 
     // Clear overlay timer entry - reset selfDestructTimer and refCount
-    D_800FF838[overlayIndex].selfDestructTimer = 0;
-    D_800FF838[overlayIndex].refCount = 0;
+    D_800FEB58_B9398[overlayIndex].selfDestructTimer = 0;
+    D_800FEB58_B9398[overlayIndex].refCount = 0;
 
     // Iterate through mainRelocTable and patch entries referencing this overlay
     relocEntry = (RelocationEntry *) mainRelocTable;
@@ -706,8 +706,8 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkFlushModules.s")
 
-extern s32 D_800A4344; // Some flag cleared at init
-extern s32 D_800A4348; // Symbol table size (D_1FED550 - D_1FEB040)
+extern s32 D_800A38F4_A44F4; // Some flag cleared at init
+extern s32 D_800A38F8_A44F8; // Symbol table size (D_1FED550 - D_1FEB040)
 
 // ROM addresses for runlink tables
 extern u8 symbolsTable_offsets_ROM_START[];
@@ -727,7 +727,7 @@ extern u8 overlayCode_ROM_END[];
  * - Allocates and copies overlayTable, overlayRomTable, and mainRelocTable from ROM
  * - Sets up the main module (overlay 0) with section base addresses
  * - Initializes the pending overlay load slots
- * - Allocates the overlay timer entry array (D_800FF838)
+ * - Allocates the overlay timer entry array (D_800FEB58_B9398)
  * - Converts relative ROM addresses in overlay headers to absolute
  */
 void runlinkInitialise(void) {
@@ -739,7 +739,7 @@ void runlinkInitialise(void) {
     s32 i;
 
     // Store symbol table size for GetSymbolName
-    D_800A4348 = symbolsTable_offsets_ROM_END - symbolsTable_offsets_ROM_START;
+    D_800A38F8_A44F8 = symbolsTable_offsets_ROM_END - symbolsTable_offsets_ROM_START;
 
     // Allocate and copy overlayTable from ROM
     // Extra 0x20 bytes at start for main module header (overlay 0)
@@ -777,7 +777,7 @@ void runlinkInitialise(void) {
 
     // Allocate and zero the overlay timer array
     timerArray = mmAlloc(overlayCount * 2, -1);
-    D_800FF838 = timerArray;
+    D_800FEB58_B9398 = timerArray;
     bzero(timerArray, overlayCount * 2);
 
     // Initialize main module header (overlay 0) with section addresses
@@ -797,7 +797,7 @@ void runlinkInitialise(void) {
         overlayEntry++;
     }
 
-    D_800A4344 = 0;
+    D_800A38F4_A44F4 = 0;
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkInitialise.s")
@@ -827,7 +827,7 @@ void runlinkLowMemoryPanic(void) {
 
     overlayIndex = overlayCount;
     while (overlayIndex--) {
-        timerEntry = &D_800FF838[overlayIndex];
+        timerEntry = &D_800FEB58_B9398[overlayIndex];
         if (timerEntry->selfDestructTimer != 0) { // Has selfDestructTimer set?
             if (timerEntry->refCount == 0) {      // No references
                 runlinkFreeCode(overlayIndex);

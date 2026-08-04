@@ -40,11 +40,11 @@ void rumbleRumbles(s32 arg0) {
 #endif
 
 UNUSED void rumbleProcessing(s32 arg0) {
-    if ((arg0 != 0) && (D_800A3ECC == 0)) {
-        D_800A3EC4 = 1;
-        D_800A3ECC = 1;
+    if ((arg0 != 0) && (D_800A346C_A406C == 0)) {
+        D_800A3464_A4064 = 1;
+        D_800A346C_A406C = 1;
     } else {
-        D_800A3ECC = 0;
+        D_800A346C_A406C = 0;
     }
 }
 
@@ -100,7 +100,7 @@ void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
 #endif
         if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
             controllerNum = joyGetController(controllerIndex);
-            rumblePak = &D_800FEC6A[controllerNum];
+            rumblePak = &D_800FDF5A_B879A[controllerNum];
             if (arg1 != 0) {
                 rumblePak->state.half = ((arg1 * arg1) * 0.1000000015f);
             }
@@ -167,7 +167,7 @@ void rumbleKill(s32 arg0) {
 #endif
 
 void rumbleUpdate(void) {
-    D_800A3EC4 = 1;
+    D_800A3464_A4064 = 1;
 }
 
 #ifdef NON_EQUIVALENT
@@ -183,8 +183,8 @@ void rumbleTick(s32 updateRate) {
     s32 controllerToCheck;
     u8 pfsBitPattern;
 
-    if (D_800A3ECC != 0) {
-        if (D_800A3EC4 != 0) {
+    if (D_800A346C_A406C != 0) {
+        if (D_800A3464_A4064 != 0) {
             osPfsIsPlug(sControllerMesgQueue, &pfsBitPattern);
             for (i = 0, controllerToCheck = 1, rumble = rumbleStructArray; i < MAXCONTROLLERS;
                  i++, controllerToCheck <<= 1, rumble++) {
@@ -198,7 +198,7 @@ void rumbleTick(s32 updateRate) {
                     }
                 }
             }
-            D_800A3EC4 = 0;
+            D_800A3464_A4064 = 0;
         }
         for (i = 0, controllerToCheck = 1, rumble = rumbleStructArray; i < MAXCONTROLLERS;
              i++, controllerToCheck <<= 1, rumble++) {
@@ -294,12 +294,12 @@ UNUSED void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
     *arg1 = 0;
     *arg2 = 0;
     if ((arg0 >= 0) && (arg0 < 3)) {
-        *arg1 = D_800A3EAC[arg0].unk0;
-        *arg2 = D_800A3EAC[arg0].unk4;
+        *arg1 = D_800A344C_A404C[arg0].unk0;
+        *arg2 = D_800A344C_A404C[arg0].unk4;
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004C2A8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004BA98_4C698.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadCharacter.s")
 
@@ -313,7 +313,7 @@ UNUSED void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packEraseEprom.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004C9B8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004BE44_4CA44.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadGlobalFlagsEprom.s")
 
@@ -541,7 +541,7 @@ SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char *
         fileTypes[i] = 1; // Unknown file type? Possibly from another game?
 
         if ((state.game_code == gameCode) && (state.company_code == COMPANY_CODE)) {
-            fileTypes[i] = func_8004DDC4(controllerIndex, i);
+            fileTypes[i] = func_8004D250_4DE50(controllerIndex, i);
         }
     }
 
@@ -864,7 +864,7 @@ char *string_to_font_codes(char *inString, char *outString, s32 stringLength) {
 }
 
 // Essentially the same as get_file_type in DKR
-s32 func_8004DDC4(s32 controllerIndex, s32 fileNum) {
+s32 func_8004D250_4DE50(s32 controllerIndex, s32 fileNum) {
     s32 *data;
     UNUSED s32 pad;
     s32 ret;

@@ -7,33 +7,33 @@ const char D_800AD900[] = "WARNING:Can't lock to node, no nodes\n";
 
 // .data
 u32 *BaddyDataArray = NULL; // Effectively unused
-u32 *D_800A4334 = NULL;     // Unknown type
+u32 *D_800A38E4_A44E4 = NULL;     // Unknown type
 
 // .bss
-void *D_800FF6B0;
+void *D_800FE9A0_B91E0;
 void *DisactivatedSquaddies;
-s32 D_800FF6B8;
-s32 D_800FF6BC;
+s32 D_800FE9A8_B91E8;
+s32 D_800FE9AC_B91EC;
 s32 SquadsModuleFlags;
 #ifdef VERSION_kiosk
-u8 D_800FF6C4[5];
+u8 D_800FE9B8_B91F8[5];
 #else
-u8 D_800FF6C4[0x35];
+u8 D_800FE9B8_B91F8[0x35];
 #endif
-u8 D_800FF6C9; // Linked with above?
+u8 D_800FE9ED_B922D; // Linked with above?
 u8 squadsBehaviour;
-s32 D_800FF6CC;
+s32 D_800FE9F0_B9230;
 s32 SquaddieGrowlTimer;
 s32 iDeltaTime;
 s32 PlayersDisguise;
 RomDefHeader *GlobalStartOfRomdefList;
 s32 GlobalSizeOfRomdefList;
-Object *D_800FF6E4;
-Object_Racer *D_800FF6E8; // Could be any Object64 from DKR
-Object *D_800FF6EC;
-Object_Racer *D_800FF6F0; // Not sure if array, or not. Could be any Object64 from DKR
+Object *D_800FEA08_B9248;
+Object_Racer *D_800FEA0C_B924C; // Could be any Object64 from DKR
+Object *D_800FEA10_B9250;
+Object_Racer *D_800FEA14_B9254; // Not sure if array, or not. Could be any Object64 from DKR
 UNUSED u8 PathLists[0x3C];
-s32 *D_800FF734;
+s32 *D_800FEA54_B9294;
 UNUSED u8 AnimPathNumbers[0x40];
 s32 MaxPatrolNodes;
 void *PatrolNodes;
@@ -66,7 +66,7 @@ void *PatrolNodes;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/ProcessNodeChange.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/func_80052900.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/squads/func_80051CCC_528CC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsInitialiseAfterObjects.s")
 

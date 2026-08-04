@@ -9,12 +9,12 @@ s32 rcpWaitDP(void) {
     s32 *refractDoneMsg = NULL;
     s32 *blurDoneMsg = NULL;
 
-    if (D_800A4034 == FALSE) {
+    if (D_800A35E4_A41E4 == FALSE) {
         return 0;
     }
-    osRecvMesg(&D_800FF1C8, (OSMesg) &unkMsg, OS_MESG_BLOCK);
+    osRecvMesg(&D_800FE4B8_B8CF8, (OSMesg) &unkMsg, OS_MESG_BLOCK);
     if (blurTaskActive) {
-        osRecvMesg(&D_800FF628, (OSMesg) &blurDoneMsg, OS_MESG_BLOCK);
+        osRecvMesg(&D_800FE918_B9158, (OSMesg) &blurDoneMsg, OS_MESG_BLOCK);
         blurTaskActive = FALSE;
     }
     if (refractTaskActive) {
@@ -25,7 +25,7 @@ s32 rcpWaitDP(void) {
         cloneTasksQueueAndWait_Trap();
         cloneTaskActive = FALSE;
     }
-    D_800A4034 = FALSE;
+    D_800A35E4_A41E4 = FALSE;
     return unkMsg[1];
 }
 

@@ -235,14 +235,14 @@ const char D_800AEC98[] = "G_MW_POINTS";
 const char D_800AECA4[] = "G_MW_SPRITEMODE";
 const char D_800AECB4[] = "G_MW_FOG";
 
-static void func_80066F64(Gfx *dList, s32 *w0_24_31, s32 *w0_16_23, s32 *w0_0_15, s32 *w1) {
+static void func_80066594_67194(Gfx *dList, s32 *w0_24_31, s32 *w0_16_23, s32 *w0_0_15, s32 *w1) {
     *w0_24_31 = (dList->words.w0 >> 0x18) & 0xFF;
     *w1 = (dList->words.w0 >> 0x10) & 0xFF;
     *w0_0_15 = dList->words.w0 & 0xFFFF;
     *w0_16_23 = dList->words.w1;
 }
 
-static void func_80066FA8(Gfx *dList, s32 *w0_24_31, s32 *w0_8_23, s32 *w0_0_7, s32 *w1) {
+static void func_800665D8_671D8(Gfx *dList, s32 *w0_24_31, s32 *w0_8_23, s32 *w0_0_7, s32 *w1) {
     *w0_24_31 = (dList->words.w0 >> 0x18) & 0xFF;
     *w0_8_23 = (dList->words.w0 >> 8) & 0xFFFF;
     *w0_0_7 = dList->words.w0 & 0xFF;
@@ -256,7 +256,7 @@ static s32 diRcpVertex(Gfx *dList) {
     s32 w1;
     s32 pad[4];
 
-    func_80066F64(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
+    func_80066594_67194(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
     return 8;
 }
 
@@ -267,7 +267,7 @@ static s32 diRcpReserved1(Gfx *dList) {
     s32 w1;
     s32 pad[4];
 
-    func_80066F64(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
+    func_80066594_67194(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
     return 8;
 }
 
@@ -278,7 +278,7 @@ static s32 diRcpMatrix(Gfx *dList) {
     s32 w1;
     s32 pad[8];
 
-    func_80066F64(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
+    func_80066594_67194(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
     return 8;
 }
 
@@ -293,7 +293,7 @@ static s32 diRcpReserved2(Gfx *dList) {
     s32 w1;
     s32 pad[2];
 
-    func_80066F64(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
+    func_80066594_67194(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
     return 8;
 }
 
@@ -304,7 +304,7 @@ static s32 diRcpMoveMem(Gfx *dList) {
     s32 w1;
     s32 pad[2];
 
-    func_80066F64(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
+    func_80066594_67194(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
     return 8;
 }
 
@@ -315,7 +315,7 @@ static s32 diRcpDisplayList(Gfx *dList) {
     s32 w1;
     s32 pad[2];
 
-    func_80066F64(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
+    func_80066594_67194(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
     return 8;
 }
 
@@ -343,7 +343,7 @@ static s32 diRcpMoveWd(Gfx *dList) {
     s32 w1;
     char str[0x2C];
 
-    func_80066FA8(dList, &w0_24_31, &w0_8_23, &w0_0_7, &w1);
+    func_800665D8_671D8(dList, &w0_24_31, &w0_8_23, &w0_0_7, &w1);
     switch (w0_0_7) {
         case 6:
             break;

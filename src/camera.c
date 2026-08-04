@@ -48,7 +48,7 @@ void camInit(void) {
 
     for (j = 0; j < 8; j++) {
         D_800FB0F4 = j;
-        func_8003F66C(200, 200, 200, 0, 0, 180);
+        func_8003FAEC_406EC(200, 200, 200, 0, 0, 180);
     }
 
     gCutsceneCameraActive = FALSE;
@@ -89,7 +89,7 @@ void camInit(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camDistance.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_8003F66C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_8003FAEC_406EC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camGetMode.s")
 
