@@ -1,4 +1,7 @@
 {
+    "clangd.arguments": [
+        "--compile-commands-dir=${workspaceFolder}/.vscode"
+    ],
     "C_Cpp.default.defines": [
         "BUILD_VERSION=6",
         "VERSION=us",
@@ -19,12 +22,6 @@
     "files.associations": {
         "*.c": "c",
         "*.h": "c",
-        "cstdint": "c",
-        "optional": "c",
-        "ranges": "c",
-        "regex": "c",
-        "ratio": "c",
-        "random": "c",
-        "chrono": "c"
-    }
+    },
+    "editor.semanticHighlighting.enabled": true
 }

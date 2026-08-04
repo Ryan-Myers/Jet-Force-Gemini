@@ -101,13 +101,10 @@ s32 debug_text_character(Gfx **dList, s32 asciiVal);
 void debug_text_bounds(void);
 void debug_text_origin(void);
 void debug_text_newline(void);
-void sprintfSetSpacingCodes(s32 arg0);
 TextureHeader *load_texture(s32 arg0);
 
-void viGetCurrentSize(s32 *arg0, s32 *arg1);
 void rcpInitDp(Gfx **dList);
 TextureHeader *texLoadTexture(s32 arg0);
-s32 debug_text_parse(Gfx **dlist, char *buffer);
 
 
 void func_80021444(unk800DC950 *arg0, s32 arg1);

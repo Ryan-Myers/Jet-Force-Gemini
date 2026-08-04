@@ -92,24 +92,21 @@ void texModelTextureLoad(u8 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/texLoadTexture.s")
 
+// Need to rework the TextureHeader struct to match the game. The current one is wrong.
 #ifdef NON_EQUIVALENT
 extern s32 D_800FF9D0;
-extern TextureCacheEntry *D_800FF9C8;
+extern s32 *D_800FF9C8;
+
 void texFreeTexture(TextureHeader *tex) {
     s32 i;
-    s32 j;
-    s32 texId;
 
     if (tex != NULL) {
-        tex->numberOfInstances--;
-        if (tex->numberOfInstances <= 0) {
+        if ((--tex->numberOfInstances) <= 0) {
             for (i = 0; i < D_800FF9D0; i++) {
-                j = i << 1;
-                if (tex == D_800FF9C8[j].texture) {
-                    texId = -1;
+                if ((s32) tex == D_800FF9C8[ASSETCACHE_PTR(i)]) {
                     mmFree(tex);
-                    D_800FF9C8[j].id = texId;
-                    D_800FF9C8[j].texture = (TextureHeader *) texId;
+                    D_800FF9C8[ASSETCACHE_ID(i)] = -1;
+                    D_800FF9C8[ASSETCACHE_PTR(i)] = -1;
                     break;
                 }
             }
@@ -140,10 +137,12 @@ typedef struct Struct_Unk_8007B46C {
     u8 pad17[8];
 } Struct_Unk_8007B46C;
 
-TextureHeader *texFrame(TextureHeader *arg0, s32 arg1) {
-    TextureHeader *ret = arg0 + 1;
-    if ((arg1 > 0) && (arg1 < arg0->numOfTextures << 8)) {
-        ret = (TextureHeader *) (((u8 *) arg0) + ((arg1 >> 16) * arg0->textureSize)) + 1;
+TextureHeader *texFrame(TextureHeader *texHead, s32 offset) {
+    TextureHeader *ret = texHead + 1;
+    if (offset > 0) {
+        if (offset < texHead->numOfTextures << 8) {
+            ret = (TextureHeader *) (((u8 *) texHead) + ((offset >> 16) * texHead->textureSize)) + 1;
+        }
     }
     return ret;
 }

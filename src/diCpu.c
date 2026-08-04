@@ -1,4 +1,5 @@
 #include "common.h"
+#include "gameVi.h"
 #include "PR/rdb.h"
 #include "PRinternal/rmonint.h"
 #include "stdarg.h"

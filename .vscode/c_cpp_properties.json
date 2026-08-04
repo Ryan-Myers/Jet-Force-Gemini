@@ -3,13 +3,65 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**",
-                "${workspaceFolder}/include/*",
-                "${workspaceFolder}/libultra/*",
-                "${workspaceFolder}/include/PR/*"
+                "${workspaceFolder}",
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/include/libc",
+                "${workspaceFolder}/include/PR",
+                "${workspaceFolder}/include/sys",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/libultra",
+                "${workspaceFolder}/libultra/src/gu",
+                "${workspaceFolder}/libultra/src/libc",
+                "${workspaceFolder}/libultra/src/io",
+                "${workspaceFolder}/libultra/src/sc",
+                "${workspaceFolder}/libultra/src/os",
+                "${workspaceFolder}/src/hasm/ido",
+                "${workspaceFolder}/build"
             ],
-            "compilerPath": "/usr/bin/gcc",
-            "cStandard": "gnu89",
+            "browse": {
+                "path": [
+                    "${workspaceFolder}/include",
+                    "${workspaceFolder}/src",
+                    "${workspaceFolder}/libultra"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            },
+            "forcedInclude": [
+                "${workspaceFolder}/include/asm.h",
+                "${workspaceFolder}/include/audio_internal.h",
+                "${workspaceFolder}/include/common.h",
+                "${workspaceFolder}/include/config.h",
+                "${workspaceFolder}/include/enums.h",
+                "${workspaceFolder}/include/f3ddkr.h",
+                "${workspaceFolder}/include/functions.h",
+                "${workspaceFolder}/include/libultra_internal.h",
+                "${workspaceFolder}/include/macros.h",
+                "${workspaceFolder}/include/siint.h",
+                "${workspaceFolder}/include/structs.h",
+                "${workspaceFolder}/include/types.h",
+                "${workspaceFolder}/include/ultra64.h",
+                "${workspaceFolder}/include/ultrahost.h",
+                "${workspaceFolder}/include/variables.h",
+                "${workspaceFolder}/include/libc/stdarg.h"
+            ],
+            "defines": [
+                "TARGET_N64=1",
+                "VERSION_US=1",
+                "VERSION=us",
+                "BUILD_VERSION=6",
+                "_FINAL_ROM=1",
+                "F3DDKR_GBI=1",
+                "NON_MATCHING=1",
+                "NON_EQUIVALENT=1",
+                "ANTI_TAMPER=1",
+                "_MIPS_SZLONG=32",
+                "RAREDIFFS=1",
+                "JFGDIFFS=1",
+                "_LANGUAGE_C",
+                "CIC_ID=6103"
+            ],
+            "compilerPath": "",
+            "cStandard": "gnu99",
             "intelliSenseMode": "linux-gcc-x86"
         }
     ],

@@ -1,5 +1,6 @@
 #include "diprint.h"
 #include "common.h"
+#include "gameVi.h"
 #include "libc/string.h"
 #include "stdarg.h"
 
@@ -970,7 +971,7 @@ void diPrintfAll(Gfx **dList) {
     gDebugScreenHeight = height;
     gDPSetScissor((*dList)++, 0, 0, 0, gDebugScreenWidth, gDebugScreenHeight);
     debug_text_bounds();
-    gSPDisplayList((*dList)++, dDebugFontSettings);
+    gSPDisplayList((*dList)++, (u32) dDebugFontSettings);
     buffer = (char *) gDebugPrintBufferStart;
     debug_text_origin();
     gDebugFontTexture = -1;

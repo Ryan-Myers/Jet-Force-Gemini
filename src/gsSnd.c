@@ -1,6 +1,20 @@
 #include "gsSnd.h"
 #include "common.h"
 
+#define AL_SNDP_PLAY_EVT (1 << 0)
+#define AL_SNDP_RELEASE_EVT (1 << 1)
+#define AL_SNDP_PAN_EVT (1 << 2)
+#define AL_SNDP_VOL_EVT (1 << 3)
+#define AL_SNDP_PITCH_EVT (1 << 4)
+#define AL_SNDP_API_EVT (1 << 5)
+#define AL_SNDP_DECAY_EVT (1 << 6)
+#define AL_SNDP_END_EVT (1 << 7)
+#define AL_SNDP_FX_EVT (1 << 8)
+#define AL_SNDP_RETRIGGER_EVT (1 << 9)
+#define AL_SNDP_STOP_EVT (1 << 10)
+#define AL_SNDP_GROUP_VOL_EVT (1 << 11)
+#define AL_SNDP_RELEASE_NEXT_EVT (1 << 12)
+
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/gsSndpNew.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/gsSnd/func_80084848.s")
@@ -15,6 +29,7 @@
 
 // ALSoundStateLists gSoundStateLists = { NULL, NULL, NULL };
 extern ALSoundStateLists gSoundStateLists;
+typedef struct ALSoundState *SoundHandle;
 
 /**
  * Takes two pointers as arguments and writes the number of free and allocated sound states to them.
@@ -191,7 +206,7 @@ u16 gsSndpGetMasterVolume(u8 groupID) {
 void gsSndpSetMasterVolume(u8 groupID, u16 volume) {
     OSIntMask mask;
     ALSoundState *state;
-    s32 i;
+    UNUSED s32 i; // Set but never used
     ALSndpEvent evt;
 
     mask = osSetIntMask(OS_IM_NONE);

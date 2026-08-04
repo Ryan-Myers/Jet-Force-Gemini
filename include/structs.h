@@ -66,21 +66,94 @@ typedef struct epcInfo {
 /* 0x1B0 */ u8 pad1B0[0x80];
 } epcInfo;
 
+typedef struct Vec4f {
+    union {
+        struct {
+            f32 x;
+            f32 y;
+            f32 z;
+            f32 w;
+        };
+        f32 f[4];
+    };
+} Vec4f;
+
 // Stolen from PD
 // This hacky structure allows coords to be accessed using
 // coord->x, coord->y and coord->z, but also as
 // coord->f[0], coord->f[1] and coord->f[2].
 // In some places code only matches when using the float array.
 typedef struct Vec3f {
-  union {
-    struct {
-      f32 x;
-      f32 y;
-      f32 z;
+    union {
+        struct {
+            f32 x;
+            f32 y;
+            f32 z;
+        };
+        f32 f[3];
     };
-    f32 f[3];
-  };
 } Vec3f;
+
+typedef struct Vec2f {
+    union {
+        struct {
+            f32 x;
+            f32 y;
+        };
+        f32 f[2];
+    };
+} Vec2f;
+
+typedef struct Vec3s {
+    union {
+        struct {
+            s16 y_rotation;
+            s16 x_rotation;
+            s16 z_rotation;
+        };
+        struct {
+            s16 x;
+            s16 y;
+            s16 z;
+        };
+        s16 s[3];
+    };
+} Vec3s;
+
+typedef struct Vec2s {
+    union {
+        struct {
+            s16 y_rotation;
+            s16 x_rotation;
+        };
+        struct {
+            s16 x;
+            s16 y;
+        };
+        s16 s[2];
+    };
+} Vec2s;
+
+typedef struct Vec3i {
+    union {
+        struct {
+            s32 x;
+            s32 y;
+            s32 z;
+        };
+        s32 i[3];
+    };
+} Vec3i;
+
+typedef struct Vec2i {
+    union {
+        struct {
+            s32 x;
+            s32 y;
+        };
+        s32 i[2];
+    };
+} Vec2i;
 
 typedef struct Object_Racer {
   /* 0x000 */ u8 pad00[0x64];
@@ -173,7 +246,7 @@ typedef struct huft {
   } v;
 } huft;
 
-/* Size: 0x20 bytes */
+// Copied from DKR, not all fields verified yet. It has been modified.
 typedef struct TextureHeader {
     /* 0x00 */ u8 width;
     /* 0x01 */ u8 height;
@@ -187,9 +260,11 @@ typedef struct TextureHeader {
         // 6 = IA4
         // 7 = CI4 (16 colors)
         // 8 = CI8 (64 colors)
-    /* 0x03 */ s8 unk3;
-    /* 0x04 */ s8 unk4;
-    /* 0x05 */ u8 numberOfInstances; // Always 1 in the ROM.
+    /* 0x03 */ s8 posX; // X coordinate of the texture in the sprite's 2D space
+    /* 0x04 */ s8 posY; // Y coordinate of the texture in the sprite's 2D space
+    // /* 0x05 */ u8 pad[0x3]; // TODO: This could be earlier.
+    // /* 0x08 */ u16 numberOfInstances;
+    /* 0x05 */ u8 numberOfInstances; // Needs to be u16
     /* 0x06 */ s16 flags;
         // 0x04 = Interlaced texture
         // 0x40 = U clamp flag. 0 = Wrap, 1 = Clamp
@@ -211,6 +286,15 @@ typedef struct TextureHeader {
     /* 0x1E */ u8 unk1E;
     /* 0x1F */ u8 unk1F;
 } TextureHeader;
+
+/* Size: 8 bytes */
+typedef struct TextureInfo {
+    /* 0x00 */ TextureHeader *texture;
+    /* 0x04 */ u8 width;
+    /* 0x05 */ u8 height;
+    /* 0x06 */ u8 format;
+    /* 0x07 */ s8 surfaceType;
+} TextureInfo;
 
 /* Size: 8 bytes */
 typedef struct FontCharData {
@@ -773,5 +857,113 @@ typedef struct Vertex {
     /* 0x08 */ u8 b;
     /* 0x09 */ u8 a;
 } Vertex;
+
+/* Size: 4 bytes */
+typedef struct TexCoords {
+    union {
+        struct {
+            s16 u, v;
+        };
+        u32 texCoords; // For convenience?
+    };
+} TexCoords;
+
+#define BACKFACE_CULL 0x00
+#define BACKFACE_DRAW 0x40
+#define TRI_FLAG_80 0x80
+
+#define DKR_TRIANGLE(flags, ind0, ind1, ind2) (((flags) << 24) | ((ind0) << 16) | ((ind1) << 8) | ((ind2) << 0))
+
+/* Size: 0x10 bytes */
+typedef struct Triangle {
+    union {
+        struct {
+            /* 0x00 */ u8 flags; // 0x40 = Draw backface, 0x00 = Cull backface
+            /* 0x01 */ u8 vi0;   // First vertex index
+            /* 0x02 */ u8 vi1;   // Second vertex index
+            /* 0x03 */ u8 vi2;   // Third vertex index
+        };
+        /* 0x00 */ u32 vertices; // For convenience?
+        u8 verticesArray[4];
+    };
+    /* 0x04 */ TexCoords uv0; // Texture coordinates for the first vertex
+    /* 0x08 */ TexCoords uv1; // Texture coordinates for the second vertex
+    /* 0x0C */ TexCoords uv2; // Texture coordinates for the third vertex
+} Triangle;
+
+/* Size: 12 bytes */
+typedef struct TriangleBatchInfo {
+    /* 0x00 */ u8 textureIndex; // 0xFF = No texture
+    /* 0x01 */ s8 vertOverride; // If used, will end a draw this many verts in, so it can do something mid mesh.
+    /* 0x02 */ s16 verticesOffset;
+    /* 0x04 */ s16 facesOffset;
+    /* 0x06 */ u8 miscData; // 0xFF = vertex colors, otherwise use dynamic lighting normals (Objects only)
+    /* 0x07 */ u8 texOffset;
+    /* 0x08 */ u32 flags; // See RenderFlags in textures_sprites.c
+} TriangleBatchInfo;
+
+#define BATCH_VTX_COL 0xFF
+
+/* Size: 8 bytes */
+typedef struct ObjectModel_44 {
+    union {
+        /* 0x00 */ s32 *anim;
+        /* 0x00 */ u8 *animData;
+    };
+    /* 0x04 */ s32 animLength; // Animation length is the result of 16-frame length keyframes.
+} ObjectModel_44;
+
+typedef struct CollisionFacetPlanes {
+    u16 basePlaneIndex;       // Index of the triangle's main collision plane
+    u16 edgeBisectorPlane[3]; // Indices of edge bisector planes for triangle edges
+} CollisionFacetPlanes;
+
+typedef struct ObjectModel {
+    /* 0x00 */ TextureInfo *textures;
+    /* 0x04 */ Vertex *vertices;
+    /* 0x08 */ Triangle *triangles;
+    /* 0x0C */ CollisionFacetPlanes *collisionFacets;
+    /* 0x10 */ f32 *collisionPlanes;
+    /* 0x14 */ s16 *attachPoints; // (Vehicle parts, Egg) Indices positions (stored in vertices).
+    /* 0x18 */ s16 numberOfAttachPoints;
+    /* 0x1A */ s16 unk1A;
+    /* 0x1C */ s16 *collisionSpheres; // Used in func_80016748. Data is a pair of s16 values.
+    /* 0x20 */ s16 collisionSpheresSize; // Should be an even number.
+    /* 0x22 */ s16 numberOfTextures;
+    /* 0x24 */ s16 numberOfVertices;
+    /* 0x26 */ s16 numberOfTriangles;
+    /* 0x28 */ s16 numberOfBatches;
+    /* 0x2A */ u8 pad2A[2];
+    /* 0x2C */ s32 fileSize; // Size of the model file (including the header)
+    /* 0x30 */ s16 references;
+    /* 0x32 */ s16 collisionFacetCount;
+    /* 0x34 */ u8 pad34[4];
+    /* 0x38 */ TriangleBatchInfo *batches;
+    /* 0x3C */ f32 unk3C;
+    /* 0x40 */ Vec3s *normals;
+    /* 0x44 */ ObjectModel_44 *animations;
+    /* 0x48 */ s16 numberOfAnimations;
+    /* 0x4A */ s16 numberOfAnimatedVertices;
+    /* 0x4C */ s32 *animatedVertexIndices;
+    /* 0x50 */ s16 hasAnimatedTexture; // Set as a boolean, but read like it can be greater than 1.
+    /* 0x52 */ s16 texOffsetUpdateRate; // Set to the current updaterate for the first model.
+    /* 0x54 */ u8 pad[0x2C];
+} ObjectModel;
+
+/* Size: 0x24 bytes */
+typedef struct ModelInstance {
+    /* 0x00 */ ObjectModel *objModel;
+    /* 0x04 */ Vertex *vertices[3];
+    /* 0x10 */ s16 animationID;
+    /* 0x12 */ s16 animationFrame;
+    /* 0x14 */ s16 animationFrameCount;
+    /* 0x16 */ s16 offsetX;
+    /* 0x18 */ s16 offsetY;
+    /* 0x1A */ s16 offsetZ;
+    /* 0x1C */ s16 headTilt;
+    /* 0x1E */ s8 modelType;
+    /* 0x1F */ s8 animationTaskNum;
+    /* 0x20 */ s8 animUpdateTimer;
+} ModelInstance;
 
 #endif
