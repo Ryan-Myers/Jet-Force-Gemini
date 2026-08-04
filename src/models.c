@@ -75,48 +75,7 @@ void *func_8003BED0(struct_8003BED0_arg0 *arg0) {
     return temp_v0;
 }
 
-void modFreeAnim(s8 *arg0);
 #pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003BF58.s")
-
-typedef struct ObjectModel_JFG {
-    /* 0x00 */ u8 pad0[0x10];
-    /* 0x10 */ u8 numberOfTextures;
-    /* 0x11 */ u8 pad11[0x18 - 0x11];
-    /* 0x18 */ TextureInfo *textures;
-    /* 0x1C */ u8 pad1C[0x28 - 0x1C];
-    /* 0x28 */ void *unk28;
-    /* 0x2C */ u8 pad2C[0x4C - 0x2C];
-    /* 0x4C */ s16 references;
-    /* 0x4E */ s8 unk4E;
-    /* 0x4F */ u8 unk4F;
-    /* 0x50 */ s8 **unk50;
-    /* 0x54 */ u8 pad54[0x58 - 0x54];
-    /* 0x58 */ void *unk58;
-    /* 0x5C */ void *unk5C;
-    /* 0x60 */ void *unk60;
-    /* 0x64 */ u8 unk64;
-    /* 0x65 */ u8 pad65[0x74 - 0x65];
-    /* 0x74 */ void *unk74;
-    /* 0x78 */ void *unk78;
-    /* 0x7C */ s32 unk7C;
-    /* 0x7E */ u8 pad80[0x84 - 0x80];
-    /* 0x84 */ s8 **unk84;
-} ObjectModel_JFG;
-
-typedef struct ModInst_UnkC {
-    u8 pad;
-} ModInst_UnkC;
-
-/* Size: 0x24 bytes */
-typedef struct ModelInstance_JFG {
-    /* 0x00 */ ObjectModel_JFG *objModel;
-    /* 0x04 */ u8 pad4[0x8];
-    /* 0x0C */ ModInst_UnkC *unkC;
-    /* 0x10 */ u8 unk10[0x70];
-    /* 0x80 */ s8 *unk80[2];
-} ModelInstance_JFG;
-
-void func_8003C6D0(ObjectModel_JFG *mdl);
 
 void modFreeModel(ModelInstance_JFG *modInst) {
     ObjectModel_JFG *model;
@@ -159,7 +118,6 @@ void modFreeModel(ModelInstance_JFG *modInst) {
     }
 }
 
-void texFreeTexture(TextureHeader *tex);
 void func_8003C6D0(ObjectModel_JFG *mdl) {
     s32 animsFreed;
     s32 animIndex;
