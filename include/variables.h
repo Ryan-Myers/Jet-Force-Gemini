@@ -22,42 +22,42 @@ extern f32 controlchr_gravity;
 extern s32 D_800A2DB4_A39B4[];
 
 //objects.c
-extern s8 D_800F3860;
-extern s32 D_800F386C;
-extern s32 D_800F3870;
-extern s32 D_800F38AC;
-extern s32 D_800F38B8;
-extern s32 D_800F38BC;
-extern s16 D_800F38C0;
-extern s16 D_800F38C2;
-extern s32 D_800F38C4;
-extern s32 D_800F3908;
-extern s32 D_800F3910;
-extern s32 D_800F391C;
-extern s32 D_800F3948;
+extern s8 D_800F2C60_F3860;
+extern s32 D_800F2C6C_F386C;
+extern s32 D_800F2C70_F3870;
+extern s32 D_800F2CAC_F38AC;
+extern s32 D_800F2CB8_F38B8;
+extern s32 D_800F2CBC_F38BC;
+extern s16 D_800F2CC0_F38C0;
+extern s16 D_800F2CC2_F38C2;
+extern s32 D_800F2CC4_F38C4;
+extern s32 D_800F2D08_F3908;
+extern s32 D_800F2D10_F3910;
+extern s32 D_800F2D1C_F391C;
+extern s32 D_800F2D40_F3940;
 extern s32 ObjListCount;
 extern Object **ObjList; // Not sure about the number of elements
 extern VertexPosition gEnvmapPos;
 extern s32 *Ftables;
 extern s32 *Findex;
 extern s32 Fmax;
-extern s8 D_800A1208;
-extern f32 D_800F3A20;
+extern s8 D_800A0980_A1580;
+extern f32 D_800F2F60_F3B60;
 
 //diCpu.c
 extern OSThread diCpuOSThread;
 void diCpuThread(void *);
 extern u64 diCpuThreadStack[1];
-extern OSMesgQueue D_801031C0;
-extern OSMesg D_801031D8[8];
-extern OSMesg D_801031F8[8];
-extern OSMesgQueue D_80103218;
-extern s32 D_800A6E88;
-extern s32 D_800A6E8C;
+extern OSMesgQueue D_801024E0_BCD20;
+extern OSMesg D_801024F8_BCD38[8];
+extern OSMesg D_80102518_BCD58[8];
+extern OSMesgQueue D_80102538_BCD78;
+extern s32 D_800A64C8_A70C8;
+extern s32 D_800A64CC_A70CC;
 // extern char D_800AF4EC[26];// = "Fault in thread %d   (%s)";
 // extern char D_800AF508[9];// = "epc NULL";
 // extern char D_800AF650[16];// = "free ram 		%08x";
-extern s32 D_800A6EDC;
+extern s32 D_800A651C_A711C;
 
 //prnBorders.c
 extern Gfx D_800A3F90[11][2]; //unknown number of graphics commands. This is a best guess.
@@ -75,20 +75,20 @@ extern char *convertBuffer;
 extern DialogueBoxBackground Window[];
 extern u8 fontInUse;
 extern u8 buttonMode;
-extern s16 D_80104C82; //Window->y2
-extern s16 D_80104C84; //Window->width
-extern DialogueBoxBackground D_80104CA0; //Window[1]
+extern s16 D_80103FB2_BE7F2; //Window->y2
+extern s16 D_80103FB4_BE7F4; //Window->width
+extern DialogueBoxBackground D_80103FD0_BE810; //Window[1]
 //Window noise?
-extern s32 D_800A7868;
-extern s32 D_800A786C;
-extern s32 D_800A7870;
+extern s32 D_800A6EA8_A7AA8;
+extern s32 D_800A6EAC_A7AAC;
+extern s32 D_800A6EB0_A7AB0;
 // Descending powers of 10
-extern s32 D_800A7874[9];
-// s32 D_800A7874[9] = {
+extern s32 D_800A6EB4_A7AB4[9];
+// s32 D_800A6EB4_A7AB4[9] = {
 //     1000000000, 100000000, 10000000, 1000000, 100000, 10000, 1000, 100, 10,
 // };
 
-extern Gfx D_800A77F0[7];
+extern Gfx D_800A6E30_A7A30[7];
 extern u32 D_A7858; //Font asset location?
 extern u32 D_A7318; //Font asset location?
 extern u32 *cache;
@@ -96,7 +96,7 @@ extern u8 *dxTable;
 extern u8 squash;
 extern DialogueTextElement String[]; //Sizeof(32)?
 //dDialogueBoxBegin?
-extern char D_800A78C4[100];
+extern char D_800A6F04_A7B04[100];
 
 /* Size: 10 bytes */
 typedef struct FontCharDataAlt {
@@ -121,11 +121,11 @@ extern u64 Time[1024];
 extern void *securitybuffer;
 extern s32 mainGameMode;
 extern u8 mainGameAutoSave;
-extern s16 D_800A3A80; //mainGameWindowIsChanging
-extern s16 D_800A3AB0;
-extern s32 D_800A3B70; //RamTest1Result
-extern s32 D_800A3B74; //RamTest2Result
-extern s32 D_800FE280;
+extern s16 D_800A3230_A3E30; //mainGameWindowIsChanging
+extern s16 D_800A3260_A3E60;
+extern s32 D_800A331C_A3F1C; //RamTest1Result
+extern s32 D_800A3320_A3F20; //RamTest2Result
+extern s32 D_800FD7D0_B8010;
 extern s32 load_save_flags;
 extern s16 D_800A323C_A3E3C;
 extern s16 D_800A3248_A3E48;
@@ -164,7 +164,7 @@ typedef struct UnkD_800FE217 {
     s8 ZBCheck;
     u8 pad1[0x7];
 } UnkD_800FE217;
-extern UnkD_800FE217 D_800FE217[8];
+extern UnkD_800FE217 D_800FD757_B7F97[8];
 
 //main.c?
 extern u64 globalflags;
@@ -187,8 +187,8 @@ extern char D_800AD824[];// = "** VTX overflow **";
 extern char D_800AD838[];// = "** POL overflow **";
 extern char D_800AD84C[];// = "Version %s";
 extern char D_800AD7D0[];// = "7.2";
-extern s32 D_800A4300[]; // = { OSMESG_SWAP_BUFFER, OSMESG_SWAP_BUFFER };
-extern s32 D_800A4308[]; //gBootBlackoutMesg[] = { OSMESG_SWAP_BUFFER, MESG_SKIP_BUFFER_SWAP };
+extern s32 D_800A38B0_A44B0[]; // = { OSMESG_SWAP_BUFFER, OSMESG_SWAP_BUFFER };
+extern s32 D_800A38B8_A44B8[]; //gBootBlackoutMesg[] = { OSMESG_SWAP_BUFFER, MESG_SKIP_BUFFER_SWAP };
 extern u8 gGfxOverflowed;
 extern u8 gMtxOverflowed;
 extern u8 gVtxOverflowed;
@@ -206,8 +206,8 @@ extern s32 *otherZbuf;
 //dicpu.c
 //These two string are the file name and extensions 
 //for what looks like debug data that gets written to a controller pak
-// extern char D_800AF400[];// = "CORE";
-// extern char D_800AF408[];// = "";
+// extern char D_800AE850_AF450[];// = "CORE";
+// extern char D_800AE858_AF458[];// = "";
 // extern char D_800AF40C[];// = 
 // // "%08x:%08x
 // // MEMORY REGION %d
@@ -224,41 +224,41 @@ extern s32 *otherZbuf;
 // extern char D_800AF4C8[]; // = "Module %d at %08x";
 
 //lights.c
-extern s32 D_800A1890; //gMaxLights
-extern ObjectLight *D_800A189C;
-extern s32 D_800A1894;
-extern ObjectLight **D_800A1898; //gActiveLights
+extern s32 D_800A1000_A1C00; //gMaxLights
+extern ObjectLight *D_800A100C_A1C0C;
+extern s32 D_800A1004_A1C04;
+extern ObjectLight **D_800A1008_A1C08; //gActiveLights
 
 //textures.c
 extern u8 blinkMode;
-extern u32 D_800A5830; //gTexColourTag = COLOUR_TAG_MAGENTA;
-extern s32 D_800A5838; //D_80126378
-extern u8 D_800A583C;
-extern s32 D_800FF9F4; //D_80126354 in DKR
-extern s32 *D_800FF9C0[2]; //D_80126320 in DKR
-extern s32 D_800FFA10;
-extern s32 D_800FFA14;
-extern s32 D_800FFA18;
-extern s32 D_800FFA1C;
-extern s32 D_800FFA20;
-extern s32 D_800FFA24;
-extern s32 D_800A584C; //A store of the texture currently loading?
-extern s32 D_800A5844; //IA2ColOverride?
-extern u8 D_800FFA28;
-extern u8 D_800FFA29;
-extern u8 D_800FFA2A;
-extern u8 D_800FFA2B;
-extern u8 D_800FFA2C;
-extern u8 D_800FFA2D;
-extern s32 D_800A5834; //textureFilter
+extern u32 D_800A4E60_A5A60; //gTexColourTag = COLOUR_TAG_MAGENTA;
+extern s32 D_800A4E68_A5A68; //D_80126378
+extern u8 D_800A4E6C_A5A6C;
+extern s32 D_800FED14_B9554; //D_80126354 in DKR
+extern s32 *D_800FECE0_B9520[2]; //D_80126320 in DKR
+extern s32 D_800FED30_B9570;
+extern s32 D_800FED34_B9574;
+extern s32 D_800FED38_B9578;
+extern s32 D_800FED3C_B957C;
+extern s32 D_800FED40_B9580;
+extern s32 D_800FED44_B9584;
+extern s32 D_800A4E7C_A5A7C; //A store of the texture currently loading?
+extern s32 D_800A4E74_A5A74; //IA2ColOverride?
+extern u8 D_800FED48_B9588;
+extern u8 D_800FED49_B9589;
+extern u8 D_800FED4A_B958A;
+extern u8 D_800FED4B_B958B;
+extern u8 D_800FED4C_B958C;
+extern u8 D_800FED4D_B958D;
+extern s32 D_800A4E64_A5A64; //textureFilter
 
 //rcpFast3d.c
 extern u8 sBackgroundPrimColourR;
 extern u8 sBackgroundPrimColourG;
 extern u8 sBackgroundPrimColourB;
-extern s32 D_800A4034; // gGfxTaskIsRunning
-extern OSMesgQueue D_800FF1C8; //gGfxTaskMsgQueue
-extern OSMesgQueue D_800FF628; //blurDoneMsgQueue
+extern s32 D_800A35E4_A41E4; // gGfxTaskIsRunning
+extern OSMesgQueue D_800FE4B8_B8CF8; //gGfxTaskMsgQueue
+extern OSMesgQueue D_800FE918_B9158; //blurDoneMsgQueue
 extern s32 blurTaskActive;
 extern s32 cloneTaskActive;
 extern OSMesgQueue refractDoneMsgQueue;
@@ -268,23 +268,23 @@ extern s32 refractTaskActive;
 //saves.c
 extern OSPfs pfs[MAXCONTROLLERS];
 extern OSMesgQueue *sControllerMesgQueue;
-extern s32 D_800FEAC4; //UNUSED
+extern s32 D_800FDDB4_B85F4; //UNUSED
 extern u8 gN64FontCodes[];
 extern s8 *sPackDirectory;
 extern u8 sRumblePaksPresent;
-extern u8 D_800A3EA8; //sControllerPakPresent?
+extern u8 D_800A3448_A4048; //sControllerPakPresent?
 extern OSMesgQueue flashEventQueue;
 extern OSMesg flashEventBuf[1];
 extern OSMesg cartEventBuf[1];
 extern OSMesgQueue cartEventQueue;
 extern OSIoMesg flashMesgReqBlock;
-extern u8 D_800A3EC4;
-extern u8 D_800A3ECC;
+extern u8 D_800A3464_A4064;
+extern u8 D_800A346C_A406C;
 extern f32 D_800AD4FC;
 extern RumbleStruct rumbleStructArray[];
 extern f32 D_800AD504;
 extern f32 D_800AD500;
-extern RumbleStruct D_800FEC6A[];
+extern RumbleStruct D_800FDF5A_B879A[];
 
 //Size: 0xA
 //extern unkD_800FEC68 *rumbleStructArray;
@@ -294,7 +294,7 @@ typedef struct unkD_800A3EAC {
     s32 unk0;
     f32 unk4;
 } unkD_800A3EAC;
-extern unkD_800A3EAC D_800A3EAC[3];
+extern unkD_800A3EAC D_800A344C_A404C[3];
 
 //camera.c
 extern ScreenViewport D_800A3728[4]; //gScreenViewports
@@ -311,14 +311,14 @@ extern s32 PlayersDisguise;
 extern s8 sResolutionIndex;
 
 // audio_manager_36D0.c
-extern Matrix D_800F3608; //.data
-extern s8 D_800F3604; //.data
+extern Matrix D_800F2A08_F3608; //.data
+extern s8 D_800F2A04_F3604; //.data
 
 //level.c
-extern LevelHeader *D_800FBBD8;
-extern s32 D_800A66D8; // gWeatherType
-extern s32 D_800A66DC; // gLightningFrequency
-extern s32 D_800A66E8; // gRainOpacity
+extern LevelHeader *D_800FB118_B5958;
+extern s32 D_800A5D18_A6918; // gWeatherType
+extern s32 D_800A5D1C_A691C; // gLightningFrequency
+extern s32 D_800A5D28_A6928; // gRainOpacity
 
 //menu.c
 extern MultiPlayer multiPlayer[4]; // Size: 0xA0 - Total Size: 0x280

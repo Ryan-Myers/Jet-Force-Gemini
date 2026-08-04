@@ -4,7 +4,7 @@
 
 #define SCREEN_HEIGHT_PART (SCREEN_HEIGHT / 40)
 
-// TODO: This is likely loading `OS_K0_TO_PHYSICAL(D_800A4D20[5])` but we need to migrate that first.
+// TODO: This is likely loading `OS_K0_TO_PHYSICAL(D_800A4350_A4F50[5])` but we need to migrate that first.
 extern Gfx D_A4F78[];
 
 Gfx D_800A4F20_A5B20[] = {

@@ -1,6 +1,6 @@
 #include "common.h"
 
-UNUSED s32 D_800A39E0 = 0xFFFFFFFF;
+UNUSED s32 D_800A3190_A3D90 = 0xFFFFFFFF;
 u16 joySecurity = 0xFFFF; // Used when anti-cheat/anti-tamper has failed.
 
 OSMesgQueue joyMessageQueue;

@@ -4,23 +4,23 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackDraw.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80012564.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800127A4_133A4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001276C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800129AC_135AC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/initSky.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackSkySet.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001296C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80012BAC_137AC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80013214.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80013454_14054.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80013478.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800136B8_142B8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackGetSky.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800135E0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80013820_14420.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackAddTextureScroll.s")
 
@@ -38,19 +38,19 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackLightMove.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80013DCC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001400C_14C0C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackUpdateLighting.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001412C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001436C_14F6C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001424C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001448C_1508C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80014B6C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80014EBC_15ABC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800150A4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80015228_15E28.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800152C0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80015444_16044.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackGetBlock.s")
 
@@ -60,33 +60,33 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackBlockDim.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80015738.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800158BC_164BC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800159B8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80015B3C_1673C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80015CB8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80015E3C_16A3C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80015D54.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80015ED8_16AD8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackGetIntersect.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackGetPlayerIntersect.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80016EA0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80017094_17C94.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800175A0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80017794_18394.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackCylinderIntersect.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackSphereIntersect.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800182C0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800184B4_190B4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackNearestIntersection.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackClip3D.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80019324.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80019518_1A118.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackPolyHeight.s")
 
@@ -96,7 +96,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackCylinderHeights.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001A990.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001AB84_1B784.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackGetNearestPoly.s")
 
@@ -108,7 +108,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackMakeAbsolute.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001B6D8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001B8E0_1C4E0.s")
 
 // In this struct, data is rightshifted 16 bytes, so make the smooth transition more precise.
 typedef struct EnvironmentFog {
@@ -139,13 +139,13 @@ typedef struct FogData {
     /* 0x38 */ s32 switchTimer;
     /* 0x3C */ Object *fogChanger;
 } FogData;
-extern FogData D_800F3D20[4];
+extern FogData D_800F3260_F3E60[4];
 
 void trackSetFog(s32 fogIdx, s16 near, s16 far, s16 arg3, u8 red, u8 green, u8 blue, s8 arg7) {
     s32 tempNear;
     FogData *fogData;
 
-    fogData = &D_800F3D20[fogIdx];
+    fogData = &D_800F3260_F3E60[fogIdx];
 
     if (far < near) {
         tempNear = near;
@@ -198,7 +198,7 @@ void trackGetFog(s32 playerID, s16 *near, s16 *far, s16 *unk18, u8 *r, u8 *g, u8
         *unk18 = 0;
         *unk33 = 0;
     } else {
-        fogData = &D_800F3D20[playerID];
+        fogData = &D_800F3260_F3E60[playerID];
         *near = fogData->fog.near >> 16;
         *far = fogData->fog.far >> 16;
         *unk18 = fogData->unk18 >> 16;
@@ -213,25 +213,25 @@ void trackGetFog(s32 playerID, s16 *near, s16 *far, s16 *unk18, u8 *r, u8 *g, u8
 }
 
 void trackSetFogOff(s32 playerID) {
-    D_800F3D20[playerID].addFog.near = 0;
-    D_800F3D20[playerID].addFog.far = 0;
-    D_800F3D20[playerID].addFog.r = 0;
-    D_800F3D20[playerID].addFog.g = 0;
-    D_800F3D20[playerID].addFog.b = 0;
-    D_800F3D20[playerID].fog.near = 1018 << 16;
-    D_800F3D20[playerID].fog.far = 1023 << 16;
-    D_800F3D20[playerID].intendedFog.r = D_800F3D20[playerID].fog.r >> 16;
-    D_800F3D20[playerID].intendedFog.g = D_800F3D20[playerID].fog.g >> 16;
-    D_800F3D20[playerID].intendedFog.b = D_800F3D20[playerID].fog.b >> 16;
-    D_800F3D20[playerID].intendedFog.near = 1018;
-    D_800F3D20[playerID].intendedFog.far = 1023;
-    D_800F3D20[playerID].switchTimer = 0;
-    D_800F3D20[playerID].fogChanger = NULL;
+    D_800F3260_F3E60[playerID].addFog.near = 0;
+    D_800F3260_F3E60[playerID].addFog.far = 0;
+    D_800F3260_F3E60[playerID].addFog.r = 0;
+    D_800F3260_F3E60[playerID].addFog.g = 0;
+    D_800F3260_F3E60[playerID].addFog.b = 0;
+    D_800F3260_F3E60[playerID].fog.near = 1018 << 16;
+    D_800F3260_F3E60[playerID].fog.far = 1023 << 16;
+    D_800F3260_F3E60[playerID].intendedFog.r = D_800F3260_F3E60[playerID].fog.r >> 16;
+    D_800F3260_F3E60[playerID].intendedFog.g = D_800F3260_F3E60[playerID].fog.g >> 16;
+    D_800F3260_F3E60[playerID].intendedFog.b = D_800F3260_F3E60[playerID].fog.b >> 16;
+    D_800F3260_F3E60[playerID].intendedFog.near = 1018;
+    D_800F3260_F3E60[playerID].intendedFog.far = 1023;
+    D_800F3260_F3E60[playerID].switchTimer = 0;
+    D_800F3260_F3E60[playerID].fogChanger = NULL;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001BBFC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001BE04_1CA04.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001BD94.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001BF9C_1CB9C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackChangeFog.s")
 
@@ -240,7 +240,7 @@ void trackFadeFog(s32 fogIdx, s32 red, s32 green, s32 blue, s32 near, s32 far, f
     s32 switchTimer;
     FogData *fogData;
 
-    fogData = &D_800F3D20[fogIdx];
+    fogData = &D_800F3260_F3E60[fogIdx];
 
     if (osTvType == OS_TV_TYPE_PAL) {
         switchTimer = (timer * 50.0f);
@@ -285,8 +285,8 @@ void trackFadeFog(s32 fogIdx, s32 red, s32 green, s32 blue, s32 near, s32 far, f
     fogData->fogChanger = NULL;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001C448.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001C650_1D250.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001C550.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001C758_1D358.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001C570.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/track/func_8001C778_1D378.s")

@@ -8,11 +8,11 @@ const char D_800AAAE0[] = "OUT OF AUDIO POINTS\n";
 
 void amAmbientPause(void) {
     amAmbientStop();
-    D_800F3604 = TRUE;
+    D_800F2A04_F3604 = TRUE;
 }
 
 void amAmbientRestart(void) {
-    D_800F3604 = FALSE;
+    D_800F2A04_F3604 = FALSE;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/amResetAudioMap.s")
@@ -29,7 +29,7 @@ s32 amCalcSfxStereo(f32 x, f32 y, f32 z) {
     if (mainGetNumberOfCameras() >= 2) {
         return 64;
     }
-    mathMtxXFMF(D_800F3608, x, y, z, &ox, &oy, &oz);
+    mathMtxXFMF(D_800F2A08_F3608, x, y, z, &ox, &oy, &oz);
     arctan = Arctanf(ox, oz);
     if (arctan >= -0x2000 && arctan <= 0x2000) {
         ret = 64 + ((arctan * 0x3F) / 8192);
@@ -57,14 +57,14 @@ typedef struct SoundData {
     u8 unk8;
     u8 unk9;
 } SoundData;
-extern SoundData *D_800F35F0;
+extern SoundData *D_800F29F0_F35F0;
 
 void amSndPlayXYZ(u16 soundId, f32 x, f32 y, f32 z, u8 arg4, SoundMask **soundMask) {
 
     if (soundMask == NULL || *soundMask == NULL) {
-        amCreateAudioPoint(D_800F35F0[soundId].soundBite, x, y, z, arg4, D_800F35F0[soundId].unk3,
-                           D_800F35F0[soundId].volume, D_800F35F0[soundId].distance, 0, D_800F35F0[soundId].pitch,
-                           D_800F35F0[soundId].unk8, D_800F35F0[soundId].unk5, soundMask);
+        amCreateAudioPoint(D_800F29F0_F35F0[soundId].soundBite, x, y, z, arg4, D_800F29F0_F35F0[soundId].unk3,
+                           D_800F29F0_F35F0[soundId].volume, D_800F29F0_F35F0[soundId].distance, 0, D_800F29F0_F35F0[soundId].pitch,
+                           D_800F29F0_F35F0[soundId].unk8, D_800F29F0_F35F0[soundId].unk5, soundMask);
     }
 }
 
@@ -93,7 +93,7 @@ void amSndSetXYZ(SoundMask *soundMask, f32 x, f32 y, f32 z) {
     }
 }
 
-extern SoundMask **D_800F35F4; // gSoundMaskHeapUsed
+extern SoundMask **D_800F29F4_F35F4; // gSoundMaskHeapUsed
 extern u16 D_800A0800_A1400;
 
 void amSndStopXYZ(SoundMask *soundMask) {
@@ -106,8 +106,8 @@ void amSndStopXYZ(SoundMask *soundMask) {
         for (i = 0; i < D_800A0800_A1400; i++)
 #endif
         {
-            if (soundMask == D_800F35F4[i]) {
-                func_80003E24(i);
+            if (soundMask == D_800F29F4_F35F4[i]) {
+                func_80003B74_4774(i);
                 break;
             }
         }
@@ -120,12 +120,12 @@ void amSndStopXYZ(SoundMask *soundMask) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/amSndSetEcho.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003AC0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_8000380C_440C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003C44.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003994_4594.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003DC4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003B14_4714.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003E24.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/func_80003B74_4774.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_36D0/amSndGetXYZVolume.s")

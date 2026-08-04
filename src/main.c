@@ -103,15 +103,15 @@ void mainThread(UNUSED void *unused) {
             ((vu32 *) (RAM_END))[--i] = (u32) 0;
         }
     }
-    D_800A3B70 = osBootRamTest1_6105();
-    D_800A3B74 = osBootRamTest2_6105();
+    D_800A331C_A3F1C = osBootRamTest1_6105();
+    D_800A3320_A3F20 = osBootRamTest2_6105();
     mainInitGame();
     load_save_flags = joyRead(load_save_flags, 0);
-    D_800FE280 = 0;
+    D_800FD7D0_B8010 = 0;
     mainGameMode = 6;
-    mainChangeLevel(0, D_800A3AB0, 0, 0, 1, 0);
+    mainChangeLevel(0, D_800A3260_A3E60, 0, 0, 1, 0);
 #ifdef VERSION_kiosk
-    func_80046070(0x1E);
+    func_800468EC_474EC(0x1E);
     while (1) {
         if (mainResetPressed()) {
             rumbleKill();
@@ -123,7 +123,7 @@ void mainThread(UNUSED void *unused) {
                           DPC_CLR_CMD_CTR | DPC_CLR_CMD_CTR);
             while (1) {} // Infinite loop
         }
-        func_80044938();
+        func_80044FAC_45BAC();
         // Toggle ALL_TRIBALS_RESCUED flag on/off with L/R triggers for testing purposes
         if (joyGetPressed(1) & L_TRIG) {
             mainSetGameFlag(ALL_TRIBALS_RESCUED, 1);
@@ -136,7 +136,7 @@ void mainThread(UNUSED void *unused) {
 #else
     while (1) {
         mainPreNMI();
-        func_80044938();
+        func_80044FAC_45BAC();
         bootCheckStack();
     }
 #endif
@@ -285,10 +285,10 @@ void mainInitGame(void) {
 }
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800448B0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80044F24_45B24.s")
 
 // main_game_loop in DKR
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80044938.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80044FAC_45BAC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainAddZBCheck.s")
 
@@ -298,17 +298,17 @@ s8 mainGetZBCheck(s32 arg0) {
     if ((arg0 < 0) || (arg0 >= 8)) {
         return 1;
     }
-    return D_800FE217[arg0].ZBCheck;
+    return D_800FD757_B7F97[arg0].ZBCheck;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainCPUeffects.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetGameWindow.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_8004552C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80045C38_46838.s")
 
 s16 mainGameWindowChanging(void) {
-    return D_800A3A80;
+    return D_800A3230_A3E30;
 }
 
 void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
@@ -318,10 +318,10 @@ void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
     *y2 = mainGameWindowSizeY2;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800456F8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80045E04_46A04.s")
 
 // PauseGame happens here, right when the rumblekill is called
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800457F4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80045F00_46B00.s")
 
 #ifdef VERSION_us
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainValidateRestart.s")
@@ -329,7 +329,7 @@ void mainGameWindowSize(s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainRestartAfterDeath.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80045D44.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80046550_47150.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainChangeLevel.s")
 
@@ -346,14 +346,14 @@ void mainChangeCameras(s32 arg0) {
 }
 
 s32 mainGetNextCharacter(void) {
-    return D_800A3AB0;
+    return D_800A3260_A3E60;
 }
 
 s32 mainGetNextLevel(void) {
     return D_800A3250_A3E50;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/func_80046070.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/main/func_800468EC_474EC.s")
 
 #ifdef VERSION_kiosk
 void mainSetAutoSave(s32 autoSave) {

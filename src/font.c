@@ -13,9 +13,9 @@ void fontSetButtonMode(s32 mode) {
 }
 
 void fontSetWindowNoise(u8 arg0, u8 arg1, u8 arg2) {
-    D_800A7868 = arg0;
-    D_800A786C = arg1;
-    D_800A7870 = arg2;
+    D_800A6EA8_A7AA8 = arg0;
+    D_800A6EAC_A7AAC = arg1;
+    D_800A6EB0_A7AB0 = arg2;
 }
 
 void fontUseFont(s32 font) {
@@ -50,7 +50,7 @@ void fontPrintWindowXY(Gfx **displayList, s32 windowId, s32 xpos, s32 ypos, char
         DialogueBoxBackground *temp = &Window[windowId];
         temp->xpos = (xpos == POS_CENTRED) ? temp->width >> 1 : xpos;
         temp->ypos = (ypos == POS_CENTRED) ? temp->height >> 1 : ypos;
-        func_80070518(displayList, temp, text, alignmentFlags);
+        func_8006FD98_70998(displayList, temp, text, alignmentFlags);
     }
 }
 
@@ -61,7 +61,7 @@ void fontPrintWindowXY(Gfx **displayList, s32 windowId, s32 xpos, s32 ypos, char
  * Will also draw a fillrect if text backgrounds are enabled.
  */
 extern u8 fontInUse;
-void func_80070518(Gfx **dList, DialogueBoxBackground *box, char *text, AlignmentFlags alignmentFlags) {
+void func_8006FD98_70998(Gfx **dList, DialogueBoxBackground *box, char *text, AlignmentFlags alignmentFlags) {
     s32 fontInUse_saved;
     s32 scisOffset;
     s32 scisPos;
@@ -99,7 +99,7 @@ void func_80070518(Gfx **dList, DialogueBoxBackground *box, char *text, Alignmen
     xpos = box->xpos;
     ypos = box->ypos;
     fontData = &Font[fontInUse];
-    gSPDisplayList((*dList)++, D_800A77F0);
+    gSPDisplayList((*dList)++, D_800A6E30_A7A30);
     if (box != Window) {
         scisOffset = (((box->y2 - box->y1) + 1) / (f32) 2) * 4.0f;
         scisPos = (box->y1 + box->y2) >> 1;
@@ -124,7 +124,7 @@ void func_80070518(Gfx **dList, DialogueBoxBackground *box, char *text, Alignmen
         if (xAlignmentDiff == -1) {
             xAlignmentDiff = fontStringWidth(text, xpos, box->font);
         }
-        gDPSetPrimColor((*dList)++, 0, 0, D_800A7868, D_800A786C, D_800A7870, 0);
+        gDPSetPrimColor((*dList)++, 0, 0, D_800A6EA8_A7AA8, D_800A6EAC_A7AAC, D_800A6EB0_A7AB0, 0);
         newTempX = xpos + xAlignmentDiff - 1;
         newTempY = ypos + fontData->y - 1;
         gDkrDmaDisplayList((*dList)++, &D_A7858, 2);
@@ -215,7 +215,7 @@ void func_80070518(Gfx **dList, DialogueBoxBackground *box, char *text, Alignmen
     }
 }
 #else
-#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80070518.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/font/func_8006FD98_70998.s")
 #endif
 
 #ifdef NON_EQUIVALENT
@@ -368,7 +368,7 @@ void *fontWindowAddStringXY(s32 windowId, s32 posX, s32 posY, char *text, s32 nu
         if (Window[windowId].font != FONT_UNK_FF) {
             fontData = &Font[Window[windowId].font];
             if (flags & (HORZ_ALIGN_CENTER | HORZ_ALIGN_RIGHT)) {
-                func_80071A0C(text, combineBuffer, number);
+                func_8007128C_71E8C(text, combineBuffer, number);
                 width = fontStringWidth(combineBuffer, Window[windowId].font, 1);
                 if (flags & HORZ_ALIGN_RIGHT) {
                     posX = (posX - width) + 1;
@@ -462,9 +462,9 @@ void fontStringAddNumber(char **outString, s32 number) {
 
     // Loop through digit places.
     hasDigit = FALSE;
-    for (i = 0; D_800A7874[i] != 0; i++) {
+    for (i = 0; D_800A6EB4_A7AB4[i] != 0; i++) {
         digit = '0';
-        pow = &D_800A7874[i];
+        pow = &D_800A6EB4_A7AB4[i];
         if (number >= *pow) {
             div = number / *pow;
             number -= div * *pow;
@@ -485,13 +485,13 @@ void fontStringAddNumber(char **outString, s32 number) {
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontWindowsDraw.s")
 
 // render_fill_rectangle
-#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071564.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80070DE4_719E4.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontWindowDraw.s")
 
 void fontStringAddNumber(char **outString, s32 number);
 // parse_string_with_number
-void func_80071A0C(char *input, char *output, s32 number) {
+void func_8007128C_71E8C(char *input, char *output, s32 number) {
     char currentChar;
 
     do {
@@ -512,11 +512,11 @@ void func_80071A0C(char *input, char *output, s32 number) {
     } while (currentChar);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071B08.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/font/func_80071388_71F88.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/font/fontCreateDisplayList.s")
 
-// char D_800A78C4[] = {
+// char D_800A6F04_A7B04[] = {
 //     0x0F, 0x34, 0x0A, 0x36, 0x02, 0x06, 0x0D, 0x37, 0x03, 0x04, 0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D,
 //     0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17, 0x18, 0x19, 0x3E, 0x05, 0x0B, 0x3F, 0x0C, 0x40,
 //     0x41, 0x1A, 0x1B, 0x1C, 0x1D, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
@@ -526,7 +526,7 @@ void func_80071A0C(char *input, char *output, s32 number) {
 // };
 void fontConvertString(char *inString, char *outString) {
     char currentChar;
-    char *conversionTable = D_800A78C4;
+    char *conversionTable = D_800A6F04_A7B04;
 
     do {
         currentChar = *inString++;

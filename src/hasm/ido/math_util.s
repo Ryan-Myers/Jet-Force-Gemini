@@ -1645,7 +1645,7 @@ LEAF(Cosf)
     /* Fall through */
 
 XLEAF(Sinf)
-    la         t2, D_800A8754
+    la         t2, D_800A7D94_A8994
     srl        t0, a0, 4
     andi       t1, a0, 0x4000
     andi       t0, 0x3FF

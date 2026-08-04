@@ -72,11 +72,11 @@ typedef struct ModelInstance_JFG {
     /* 0x80 */ s8 *unk80[2];
 } ModelInstance_JFG;
 
-void func_8003C6D0(ObjectModel_JFG *mdl);
+void func_8003C92C_3D52C(ObjectModel_JFG *mdl);
 void modFreeModel(ModelInstance_JFG *modInst);
 
-void func_8003B640(u16 *src, u16 *dest, s32 len);
-void *func_8003BED0(struct_8003BED0_arg0 *arg0);
+void func_8003B870_3C470(u16 *src, u16 *dest, s32 len);
+void *func_8003C12C_3CD2C(struct_8003BED0_arg0 *arg0);
 void modFreeAnim(s8 *arg0);
 void texFreeTexture(TextureHeader *tex);
 

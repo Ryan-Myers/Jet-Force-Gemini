@@ -39,7 +39,7 @@ const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetCamera.s")
 
 LevelHeader *levelGetLevel(void) {
-    return D_800FBBD8;
+    return D_800FB118_B5958;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetName.s")

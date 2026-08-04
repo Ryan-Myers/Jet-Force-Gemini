@@ -147,8 +147,8 @@ Gfx dDebugFontSettings[] = {
 TextureHeader *gTexture[3];
 u16 gDebugTextX;
 u16 gDebugTextY;
-u16 D_80101F50;
-u16 D_80101F52;
+u16 D_80101270_BBAB0;
+u16 D_80101272_BBAB2;
 s32 gDebugFixedWidthMode;
 s32 gDebugTextOn;
 s32 gDebugBoundsX1;
@@ -976,13 +976,13 @@ void diPrintfAll(Gfx **dList) {
     debug_text_origin();
     gDebugFontTexture = -1;
     gDebugFixedWidthMode = FALSE;
-    D_80101F50 = gDebugTextX;
-    D_80101F52 = gDebugTextY;
+    D_80101270_BBAB0 = gDebugTextX;
+    D_80101272_BBAB2 = gDebugTextY;
     while ((s32) buffer != (s32) gDebugPrintBufferEnd) {
         gDebugTextOn = FALSE;
         buffer += debug_text_parse(dList, buffer);
     }
-    debug_text_background(dList, D_80101F50, D_80101F52, gDebugTextX, gDebugTextY + 10);
+    debug_text_background(dList, D_80101270_BBAB0, D_80101272_BBAB2, gDebugTextX, gDebugTextY + 10);
     buffer = (char *) gDebugPrintBufferStart;
     debug_text_origin();
     gDebugFontTexture = -1;
@@ -1063,14 +1063,14 @@ s32 debug_text_parse(Gfx **dList, char *buffer) {
                 break;
             case 0x82: // Set debug text position from the next 4 bytes
                 if (!gDebugTextOn) {
-                    debug_text_background(dList, D_80101F50, D_80101F52, gDebugTextX, gDebugTextY + 10);
+                    debug_text_background(dList, D_80101270_BBAB0, D_80101272_BBAB2, gDebugTextX, gDebugTextY + 10);
                 }
                 gDebugTextX = buffer[0];
                 gDebugTextX |= buffer[1] << 8;
                 gDebugTextY = buffer[2];
                 gDebugTextY |= buffer[3] << 8;
-                D_80101F50 = gDebugTextX;
-                D_80101F52 = gDebugTextY;
+                D_80101270_BBAB0 = gDebugTextX;
+                D_80101272_BBAB2 = gDebugTextY;
                 buffer += 4;
                 break;
             case ' ': // Space
@@ -1078,11 +1078,11 @@ s32 debug_text_parse(Gfx **dList, char *buffer) {
                 break;
             case '\n': // Line Feed
                 if (!gDebugTextOn) {
-                    debug_text_background(dList, D_80101F50, D_80101F52, gDebugTextX, gDebugTextY + 10);
+                    debug_text_background(dList, D_80101270_BBAB0, D_80101272_BBAB2, gDebugTextX, gDebugTextY + 10);
                 }
                 debug_text_newline();
-                D_80101F50 = gDebugTextX;
-                D_80101F52 = gDebugTextY;
+                D_80101270_BBAB0 = gDebugTextX;
+                D_80101272_BBAB2 = gDebugTextY;
                 break;
             case '\t': // HT - Horizontal Tab
                 if (!(gDebugTextX % 32)) {
@@ -1102,11 +1102,11 @@ s32 debug_text_parse(Gfx **dList, char *buffer) {
         gDebugTextX += xOffset;
         if ((gDebugScreenWidth - 16) < gDebugTextX) {
             if (!gDebugTextOn) {
-                debug_text_background(dList, D_80101F50, D_80101F52, gDebugTextX, gDebugTextY + 10);
+                debug_text_background(dList, D_80101270_BBAB0, D_80101272_BBAB2, gDebugTextX, gDebugTextY + 10);
             }
             debug_text_newline();
-            D_80101F50 = gDebugTextX;
-            D_80101F52 = gDebugTextY;
+            D_80101270_BBAB0 = gDebugTextX;
+            D_80101272_BBAB2 = gDebugTextY;
         }
         bufferValue = *buffer;
         buffer++;

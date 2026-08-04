@@ -26,7 +26,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_seqplayer/__n_resetPerfChanState.s")
 
-void func_8008A8DC(void) {
+void func_8008D41C_8E01C(void) {
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_seqplayer/__n_setInstChanState.s")

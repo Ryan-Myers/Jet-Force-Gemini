@@ -18,7 +18,7 @@ const char D_800ACB10[] = "Anim Event Error: Tryed to deallocate non-existent an
 /**
  * Two Byte memcpy
  */
-void func_8003B640(u16 *src, u16 *dest, s32 len) {
+void func_8003B870_3C470(u16 *src, u16 *dest, s32 len) {
     len = (len + 1) >> 1;
     while (len--) {
         *dest++ = *src++;
@@ -56,9 +56,9 @@ void modInitModels(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/modLoadModel.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003BE68.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003C0C4_3CCC4.s")
 
-void *func_8003BED0(struct_8003BED0_arg0 *arg0) {
+void *func_8003C12C_3CD2C(struct_8003BED0_arg0 *arg0) {
     u16 *temp_a1;
     struct_8003BED0_alloc *temp_v0;
 
@@ -70,12 +70,12 @@ void *func_8003BED0(struct_8003BED0_arg0 *arg0) {
         temp_v0->unkA = 2;
         temp_v0->unkB = 0;
         temp_v0->unkC = 0;
-        func_8003B640(arg0->unk1C, temp_a1, arg0->unk12 * 0xA);
+        func_8003B870_3C470(arg0->unk1C, temp_a1, arg0->unk12 * 0xA);
     }
     return temp_v0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003BF58.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003C1B4_3CDB4.s")
 
 void modFreeModel(ModelInstance_JFG *modInst) {
     ObjectModel_JFG *model;
@@ -108,7 +108,7 @@ void modFreeModel(ModelInstance_JFG *modInst) {
             }
 
             if (modelIndex != -1) {
-                func_8003C6D0(model);
+                func_8003C92C_3D52C(model);
                 D_800F6F18_B1758[D_800F6F24_B1764] = modelIndex;
                 D_800F6F24_B1764++;
                 gModelCache[ASSETCACHE_ID(modelIndex)] = -1;
@@ -118,7 +118,7 @@ void modFreeModel(ModelInstance_JFG *modInst) {
     }
 }
 
-void func_8003C6D0(ObjectModel_JFG *mdl) {
+void func_8003C92C_3D52C(ObjectModel_JFG *mdl) {
     s32 animsFreed;
     s32 animIndex;
 
@@ -180,13 +180,13 @@ void func_8003C6D0(ObjectModel_JFG *mdl) {
     mmFree(mdl);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003C8A8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003CB04_3D704.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003CB50.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003CDAC_3D9AC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003CCC8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003CF24_3DB24.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003CD70.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003CFCC_3DBCC.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/modFreeAnim.s")
 
@@ -198,9 +198,9 @@ void func_8003C6D0(ObjectModel_JFG *mdl) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/makeModelGfx.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003E100.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003E35C_3EF5C.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003E13C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/models/func_8003E398_3EF98.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/models/modMakeLimbModel.s")
 

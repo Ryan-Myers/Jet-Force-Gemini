@@ -7,29 +7,29 @@
 extern OSThread *__osGetActiveQueue(void);
 
 #ifdef VERSION_kiosk
-const char D_800AF300[] = "7.2";
+const char D_800AE750_AF350[] = "7.2";
 #else
-const char D_800AF300[] = "9.6";
+const char D_800AE750_AF350[] = "9.6";
 #endif
-const char D_800AF304[] = "interrupt";
-const char D_800AF310[] = "TLB modify";
-const char D_800AF31C[] = "TLB load or fetch";
-const char D_800AF330[] = "TLB store";
-const char D_800AF33C[] = "addr load or fetch";
-const char D_800AF350[] = "addr store";
-const char D_800AF35C[] = "bus error fetch";
-const char D_800AF36C[] = "bus error reference";
-const char D_800AF380[] = "syscall";
-const char D_800AF388[] = "breakpoint";
-const char D_800AF394[] = "reserved instruction";
-const char D_800AF3AC[] = "co-pro unusable";
-const char D_800AF3BC[] = "overflow";
-const char D_800AF3C8[] = "trap";
-const char D_800AF3D0[] = "virtual coherency";
-const char D_800AF3E4[] = "floating point";
-const char D_800AF3F4[] = ">fault< ";
-const char D_800AF400[] = "CORE";
-const char D_800AF408[] = "";
+const char D_800AE754_AF354[] = "interrupt";
+const char D_800AE760_AF360[] = "TLB modify";
+const char D_800AE76C_AF36C[] = "TLB load or fetch";
+const char D_800AE780_AF380[] = "TLB store";
+const char D_800AE78C_AF38C[] = "addr load or fetch";
+const char D_800AE7A0_AF3A0[] = "addr store";
+const char D_800AE7AC_AF3AC[] = "bus error fetch";
+const char D_800AE7BC_AF3BC[] = "bus error reference";
+const char D_800AE7D0_AF3D0[] = "syscall";
+const char D_800AE7D8_AF3D8[] = "breakpoint";
+const char D_800AE7E4_AF3E4[] = "reserved instruction";
+const char D_800AE7FC_AF3FC[] = "co-pro unusable";
+const char D_800AE80C_AF40C[] = "overflow";
+const char D_800AE818_AF418[] = "trap";
+const char D_800AE820_AF420[] = "virtual coherency";
+const char D_800AE834_AF434[] = "floating point";
+const char D_800AE844_AF444[] = ">fault< ";
+const char D_800AE850_AF450[] = "CORE";
+const char D_800AE858_AF458[] = "";
 #ifdef VERSION_kiosk
 // These rodata symbols are contained within the relevant functions, which I didn't do for kiosk.
 const char D_800AF40C[] = "%08x:%08x";
@@ -66,19 +66,19 @@ void diCpuTraceInit(void) {
 void diCpuThread(UNUSED void *unused) {
     s32 sp2C;
     s32 s0 = 0;
-    osCreateMesgQueue(&D_801031C0, D_801031D8, ARRAY_COUNT(D_801031D8));
-    osSetEventMesg(OS_EVENT_FAULT, &D_801031C0, (OSMesg) RMON_MESG_FAULT);
-    osSetEventMesg(OS_EVENT_CPU_BREAK, &D_801031C0, (OSMesg) RMON_MESG_CPU_BREAK);
-    osCreatePiManager(150, &D_80103218, D_801031F8, ARRAY_COUNT(D_801031F8));
+    osCreateMesgQueue(&D_801024E0_BCD20, D_801024F8_BCD38, ARRAY_COUNT(D_801024F8_BCD38));
+    osSetEventMesg(OS_EVENT_FAULT, &D_801024E0_BCD20, (OSMesg) RMON_MESG_FAULT);
+    osSetEventMesg(OS_EVENT_CPU_BREAK, &D_801024E0_BCD20, (OSMesg) RMON_MESG_CPU_BREAK);
+    osCreatePiManager(150, &D_80102538_BCD78, D_80102518_BCD58, ARRAY_COUNT(D_80102518_BCD58));
     while (1) {
-        osRecvMesg(&D_801031C0, (OSMesg) &sp2C, 1);
+        osRecvMesg(&D_801024E0_BCD20, (OSMesg) &sp2C, 1);
         s0 |= sp2C;
         if (!(s0 & RMON_MESG_FAULT) && !(s0 & RMON_MESG_CPU_BREAK)) {
             continue;
         }
         s0 &= ~RMON_MESG_FAULT;
         stop_all_threads_except_main();
-        func_800677E4();
+        func_80066E14_67A14();
     }
 }
 
@@ -96,43 +96,43 @@ void stop_all_threads_except_main(void) {
 }
 
 #if 0
-extern s32 D_800A6E90;
-extern s32 D_800A6E94;
-extern s32 D_800A6E98;
-extern s8 D_800AF400;
-extern s8 D_800AF408;
-extern void *D_80103234;
-extern ? D_80103238;
+extern s32 D_800A64D0_A70D0;
+extern s32 D_800A64D4_A70D4;
+extern s32 D_800A64D8_A70D8;
+extern s8 D_800AE850_AF450;
+extern s8 D_800AE858_AF458;
+extern void *D_80102554_BCD94;
+extern ? D_80102558_BCD98;
 extern s32 D_80705014;
 extern s32 D_80705018;
 extern s32 D_8070501C;
 
-void func_800676F8(void *arg0) {
+void func_80066D28_67928(void *arg0) {
     void *sp28;
     s32 var_v1;
     void *temp_a0;
 
-    D_80705014 = D_800A6E98;
-    D_80705018 = D_800A6E90;
-    D_8070501C = D_800A6E94;
+    D_80705014 = D_800A64D8_A70D8;
+    D_80705018 = D_800A64D0_A70D0;
+    D_8070501C = D_800A64D4_A70D4;
     _bcopy(arg0, (void *)0x80705094, 0x230);
     temp_a0 = arg0->unkF4;
     sp28 = temp_a0;
     _bcopy(temp_a0, (void *)0x80705294, 0x200);
-    D_80103234 = temp_a0;
-    _bcopy(temp_a0, &D_80103238, 0x200);
+    D_80102554_BCD94 = temp_a0;
+    _bcopy(temp_a0, &D_80102558_BCD98, 0x200);
     var_v1 = 0x100005494;
     if (0x100005494 & 0x1F) {
         var_v1 = (0x100005494 & ~0x1F) + 0x20;
     }
-    packWriteFile(0, -1, &D_800AF400, &D_800AF408, (u8 *)0x80700000, var_v1);
+    packWriteFile(0, -1, &D_800AE850_AF450, &D_800AE858_AF458, (u8 *)0x80700000, var_v1);
 }
 #else
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800676F8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80066D28_67928.s")
 #endif
 
 // write_epc_data_to_cpak
-void func_800677E4(void) {
+void func_80066E14_67A14(void) {
     OSThread *thread;
 
     for (thread = __osGetActiveQueue(); thread->priority != -1; thread = thread->tlnext) {
@@ -143,38 +143,38 @@ void func_800677E4(void) {
         }
     }
     if (thread->priority != -1) {
-        func_800676F8(thread);
+        func_80066D28_67928(thread);
     }
-    func_80067880(thread);
+    func_80066EB0_67AB0(thread);
 }
 
 // interactive_crash_screens
 #ifdef NON_EQUIVALENT
 extern s32 osCicId;
-extern s32 D_800A6E98;
+extern s32 D_800A64D8_A70D8;
 
-void func_80067880(OSThread *thread) {
+void func_80066EB0_67AB0(OSThread *thread) {
     s32 i;
 
     // Anti Piracy Check
-    if ((D_800A3B74 == 0) || (osCicId != 6105)) {
+    if ((D_800A3320_A3F20 == 0) || (osCicId != 6105)) {
         while (1) {}
     }
-    if (D_800A6E98 == 0) {
+    if (D_800A64D8_A70D8 == 0) {
         if (thread && thread && thread) {}
     }
     if (viGetVideoMode() != 0) {
-        D_800A6EDC = 1;
+        D_800A651C_A711C = 1;
     } else {
-        D_800A6EDC = 0;
+        D_800A651C_A711C = 0;
     }
     for (i = 0; i < 100; i++) {
-        func_8006869C();
+        func_8006837C_68F7C();
     }
     while (1) {}
 }
 #else
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067880.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80066EB0_67AB0.s")
 #endif
 
 UNUSED void diCpuReportWatchpoint(u32 address) {
@@ -182,7 +182,7 @@ UNUSED void diCpuReportWatchpoint(u32 address) {
     s32 moduleId;
     s32 i;
     for (i = 0; i < 100; i++) {
-        func_8006869C();
+        func_8006837C_68F7C();
     }
     cpuXYPrintf(30, 80, "Watchpoint exception at %x\n", address);
     if (runlinkGetAddressInfo(address, &moduleId, &moduleAddress, NULL)) {
@@ -238,9 +238,9 @@ const char D_800AF810[] = "Object edge buffer overflow";
 #endif
 
 #ifdef NON_EQUIVALENT
-extern s32 D_800A6E90;
-extern s32 D_800A6E94;
-extern s32 D_800A6E98;
+extern s32 D_800A64D0_A70D0;
+extern s32 D_800A64D4_A70D4;
+extern s32 D_800A64D8_A70D8;
 
 void diCpuLogMessage(const char *format, ...) {
     va_list args;
@@ -254,7 +254,7 @@ void diCpuLogMessage(const char *format, ...) {
     vsprintf(&sp20, format, &args);
     va_end(args);
 
-    var_a1 = (D_800A6E94 * 41) + 0x80700000;
+    var_a1 = (D_800A64D4_A70D4 * 41) + 0x80700000;
     var_v0 = &sp20;
     i = 0;
     if (var_v0[i] != 0) {
@@ -270,20 +270,20 @@ void diCpuLogMessage(const char *format, ...) {
         }
     }
     *var_a1 = 0;
-    D_800A6E94++;
-    if (D_800A6E94 >= 500) {
-        D_800A6E98 = 1;
-        D_800A6E94 = 0;
+    D_800A64D4_A70D4++;
+    if (D_800A64D4_A70D4 >= 500) {
+        D_800A64D8_A70D8 = 1;
+        D_800A64D4_A70D4 = 0;
     }
-    if (D_800A6E98 != 0) {
-        D_800A6E90 = D_800A6E94;
+    if (D_800A64D8_A70D8 != 0) {
+        D_800A64D0_A70D0 = D_800A64D4_A70D4;
     }
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/diCpuLogMessage.s")
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067AA0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_80067790_68390.s")
 
 void render_epc_lock_up_display(epcInfo *arg0);
 
@@ -304,18 +304,18 @@ s32 diCpuTraceGetFault(void) {
 }
 
 void diCpuTraceTick(s32 arg0) {
-    D_800A6E8C += arg0;
-    if (D_800A6E8C > 60) {
-        D_800A6E8C = 0;
-        D_800A6E88++;
+    D_800A64CC_A70CC += arg0;
+    if (D_800A64CC_A70CC > 60) {
+        D_800A64CC_A70CC = 0;
+        D_800A64C8_A70C8++;
     }
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/diCpu/render_epc_lock_up_display.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800683D0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800680B0_68CB0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800684F0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/diCpu/func_800681D0_68DD0.s")
 
 void cpuXYPrintf(s32 x, s32 y, const char *format, ...) {
     va_list args;
@@ -325,8 +325,8 @@ void cpuXYPrintf(s32 x, s32 y, const char *format, ...) {
     vsprintf(s, format, args);
     va_end(args);
 
-    if (D_800A6EDC != 0) {
-        if (D_800A6EDC == 1) {
+    if (D_800A651C_A711C != 0) {
+        if (D_800A651C_A711C == 1) {
             y -= 8;
         } else {
             y -= 104;
@@ -337,12 +337,12 @@ void cpuXYPrintf(s32 x, s32 y, const char *format, ...) {
         }
     } else {
     block_7:
-        func_800684F0(x, y, s);
+        func_800681D0_68DD0(x, y, s);
     }
 }
 
 // Zeroes out `otherScreen`
-void func_8006869C(void) {
+void func_8006837C_68F7C(void) {
     UNUSED s32 pad;
     s32 height;
     s32 width;

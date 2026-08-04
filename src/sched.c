@@ -40,15 +40,15 @@ static void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp);
 void __scYield(OSSched *s);
 
 s32 __scSchedule(OSSched *sc, OSScTask **sp, OSScTask **dp, s32 availRCP);
-void func_80050670(OSSched *sc);
+void func_8004FB30_50730(OSSched *sc);
 
 extern OSViMode osViModePalLpn1;  // PAL
 extern OSViMode osViModeMpalLpn1; // MPAL
 extern OSViMode osViModeNtscLpn1; // NTSC
 
-extern OSTime D_800FF668;
+extern OSTime D_800FE958_B9198;
 extern s32 D_800A38CC_A44CC;
-// OSTime D_800FF668; //gYieldTime
+// OSTime D_800FE958_B9198; //gYieldTime
 
 void osCreateScheduler(OSSched *sc, void *stack, OSPri priority, u8 mode, u8 numFields) {
     sc->curRSPTask = 0;
@@ -170,7 +170,7 @@ static void __scMain(void *arg) {
                 break;
 
             case (UNK_MSG):
-                func_80050670(sc);
+                func_8004FB30_50730(sc);
                 break;
 
             case (PRE_NMI_MSG):
@@ -193,7 +193,7 @@ static void __scMain(void *arg) {
     }
 }
 
-void func_80050670(OSSched *sc) {
+void func_8004FB30_50730(OSSched *sc) {
     s32 state;
     OSScTask *sp = 0;
     OSScTask *dp = 0;
@@ -245,14 +245,14 @@ char *osScGetTaskType(s32 taskID) {
 #pragma GLOBAL_ASM("asm/nonmatchings/sched/osScGetTaskType.s")
 #endif
 
-void func_800507A4(OSScTask *task) {
+void func_8004FC64_50864(OSScTask *task) {
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_800507AC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_8004FC6C_5086C.s")
 
 #if 0
 void diRcpTraceGetInfo(Gfx*, u32*, char**, u32*, s32*, u32*, char**, u32*, s32*);
-Gfx *func_80050AA4(OSSched *sc, 
+Gfx *func_8004FF64_50B64(OSSched *sc, 
     char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
     char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2) {
 
@@ -396,12 +396,12 @@ Gfx *func_80050AA4(OSSched *sc,
     return displayListPtr;
 }
 #else
-#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_80050AA4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/sched/func_8004FF64_50B64.s")
 #endif
 
 #ifdef NON_MATCHING
 // Need to migrate bss in order to match this.
-extern u64 D_800A4324;
+extern u64 D_800A38D4_A44D4;
 u64 gRetraceCounter64;
 
 void __scHandleRetrace(OSSched *sc) {
@@ -448,9 +448,9 @@ void __scHandleRetrace(OSSched *sc) {
     if ((gCurRSPTaskCounter > 10) && (sc->curRSPTask)) {
         if (gCurRSPTaskIsSet) {
             osScGetTaskType(sc->curRSPTask->taskID); // Returns a string containing the name of the task
-            func_800507A4(sc->curRSPTask);           // Func is empty
+            func_8004FC64_50864(sc->curRSPTask);           // Func is empty
             if (sc->curRSPTask->list.t.type == M_GFXTASK) {
-                spGfx = (Gfx *) func_80050AA4(sc, &spB4, &spA4, &spC4, &spB0, &spA0, &spC0);
+                spGfx = (Gfx *) func_8004FF64_50B64(sc, &spB4, &spA4, &spC4, &spB0, &spA0, &spC0);
             }
             gCurRSPTaskIsSet = FALSE;
         }
@@ -464,13 +464,13 @@ void __scHandleRetrace(OSSched *sc) {
 
     if ((gCurRDPTaskCounter > 10) && (sc->curRDPTask)) {
         if (sc->curRDPTask->unk68 == 0) {
-            osSendMesg(sc->curRDPTask->msgQ, &D_800A4308, OS_MESG_BLOCK);
+            osSendMesg(sc->curRDPTask->msgQ, &D_800A38B8_A44B8, OS_MESG_BLOCK);
         }
         if (gCurRDPTaskIsSet) {
             osScGetTaskType(sc->curRDPTask->taskID); // Returns a string containing the name of the task
-            func_800507A4(sc->curRDPTask);           // Func is empty
+            func_8004FC64_50864(sc->curRDPTask);           // Func is empty
             if (sc->curRDPTask->list.t.type == M_GFXTASK) {
-                dpGfx = (Gfx *) func_80050AA4(sc, &spAC, &sp9C, &spBC, &spA8, &sp98, &unkTask);
+                dpGfx = (Gfx *) func_8004FF64_50B64(sc, &spAC, &sp9C, &spBC, &spA8, &sp98, &unkTask);
             }
             gCurRDPTaskIsSet = FALSE;
         }
@@ -577,7 +577,7 @@ void __scHandleRetrace(OSSched *sc) {
         __scExec(sc, sp, dp);
     }
 
-    gRetraceCounter64 = D_800A4324 + 1;
+    gRetraceCounter64 = D_800A38D4_A44D4 + 1;
 
     sc->frameCount += 1; // If you want to make the game 60FPS, change this to 2.
 
@@ -587,7 +587,7 @@ void __scHandleRetrace(OSSched *sc) {
             if ((unkTask2->unk68) || (unkTask2->msg)) {
                 osSendMesg(unkTask2->msgQ, unkTask2->msg, OS_MESG_BLOCK);
             } else {
-                osSendMesg(unkTask2->msgQ, &D_800A4300, OS_MESG_BLOCK);
+                osSendMesg(unkTask2->msgQ, &D_800A38B0_A44B0, OS_MESG_BLOCK);
             }
         }
         sc->frameCount = 0;
@@ -600,7 +600,7 @@ void __scHandleRetrace(OSSched *sc) {
             if (gNextFrameCount <= 0) {
                 osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
                 if (sc->audioListHead) {
-                    func_80050670(sc);
+                    func_8004FB30_50730(sc);
                 }
                 gNextFrameCount = amAudioMgrGetNextFrameCount();
             }
@@ -696,7 +696,7 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
                 if (t->unk68 || t->msg) {
                     osSendMesg(t->msgQ, t->msg, OS_MESG_BLOCK);
                 } else {
-                    osSendMesg(t->msgQ, &D_800A4300, OS_MESG_BLOCK);
+                    osSendMesg(t->msgQ, &D_800A38B0_A44B0, OS_MESG_BLOCK);
                 }
                 sc->frameCount = 0;
                 return 1;
@@ -705,7 +705,7 @@ s32 __scTaskComplete(OSSched *sc, OSScTask *t) {
                 osSendMesg(t->msgQ, t->msg, OS_MESG_BLOCK);
                 return 1;
             }
-            osSendMesg(t->msgQ, &D_800A4300, OS_MESG_BLOCK);
+            osSendMesg(t->msgQ, &D_800A38B0_A44B0, OS_MESG_BLOCK);
         }
         return 1;
     }
@@ -766,7 +766,7 @@ void __scExec(OSSched *sc, OSScTask *sp, OSScTask *dp) {
 void __scYield(OSSched *sc) {
     if (sc->curRSPTask->list.t.type == M_GFXTASK) {
         sc->curRSPTask->state |= OS_SC_YIELD;
-        D_800FF668 = osGetTime();
+        D_800FE958_B9198 = osGetTime();
         osSpTaskYield();
     }
 }
