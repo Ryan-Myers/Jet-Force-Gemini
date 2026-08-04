@@ -206,8 +206,8 @@ void RevealReturnAddresses(void) {
                 instr->shiftEncoding.targetRegister = ZERO_REG;
                 instr->shiftEncoding.shiftAmount = 0;
                 instr->shiftEncoding.function = OR_OPCODE;
-                osWritebackDCache(instr, 4);
-                osInvalICache(instr, 4);
+                osWritebackDCache(instr, sizeof(MipsInstruction));
+                osInvalICache(instr, sizeof(MipsInstruction));
                 break;
             }
             instr++;

@@ -1,4 +1,5 @@
 #include "common.h"
+#include "mips.h"
 
 const char D_800ADC90[] = "WARNING: Unimplemented linkage operation %d\n";
 const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";
@@ -174,22 +175,6 @@ typedef struct RelocationEntry {
         };
     };
 } RelocationEntry; /* 8 bytes */
-
-/**
- * MIPS instruction word layout (big-endian).
- * Used for runtime instruction patching during relocation.
- */
-typedef union MipsInstruction {
-    u32 word;
-    struct {
-        u32 opcode : 6;  // Instruction opcode (bits 26-31)
-        u32 target : 26; // J/JAL target address >> 2 (bits 0-25)
-    } jump;
-    struct {
-        u16 immediate; // immediate value (bits 0-15)
-        u16 upper;     // rs/rt/opcode (bits 16-31)
-    } itype;
-} MipsInstruction; /* 4 bytes */
 
 extern void *__BSS_SECTION_START;
 extern void *__BSS_SECTION_END;
