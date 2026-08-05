@@ -2,6 +2,7 @@
 #include "common.h"
 #include "functions.h"
 #include "models.h"
+#include "textures.h"
 
 typedef enum WeatherType { WEATHER_SNOW, WEATHER_RAIN, WEATHER_UNK } WeatherType;
 
@@ -311,7 +312,7 @@ void changeWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) {
         gWeather.intensity = arg3;
         gWeather.opacity = arg4;
         gWeather.shiftTime = 0;
-        func_8005BDB8_5C9B8(arg3 + 1, arg4 + 1, (f32) arg5 / 60.0f);
+        func_8005BDB8_5C9B8(arg3 + 1, arg4 + 1, arg5 / 60.0f);
     }
 }
 
@@ -409,7 +410,41 @@ void func_8005B62C_5C22C(void) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005B928_5C528.s")
+void func_8005B928_5C528(void) {
+    s32 i;
+    Mtx *mtx;
+    Vertex *vtx;
+
+    if (gSnowGfx.texture == NULL) {
+        return;
+    }
+
+    gSnowVertOffset = 4;
+    gSnowTriCount = 2;
+    if (gSnowVertCount < 4) {
+        return;
+    }
+
+    i = 0;
+    mtx = camGetProjOrgMtx();
+    gSPMatrixDKR(gCurrWeatherDisplayList++, OS_K0_TO_PHYSICAL(mtx), G_MTX_DKR_INDEX_0);
+    gSPSelectMatrixDKR(gCurrWeatherDisplayList++, G_MTX_DKR_INDEX_0);
+    texDPTextureX(&gCurrWeatherDisplayList, gSnowGfx.texture, 2, 0);
+    gDPSetPrimColor(gCurrWeatherDisplayList++, 0, 0, 224, 240, 255, 160); // light blue-ish, snow color
+    gDPSetEnvColor(gCurrWeatherDisplayList++, 64, 128, 255, 0);           // blue-ish, transparent?
+    while (i + gSnowVertOffset < gSnowVertCount) {
+        vtx = &gSnowVerts[i];
+        gSPVertexJFG(gCurrWeatherDisplayList++, OS_K0_TO_PHYSICAL(vtx), gSnowVertOffset, 0);
+        gSPPolygon(gCurrWeatherDisplayList++, OS_K0_TO_PHYSICAL(gSnowTriangles), gSnowTriCount, 1);
+        i += gSnowVertOffset;
+    }
+
+    vtx = &gSnowVerts[i];
+    gSPVertexJFG(gCurrWeatherDisplayList++, OS_K0_TO_PHYSICAL(vtx), (gSnowVertCount - i), 0);
+    gSPPolygon(gCurrWeatherDisplayList++, OS_K0_TO_PHYSICAL(gSnowTriangles), ((gSnowVertCount - i) >> 1), 1);
+    gDPSetPrimColor(gCurrWeatherDisplayList++, 0, 0, 255, 255, 255, 255); // all white
+    gDPSetEnvColor(gCurrWeatherDisplayList++, 255, 255, 255, 255);        // all white
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005BC44_5C844.s")
 

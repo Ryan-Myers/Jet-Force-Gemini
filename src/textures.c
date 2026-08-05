@@ -1,3 +1,4 @@
+#include "textures.h"
 #include "common.h"
 
 const char D_800ADD40[] = "Error: Texture no %x out of range on load. !!\n";
