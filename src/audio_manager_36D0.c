@@ -63,8 +63,9 @@ void amSndPlayXYZ(u16 soundId, f32 x, f32 y, f32 z, u8 arg4, SoundMask **soundMa
 
     if (soundMask == NULL || *soundMask == NULL) {
         amCreateAudioPoint(D_800F29F0_F35F0[soundId].soundBite, x, y, z, arg4, D_800F29F0_F35F0[soundId].unk3,
-                           D_800F29F0_F35F0[soundId].volume, D_800F29F0_F35F0[soundId].distance, 0, D_800F29F0_F35F0[soundId].pitch,
-                           D_800F29F0_F35F0[soundId].unk8, D_800F29F0_F35F0[soundId].unk5, soundMask);
+                           D_800F29F0_F35F0[soundId].volume, D_800F29F0_F35F0[soundId].distance, 0,
+                           D_800F29F0_F35F0[soundId].pitch, D_800F29F0_F35F0[soundId].unk8,
+                           D_800F29F0_F35F0[soundId].unk5, soundMask);
     }
 }
 

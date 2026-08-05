@@ -50,7 +50,7 @@ typedef enum MempoolFlags {
 // Controller Pak
 #define COLOUR_TAG_BLACK 0x000000FF
 // Weather
-#define COLOUR_TAG_LIGHT_ORANGE 0xFFAA55FF
+#define COLOUR_TAG_PURPLE 0xAA55FFFF
     
 /* Size: 0x14 bytes */
 typedef struct MemoryPoolSlot {
