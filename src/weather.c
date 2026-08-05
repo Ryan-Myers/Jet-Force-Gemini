@@ -1,3 +1,4 @@
+#include "camera.h"
 #include "common.h"
 #include "models.h"
 
@@ -10,117 +11,134 @@ enum ViewportCount {
     VIEWPORTS_COUNT_4_PLAYERS
 };
 
+/* Size: 0x8 Bytes */
 typedef struct {
-    s16 near;
-    s16 far;
-    s32 current;
+    /* 0x00 */ s16 near;
+    /* 0x02 */ s16 far;
+    /* 0x04 */ s32 current;
 } SnowLimits;
 
+/* Size: 0x10 Bytes */
 typedef struct SnowPosData {
-    s32 x_position;
-    s32 y_position;
-    s32 z_position;
-    u8 unused_C;
-    u8 unused_D;
-    u8 unused_E;
-    u8 index;
+    /* 0x00 */ s32 x_position;
+    /* 0x04 */ s32 y_position;
+    /* 0x08 */ s32 z_position;
+    /* 0x0C */ u8 unused_C;
+    /* 0x0D */ u8 unused_D;
+    /* 0x0E */ u8 unused_E;
+    /* 0x0F */ u8 index;
 } SnowPosData;
 
+/* Size: 0x40 Bytes */
 typedef struct WeatherData {
-    s32 intensity;
-    s32 intensityStep;
-    s32 intensityTarget;
-    s32 velX;
-    s32 velXStep;
-    s32 velXTarget;
-    s32 velY;
-    s32 velYStep;
-    s32 velYTarget;
-    s32 velZ;
-    s32 velZStep;
-    s32 velZTarget;
-    s32 opacity;
-    s32 opacityStep;
-    s32 opacityTarget;
-    s32 shiftTime;
+    /* 0x00 */ s32 intensity;
+    /* 0x04 */ s32 intensityStep;
+    /* 0x08 */ s32 intensityTarget;
+    /* 0x0C */ s32 velX;
+    /* 0x10 */ s32 velXStep;
+    /* 0x14 */ s32 velXTarget;
+    /* 0x18 */ s32 velY;
+    /* 0x1C */ s32 velYStep;
+    /* 0x20 */ s32 velYTarget;
+    /* 0x24 */ s32 velZ;
+    /* 0x28 */ s32 velZStep;
+    /* 0x2C */ s32 velZTarget;
+    /* 0x30 */ s32 opacity;
+    /* 0x34 */ s32 opacityStep;
+    /* 0x38 */ s32 opacityTarget;
+    /* 0x3C */ s32 shiftTime;
 } WeatherData;
 
 /* Size: 0x2C Bytes */
 typedef struct SnowGfxData {
-    Vec3i *pos;
-    s32 size;
+    /* 0x00 */ Vec3i *pos;
+    /* 0x04 */ s32 size;
     union {
-        WeatherType type;
-        TextureHeader *texture;
+        /* 0x08 */ WeatherType type;
+        /* 0x08 */ TextureHeader *texture;
     };
-    s32 offsetX;
-    s32 offsetY;
-    s32 offsetZ;
-    s32 radiusX;
-    s32 radiusY;
-    s32 radiusZ;
-    s16 vertOffsetW;
-    s16 vertOffsetH;
-    s16 vertWidth;
-    s16 vertHeight;
+    /* 0x0C */ s32 offsetX;
+    /* 0x10 */ s32 offsetY;
+    /* 0x14 */ s32 offsetZ;
+    /* 0x18 */ s32 radiusX;
+    /* 0x1C */ s32 radiusY;
+    /* 0x20 */ s32 radiusZ;
+    /* 0x24 */ s16 vertOffsetW;
+    /* 0x26 */ s16 vertOffsetH;
+    /* 0x28 */ s16 vertWidth;
+    /* 0x2A */ s16 vertHeight;
 } SnowGfxData;
 
 // .bss
-extern s32 D_80100840_BB080;
-extern SnowLimits D_80100888_BB0C8;
-extern s32 D_80100890_BB0D0;
-extern s32 D_80100894_BB0D4;
-extern s8 D_80100898_BB0D8;
-extern WeatherData D_80100848_BB088; // gWeather in DKR
+extern s32 gSnowDensity;
+extern s32 gSnowParticleCount;
+extern WeatherData gWeather;
+extern SnowLimits gSnowPlane;
+extern s32 gSnowVertOffset;
+extern s32 gSnowTriCount;
+extern s8 gSnowVertexFlip;
+extern Gfx *gCurrWeatherDisplayList;
+extern Mtx *gCurrWeatherMatrix;
+extern Vertex *gCurrWeatherVertexList;
+extern Triangle *gCurrWeatherTriList;
+extern Camera *gWeatherCamera;
+extern Matrix *gWeatherCameraMatrix;
 
 // .data
-extern SnowPosData *D_800A59C4_A65C4;  // = 0; // gSnowPhysics in DKR
-extern SnowGfxData D_800A59C8_A65C8;   // = { 0, 0 }; // gSnowGfx in DKR
-extern s32 D_800A59FC_A65FC;           // = 0; // gSnowTriangles in DKR
-extern s16 *D_800A5A00_A6600;          // = NULL; // gSnowTriIndices in DKR
-extern Vertex *D_800A5A04_A6604[];     // = { 0, 0 }; // gSnowVertexData in DKR
-extern s32 *D_800A5A0C_A660C;          // = 0; // gWeatherAssetTable in DKR
-extern s8 D_800A5A10_A6610;            // = 0; // gWeatherAssetTableLength in DKR
-extern SnowGfxData D_800A5940_A6540[]; // gWeatherPresets in DKR
+extern SnowPosData *gSnowPhysics;   // = 0;
+extern SnowGfxData gSnowGfx;        // = { 0, 0 };
+extern s32 gSnowTriangles;          // = 0;
+extern s16 *gSnowTriIndices;        // = NULL;
+extern Vertex *gSnowVertexData[];   // = { 0, 0 };
+extern s32 *gWeatherAssetTable;     // = 0;
+extern s8 gWeatherAssetTableLength; // = 0;
+extern SnowGfxData gWeatherPresets[];
+extern Vertex *gSnowVerts; // = 0;
 
+// forward declarations
 void func_8005BD30_5C930(void);               // free_rain_memory in DKR
 void func_8005BC44_5C844(s32, s32, s32, s32); // rain_init in DKR
 void func_8005CBBC_5D7BC(void);               // snow_init in DKR
+void func_8005BDB8_5C9B8(s32, s32, f32);      // rain_set in DKR
+void func_8005B62C_5C22C(void);               // snow_vertices in DKR
+void func_8005B928_5C528(void);               // snow_render in DKR
+void func_8005C040_5CC40(s32);                // rain_update in DKR
+void func_8005CC0C_5D80C(s32);                // snow_update in DKR
 
 void initWeather(void) {
     s32 *temp_v0;
 
-    D_800A59C8_A65C8.pos = NULL;
-    D_800A59C8_A65C8.size = 0;
-    D_800A59C4_A65C4 = 0;
-    D_80100840_BB080 = 0;
-    D_80100890_BB0D0 = 6;
-    D_80100890_BB0D0 <<= 2;
-    D_80100894_BB0D4 = D_80100890_BB0D0 >> 1;
-    D_800A5A04_A6604[0] = 0;
-    D_800A5A04_A6604[1] = 0;
-    D_800A59FC_A65FC = 0;
-    D_80100888_BB0C8.near = -1;
-    D_80100888_BB0C8.far = -0x200;
-    if (D_800A5A0C_A660C == NULL) {
+    gSnowGfx.pos = NULL;
+    gSnowGfx.size = 0;
+    gSnowPhysics = 0;
+    gSnowDensity = 0;
+    gSnowVertOffset = 6;
+    gSnowVertOffset <<= 2;
+    gSnowTriCount = gSnowVertOffset >> 1;
+    gSnowVertexData[0] = 0;
+    gSnowVertexData[1] = 0;
+    gSnowTriangles = 0;
+    gSnowPlane.near = -1;
+    gSnowPlane.far = -0x200;
+    if (gWeatherAssetTable == NULL) {
         temp_v0 = (s32 *) piRomLoad(0x1BU);
-        D_800A5A10_A6610 = 0;
-        D_800A5A0C_A660C = temp_v0;
-        while (D_800A5A0C_A660C[D_800A5A10_A6610] != -1) {
-            D_800A5A10_A6610++;
+        gWeatherAssetTableLength = 0;
+        gWeatherAssetTable = temp_v0;
+        while (gWeatherAssetTable[gWeatherAssetTableLength] != -1) {
+            gWeatherAssetTableLength++;
         }
     }
 
-    D_80100898_BB0D8 = 0;
+    gSnowVertexFlip = 0;
 }
 
 void setWeatherLimits(s16 near, s16 far) {
-    if (D_80100888_BB0C8.far < D_80100888_BB0C8.near) {
-        D_80100888_BB0C8.near = near;
-        D_80100888_BB0C8.far = far;
+    if (gSnowPlane.far < gSnowPlane.near) {
+        gSnowPlane.near = near;
+        gSnowPlane.far = far;
     } else {
-        D_80100888_BB0C8.near = far;
-        D_80100888_BB0C8.far = near;
+        gSnowPlane.near = far;
+        gSnowPlane.far = near;
     }
 }
 
@@ -141,14 +159,14 @@ void freeWeather(void) {
     TextureHeader *tempTex;
     s32 *tempMem;
 
-    FREE_MEM(D_800A59FC_A65FC);
-    FREE_MEM(D_800A5A04_A6604[0]);
-    FREE_MEM(D_800A5A04_A6604[1]);
-    FREE_MEM(D_800A59C4_A65C4);
-    FREE_MEM(D_800A59C8_A65C8.pos);
-    FREE_TEX(D_800A59C8_A65C8.texture);
-    FREE_MEM(D_800A5A00_A6600);
-    if (D_800A5D18_A6918 != NULL) {
+    FREE_MEM(gSnowTriangles);
+    FREE_MEM(gSnowVertexData[0]);
+    FREE_MEM(gSnowVertexData[1]);
+    FREE_MEM(gSnowPhysics);
+    FREE_MEM(gSnowGfx.pos);
+    FREE_TEX(gSnowGfx.texture);
+    FREE_MEM(gSnowTriIndices);
+    if (D_800A5D18_A6918 != WEATHER_SNOW) {
         func_8005BD30_5C930();
     }
 }
@@ -169,64 +187,65 @@ void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s3
     s32 numOfElements;
 
     freeWeather();
-    D_80100848_BB088.velX = arg2;
-    D_80100848_BB088.velXStep = 0;
-    D_80100848_BB088.velXTarget = arg2;
-    D_80100848_BB088.velY = arg3;
-    D_80100848_BB088.velYStep = 0;
-    D_80100848_BB088.velYTarget = arg3;
-    D_80100848_BB088.velZStep = 0;
-    D_80100848_BB088.intensityStep = 0;
-    D_80100848_BB088.opacityStep = 0;
-    D_80100848_BB088.shiftTime = 0;
-    D_80100848_BB088.velZ = arg4;
-    D_80100848_BB088.velZTarget = arg4;
-    D_80100848_BB088.intensity = arg5;
-    D_80100848_BB088.intensityTarget = arg5;
-    D_80100848_BB088.opacity = arg6;
-    D_80100848_BB088.opacityTarget = arg6;
+    gWeather.velX = arg2;
+    gWeather.velXStep = 0;
+    gWeather.velXTarget = arg2;
+    gWeather.velY = arg3;
+    gWeather.velYStep = 0;
+    gWeather.velYTarget = arg3;
+    gWeather.velZStep = 0;
+    gWeather.intensityStep = 0;
+    gWeather.opacityStep = 0;
+    gWeather.shiftTime = 0;
+    gWeather.velZ = arg4;
+    gWeather.velZTarget = arg4;
+    gWeather.intensity = arg5;
+    gWeather.intensityTarget = arg5;
+    gWeather.opacity = arg6;
+    gWeather.opacityTarget = arg6;
     if (arg0 > 1) {
         arg0 = 1;
     }
-    if (D_800A5940_A6540[arg0].type == WEATHER_RAIN) {
+    if (gWeatherPresets[arg0].type == WEATHER_RAIN) {
         func_8005BC44_5C844(arg1, arg5 + 1, arg6 + 1, arg5);
         return;
     }
-    var_v1 = &D_800A5940_A6540[arg0];
-    var_a0 = (s8 *) &D_800A59C8_A65C8;
+    var_v1 = &gWeatherPresets[arg0];
+    var_a0 = (s8 *) &gSnowGfx;
     var_a1 = 0x2C;
     while (var_a1--) {
         *var_a0++ = *var_v1++;
     }
+    // FAKE
     if (!var_s1_2) {
         ;
     }
-    D_800A59C8_A65C8.pos = mmAlloc(D_800A5940_A6540[arg0].size * sizeof(Vec3i), COLOUR_TAG_PURPLE);
-    if (D_800A5940_A6540[arg0].type == WEATHER_SNOW) {
+    gSnowGfx.pos = mmAlloc(gWeatherPresets[arg0].size * sizeof(Vec3i), COLOUR_TAG_PURPLE);
+    if (gWeatherPresets[arg0].type == WEATHER_SNOW) {
         func_8005CBBC_5D7BC();
     }
     numOfElements = arg1;
-    D_80100840_BB080 = arg1;
-    D_800A5A00_A6600 = mmAlloc(arg1 * sizeof(s16), COLOUR_TAG_PURPLE);
-    D_800A59C4_A65C4 = mmAlloc(arg1 * sizeof(SnowPosData), COLOUR_TAG_PURPLE);
-    var_s1_2 = D_800A59C4_A65C4;
-    for (i = 0; i < D_80100840_BB080; i++) {
-        var_s1_2->x_position = mathRnd(0, D_800A59C8_A65C8.radiusX);
-        var_s1_2->y_position = mathRnd(0, D_800A59C8_A65C8.radiusY);
-        var_s1_2->z_position = mathRnd(0, D_800A59C8_A65C8.radiusZ);
+    gSnowDensity = arg1;
+    gSnowTriIndices = mmAlloc(arg1 * sizeof(s16), COLOUR_TAG_PURPLE);
+    gSnowPhysics = mmAlloc(arg1 * sizeof(SnowPosData), COLOUR_TAG_PURPLE);
+    var_s1_2 = gSnowPhysics;
+    for (i = 0; i < gSnowDensity; i++) {
+        var_s1_2->x_position = mathRnd(0, gSnowGfx.radiusX);
+        var_s1_2->y_position = mathRnd(0, gSnowGfx.radiusY);
+        var_s1_2->z_position = mathRnd(0, gSnowGfx.radiusZ);
         var_s1_2->unused_C = 1 << (mathRnd(0, 0x20) + 5);
         var_s1_2->unused_D = 1 << (mathRnd(0, 0x20) + 5);
         var_s1_2->unused_E = 1 << (mathRnd(0, 0x20) + 5);
-        var_s1_2->index = mathRnd(0, D_800A59C8_A65C8.size - 1);
+        var_s1_2->index = mathRnd(0, gSnowGfx.size - 1);
         var_s1_2++;
     }
     numOfElements *= 4;
     temp_s1 = sizeof(Vertex);
     temp_s1 *= numOfElements;
-    D_800A5A04_A6604[0] = (Vertex *) mmAlloc(temp_s1, COLOUR_TAG_PURPLE);
-    D_800A5A04_A6604[1] = (Vertex *) mmAlloc(temp_s1, COLOUR_TAG_PURPLE);
+    gSnowVertexData[0] = (Vertex *) mmAlloc(temp_s1, COLOUR_TAG_PURPLE);
+    gSnowVertexData[1] = (Vertex *) mmAlloc(temp_s1, COLOUR_TAG_PURPLE);
     for (j = 0; j < 2; j++) {
-        var_a3 = D_800A5A04_A6604[j];
+        var_a3 = gSnowVertexData[j];
         for (i = 0; i < numOfElements; i++, var_a3++) {
             var_a3->r = 255;
             var_a3->g = 255;
@@ -234,11 +253,11 @@ void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s3
             var_a3->a = 255;
         }
     }
-    temp_s1_2 = (D_800A59C8_A65C8.texture->width << 5) - 1;
-    temp_s2 = (D_800A59C8_A65C8.texture->height << 5) - 1;
-    D_800A59FC_A65FC = mmAlloc(D_80100894_BB0D4 * sizeof(Triangle), COLOUR_TAG_PURPLE);
-    var_v1_2 = D_800A59FC_A65FC;
-    for (i = 0; i < D_80100894_BB0D4; i += 2) {
+    temp_s1_2 = (gSnowGfx.texture->width << 5) - 1;
+    temp_s2 = (gSnowGfx.texture->height << 5) - 1;
+    gSnowTriangles = mmAlloc(gSnowTriCount * sizeof(Triangle), COLOUR_TAG_PURPLE);
+    var_v1_2 = gSnowTriangles;
+    for (i = 0; i < gSnowTriCount; i += 2) {
         var_v1_2[0].flags = 0;
         var_v1_2[0].vi0 = (i << 1) + 3;
         var_v1_2[0].uv0.u = 0;
@@ -261,12 +280,81 @@ void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s3
         var_v1_2[1].uv2.v = 0;
         var_v1_2 += 2;
     }
-    D_80100898_BB0D8 = 0;
+    gSnowVertexFlip = 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/changeWeather.s")
+void changeWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) {
+    if (arg5 <= 0) {
+        return;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/doWeather.s")
+    if (arg0 == gWeather.velXTarget && arg1 == gWeather.velYTarget && arg2 == gWeather.velZTarget &&
+        arg3 == gWeather.intensity && arg4 == gWeather.opacity) {
+        return;
+    }
+
+    gWeather.velXTarget = arg0;
+    gWeather.velYTarget = arg1;
+    gWeather.velZTarget = arg2;
+    gWeather.velXStep = (arg0 - gWeather.velX) / arg5;
+    gWeather.velYStep = (arg1 - gWeather.velY) / arg5;
+    gWeather.velZStep = (arg2 - gWeather.velZ) / arg5;
+    if (D_800A5D18_A6918 == WEATHER_SNOW) {
+        gWeather.intensityStep = (arg3 - gWeather.intensity) / arg5;
+        gWeather.opacityStep = (arg4 - gWeather.opacity) / arg5;
+        gWeather.intensityTarget = arg3;
+        gWeather.opacityTarget = arg4;
+        gWeather.shiftTime = arg5;
+    } else {
+        gWeather.intensity = arg3;
+        gWeather.opacity = arg4;
+        gWeather.shiftTime = 0;
+        func_8005BDB8_5C9B8(arg3 + 1, arg4 + 1, (f32) arg5 / 60.0f);
+    }
+}
+
+void doWeather(Gfx **currDisplayList, Mtx **currHudMat, Vertex **currHudVerts, Triangle **currHudTris, s32 updateRate) {
+    gCurrWeatherDisplayList = *currDisplayList;
+    gCurrWeatherMatrix = *currHudMat;
+    gCurrWeatherVertexList = *currHudVerts;
+    gCurrWeatherTriList = *currHudTris;
+    gWeatherCamera = camGetPtr();
+    gWeatherCameraMatrix = camGetRotationMtx();
+    if (D_800A5D18_A6918 != WEATHER_SNOW) {
+        func_8005C040_5CC40(updateRate);
+    } else {
+        if (gWeather.shiftTime > 0) {
+            if (updateRate < gWeather.shiftTime) {
+                gWeather.intensity += gWeather.intensityStep * updateRate;
+                gWeather.velX += gWeather.velXStep * updateRate;
+                gWeather.velY += gWeather.velYStep * updateRate;
+                gWeather.velZ += gWeather.velZStep * updateRate;
+                gWeather.opacity += gWeather.opacityStep * updateRate;
+                gWeather.shiftTime -= updateRate;
+            } else {
+                gWeather.intensity = gWeather.intensityTarget;
+                gWeather.velX = gWeather.velXTarget;
+                gWeather.velY = gWeather.velYTarget;
+                gWeather.velZ = gWeather.velZTarget;
+                gWeather.opacity = gWeather.opacityTarget;
+                gWeather.shiftTime = 0;
+            }
+        }
+        gSnowParticleCount = (gSnowDensity * gWeather.intensity) >> 16;
+        gSnowPlane.current = (gSnowPlane.near + ((gSnowPlane.far - gSnowPlane.near) * gWeather.opacity)) >> 16;
+        func_8005CC0C_5D80C(updateRate);
+        if (gSnowParticleCount > 0 && gSnowPlane.current < gSnowPlane.near) {
+            gSnowVerts = gSnowVertexData[gSnowVertexFlip];
+            func_8005B62C_5C22C();
+            func_8005B928_5C528();
+            gSnowVertexFlip = 1 - gSnowVertexFlip;
+        }
+    }
+    *currDisplayList = gCurrWeatherDisplayList;
+    *currHudMat = gCurrWeatherMatrix;
+    *currHudVerts = gCurrWeatherVertexList;
+    *currHudTris = gCurrWeatherTriList;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005B62C_5C22C.s")
 
