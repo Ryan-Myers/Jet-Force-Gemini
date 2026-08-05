@@ -253,6 +253,7 @@ s32 viGetVideoMode(void);
 //math_util
 u16 Arctanf(f32, f32);
 void mathMtxXFMF(Matrix mf, float x, float y, float z, float *ox, float *oy, float *oz);
+void mathMtxFastXFMF(Matrix* mf, f32* in, f32* out);
 void pointListRPY(s32 count, s16 *rotation, s32 *arg2, f32 *out);
 
 // audio_manager_1050

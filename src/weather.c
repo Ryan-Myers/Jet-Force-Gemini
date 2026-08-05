@@ -1,5 +1,6 @@
 #include "camera.h"
 #include "common.h"
+#include "functions.h"
 #include "models.h"
 
 typedef enum WeatherType { WEATHER_SNOW, WEATHER_RAIN, WEATHER_UNK } WeatherType;
@@ -94,6 +95,7 @@ extern s32 *gWeatherAssetTable;     // = 0;
 extern s8 gWeatherAssetTableLength; // = 0;
 extern SnowGfxData gWeatherPresets[];
 extern Vertex *gSnowVerts; // = 0;
+extern s32 gSnowVertCount; // = 0;
 
 // forward declarations
 void func_8005BD30_5C930(void);               // free_rain_memory in DKR
@@ -356,7 +358,56 @@ void doWeather(Gfx **currDisplayList, Mtx **currHudMat, Vertex **currHudVerts, T
     *currHudTris = gCurrWeatherTriList;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005B62C_5C22C.s")
+void func_8005B62C_5C22C(void) {
+    Vertex *var_s0;
+    s16 temp_s5;
+    s16 temp_s6;
+    s16 temp_f10;
+    s16 temp_f18;
+    Vec3f posF;
+    s16 temp_f6;
+    s32 i;
+    s32 camX;
+    s32 camY;
+    s32 camZ;
+
+    temp_s5 = gSnowGfx.vertOffsetW;
+    temp_s6 = gSnowGfx.vertOffsetH;
+    camX = gWeatherCamera->trans.x_position * 65536.0f;
+    camY = gWeatherCamera->trans.y_position * 65536.0f;
+    camZ = gWeatherCamera->trans.z_position * 65536.0f;
+    gSnowVertCount = 0;
+    var_s0 = gSnowVerts;
+    for (i = 0; i < gSnowParticleCount; i++) {
+        posF.f[0] = (((gSnowPhysics[i].x_position - camX) & gSnowGfx.radiusX) + gSnowGfx.offsetX) * (1.0f / 65536.0f);
+        posF.f[1] = (((gSnowPhysics[i].y_position - camY) & gSnowGfx.radiusY) + gSnowGfx.offsetY) * (1.0f / 65536.0f);
+        posF.f[2] = (((gSnowPhysics[i].z_position - camZ) & gSnowGfx.radiusZ) + gSnowGfx.offsetZ) * (1.0f / 65536.0f);
+        mathMtxFastXFMF(gWeatherCameraMatrix, posF.f, posF.f);
+        temp_f6 = posF.f[2];
+        if (temp_f6 < gSnowPlane.near && gSnowPlane.current < temp_f6) {
+            temp_f10 = posF.f[0];
+            temp_f18 = posF.f[1];
+            var_s0->x = temp_f10 - temp_s5;
+            var_s0->y = temp_f18 + temp_s6;
+            var_s0->z = temp_f6;
+            var_s0++;
+            var_s0->x = temp_f10 + temp_s5;
+            var_s0->z = temp_f6;
+            var_s0->y = temp_f18 + temp_s6;
+            var_s0++;
+            var_s0->x = temp_f10 + temp_s5;
+            var_s0->y = temp_f18 - temp_s6;
+            var_s0->z = temp_f6;
+            var_s0++;
+            var_s0->x = temp_f10 - temp_s5;
+            var_s0->y = temp_f18 - temp_s6;
+            var_s0->z = temp_f6;
+            var_s0++;
+            gSnowVertCount += 4;
+            gSnowTriIndices[gSnowVertCount >> 2] = i;
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005B928_5C528.s")
 
