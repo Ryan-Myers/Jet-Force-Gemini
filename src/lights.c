@@ -52,6 +52,7 @@ void setupLights(s32 count, UNUSED s32 arg1, UNUSED s32 arg2) {
 
 extern f32 D_800AC360; // = 0.3000000119f
 void *trackLightAdd(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, s32 arg5, s32 arg6, s32 arg7);
+void trackLightDelete(s32 *arg0);
 void func_80020D84_21984(ObjectLight *arg0) {
     if (!(arg0->type & 0x40)) {
         arg0->unk6C = trackLightAdd(arg0->pos.z, arg0->unk1C, arg0->unk20, arg0->unk24 * 1.25f,
@@ -108,7 +109,28 @@ void lightUpdateLights(s32 arg0) {
 // Same as func_80032424 in DKR
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021434_22034.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/killLight.s")
+void killLight(ObjectLight *light) {
+    s32 i;
+    ObjectLight *entry;
+
+    entry = NULL;
+    for (i = 0; (i < D_800A1004_A1C04) && (entry == NULL); i++) {
+        if (light == D_800A1008_A1C08[i]) {
+            entry = D_800A1008_A1C08[i];
+        }
+    }
+
+    if (entry != NULL) {
+        if (light->unk6C != NULL) {
+            trackLightDelete(light->unk6C);
+        }
+        D_800A1004_A1C04--;
+        for (i--; i < D_800A1004_A1C04; i++) {
+            D_800A1008_A1C08[i] = D_800A1008_A1C08[i + 1];
+        }
+        D_800A1008_A1C08[D_800A1004_A1C04] = entry;
+    }
+}
 
 UNUSED unk800DC950 **lightGetLights(s32 *arg0) {
     *arg0 = D_800A1004_A1C04;
