@@ -91,17 +91,17 @@ extern u16 SFXVolume;
 u16 frontGetSfxVolume(void) {
     return SFXVolume;
 }
-void gsSndpSetGlobalVolume(s32 arg0);
+void gsSndpSetGlobalVolume(s32 volume);
 
-void frontSetSfxVolume(s32 arg0) {
-    if (arg0 < 0) {
-        arg0 = 0;
+void frontSetSfxVolume(s32 volume) {
+    if (volume < 0) {
+        volume = 0;
     }
-    if (arg0 >= 0x101) {
-        arg0 = 0x100;
+    if (volume >= 0x101) {
+        volume = 0x100;
     }
-    SFXVolume = arg0;
-    gsSndpSetGlobalVolume(arg0);
+    SFXVolume = volume;
+    gsSndpSetGlobalVolume(volume);
 }
 
 extern u16 musicVolume;
@@ -111,15 +111,15 @@ u16 frontGetBgmVolume(void) {
 
 void amTuneSetGlobalVolume(u32 volume);
 
-void frontSetBgmVolume(s32 arg0) {
-    if (arg0 < 0) {
-        arg0 = 0;
+void frontSetBgmVolume(s32 volume) {
+    if (volume < 0) {
+        volume = 0;
     }
-    if (arg0 >= 0x101) {
-        arg0 = 0x100;
+    if (volume >= 0x101) {
+        volume = 0x100;
     }
-    musicVolume = arg0;
-    amTuneSetGlobalVolume(arg0);
+    musicVolume = volume;
+    amTuneSetGlobalVolume(volume);
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGet2PlayerSplit.s")
