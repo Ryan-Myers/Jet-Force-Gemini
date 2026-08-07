@@ -80,15 +80,23 @@ s32 frontGetWorldLevel(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetWideAdjust.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetStereoMode.s")
+extern u8 speakerSetting;
+u8 frontGetStereoMode(void) {
+    return speakerSetting;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetStereoMode.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetSfxVolume.s")
-
+extern u16 SFXVolume;
+u16 frontGetSfxVolume(void) {
+    return SFXVolume;
+}
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetSfxVolume.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetBgmVolume.s")
+extern u16 musicVolume;
+u16 frontGetBgmVolume(void) {
+    return musicVolume;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetBgmVolume.s")
 
