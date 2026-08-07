@@ -1,4 +1,9 @@
 #include "common.h"
+#include "gsSnd.h"
+#include "audio.h"
+
+extern u16 SFXVolume;
+extern u16 musicVolume;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setLanguage.s")
 
@@ -87,11 +92,9 @@ u8 frontGetStereoMode(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetStereoMode.s")
 
-extern u16 SFXVolume;
 u16 frontGetSfxVolume(void) {
     return SFXVolume;
 }
-void gsSndpSetGlobalVolume(s32 volume);
 
 void frontSetSfxVolume(s32 volume) {
     if (volume < 0) {
@@ -104,12 +107,9 @@ void frontSetSfxVolume(s32 volume) {
     gsSndpSetGlobalVolume(volume);
 }
 
-extern u16 musicVolume;
 u16 frontGetBgmVolume(void) {
     return musicVolume;
 }
-
-void amTuneSetGlobalVolume(u32 volume);
 
 void frontSetBgmVolume(s32 volume) {
     if (volume < 0) {

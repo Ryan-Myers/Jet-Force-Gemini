@@ -42,4 +42,6 @@ typedef struct DelayedSound {
     /* 0x04 */ SoundHandle *handlePtr;
 } DelayedSound;
 
+void amTuneSetGlobalVolume(u32 volume);
+
 #endif
