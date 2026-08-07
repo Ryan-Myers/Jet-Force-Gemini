@@ -100,7 +100,7 @@ void frontSetSfxVolume(s32 volume) {
     if (volume < 0) {
         volume = 0;
     }
-    if (volume >= 0x101) {
+    if (volume > 0x100) {
         volume = 0x100;
     }
     SFXVolume = volume;
@@ -115,7 +115,7 @@ void frontSetBgmVolume(s32 volume) {
     if (volume < 0) {
         volume = 0;
     }
-    if (volume >= 0x101) {
+    if (volume > 0x100) {
         volume = 0x100;
     }
     musicVolume = volume;
