@@ -52,9 +52,13 @@ const char D_800AD390_ADF90[] = "loadFrontEndItem() - Item no %d out of range 0-
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetupMultiPickup.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGameSelected.s")
+s32 frontGameSelected(void) {
+    return 0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetWorldLevel.s")
+s32 frontGetWorldLevel(void) {
+    return 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetWorldName.s")
 
