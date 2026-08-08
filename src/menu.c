@@ -145,5 +145,8 @@ void frontSetBgmVolume(s32 volume) {
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetTargetControl.s")
 
 #ifdef VERSION_us
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontCharSelectSetQuitMode.s")
+extern s8 charselquitmode;
+void frontCharSelectSetQuitMode(s32 arg0) {
+    charselquitmode = arg0;
+}
 #endif
