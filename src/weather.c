@@ -176,6 +176,11 @@ void func_8005C188_5CD88(s32 updateRate);                                // rain
 void func_8005C9B8_5D5B8(s32 updateRate);                                // rain_lightning in DKR
 void func_8005CAD0_5D6D0(s32 updateRate);                                // rain_sound in DKR
 
+// overlay 5 function traps
+void rainInit_Trap(s32, s32, s32, s32, s32, s32, s32);
+void rainFree_Trap(void);
+void rainMove_Trap(f32, f32, f32, s32);
+
 void initWeather(void) {
     s32 *temp_v0;
 
@@ -526,7 +531,8 @@ void func_8005BC44_5C844(s32 arg0, s32 intensity, s32 opacity) {
     gThunderTimer = 0;
     gRainSplashDelay = 0;
     gRainVertexFlip = 0;
-    TrapDanglingJump(arg0, 0x2BC, 0x2BC, 0x2BC, 0x2080E002, 0xA0E0FF04, 0x226);
+
+    rainInit_Trap(arg0, 700, 700, 700, 0x2080E002, 0xA0E0FF04, 550);
     D_800A5D44_A6944 = texLoadSprite(0x4A, 0);
     D_800A5D48_A6948 = texLoadTexture(0x1AC);
     gWeatherType = WEATHER_RAIN;
@@ -549,7 +555,7 @@ void func_8005BD30_5C930(void) {
         gWeatherSoundMask = NULL;
     }
 
-    TrapDanglingJump();
+    rainFree_Trap();
     gWeatherType = WEATHER_SNOW;
 }
 
@@ -591,7 +597,6 @@ f32 rainDensity(void) {
     return var_f2;
 }
 
-#ifdef NON_EQUIVALENT
 void func_8005C040_5CC40(s32 updateRate) {
     if ((camGetMode() != 0) || (gWeatherType == 0)) {
         return;
@@ -609,14 +614,11 @@ void func_8005C040_5CC40(s32 updateRate) {
         }
     }
 
-    TrapDanglingJump(gWeather.velX / 65536.0f, (gWeather.velY / 65536.0f) - 5.0f, gWeather.velZ / 65536.0f, updateRate);
+    rainMove_Trap(gWeather.velX / 65536.0f, (gWeather.velY / 65536.0f) - 5.0f, gWeather.velZ / 65536.0f, updateRate);
     func_8005CAD0_5D6D0(updateRate);
     func_8005C188_5CD88(updateRate);
     func_8005C9B8_5D5B8(updateRate);
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005C040_5CC40.s")
-#endif
 
 #ifdef NON_EQUIVALENT
 extern u8 D_A5CD8[];
