@@ -251,17 +251,9 @@ void func_80066EB0_67AB0(OSThread *);
 s32 viGetVideoMode(void);
 
 //math_util
-u16 Arctanf(f32, f32);
 void mathMtxXFMF(Matrix mf, float x, float y, float z, float *ox, float *oy, float *oz);
 void mathMtxFastXFMF(Matrix* mf, f32* in, f32* out);
 void pointListRPY(s32 count, s16 *rotation, s32 *arg2, f32 *out);
-
-// audio_manager_1050
-void amAmbientStop(void);
-void amSndSetVolXYZ(SoundMask *soundMask, u8 volume);
-void amSndSetXYZ(SoundMask *soundMask, f32 x, f32 y, f32 z);
-void func_80003B74_4774(s32 arg0);
-
 
 // level
 LevelHeader *levelGetLevel(void);

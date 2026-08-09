@@ -1,9 +1,10 @@
+#include "audio.h"
 #include "camera.h"
-#include "fx.h"
 #include "common.h"
 #include "functions.h"
+#include "fx.h"
+#include "math/math.h"
 #include "models.h"
-#include "audio.h"
 #include "textures.h"
 
 typedef enum WeatherType { WEATHER_SNOW, WEATHER_RAIN, WEATHER_UNK } WeatherType;
@@ -104,51 +105,51 @@ extern s32 D_801008B4_BB0F4;
 
 // .data
 extern SnowGfxData gWeatherPresets[];
-extern SnowPosData *gSnowPhysics;   // = NULL;
-extern SnowGfxData gSnowGfx;        // = { 0, 0 };
+extern SnowPosData *gSnowPhysics; // = NULL;
+extern SnowGfxData gSnowGfx;      // = { 0, 0 };
 // D_800A59D0_A65D0
-extern Vertex *gSnowVerts; // = NULL;
-extern s32 gSnowVertCount; // = 0;
-extern s32 gSnowTriangles;          // = 0;
+extern Vertex *gSnowVerts;          // = NULL;
+extern s32 gSnowVertCount;          // = 0;
+extern Triangle *gSnowTriangles;    // = 0;
 extern s16 *gSnowTriIndices;        // = NULL;
 extern Vertex *gSnowVertexData[];   // = { 0, 0 };
 extern s32 *gWeatherAssetTable;     // = NULL;
 extern s8 gWeatherAssetTableLength; // = 0;
 extern Unk800A5A14 D_800A5A14_A6614[];
-extern f32 D_800A5CF8_A68F8; // = -3.0f;
-extern f32 D_800A5CFC_A68FC; // = 3.0f;
-extern f32 D_800A5D00_A6900; // = 3.0f;
-extern f32 D_800A5D04_A6904; // = -3.0f;
-extern f32 D_800A5D08_A6908; // = -3.0f;
-extern f32 D_800A5D0C_A690C; // = -3.0f;
-extern f32 D_800A5D10_A6910; // = 3.0f;
-extern f32 D_800A5D14_A6914; // = 3.0f;
-extern s32 gWeatherType; // = WEATHER_SNOW;
-extern s32 gLightningFrequency; // = 0x00010000;
-extern s32 D_800A5D20_A6920; // = 0;
-extern s32 D_800A5D24_A6924; // = 0;
-extern s32 gRainOpacity; // = 0x00010000;
-extern s32 D_800A5D2C_A692C; // = 0;
-extern s32 D_800A5D30_A6930; // = 0x00010000;
-extern s32 D_800A5D34_A6934; // = 0;
-extern s32 D_800A5D38_A6938; // = 0;
-extern s32 D_800A5D3C_A693C; // = 0;
-extern s32 D_800A5D40_A6940; // = 0;
-extern TextureSprite* D_800A5D44_A6944; // = NULL;
-extern TextureHeader* D_800A5D48_A6948; // = NULL;
-extern s32 D_800A5D4C_A694C; // = 0;
-extern SoundMask* D_800A5D50_A6950; // = NULL;
+extern f32 D_800A5CF8_A68F8;            // = -3.0f;
+extern f32 D_800A5CFC_A68FC;            // = 3.0f;
+extern f32 D_800A5D00_A6900;            // = 3.0f;
+extern f32 D_800A5D04_A6904;            // = -3.0f;
+extern f32 D_800A5D08_A6908;            // = -3.0f;
+extern f32 D_800A5D0C_A690C;            // = -3.0f;
+extern f32 D_800A5D10_A6910;            // = 3.0f;
+extern f32 D_800A5D14_A6914;            // = 3.0f;
+extern s32 gWeatherType;                // = WEATHER_SNOW;
+extern s32 gLightningFrequency;         // = 0x00010000;
+extern s32 D_800A5D20_A6920;            // = 0;
+extern s32 D_800A5D24_A6924;            // = 0;
+extern s32 gRainOpacity;                // = 0x00010000;
+extern s32 D_800A5D2C_A692C;            // = 0;
+extern s32 D_800A5D30_A6930;            // = 0x00010000;
+extern s32 D_800A5D34_A6934;            // = 0;
+extern s32 D_800A5D38_A6938;            // = 0;
+extern s32 D_800A5D3C_A693C;            // = 0;
+extern s32 D_800A5D40_A6940;            // = 0;
+extern TextureSprite *D_800A5D44_A6944; // = NULL;
+extern TextureHeader *D_800A5D48_A6948; // = NULL;
+extern s32 D_800A5D4C_A694C;            // = 0;
+extern SoundMask *D_800A5D50_A6950;     // = NULL;
 extern UnkScreenStruct D_800A5D54_A6954;
 
 // forward declarations
-void func_8005BD30_5C930(void);               // free_rain_memory in DKR
+void func_8005BD30_5C930(void);          // free_rain_memory in DKR
 void func_8005BC44_5C844(s32, s32, s32); // rain_init in DKR
-void func_8005CBBC_5D7BC(void);               // snow_init in DKR
-void func_8005BDB8_5C9B8(s32, s32, f32);      // rain_set in DKR
-void func_8005B62C_5C22C(void);               // snow_vertices in DKR
-void func_8005B928_5C528(void);               // snow_render in DKR
-void func_8005C040_5CC40(s32);                // rain_update in DKR
-void func_8005CC0C_5D80C(s32);                // snow_update in DKR
+void func_8005CBBC_5D7BC(void);          // snow_init in DKR
+void func_8005BDB8_5C9B8(s32, s32, f32); // rain_set in DKR
+void func_8005B62C_5C22C(void);          // snow_vertices in DKR
+void func_8005B928_5C528(void);          // snow_render in DKR
+void func_8005C040_5CC40(s32);           // rain_update in DKR
+void func_8005CC0C_5D80C(s32);           // snow_update in DKR
 
 void initWeather(void) {
     s32 *temp_v0;
@@ -255,7 +256,7 @@ void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s3
         func_8005BC44_5C844(arg1, arg5 + 1, arg6 + 1);
         return;
     }
-    var_v1 = &gWeatherPresets[arg0];
+    var_v1 = (u8 *) &gWeatherPresets[arg0];
     var_a0 = (s8 *) &gSnowGfx;
     var_a1 = 0x2C;
     while (var_a1--) {
@@ -265,14 +266,14 @@ void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s3
     if (!var_s1_2) {
         ;
     }
-    gSnowGfx.pos = mmAlloc(gWeatherPresets[arg0].size * sizeof(Vec3i), COLOUR_TAG_PURPLE);
+    gSnowGfx.pos = (Vec3i *) mmAlloc(gWeatherPresets[arg0].size * sizeof(Vec3i), COLOUR_TAG_PURPLE);
     if (gWeatherPresets[arg0].type == WEATHER_SNOW) {
         func_8005CBBC_5D7BC();
     }
     numOfElements = arg1;
     gSnowDensity = arg1;
-    gSnowTriIndices = mmAlloc(arg1 * sizeof(s16), COLOUR_TAG_PURPLE);
-    gSnowPhysics = mmAlloc(arg1 * sizeof(SnowPosData), COLOUR_TAG_PURPLE);
+    gSnowTriIndices = (s16 *) mmAlloc(arg1 * sizeof(s16), COLOUR_TAG_PURPLE);
+    gSnowPhysics = (SnowPosData *) mmAlloc(arg1 * sizeof(SnowPosData), COLOUR_TAG_PURPLE);
     var_s1_2 = gSnowPhysics;
     for (i = 0; i < gSnowDensity; i++) {
         var_s1_2->x_position = mathRnd(0, gSnowGfx.radiusX);
@@ -300,7 +301,7 @@ void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s3
     }
     temp_s1_2 = (gSnowGfx.texture->width << 5) - 1;
     temp_s2 = (gSnowGfx.texture->height << 5) - 1;
-    gSnowTriangles = mmAlloc(gSnowTriCount * sizeof(Triangle), COLOUR_TAG_PURPLE);
+    gSnowTriangles = (Triangle *) mmAlloc(gSnowTriCount * sizeof(Triangle), COLOUR_TAG_PURPLE);
     var_v1_2 = gSnowTriangles;
     for (i = 0; i < gSnowTriCount; i += 2) {
         var_v1_2[0].flags = 0;
@@ -571,15 +572,14 @@ f32 rainDensity(void) {
 extern u8 D_A5CD8[];
 
 // https://decomp.me/scratch/bCbde
-f32 Sinf(s32);
-s32 hitGetHeights(f32, f32, s32, f32***);
-Object* objGetPlayerNo(s32);
-s32 trackGetHeights(f32, f32, s32, f32***);
+s32 hitGetHeights(f32, f32, s32, f32 ***);
+Object *objGetPlayerNo(s32);
+s32 trackGetHeights(f32, f32, s32, f32 ***);
 
 void func_8005C188_5CD88(s32 arg0) {
     s32 pad;
-    Object* temp_v0;
-    Unk800A5A14* var_s2;
+    Object *temp_v0;
+    Unk800A5A14 *var_s2;
     f32 temp_f20;
     f32 temp_f22;
     f32 temp_f24;
@@ -590,8 +590,8 @@ void func_8005C188_5CD88(s32 arg0) {
     s32 var_s3;
     s32 var_v0_2;
     s32 pad2;
-    f32** sp88;
-    f32** sp84;
+    f32 **sp88;
+    f32 **sp84;
 
     if (D_800A5D44_A6944 == NULL || D_800A5D48_A6948 == NULL) {
         return;
@@ -632,7 +632,7 @@ void func_8005C188_5CD88(s32 arg0) {
                         }
                         if (var_s0 != 0) {
                             var_s2->unk10 = **sp88;
-                            if (((s8*)(*sp88))[0x13] == 2) {
+                            if (((s8 *) (*sp88))[0x13] == 2) {
                                 var_s2->unk6 += 1;
                             }
                         } else {
@@ -658,7 +658,8 @@ void func_8005C188_5CD88(s32 arg0) {
             if (var_s2->unk28 < 4.0f) {
                 if (var_s2->unk6 == 1) {
                     gDPSetPrimColor(gCurrWeatherDisplayList++, 0, 0, 0xFF, 0xFF, 0xFF, var_s2->unk18);
-                    camDoSprite(&gCurrWeatherDisplayList, &gCurrWeatherMatrix, &gCurrWeatherVertexList, var_s2, D_800A5D44_A6944, 0xE, 0);
+                    camDoSprite(&gCurrWeatherDisplayList, &gCurrWeatherMatrix, &gCurrWeatherVertexList, var_s2,
+                                D_800A5D44_A6944, 0xE, 0);
                 } else {
                     texDPTextureX(&gCurrWeatherDisplayList, D_800A5D48_A6948, 0xE, 0);
                     gDPSetPrimColor(gCurrWeatherDisplayList++, 0, 0, 0xC0, 0xE0, 0xFF, 0xFF);

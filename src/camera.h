@@ -49,8 +49,8 @@ typedef struct Camera {
     /* 0x0040 */ ObjectHeader *header;
   } Camera;
 
-s32 camGetPtr(void);
-s32 camGetRotationMtx(void);
+Camera *camGetPtr(void);
+Matrix *camGetRotationMtx(void);
 Mtx *camGetProjOrgMtx(void);
 void camDoSprite(Gfx**, Mtx**, Vertex**, void*, Sprite*, s32, s32); /* extern */
 

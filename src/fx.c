@@ -1,5 +1,5 @@
-#include "common.h"
 #include "fx.h"
+#include "common.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxInitLevelEffects.s")
 
