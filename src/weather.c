@@ -6,6 +6,7 @@
 #include "math/math.h"
 #include "models.h"
 #include "textures.h"
+#include "overlays/overlay5.h"
 
 typedef enum WeatherType { WEATHER_SNOW, WEATHER_RAIN, WEATHER_UNK } WeatherType;
 
@@ -175,11 +176,6 @@ void func_8005CC0C_5D80C(s32 updateRate);                                // snow
 void func_8005C188_5CD88(s32 updateRate);                                // rain_render_splashes in DKR
 void func_8005C9B8_5D5B8(s32 updateRate);                                // rain_lightning in DKR
 void func_8005CAD0_5D6D0(s32 updateRate);                                // rain_sound in DKR
-
-// overlay 5 function traps
-void rainInit_Trap(s32, s32, s32, s32, s32, s32, s32);
-void rainFree_Trap(void);
-void rainMove_Trap(f32, f32, f32, s32);
 
 void initWeather(void) {
     s32 *temp_v0;

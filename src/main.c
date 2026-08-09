@@ -1,6 +1,7 @@
 #include "common.h"
 #include "mips.h"
 #include "sched.h"
+#include "overlays/overlay36.h"
 
 #ifdef VERSION_kiosk
 const char D_800ACDB0[] = "1.1723";
@@ -223,8 +224,6 @@ void RevealReturnAddresses(void) {
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
 #endif
-
-void mainInitRlo_Trap(void);
 
 #ifdef VERSION_kiosk
 void mainInitGame(void) {

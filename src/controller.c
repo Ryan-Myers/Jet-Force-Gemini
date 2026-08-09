@@ -1,4 +1,5 @@
 #include "common.h"
+#include "overlays/overlay45.h"
 
 UNUSED s32 D_800A3190_A3D90 = 0xFFFFFFFF;
 u16 joySecurity = 0xFFFF; // Used when anti-cheat/anti-tamper has failed.
@@ -233,10 +234,6 @@ void joySetSecurity(void) {
 }
 
 #ifdef VERSION_us
-void osCic6105SendData_Trap(u8 *challenge, OSMesgQueue *arg1);
-void osCic6105StartGetData_Trap(OSMesgQueue *arg0);
-void osCic6105GetReadData_Trap(u8 *response);
-
 void arithmeticFunction(u8 *challenge, u8 *response) {
     osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
     osCic6105SendData_Trap(challenge, &joyMessageQueue);

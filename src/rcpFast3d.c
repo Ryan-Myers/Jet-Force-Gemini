@@ -1,8 +1,7 @@
 #include "common.h"
+#include "overlays/overlay4.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/rcpFast3d/rcpFast3d.s")
-
-void cloneTasksQueueAndWait_Trap(void);
 
 s32 rcpWaitDP(void) {
     s32 *unkMsg = NULL;
