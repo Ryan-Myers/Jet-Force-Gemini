@@ -20,7 +20,7 @@ enum ViewportCount {
 typedef struct Unk800A5A14 {
     u8 pad0[6];
     s16 unk6;
-    u32 pad8;
+    f32 pad8; // set but never read
     f32 unkC;
     f32 unk10;
     f32 unk14;
@@ -88,68 +88,93 @@ typedef struct SnowGfxData {
 } SnowGfxData;
 
 // .bss
-extern s32 gSnowDensity;
-extern s32 gSnowParticleCount;
-extern WeatherData gWeather;
-extern SnowLimits gSnowPlane;
-extern s32 gSnowVertOffset;
-extern s32 gSnowTriCount;
-extern s8 gSnowVertexFlip;
-extern Gfx *gCurrWeatherDisplayList;
-extern Mtx *gCurrWeatherMatrix;
-extern Vertex *gCurrWeatherVertexList;
-extern Triangle *gCurrWeatherTriList;
-extern Camera *gWeatherCamera;
-extern Matrix *gWeatherCameraMatrix;
-extern s32 D_801008B4_BB0F4;
+s32 gSnowDensity;
+s32 gSnowParticleCount;
+WeatherData gWeather;
+SnowLimits gSnowPlane;
+s32 gSnowVertOffset;
+s32 gSnowTriCount;
+s8 gSnowVertexFlip;
+Gfx *gCurrWeatherDisplayList;
+Mtx *gCurrWeatherMatrix;
+Vertex *gCurrWeatherVertexList;
+Triangle *gCurrWeatherTriList;
+Camera *gWeatherCamera;
+Matrix *gWeatherCameraMatrix;
+s32 D_801008B4_BB0F4;
+s32 D_801008B8_BB0F8;
+s32 D_801008BC_BB0FC;
+s32 D_801008C0_BB100;
+s32 D_801008C4_BB104;
+s32 D_801008C8_BB108;
+s32 D_801008CC_BB10C;
+s32 D_801008D0_BB110;
 
 // .data
-extern SnowGfxData gWeatherPresets[];
-extern SnowPosData *gSnowPhysics; // = NULL;
-extern SnowGfxData gSnowGfx;      // = { 0, 0 };
-// D_800A59D0_A65D0
-extern Vertex *gSnowVerts;          // = NULL;
-extern s32 gSnowVertCount;          // = 0;
-extern Triangle *gSnowTriangles;    // = 0;
-extern s16 *gSnowTriIndices;        // = NULL;
-extern Vertex *gSnowVertexData[];   // = { 0, 0 };
-extern s32 *gWeatherAssetTable;     // = NULL;
-extern s8 gWeatherAssetTableLength; // = 0;
-extern Unk800A5A14 D_800A5A14_A6614[];
-extern f32 D_800A5CF8_A68F8;            // = -3.0f;
-extern f32 D_800A5CFC_A68FC;            // = 3.0f;
-extern f32 D_800A5D00_A6900;            // = 3.0f;
-extern f32 D_800A5D04_A6904;            // = -3.0f;
-extern f32 D_800A5D08_A6908;            // = -3.0f;
-extern f32 D_800A5D0C_A690C;            // = -3.0f;
-extern f32 D_800A5D10_A6910;            // = 3.0f;
-extern f32 D_800A5D14_A6914;            // = 3.0f;
-extern s32 gWeatherType;                // = WEATHER_SNOW;
-extern s32 gLightningFrequency;         // = 0x00010000;
-extern s32 D_800A5D20_A6920;            // = 0;
-extern s32 D_800A5D24_A6924;            // = 0;
-extern s32 gRainOpacity;                // = 0x00010000;
-extern s32 D_800A5D2C_A692C;            // = 0;
-extern s32 D_800A5D30_A6930;            // = 0x00010000;
-extern s32 D_800A5D34_A6934;            // = 0;
-extern s32 D_800A5D38_A6938;            // = 0;
-extern s32 D_800A5D3C_A693C;            // = 0;
-extern s32 D_800A5D40_A6940;            // = 0;
-extern TextureSprite *D_800A5D44_A6944; // = NULL;
-extern TextureHeader *D_800A5D48_A6948; // = NULL;
-extern s32 D_800A5D4C_A694C;            // = 0;
-extern SoundMask *D_800A5D50_A6950;     // = NULL;
-extern UnkScreenStruct D_800A5D54_A6954;
+SnowGfxData gWeatherPresets[] = {
+    { NULL, 0x40, WEATHER_SNOW, 0xFF000000, 0xFF000000, 0xFF000000, 0x01FFFFFF, 0x01FFFFFF, 0x01FFFFFF, 4, 4, 8, 8 },
+    { NULL, 0x100, WEATHER_RAIN, 0xFE000000, 0xFE000000, 0xFE000000, 0x03FFFFFF, 0x03FFFFFF, 0x03FFFFFF, 4, 4, 8, 8 },
+    { NULL, 0x8, WEATHER_UNK, 0xFE000000, 0xFE000000, 0xFE000000, 0x03FFFFFF, 0x03FFFFFF, 0x03FFFFFF, 4, 4, 8, 8 },
+};
+SnowPosData *gSnowPhysics = NULL;
+SnowGfxData gSnowGfx = { NULL, 0, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+Vertex *gSnowVerts = NULL;
+s32 gSnowVertCount = 0;
+Triangle *gSnowTriangles = 0;
+s16 *gSnowTriIndices = NULL;
+Vertex *gSnowVertexData[] = { 0, 0 };
+s32 *gWeatherAssetTable = NULL;
+s8 gWeatherAssetTableLength = 0;
+Unk800A5A14 D_800A5A14_A6614[] = {
+    { { 0 }, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f }, { { 0 }, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f },
+    { { 0 }, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f }, { { 0 }, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f },
+    { { 0 }, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f }, { { 0 }, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f },
+    { { 0 }, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f }, { { 0 }, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f },
+    { { 0 }, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f }, { { 0 }, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f },
+    { { 0 }, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f }, { { 0 }, 0, 1.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f },
+    { { 0 }, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f }, { { 0 }, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f },
+    { { 0 }, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f }, { { 0 }, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0, { 0 }, 0.0f }
+};
+u16 D_800A5CD4_A68D4[] = {
+    0, 0, 0, 0x0301, 0, 0, 0, 0x7E0, 0x7E0, 0, 1, 0x302, 0x7E0, 0, 0, 0x7E0, 0x7E0, 0x7E0
+}; // unused data
+f32 D_800A5CF8_A68F8 = -3.0f;
+f32 D_800A5CFC_A68FC = 3.0f;
+f32 D_800A5D00_A6900 = 3.0f;
+f32 D_800A5D04_A6904 = -3.0f;
+f32 D_800A5D08_A6908 = -3.0f;
+f32 D_800A5D0C_A690C = -3.0f;
+f32 D_800A5D10_A6910 = 3.0f;
+f32 D_800A5D14_A6914 = 3.0f;
+s32 gWeatherType = WEATHER_SNOW;
+s32 gLightningFrequency = 0x00010000;
+s32 gLightningFrequencyStep = 0;
+s32 gLightningFrequencyTarget = 0x00010000;
+s32 gRainOpacity = 0x00010000;
+s32 gRainOpacityStep = 0;
+s32 gRainOpacityTarget = 0x00010000;
+s32 gRainHiddenTimer = 0;
+s32 gLightningTimer = 0;
+s32 gThunderTimer = 0;
+s32 gRainSplashDelay = 0;
+TextureSprite *D_800A5D44_A6944 = NULL;
+TextureHeader *D_800A5D48_A6948 = NULL;
+s32 gRainVertexFlip = 0;
+SoundMask *gWeatherSoundMask = NULL;
+UnkScreenStruct D_800A5D54_A6954 = { 0x40, 0xFF, 0xFF, 0xFF, 5, 2 };
 
 // forward declarations
-void func_8005BD30_5C930(void);          // free_rain_memory in DKR
-void func_8005BC44_5C844(s32, s32, s32); // rain_init in DKR
-void func_8005CBBC_5D7BC(void);          // snow_init in DKR
-void func_8005BDB8_5C9B8(s32, s32, f32); // rain_set in DKR
-void func_8005B62C_5C22C(void);          // snow_vertices in DKR
-void func_8005B928_5C528(void);          // snow_render in DKR
-void func_8005C040_5CC40(s32);           // rain_update in DKR
-void func_8005CC0C_5D80C(s32);           // snow_update in DKR
+void func_8005BD30_5C930(void);                                          // free_rain_memory in DKR
+void func_8005BC44_5C844(s32 arg0, s32 intensity, s32 opacity);          // rain_init in DKR
+void func_8005CBBC_5D7BC(void);                                          // snow_init in DKR
+void func_8005BDB8_5C9B8(s32 lightningFrequency, s32 opacity, f32 time); // rain_set in DKR
+void func_8005B62C_5C22C(void);                                          // snow_vertices in DKR
+void func_8005B928_5C528(void);                                          // snow_render in DKR
+void func_8005C040_5CC40(s32 updateRate);                                // rain_update in DKR
+void func_8005CC0C_5D80C(s32 updateRate);                                // snow_update in DKR
+void func_8005C188_5CD88(s32 updateRate);                                // rain_render_splashes in DKR
+void func_8005C9B8_5D5B8(s32 updateRate);                                // rain_lightning in DKR
+void func_8005CAD0_5D6D0(s32 updateRate);                                // rain_sound in DKR
 
 void initWeather(void) {
     s32 *temp_v0;
@@ -489,23 +514,23 @@ void func_8005B928_5C528(void) {
     gDPSetEnvColor(gCurrWeatherDisplayList++, 255, 255, 255, 255);        // all white
 }
 
-void func_8005BC44_5C844(s32 arg0, s32 arg1, s32 arg2) {
-    gLightningFrequency = arg1;
-    D_800A5D20_A6920 = 0;
-    D_800A5D24_A6924 = gLightningFrequency;
-    gRainOpacity = arg2;
-    D_800A5D2C_A692C = 0;
-    D_800A5D30_A6930 = gRainOpacity;
-    D_800A5D34_A6934 = 0;
-    D_800A5D38_A6938 = 0;
-    D_800A5D3C_A693C = 0;
-    D_800A5D40_A6940 = 0;
-    D_800A5D4C_A694C = 0;
+void func_8005BC44_5C844(s32 arg0, s32 intensity, s32 opacity) {
+    gLightningFrequency = intensity;
+    gLightningFrequencyStep = 0;
+    gLightningFrequencyTarget = gLightningFrequency;
+    gRainOpacity = opacity;
+    gRainOpacityStep = 0;
+    gRainOpacityTarget = gRainOpacity;
+    gRainHiddenTimer = 0;
+    gLightningTimer = 0;
+    gThunderTimer = 0;
+    gRainSplashDelay = 0;
+    gRainVertexFlip = 0;
     TrapDanglingJump(arg0, 0x2BC, 0x2BC, 0x2BC, 0x2080E002, 0xA0E0FF04, 0x226);
     D_800A5D44_A6944 = texLoadSprite(0x4A, 0);
     D_800A5D48_A6948 = texLoadTexture(0x1AC);
-    gWeatherType = 1;
-    D_801008B4_BB0F4 = 0;
+    gWeatherType = WEATHER_RAIN;
+    D_801008B4_BB0F4 = NULL;
 }
 
 void func_8005BD30_5C930(void) {
@@ -519,26 +544,26 @@ void func_8005BD30_5C930(void) {
         D_800A5D48_A6948 = NULL;
     }
 
-    if (D_800A5D50_A6950 != NULL) {
-        amSndStopXYZ(D_800A5D50_A6950);
-        D_800A5D50_A6950 = NULL;
+    if (gWeatherSoundMask != NULL) {
+        amSndStopXYZ(gWeatherSoundMask);
+        gWeatherSoundMask = NULL;
     }
 
     TrapDanglingJump();
     gWeatherType = WEATHER_SNOW;
 }
 
-void func_8005BDB8_5C9B8(s32 arg0, s32 arg1, f32 arg2) {
+void func_8005BDB8_5C9B8(s32 lightningFrequency, s32 opacity, f32 time) {
     if (osTvType == OS_TV_TYPE_PAL) {
-        D_800A5D34_A6934 = (50.0f * arg2);
+        gRainHiddenTimer = (50.0f * time);
     } else {
-        D_800A5D34_A6934 = (60.0f * arg2);
+        gRainHiddenTimer = (60.0f * time);
     }
 
-    D_800A5D24_A6924 = arg0;
-    D_800A5D20_A6920 = (D_800A5D24_A6924 - gLightningFrequency) / D_800A5D34_A6934;
-    D_800A5D30_A6930 = arg1;
-    D_800A5D2C_A692C = (D_800A5D30_A6930 - gRainOpacity) / D_800A5D34_A6934;
+    gLightningFrequencyTarget = lightningFrequency;
+    gLightningFrequencyStep = (gLightningFrequencyTarget - gLightningFrequency) / gRainHiddenTimer;
+    gRainOpacityTarget = opacity;
+    gRainOpacityStep = (gRainOpacityTarget - gRainOpacity) / gRainHiddenTimer;
 }
 
 void rainSetFog(void) {
@@ -566,17 +591,49 @@ f32 rainDensity(void) {
     return var_f2;
 }
 
+#ifdef NON_EQUIVALENT
+void func_8005C040_5CC40(s32 updateRate) {
+    if ((camGetMode() != 0) || (gWeatherType == 0)) {
+        return;
+    }
+
+    if (gRainHiddenTimer > 0) {
+        if (updateRate < gRainHiddenTimer) {
+            gRainHiddenTimer -= updateRate;
+            gLightningFrequency += gLightningFrequencyStep * updateRate;
+            gRainOpacity += gRainOpacityStep * updateRate;
+        } else {
+            gRainHiddenTimer = 0;
+            gLightningFrequency = gLightningFrequencyTarget;
+            gRainOpacity = gRainOpacityTarget;
+        }
+    }
+
+    TrapDanglingJump(gWeather.velX / 65536.0f, (gWeather.velY / 65536.0f) - 5.0f, gWeather.velZ / 65536.0f, updateRate);
+    func_8005CAD0_5D6D0(updateRate);
+    func_8005C188_5CD88(updateRate);
+    func_8005C9B8_5D5B8(updateRate);
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005C040_5CC40.s")
+#endif
 
 #ifdef NON_EQUIVALENT
 extern u8 D_A5CD8[];
 
+// similar to rain_render_splashes in DKR
+typedef struct TrackGetHeightsArg3 {
+    f32 unk0;
+    u8 pad4[0x13 - 0x4];
+    s8 unk13;
+} TrackGetHeightsArg3;
+
 // https://decomp.me/scratch/bCbde
 s32 hitGetHeights(f32, f32, s32, f32 ***);
 Object *objGetPlayerNo(s32);
-s32 trackGetHeights(f32, f32, s32, f32 ***);
+s32 trackGetHeights(f32, f32, s32, TrackGetHeightsArg3 ***);
 
-void func_8005C188_5CD88(s32 arg0) {
+void func_8005C188_5CD88(s32 updateRate) {
     s32 pad;
     Object *temp_v0;
     Unk800A5A14 *var_s2;
@@ -590,21 +647,21 @@ void func_8005C188_5CD88(s32 arg0) {
     s32 var_s3;
     s32 var_v0_2;
     s32 pad2;
-    f32 **sp88;
+    TrackGetHeightsArg3 **sp88;
     f32 **sp84;
 
     if (D_800A5D44_A6944 == NULL || D_800A5D48_A6948 == NULL) {
         return;
     }
 
-    temp_t1 = (s32) (((s32) gRainOpacity >> 2) * gLightningFrequency) >> 0xE;
+    temp_t1 = ((gRainOpacity >> 2) * gLightningFrequency) >> 0xE;
     if (temp_t1 > 0x4000) {
         temp_v0 = objGetPlayerNo(0);
         if (temp_v0 != NULL) {
-            D_800A5D40_A6940 -= arg0;
-            while (D_800A5D40_A6940 <= 0) {
+            gRainSplashDelay -= updateRate;
+            while (gRainSplashDelay <= 0) {
                 var_s2 = D_800A5A14_A6614;
-                var_s3 = 0x10;
+                var_s3 = ARRAY_COUNT(D_800A5A14_A6614);
                 var_v0_2 = FALSE;
                 while (var_s3 > 0 && var_v0_2 == FALSE) {
                     if (var_s2->unk6 == 0) {
@@ -626,13 +683,13 @@ void func_8005C188_5CD88(s32 arg0) {
                         var_s2->unk14 = temp_f24;
                         var_s2->unk6 = 1;
                         var_s2->unk28 = 0.0f;
-                        var_s2->unk18 = mathRnd(0x40, (temp_t1 >> 0xA) + 0x60);
-                        if ((var_s0 != 0) && (temp_v0_2 != 0)) {
+                        var_s2->unk18 = mathRnd(64, (temp_t1 >> 10) + 96);
+                        if (var_s0 != 0 && temp_v0_2 != 0) {
                             var_s0 = 0;
                         }
                         if (var_s0 != 0) {
-                            var_s2->unk10 = **sp88;
-                            if (((s8 *) (*sp88))[0x13] == 2) {
+                            var_s2->unk10 = (*sp88)->unk0;
+                            if ((*sp88)->unk13 == 2) {
                                 var_s2->unk6 += 1;
                             }
                         } else {
@@ -640,11 +697,11 @@ void func_8005C188_5CD88(s32 arg0) {
                         }
                     }
                 }
-                D_800A5D40_A6940 += 2;
-                if (D_800A5D40_A6940 >= 0) {
-                    D_800A5D40_A6940 = (D_800A5D40_A6940 - (temp_t1 >> 0xA)) + 0x40;
-                    if (D_800A5D40_A6940 < 0) {
-                        D_800A5D40_A6940 = 0;
+                gRainSplashDelay += 2;
+                if (gRainSplashDelay >= 0) {
+                    gRainSplashDelay = (gRainSplashDelay - (temp_t1 >> 10)) + 64;
+                    if (gRainSplashDelay < 0) {
+                        gRainSplashDelay = 0;
                     }
                 }
             }
@@ -652,9 +709,9 @@ void func_8005C188_5CD88(s32 arg0) {
     }
     gDPSetEnvColor(gCurrWeatherDisplayList++, 0xFF, 0xFF, 0xFF, 0);
     var_s2 = D_800A5A14_A6614;
-    for (var_s3 = 0; var_s3 < 16; var_s3++) {
+    for (var_s3 = 0; var_s3 < ARRAY_COUNT(D_800A5A14_A6614); var_s3++) {
         if (var_s2->unk6 != 0) {
-            var_s2->unk28 += arg0 * 0.175f;
+            var_s2->unk28 += updateRate * 0.175f;
             if (var_s2->unk28 < 4.0f) {
                 if (var_s2->unk6 == 1) {
                     gDPSetPrimColor(gCurrWeatherDisplayList++, 0, 0, 0xFF, 0xFF, 0xFF, var_s2->unk18);
@@ -711,35 +768,127 @@ void func_8005C188_5CD88(s32 arg0) {
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005C188_5CD88.s")
 #endif
 
-void func_8005C9B8_5D5B8(s32 arg0) {
+void func_8005C9B8_5D5B8(s32 updateRate) {
     s32 sp1C;
 
-    if (D_800A5D3C_A693C > 0) {
-        D_800A5D3C_A693C -= arg0;
-        if (D_800A5D3C_A693C <= 0) {
+    if (gThunderTimer > 0) {
+        gThunderTimer -= updateRate;
+        if (gThunderTimer <= 0) {
             if (gRainOpacity > 0x8000) {
                 if (fxFadeOn() == 0) {
                     setupClearScreen(&D_800A5D54_A6954);
                     D_800A6784_A7384 = 0;
                 }
             }
-            amSndPlay(6, 0);
-            D_800A5D3C_A693C = 0;
+            amSndPlay(6, NULL);
+            gThunderTimer = 0;
         }
-    } else if (gLightningFrequency >= 0xC001) {
-        if (D_800A5D38_A6938 > 0) {
-            D_800A5D38_A6938 -= arg0;
+    } else if (gLightningFrequency > 0xC000) {
+        if (gLightningTimer > 0) {
+            gLightningTimer -= updateRate;
         } else {
             sp1C = (s32) ((gLightningFrequency * 0x258) + 0xFE3E0000) >> 0xE;
-            amSndPlay(7, 0);
-            D_800A5D3C_A693C = sp1C + 0x3C;
-            D_800A5D38_A6938 = mathRnd(0x4B0, 0x5DC) - sp1C;
+            amSndPlay(7, NULL);
+            gThunderTimer = sp1C + 0x3C;
+            gLightningTimer = mathRnd(0x4B0, 0x5DC) - sp1C;
         }
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005CAD0_5D6D0.s")
+void func_8005CAD0_5D6D0(UNUSED s32 updateRate) {
+    f32 xPos;
+    f32 yPos;
+    f32 zPos;
+    f32 length;
+    f32 cosOffset;
+    f32 sinOffset;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005CBBC_5D7BC.s")
+    length = 1152.0f - (f32) (gLightningFrequency >> 6);
+    cosOffset = Sinf(-0x8000 - gWeatherCamera->trans.y_rotation);
+    sinOffset = Cosf(-0x8000 - gWeatherCamera->trans.y_rotation);
+    xPos = gWeatherCamera->trans.x_position - (length * cosOffset);
+    yPos = gWeatherCamera->trans.y_position;
+    zPos = gWeatherCamera->trans.z_position - (length * sinOffset);
+    if (gWeatherSoundMask != NULL) {
+        amSndSetXYZ(gWeatherSoundMask, xPos, yPos, zPos);
+    } else {
+        amSndPlayXYZ(4, xPos, yPos, zPos, 1, &gWeatherSoundMask);
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005CC0C_5D80C.s")
+void func_8005CBBC_5D7BC(void) {
+    D_801008B8_BB0F8 = 0;
+    D_801008BC_BB0FC = 0;
+    D_801008C0_BB100 = 0;
+    D_801008C4_BB104 = 0;
+    gSnowGfx.texture = texLoadTexture(*gWeatherAssetTable);
+}
+
+void func_8005CC0C_5D80C(s32 updateRate) {
+    SnowPosData *var_v0;
+    s32 var_a1;
+    s32 var_a2;
+    s32 var_a3;
+    s32 var_t0;
+    s32 var_t1;
+    s32 var_t2;
+    s32 var_t3;
+    s32 var_t4;
+    s32 var_t5;
+    s32 var_v1;
+    s32 var_v0_2;
+    s32 var_ra;
+    Vec3s sp34;
+    Vec3f sp28;
+    s32 var_s0;
+
+    D_801008B8_BB0F8 -= updateRate;
+    if (D_801008B8_BB0F8 <= 0) {
+        D_801008B8_BB0F8 = mathRnd(0xB4, 0x12C);
+        sp34.s[0] = mathRnd(-0x8000, 0x7FFF);
+        sp34.s[1] = mathRnd(-0x800, -0x400);
+        sp28.f[2] = -(f32) mathRnd(0x28000, 0x58000);
+        mathOneFloatPY(&sp34, &sp28);
+        D_801008C8_BB108 = sp28.f[0];
+        D_801008CC_BB10C = sp28.f[1];
+        D_801008D0_BB110 = sp28.f[2];
+    }
+    var_a1 = D_801008BC_BB0FC;
+    var_a2 = D_801008C0_BB100;
+    var_a3 = D_801008C4_BB104;
+    var_t3 = D_801008C8_BB108;
+    var_t4 = D_801008CC_BB10C;
+    var_t5 = D_801008D0_BB110;
+    var_v0_2 = gWeather.velX;
+    var_ra = gWeather.velY;
+    var_s0 = gWeather.velZ;
+    var_t0 = 0;
+    var_t1 = 0;
+    var_t2 = 0;
+    var_v1 = updateRate;
+    while (var_v1--) {
+        var_a1 += (var_t3 - var_a1) >> 6;
+        var_a2 += (var_t4 - var_a2) >> 6;
+        var_a3 += (var_t5 - var_a3) >> 6;
+        var_t0 += var_a1 + var_v0_2;
+        var_t1 += var_a2 + var_ra;
+        var_t2 += var_a3 + var_s0;
+    }
+    D_801008BC_BB0FC = var_a1;
+    D_801008C0_BB100 = var_a2;
+    D_801008C4_BB104 = var_a3;
+    var_t3 = gSnowGfx.radiusX;
+    var_t4 = gSnowGfx.radiusY;
+    var_t5 = gSnowGfx.radiusZ;
+    var_t0 >>= 1;
+    var_t1 >>= 1;
+    var_t2 >>= 1;
+    var_v0 = gSnowPhysics;
+    var_v1 = gSnowDensity;
+    while (var_v1--) {
+        var_v0->x_position = (var_v0->x_position + var_t0) & var_t3;
+        var_v0->y_position = (var_v0->y_position + var_t1) & var_t4;
+        var_v0->z_position = (var_v0->z_position + var_t2) & var_t5;
+        var_v0 += 1;
+    }
+}

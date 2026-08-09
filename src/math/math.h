@@ -13,6 +13,7 @@ f32 acosf(f32 value);
 
 f32 Sinf(s32);
 u16 Arctanf(f32, f32);
+void mathOneFloatPY(Vec3s*, Vec3f*);
 
 extern float sinf(float angle); //official name: fsin
 extern float cosf(float angle);
