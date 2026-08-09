@@ -448,7 +448,7 @@ void __scHandleRetrace(OSSched *sc) {
     if ((gCurRSPTaskCounter > 10) && (sc->curRSPTask)) {
         if (gCurRSPTaskIsSet) {
             osScGetTaskType(sc->curRSPTask->taskID); // Returns a string containing the name of the task
-            func_8004FC64_50864(sc->curRSPTask);           // Func is empty
+            func_8004FC64_50864(sc->curRSPTask);     // Func is empty
             if (sc->curRSPTask->list.t.type == M_GFXTASK) {
                 spGfx = (Gfx *) func_8004FF64_50B64(sc, &spB4, &spA4, &spC4, &spB0, &spA0, &spC0);
             }
@@ -468,7 +468,7 @@ void __scHandleRetrace(OSSched *sc) {
         }
         if (gCurRDPTaskIsSet) {
             osScGetTaskType(sc->curRDPTask->taskID); // Returns a string containing the name of the task
-            func_8004FC64_50864(sc->curRDPTask);           // Func is empty
+            func_8004FC64_50864(sc->curRDPTask);     // Func is empty
             if (sc->curRDPTask->list.t.type == M_GFXTASK) {
                 dpGfx = (Gfx *) func_8004FF64_50B64(sc, &spAC, &sp9C, &spBC, &spA8, &sp98, &unkTask);
             }

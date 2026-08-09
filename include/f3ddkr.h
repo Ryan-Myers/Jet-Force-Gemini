@@ -169,6 +169,9 @@
 #define gSPVertexDKR(pkt, v, n, v0) \
     gDma1p(pkt, G_VTX, v, (((n) * 8 + (n)) << 1) + 8, ((n)-1)<<3|(((u32)(v) & 6))|(v0))
 
+#define gSPVertexJFG(pkt, v, n, v0) \
+    gDma1p(pkt, G_VTX, v, ((((n) << 3) + ((n) << 1))) + 8, ((n))<<3|(((u32)(v) & 6))|(v0))
+
 #define gSPMatrixDKR(pkt, m, i) \
     gSPMatrix(pkt, m, (i) << 6)
 #define gSPSelectMatrixDKR(pkt, num)   \

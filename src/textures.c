@@ -1,3 +1,4 @@
+#include "textures.h"
 #include "common.h"
 
 const char D_800ADD40[] = "Error: Texture no %x out of range on load. !!\n";
@@ -55,22 +56,9 @@ typedef struct TextureCacheEntry {
     TextureHeader *texture;
 } TextureCacheEntry;
 
-typedef struct Sprite {
-    /* 0x00 */ s16 baseTextureId;
-    /* 0x02 */ s16 numberOfFrames; // 1 means static texture
-    /* 0x04 */ s16 numberOfInstances;
-    /* 0x06 */ s16 unk6;
-    /* 0x08 */ u8 pad8[8];
-    /* 0x10 */ TextureHeader **frames;
-    union {
-        /* 0x0C */ u8 val[1];  // Actual size varies.
-        /* 0x0C */ u8 *ptr[1]; // Display list?
-    } unkC;
-} Sprite;
-
 typedef struct SpriteCacheEntry {
     s32 id;
-    Sprite *sprite;
+    TextureSprite *sprite;
 } SpriteCacheEntry;
 
 extern SpriteCacheEntry *D_800FED0C_B954C;

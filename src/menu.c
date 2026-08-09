@@ -1,6 +1,6 @@
+#include "audio.h"
 #include "common.h"
 #include "gsSnd.h"
-#include "audio.h"
 
 extern u16 SFXVolume;
 extern u16 musicVolume;

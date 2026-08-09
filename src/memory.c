@@ -1,5 +1,6 @@
 #include "memory.h"
 #include "common.h"
+#include "overlays/overlay10.h"
 
 #ifndef _ALIGN16
 #define _ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
@@ -352,8 +353,6 @@ void mmFree(void *data) {
     enableInterrupts(intFlags);
 #endif
 }
-
-void sparkUpdate_Trap(void);
 
 /**
  * Frees all the addresses in the free queue.

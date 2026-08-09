@@ -1,5 +1,6 @@
 #include "common.h"
 #include "mips.h"
+#include "overlays/overlay36.h"
 #include "sched.h"
 
 #ifdef VERSION_kiosk
@@ -223,8 +224,6 @@ void RevealReturnAddresses(void) {
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/main/RevealReturnAddresses.s")
 #endif
-
-void mainInitRlo_Trap(void);
 
 #ifdef VERSION_kiosk
 void mainInitGame(void) {
