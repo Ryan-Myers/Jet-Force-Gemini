@@ -1,4 +1,9 @@
 #include "common.h"
+#include "gsSnd.h"
+#include "audio.h"
+
+extern u16 SFXVolume;
+extern u16 musicVolume;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setLanguage.s")
 
@@ -52,9 +57,13 @@ const char D_800AD390_ADF90[] = "loadFrontEndItem() - Item no %d out of range 0-
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetupMultiPickup.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGameSelected.s")
+s32 frontGameSelected(void) {
+    return 0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetWorldLevel.s")
+s32 frontGetWorldLevel(void) {
+    return 0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetWorldName.s")
 
@@ -76,17 +85,42 @@ const char D_800AD390_ADF90[] = "loadFrontEndItem() - Item no %d out of range 0-
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetWideAdjust.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetStereoMode.s")
+extern u8 speakerSetting;
+u8 frontGetStereoMode(void) {
+    return speakerSetting;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetStereoMode.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetSfxVolume.s")
+u16 frontGetSfxVolume(void) {
+    return SFXVolume;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetSfxVolume.s")
+void frontSetSfxVolume(s32 volume) {
+    if (volume < 0) {
+        volume = 0;
+    }
+    if (volume > 0x100) {
+        volume = 0x100;
+    }
+    SFXVolume = volume;
+    gsSndpSetGlobalVolume(volume);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetBgmVolume.s")
+u16 frontGetBgmVolume(void) {
+    return musicVolume;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetBgmVolume.s")
+void frontSetBgmVolume(s32 volume) {
+    if (volume < 0) {
+        volume = 0;
+    }
+    if (volume > 0x100) {
+        volume = 0x100;
+    }
+    musicVolume = volume;
+    amTuneSetGlobalVolume(volume);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGet2PlayerSplit.s")
 
