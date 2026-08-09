@@ -5,8 +5,8 @@
 #include "fx.h"
 #include "math/math.h"
 #include "models.h"
-#include "textures.h"
 #include "overlays/overlay5.h"
+#include "textures.h"
 
 typedef enum WeatherType { WEATHER_SNOW, WEATHER_RAIN, WEATHER_UNK } WeatherType;
 
@@ -529,8 +529,13 @@ void func_8005BC44_5C844(s32 arg0, s32 intensity, s32 opacity) {
     gRainVertexFlip = 0;
 
     rainInit_Trap(arg0, 700, 700, 700, 0x2080E002, 0xA0E0FF04, 550);
+#ifdef VERSION_us
     D_800A5D44_A6944 = texLoadSprite(0x4A, 0);
     D_800A5D48_A6948 = texLoadTexture(0x1AC);
+#else
+    D_800A5D44_A6944 = texLoadSprite(0x49, 0);
+    D_800A5D48_A6948 = texLoadTexture(0x1A9);
+#endif
     gWeatherType = WEATHER_RAIN;
     D_801008B4_BB0F4 = NULL;
 }
@@ -775,9 +780,9 @@ void func_8005C9B8_5D5B8(s32 updateRate) {
             if (gRainOpacity > 0x8000) {
                 if (fxFadeOn() == 0) {
                     setupClearScreen(&D_800A5D54_A6954);
-                    #ifdef VERSION_us
+#ifdef VERSION_us
                     D_800A6784_A7384 = 0;
-                    #endif
+#endif
                 }
             }
             amSndPlay(6, NULL);
