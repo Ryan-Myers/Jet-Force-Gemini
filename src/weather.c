@@ -775,7 +775,9 @@ void func_8005C9B8_5D5B8(s32 updateRate) {
             if (gRainOpacity > 0x8000) {
                 if (fxFadeOn() == 0) {
                     setupClearScreen(&D_800A5D54_A6954);
+                    #ifdef VERSION_us
                     D_800A6784_A7384 = 0;
+                    #endif
                 }
             }
             amSndPlay(6, NULL);
