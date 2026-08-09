@@ -71,8 +71,9 @@ typedef union {
         s32             soundIndex;
         ALBank          *bank;
     } retrigger;
-    
+
 } ALSndpEvent;
 
+void gsSndpSetGlobalVolume(u32 volume);
 
 #endif
