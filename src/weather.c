@@ -1,7 +1,9 @@
 #include "camera.h"
+#include "fx.h"
 #include "common.h"
 #include "functions.h"
 #include "models.h"
+#include "audio.h"
 #include "textures.h"
 
 typedef enum WeatherType { WEATHER_SNOW, WEATHER_RAIN, WEATHER_UNK } WeatherType;
@@ -12,6 +14,19 @@ enum ViewportCount {
     VIEWPORTS_COUNT_3_PLAYERS,
     VIEWPORTS_COUNT_4_PLAYERS
 };
+
+/* Size: 0x2C Bytes */
+typedef struct Unk800A5A14 {
+    u8 pad0[6];
+    s16 unk6;
+    u32 pad8;
+    f32 unkC;
+    f32 unk10;
+    f32 unk14;
+    s16 unk18;
+    u8 pad1A[0x28 - 0x1A];
+    f32 unk28;
+} Unk800A5A14;
 
 /* Size: 0x8 Bytes */
 typedef struct {
@@ -85,22 +100,49 @@ extern Vertex *gCurrWeatherVertexList;
 extern Triangle *gCurrWeatherTriList;
 extern Camera *gWeatherCamera;
 extern Matrix *gWeatherCameraMatrix;
+extern s32 D_801008B4_BB0F4;
 
 // .data
-extern SnowPosData *gSnowPhysics;   // = 0;
+extern SnowGfxData gWeatherPresets[];
+extern SnowPosData *gSnowPhysics;   // = NULL;
 extern SnowGfxData gSnowGfx;        // = { 0, 0 };
+// D_800A59D0_A65D0
+extern Vertex *gSnowVerts; // = NULL;
+extern s32 gSnowVertCount; // = 0;
 extern s32 gSnowTriangles;          // = 0;
 extern s16 *gSnowTriIndices;        // = NULL;
 extern Vertex *gSnowVertexData[];   // = { 0, 0 };
-extern s32 *gWeatherAssetTable;     // = 0;
+extern s32 *gWeatherAssetTable;     // = NULL;
 extern s8 gWeatherAssetTableLength; // = 0;
-extern SnowGfxData gWeatherPresets[];
-extern Vertex *gSnowVerts; // = 0;
-extern s32 gSnowVertCount; // = 0;
+extern Unk800A5A14 D_800A5A14_A6614[];
+extern f32 D_800A5CF8_A68F8; // = -3.0f;
+extern f32 D_800A5CFC_A68FC; // = 3.0f;
+extern f32 D_800A5D00_A6900; // = 3.0f;
+extern f32 D_800A5D04_A6904; // = -3.0f;
+extern f32 D_800A5D08_A6908; // = -3.0f;
+extern f32 D_800A5D0C_A690C; // = -3.0f;
+extern f32 D_800A5D10_A6910; // = 3.0f;
+extern f32 D_800A5D14_A6914; // = 3.0f;
+extern s32 gWeatherType; // = WEATHER_SNOW;
+extern s32 gLightningFrequency; // = 0x00010000;
+extern s32 D_800A5D20_A6920; // = 0;
+extern s32 D_800A5D24_A6924; // = 0;
+extern s32 gRainOpacity; // = 0x00010000;
+extern s32 D_800A5D2C_A692C; // = 0;
+extern s32 D_800A5D30_A6930; // = 0x00010000;
+extern s32 D_800A5D34_A6934; // = 0;
+extern s32 D_800A5D38_A6938; // = 0;
+extern s32 D_800A5D3C_A693C; // = 0;
+extern s32 D_800A5D40_A6940; // = 0;
+extern TextureSprite* D_800A5D44_A6944; // = NULL;
+extern TextureHeader* D_800A5D48_A6948; // = NULL;
+extern s32 D_800A5D4C_A694C; // = 0;
+extern SoundMask* D_800A5D50_A6950; // = NULL;
+extern UnkScreenStruct D_800A5D54_A6954;
 
 // forward declarations
 void func_8005BD30_5C930(void);               // free_rain_memory in DKR
-void func_8005BC44_5C844(s32, s32, s32, s32); // rain_init in DKR
+void func_8005BC44_5C844(s32, s32, s32); // rain_init in DKR
 void func_8005CBBC_5D7BC(void);               // snow_init in DKR
 void func_8005BDB8_5C9B8(s32, s32, f32);      // rain_set in DKR
 void func_8005B62C_5C22C(void);               // snow_vertices in DKR
@@ -169,7 +211,7 @@ void freeWeather(void) {
     FREE_MEM(gSnowGfx.pos);
     FREE_TEX(gSnowGfx.texture);
     FREE_MEM(gSnowTriIndices);
-    if (D_800A5D18_A6918 != WEATHER_SNOW) {
+    if (gWeatherType != WEATHER_SNOW) {
         func_8005BD30_5C930();
     }
 }
@@ -210,7 +252,7 @@ void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s3
         arg0 = 1;
     }
     if (gWeatherPresets[arg0].type == WEATHER_RAIN) {
-        func_8005BC44_5C844(arg1, arg5 + 1, arg6 + 1, arg5);
+        func_8005BC44_5C844(arg1, arg5 + 1, arg6 + 1);
         return;
     }
     var_v1 = &gWeatherPresets[arg0];
@@ -302,7 +344,7 @@ void changeWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5) {
     gWeather.velXStep = (arg0 - gWeather.velX) / arg5;
     gWeather.velYStep = (arg1 - gWeather.velY) / arg5;
     gWeather.velZStep = (arg2 - gWeather.velZ) / arg5;
-    if (D_800A5D18_A6918 == WEATHER_SNOW) {
+    if (gWeatherType == WEATHER_SNOW) {
         gWeather.intensityStep = (arg3 - gWeather.intensity) / arg5;
         gWeather.opacityStep = (arg4 - gWeather.opacity) / arg5;
         gWeather.intensityTarget = arg3;
@@ -323,7 +365,7 @@ void doWeather(Gfx **currDisplayList, Mtx **currHudMat, Vertex **currHudVerts, T
     gCurrWeatherTriList = *currHudTris;
     gWeatherCamera = camGetPtr();
     gWeatherCameraMatrix = camGetRotationMtx();
-    if (D_800A5D18_A6918 != WEATHER_SNOW) {
+    if (gWeatherType != WEATHER_SNOW) {
         func_8005C040_5CC40(updateRate);
     } else {
         if (gWeather.shiftTime > 0) {
@@ -446,19 +488,65 @@ void func_8005B928_5C528(void) {
     gDPSetEnvColor(gCurrWeatherDisplayList++, 255, 255, 255, 255);        // all white
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005BC44_5C844.s")
+void func_8005BC44_5C844(s32 arg0, s32 arg1, s32 arg2) {
+    gLightningFrequency = arg1;
+    D_800A5D20_A6920 = 0;
+    D_800A5D24_A6924 = gLightningFrequency;
+    gRainOpacity = arg2;
+    D_800A5D2C_A692C = 0;
+    D_800A5D30_A6930 = gRainOpacity;
+    D_800A5D34_A6934 = 0;
+    D_800A5D38_A6938 = 0;
+    D_800A5D3C_A693C = 0;
+    D_800A5D40_A6940 = 0;
+    D_800A5D4C_A694C = 0;
+    TrapDanglingJump(arg0, 0x2BC, 0x2BC, 0x2BC, 0x2080E002, 0xA0E0FF04, 0x226);
+    D_800A5D44_A6944 = texLoadSprite(0x4A, 0);
+    D_800A5D48_A6948 = texLoadTexture(0x1AC);
+    gWeatherType = 1;
+    D_801008B4_BB0F4 = 0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005BD30_5C930.s")
+void func_8005BD30_5C930(void) {
+    if (D_800A5D44_A6944 != NULL) {
+        texFreeSprite(D_800A5D44_A6944);
+        D_800A5D44_A6944 = NULL;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005BDB8_5C9B8.s")
+    if (D_800A5D48_A6948 != NULL) {
+        texFreeTexture(D_800A5D48_A6948);
+        D_800A5D48_A6948 = NULL;
+    }
+
+    if (D_800A5D50_A6950 != NULL) {
+        amSndStopXYZ(D_800A5D50_A6950);
+        D_800A5D50_A6950 = NULL;
+    }
+
+    TrapDanglingJump();
+    gWeatherType = WEATHER_SNOW;
+}
+
+void func_8005BDB8_5C9B8(s32 arg0, s32 arg1, f32 arg2) {
+    if (osTvType == OS_TV_TYPE_PAL) {
+        D_800A5D34_A6934 = (50.0f * arg2);
+    } else {
+        D_800A5D34_A6934 = (60.0f * arg2);
+    }
+
+    D_800A5D24_A6924 = arg0;
+    D_800A5D20_A6920 = (D_800A5D24_A6924 - gLightningFrequency) / D_800A5D34_A6934;
+    D_800A5D30_A6930 = arg1;
+    D_800A5D2C_A692C = (D_800A5D30_A6930 - gRainOpacity) / D_800A5D34_A6934;
+}
 
 void rainSetFog(void) {
     s32 a, b;
 
-    if (D_800A5D18_A6918 != WEATHER_SNOW && camGetMode() == VIEWPORTS_COUNT_1_PLAYER) {
+    if (gWeatherType != WEATHER_SNOW && camGetMode() == VIEWPORTS_COUNT_1_PLAYER) {
         if (!(levelGetLevel()->unkA2 & 1)) {
-            a = ((D_800A5D1C_A691C * -38) >> 16) + 1018;
-            b = ((D_800A5D1C_A691C * -20) >> 16) + 1023;
+            a = ((gLightningFrequency * -38) >> 16) + 1018;
+            b = ((gLightningFrequency * -20) >> 16) + 1023;
             trackSetFog(0, a, b, a, 28, 15, 36, 0);
         }
     }
@@ -467,7 +555,7 @@ void rainSetFog(void) {
 f32 rainDensity(void) {
     f32 var_f2;
 
-    var_f2 = (f32) (((D_800A5D28_A6928 >> 2) * D_800A5D1C_A691C) >> 14) / 0x10000;
+    var_f2 = (f32) (((gRainOpacity >> 2) * gLightningFrequency) >> 14) / 0x10000;
     if (var_f2 < 0.0f) {
         var_f2 = 0.0f;
     }
@@ -479,9 +567,175 @@ f32 rainDensity(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005C040_5CC40.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005C188_5CD88.s")
+#ifdef NON_EQUIVALENT
+extern u8 D_A5CD8[];
 
-#pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005C9B8_5D5B8.s")
+// https://decomp.me/scratch/bCbde
+f32 Sinf(s32);
+s32 hitGetHeights(f32, f32, s32, f32***);
+Object* objGetPlayerNo(s32);
+s32 trackGetHeights(f32, f32, s32, f32***);
+
+void func_8005C188_5CD88(s32 arg0) {
+    s32 pad;
+    Object* temp_v0;
+    Unk800A5A14* var_s2;
+    f32 temp_f20;
+    f32 temp_f22;
+    f32 temp_f24;
+    s32 temp_s0;
+    s32 temp_t1;
+    s32 temp_v0_2;
+    s32 var_s0;
+    s32 var_s3;
+    s32 var_v0_2;
+    s32 pad2;
+    f32** sp88;
+    f32** sp84;
+
+    if (D_800A5D44_A6944 == NULL || D_800A5D48_A6948 == NULL) {
+        return;
+    }
+
+    temp_t1 = (s32) (((s32) gRainOpacity >> 2) * gLightningFrequency) >> 0xE;
+    if (temp_t1 > 0x4000) {
+        temp_v0 = objGetPlayerNo(0);
+        if (temp_v0 != NULL) {
+            D_800A5D40_A6940 -= arg0;
+            while (D_800A5D40_A6940 <= 0) {
+                var_s2 = D_800A5A14_A6614;
+                var_s3 = 0x10;
+                var_v0_2 = FALSE;
+                while (var_s3 > 0 && var_v0_2 == FALSE) {
+                    if (var_s2->unk6 == 0) {
+                        var_v0_2 = TRUE;
+                    } else {
+                        var_s2 += 1;
+                    }
+                    var_s3--;
+                }
+                if (var_v0_2 != FALSE) {
+                    temp_s0 = mathRnd(0, 0x10000);
+                    temp_f20 = mathRnd(30, 300);
+                    temp_f22 = (Sinf(temp_s0) * temp_f20) + temp_v0->segment.trans.x_position;
+                    temp_f24 = (Cosf(temp_s0) * temp_f20) + temp_v0->segment.trans.z_position;
+                    var_s0 = trackGetHeights(temp_f22, temp_f24, 0x400, &sp88);
+                    temp_v0_2 = hitGetHeights(temp_f22, temp_f24, 0x400, &sp84);
+                    if (var_s0 != 0 || temp_v0_2 != 0) {
+                        var_s2->unkC = temp_f22;
+                        var_s2->unk14 = temp_f24;
+                        var_s2->unk6 = 1;
+                        var_s2->unk28 = 0.0f;
+                        var_s2->unk18 = mathRnd(0x40, (temp_t1 >> 0xA) + 0x60);
+                        if ((var_s0 != 0) && (temp_v0_2 != 0)) {
+                            var_s0 = 0;
+                        }
+                        if (var_s0 != 0) {
+                            var_s2->unk10 = **sp88;
+                            if (((s8*)(*sp88))[0x13] == 2) {
+                                var_s2->unk6 += 1;
+                            }
+                        } else {
+                            var_s2->unk10 = **sp84;
+                        }
+                    }
+                }
+                D_800A5D40_A6940 += 2;
+                if (D_800A5D40_A6940 >= 0) {
+                    D_800A5D40_A6940 = (D_800A5D40_A6940 - (temp_t1 >> 0xA)) + 0x40;
+                    if (D_800A5D40_A6940 < 0) {
+                        D_800A5D40_A6940 = 0;
+                    }
+                }
+            }
+        }
+    }
+    gDPSetEnvColor(gCurrWeatherDisplayList++, 0xFF, 0xFF, 0xFF, 0);
+    var_s2 = D_800A5A14_A6614;
+    for (var_s3 = 0; var_s3 < 16; var_s3++) {
+        if (var_s2->unk6 != 0) {
+            var_s2->unk28 += arg0 * 0.175f;
+            if (var_s2->unk28 < 4.0f) {
+                if (var_s2->unk6 == 1) {
+                    gDPSetPrimColor(gCurrWeatherDisplayList++, 0, 0, 0xFF, 0xFF, 0xFF, var_s2->unk18);
+                    camDoSprite(&gCurrWeatherDisplayList, &gCurrWeatherMatrix, &gCurrWeatherVertexList, var_s2, D_800A5D44_A6944, 0xE, 0);
+                } else {
+                    texDPTextureX(&gCurrWeatherDisplayList, D_800A5D48_A6948, 0xE, 0);
+                    gDPSetPrimColor(gCurrWeatherDisplayList++, 0, 0, 0xC0, 0xE0, 0xFF, 0xFF);
+                    gSPVertexJFG(gCurrWeatherDisplayList++, OS_PHYSICAL_TO_K0(gCurrWeatherVertexList), 4, 0);
+                    gSPPolygon(gCurrWeatherDisplayList++, D_A5CD8, 2, 1);
+                    gCurrWeatherVertexList->x = ((0, D_800A5CF8_A68F8) * var_s2->unk28) + var_s2->unkC;
+                    gCurrWeatherVertexList->y = var_s2->unk10;
+                    gCurrWeatherVertexList->z = ((0, D_800A5D08_A6908) * var_s2->unk28) + var_s2->unk14;
+                    gCurrWeatherVertexList->r = 0xFF;
+                    gCurrWeatherVertexList->g = 0xFF;
+                    gCurrWeatherVertexList->b = 0xFF;
+                    gCurrWeatherVertexList->a = 0xFF;
+                    gCurrWeatherVertexList += 1;
+                    gCurrWeatherVertexList->x = ((0, D_800A5CFC_A68FC) * var_s2->unk28) + var_s2->unkC;
+                    gCurrWeatherVertexList->y = var_s2->unk10;
+                    gCurrWeatherVertexList->z = ((0, D_800A5D0C_A690C) * var_s2->unk28) + var_s2->unk14;
+                    gCurrWeatherVertexList->r = 0xFF;
+                    gCurrWeatherVertexList->g = 0xFF;
+                    gCurrWeatherVertexList->b = 0xFF;
+                    gCurrWeatherVertexList->a = 0xFF;
+                    gCurrWeatherVertexList += 1;
+                    gCurrWeatherVertexList->x = ((0, D_800A5D00_A6900) * var_s2->unk28) + var_s2->unkC;
+                    gCurrWeatherVertexList->y = var_s2->unk10;
+                    gCurrWeatherVertexList->z = ((0, D_800A5D10_A6910) * var_s2->unk28) + var_s2->unk14;
+                    gCurrWeatherVertexList->r = 0xFF;
+                    gCurrWeatherVertexList->g = 0xFF;
+                    gCurrWeatherVertexList->b = 0xFF;
+                    gCurrWeatherVertexList->a = 0xFF;
+                    gCurrWeatherVertexList += 1;
+                    gCurrWeatherVertexList->x = ((0, D_800A5D04_A6904) * var_s2->unk28) + var_s2->unkC;
+                    gCurrWeatherVertexList->y = var_s2->unk10;
+                    gCurrWeatherVertexList->z = ((0, D_800A5D14_A6914) * var_s2->unk28) + var_s2->unk14;
+                    gCurrWeatherVertexList->r = 0xFF;
+                    gCurrWeatherVertexList->g = 0xFF;
+                    gCurrWeatherVertexList->b = 0xFF;
+                    gCurrWeatherVertexList->a = 0xFF;
+                    gCurrWeatherVertexList += 1;
+                }
+            } else {
+                var_s2->unk6 = 0;
+            }
+        }
+        var_s2 += 1;
+    }
+
+    gDPSetPrimColor(gCurrWeatherDisplayList++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+}
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005C188_5CD88.s")
+#endif
+
+void func_8005C9B8_5D5B8(s32 arg0) {
+    s32 sp1C;
+
+    if (D_800A5D3C_A693C > 0) {
+        D_800A5D3C_A693C -= arg0;
+        if (D_800A5D3C_A693C <= 0) {
+            if (gRainOpacity > 0x8000) {
+                if (fxFadeOn() == 0) {
+                    setupClearScreen(&D_800A5D54_A6954);
+                    D_800A6784_A7384 = 0;
+                }
+            }
+            amSndPlay(6, 0);
+            D_800A5D3C_A693C = 0;
+        }
+    } else if (gLightningFrequency >= 0xC001) {
+        if (D_800A5D38_A6938 > 0) {
+            D_800A5D38_A6938 -= arg0;
+        } else {
+            sp1C = (s32) ((gLightningFrequency * 0x258) + 0xFE3E0000) >> 0xE;
+            amSndPlay(7, 0);
+            D_800A5D3C_A693C = sp1C + 0x3C;
+            D_800A5D38_A6938 = mathRnd(0x4B0, 0x5DC) - sp1C;
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/weather/func_8005CAD0_5D6D0.s")
 

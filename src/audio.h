@@ -42,4 +42,7 @@ typedef struct DelayedSound {
     /* 0x04 */ SoundHandle *handlePtr;
 } DelayedSound;
 
+void amSndStopXYZ(SoundMask *soundMask);
+void amSndPlay(u16 soundID, SoundHandle *handlePtr);
+
 #endif

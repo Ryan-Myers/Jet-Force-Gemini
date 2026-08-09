@@ -3,6 +3,7 @@
 
 #include <PR/ultratypes.h>
 #include <PR/gbi.h>
+#include <PR/sp.h>
 #include "structs.h"
 
 #define SCREEN_WIDTH 320
@@ -51,5 +52,6 @@ typedef struct Camera {
 s32 camGetPtr(void);
 s32 camGetRotationMtx(void);
 Mtx *camGetProjOrgMtx(void);
+void camDoSprite(Gfx**, Mtx**, Vertex**, void*, Sprite*, s32, s32); /* extern */
 
 #endif

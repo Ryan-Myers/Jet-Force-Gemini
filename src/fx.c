@@ -1,4 +1,5 @@
 #include "common.h"
+#include "fx.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxInitLevelEffects.s")
 
@@ -60,6 +61,8 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/fxFadeOn.s")
 
+// has a match here: https://decomp.me/scratch/fDplg
+// but should probably only be ported in here once more of the fx code and it's data / bss has been defined
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/setupClearScreen.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/fx/updateClearScreen.s")
