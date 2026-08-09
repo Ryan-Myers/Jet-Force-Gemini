@@ -28,7 +28,7 @@ options:
   section_order: [".text", ".data", ".rodata", ".bss"]
   migrate_rodata_to_functions: False
   hasm_in_src_path: True
-  make_full_disasm_for_code: True
+  disassemble_all: True
 segments:
   - name: header
     type: header

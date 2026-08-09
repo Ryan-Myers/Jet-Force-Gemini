@@ -29,7 +29,7 @@ options:
   migrate_rodata_to_functions: True
   hasm_in_src_path: True
   libultra_symbols: True
-  make_full_disasm_for_code: True
+  disassemble_all: True
 segments:
   - name: header
     type: header
