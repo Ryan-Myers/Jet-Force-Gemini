@@ -23,6 +23,7 @@ extern s8 widescreenVOffset;
 extern u8 D_800A51A0_A5DA0;
 extern u8 D_800A51A4_A5DA4;
 extern u8 D_800A51A8_A5DA8;
+extern u8 D_800FF386_B1D86;
 extern u8 frontEndMode;
 extern u8 multiGameType;
 
@@ -101,7 +102,9 @@ void frontFreeMode(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetMode.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetMode.s")
+u8 frontGetMode(void) {
+    return frontEndMode;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontUpdate.s")
 
@@ -153,8 +156,9 @@ s32 frontGetWorldLevel(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetWorldName.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetLanguage.s")
-
+s32 frontGetLanguage(void) {
+    return D_800FF386_B1D86;
+}
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetLanguage.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetScreenMode.s")

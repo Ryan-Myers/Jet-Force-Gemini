@@ -2360,6 +2360,7 @@ msgQueues = 0x800FFEB0;
 hideinstruments = 0x800FFFF0;
 globalflags = 0x800FFFF8;
 someResVar = 0x80100064;
+D_800FF386_B1D86 = 0x80100066;
 widescreenVOffset = 0x80100067;
 D_800A51A4_A5DA4 = 0x800A5B68;
 D_800A51A8_A5DA8 = 0x800A5B6C;
