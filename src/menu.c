@@ -2,18 +2,88 @@
 #include "common.h"
 #include "gsSnd.h"
 #include "gameVi.h"
+#include "functions.h"
+#include "font.h"
 
 extern u16 SFXVolume;
 extern u16 musicVolume;
 extern s8 widescreenVOffset;
+extern u8 D_800A51A0_A5DA0;
 extern u8 D_800A51A4_A5DA4;
 extern u8 D_800A51A8_A5DA8;
+extern u8 D_800A51B0_A5DB0;
+extern u8 multiGameType;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setLanguage.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/initFront.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontFreeMode.s")
+
+void frontFreeMode(void) {
+    if (runlinkIsModuleLoaded(0xC) != 0) {
+        TrapDanglingJump();
+    }
+    if (D_800A51A0_A5DA0 != 0) {
+        switch (D_800A51B0_A5DB0) {
+        case 0:
+            fontWindowFlushStrings(1);
+            break;
+        case 2:
+            TrapDanglingJump();
+            break;
+        case 3:
+            TrapDanglingJump();
+            break;
+        case 4:
+            TrapDanglingJump();
+            break;
+        case 5:
+            TrapDanglingJump();
+            break;
+        case 6:
+            TrapDanglingJump();
+            break;
+        case 8:
+            TrapDanglingJump();
+            break;
+        case 18:
+        case 19:
+        case 20:
+        case 21:
+        case 22:
+            TrapDanglingJump();
+            break;
+        case 24:
+            TrapDanglingJump();
+            break;
+        case 16:
+            #ifdef VERSION_us
+            if (((multiPlayerGame != 0) && (multiGameType == 4)) || (racingInGame != 0)) {
+                TrapDanglingJump();
+            } else if (numberOfPlayers == 1) {
+                TrapDanglingJump();
+            } else {
+                TrapDanglingJump();
+            }
+            #endif
+            #ifdef VERSION_kiosk
+            if ((multiGameType == 4) || (racingInGame != 0)) {
+                TrapDanglingJump();
+            } else if (numberOfPlayers == 1) {
+                TrapDanglingJump();
+            } else {
+                TrapDanglingJump();
+            }
+            #endif
+            break;
+        case 17:
+            TrapDanglingJump();
+            runlinkFreeCode(9);
+            break;
+        }
+        D_800A51A0_A5DA0 = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontInitMode.s")
 
