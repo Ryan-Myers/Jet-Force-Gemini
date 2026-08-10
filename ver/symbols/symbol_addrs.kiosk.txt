@@ -2367,6 +2367,7 @@ D_800A51A8_A5DA8 = 0x800A5B6C;
 SFXVolume = 0x80100068;
 speakerSetting = 0x8010006C;
 musicVolume = 0x8010006A;
+selectedControlModes = 0x8010006D;
 frontgfx = 0x80100078;
 frontmtx = 0x8010007C;
 frontvtx = 0x80100080;
