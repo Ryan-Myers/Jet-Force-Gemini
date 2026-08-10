@@ -1994,6 +1994,7 @@ invulnerabilityCheat = 0x800A5A40;
 infiniteammoCheat = 0x800A5A44;
 allweaponsCheat = 0x800A5A48;
 frontEndMode = 0x800A5B74;
+D_800A51A0_A5DA0 = 0x800A5B64;
 frR = 0x800A5B78;
 frB = 0x800A5B80;
 front_text = 0x800A5B8C;

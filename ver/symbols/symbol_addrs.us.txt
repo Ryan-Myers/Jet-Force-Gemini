@@ -1910,6 +1910,7 @@ gameType = 0x800A506C;
 invulnerabilityCheat = 0x800A5070;
 DebugAmmoFlag = 0x800a5074;
 allweaponsCheat = 0x800A5078;
+frontEndMode = 0x800A51B0;
 rainbowblood = 0x800A5080;
 deformedchars = 0x800A5084;
 antsasmrpants = 0x800A5088;

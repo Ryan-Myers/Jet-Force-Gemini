@@ -11,7 +11,7 @@ extern s8 widescreenVOffset;
 extern u8 D_800A51A0_A5DA0;
 extern u8 D_800A51A4_A5DA4;
 extern u8 D_800A51A8_A5DA8;
-extern u8 D_800A51B0_A5DB0;
+extern u8 frontEndMode;
 extern u8 multiGameType;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setLanguage.s")
@@ -24,7 +24,7 @@ void frontFreeMode(void) {
         TrapDanglingJump();
     }
     if (D_800A51A0_A5DA0 != 0) {
-        switch (D_800A51B0_A5DB0) {
+        switch (frontEndMode) {
         case 0:
             fontWindowFlushStrings(1);
             break;
