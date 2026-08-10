@@ -192,9 +192,9 @@ void objDoPlayerTumble(Object *this) {
 void objUndoPlayerTumble(Object *obj) {
     if (obj->behaviorId == 1) {
         Object_Racer *racer = obj->racer;
-        obj->segment.trans.y_rotation -= racer->y_rotation_offset;
-        obj->segment.trans.x_rotation -= racer->x_rotation_offset;
-        obj->segment.trans.z_rotation -= racer->z_rotation_offset;
+        obj->segment.trans.rotation.x -= racer->y_rotation_offset;
+        obj->segment.trans.rotation.y -= racer->x_rotation_offset;
+        obj->segment.trans.rotation.z -= racer->z_rotation_offset;
         obj->segment.trans.y_position -= D_800F2F60_F3B60;
     }
 }
