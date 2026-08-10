@@ -21,7 +21,7 @@ extern u8 multiGameType;
 
 void frontFreeMode(void) {
     if (runlinkIsModuleLoaded(0xC) != 0) {
-        TrapDanglingJump();
+        frontFreeMenuFrame_Trap();
     }
     if (D_800A51A0_A5DA0 != 0) {
         switch (frontEndMode) {
@@ -29,55 +29,55 @@ void frontFreeMode(void) {
             fontWindowFlushStrings(1);
             break;
         case 2:
-            TrapDanglingJump();
+            frontCleanupRarepage_Trap();
             break;
         case 3:
-            TrapDanglingJump();
+            frontCleanupStartScreen_Trap();
             break;
         case 4:
-            TrapDanglingJump();
+            frontCleanupOptionsPage_Trap();
             break;
         case 5:
-            TrapDanglingJump();
+            frontCleanupCharSelect_Trap();
             break;
         case 6:
-            TrapDanglingJump();
+            frontCleanupMultiSelect_Trap();
             break;
         case 8:
-            TrapDanglingJump();
+            frontCleanupMultiModeSelect_Trap();
             break;
         case 18:
         case 19:
         case 20:
         case 21:
         case 22:
-            TrapDanglingJump();
+            frontCleanupMultiStats_Trap();
             break;
         case 24:
-            TrapDanglingJump();
+            frontKeyboardCleanup_Trap();
             break;
         case 16:
             #ifdef VERSION_us
             if (((multiPlayerGame != 0) && (multiGameType == 4)) || (racingInGame != 0)) {
-                TrapDanglingJump();
+                sprintFreeInstruments_Trap();
             } else if (numberOfPlayers == 1) {
-                TrapDanglingJump();
+                frontCleanupInstruments_Trap();
             } else {
-                TrapDanglingJump();
+                frontCleanupMultiInstruments_Trap();
             }
             #endif
             #ifdef VERSION_kiosk
             if ((multiGameType == 4) || (racingInGame != 0)) {
-                TrapDanglingJump();
+                sprintFreeInstruments_Trap();
             } else if (numberOfPlayers == 1) {
-                TrapDanglingJump();
+                frontCleanupInstruments_Trap();
             } else {
-                TrapDanglingJump();
+                frontCleanupMultiInstruments_Trap();
             }
             #endif
             break;
         case 17:
-            TrapDanglingJump();
+            frontCleanupMap_Trap();
             runlinkFreeCode(9);
             break;
         }
