@@ -6,6 +6,8 @@
 extern u16 SFXVolume;
 extern u16 musicVolume;
 extern s8 widescreenVOffset;
+extern u8 D_800A51A4_A5DA4;
+extern u8 D_800A51A8_A5DA8;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setLanguage.s")
 
@@ -77,9 +79,13 @@ s32 frontGetWorldLevel(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetScreenMode.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontStoreScreenMode.s")
+void frontStoreScreenMode(void) {
+    D_800A51A4_A5DA4 = D_800A51A8_A5DA8;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontRecallScreenMode.s")
+u8 frontRecallScreenMode(void) {
+    return D_800A51A4_A5DA4;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetLevelScreenMode.s")
 
