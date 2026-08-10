@@ -26,7 +26,7 @@ extern u8 D_800A51A8_A5DA8;
 extern u8 D_800FF386_B1D86;
 extern u8 frontEndMode;
 extern u8 multiGameType;
-extern u8 selectedControlModes;
+extern u8 selectedControlModes[];
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setLanguage.s")
 
@@ -226,11 +226,11 @@ void frontSetBgmVolume(s32 volume) {
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSet2PlayerSplit.s")
 
 u8 frontGetTargetControl(s32 arg0) {
-    return *(&selectedControlModes + (arg0 & 3));
+    return selectedControlModes[arg0 & 3];
 }
 
 void frontSetTargetControl(s32 arg0, s32 arg1) {
-    *(&selectedControlModes + (arg0 & 3)) = arg1 & 1;
+    selectedControlModes[arg0 & 3] = arg1 & 1;
 }
 #ifdef VERSION_us
 extern s8 charselquitmode;
