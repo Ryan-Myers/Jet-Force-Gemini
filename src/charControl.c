@@ -1,4 +1,6 @@
 #include "common.h"
+#include "charControl.h"
+#include "math/math.h"
 
 const char D_800AC5E0[] = "charAnimSoundTick: Illegal soundtype\n";
 const char D_800AC608[] = "The maximum number of camera objects has been exceeded.\n";
@@ -90,30 +92,40 @@ void controlDecapitatePlayer(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlThrowWeapon.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/charControl/dAngle.s")
+s16 dAngle(s16 arg0, s16 arg1, f32 arg2) {
+    s32 temp_t1;
+    s32 var_v1;
 
-void controlMakeGravity(u8 *player) {
+    var_v1 = (arg1 - arg0) & 0xFFFF;
+    temp_t1 = (arg0 - arg1) & 0xFFFF;
+    if (temp_t1 < var_v1) {
+        var_v1 = -temp_t1;
+    }
+    return (s16) (arg0 + (s32) ((f32) var_v1 * arg2));
+}
+
+void controlMakeGravity(ControlPlayer *player) {
     s32 pad;
     f32 *table1;
     f32 *table2;
 
     table1 = (f32 *) objGetTable(1);
     table2 = (f32 *) objGetTable(2);
-    controlchr_gravity = table1[((s8 *) player)[1] & 3] * table2[((s8 *) player)[0x575]];
-    if (player[0x194] == 1) {
+    controlchr_gravity = table1[player->gravityType & 3] * table2[player->gravityScaleIndex];
+    if (player->gravityDisabled == TRUE) {
         controlchr_gravity = 0.0f;
     }
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlMakeV.s")
 
-void controlFSUvels(s16 *rotation, u8 *player) {
-    s16 sp18[3];
+void controlFSUvels(s16 *rotation, ControlPlayer *player) {
+    Vec3s sp18;
 
-    sp18[0] = rotation[0];
-    sp18[1] = rotation[1];
-    sp18[2] = 0;
-    pointListRPY(3, sp18, D_800A2DB4_A39B4, (f32 *) (player + 0x18));
+    sp18.x = rotation[0];
+    sp18.y = rotation[1];
+    sp18.z = 0;
+    pointListRPY(3, &sp18, D_800A2DB4_A39B4, (f32 *) &player->unk18);
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlUpdateJetFlames.s")
@@ -244,15 +256,15 @@ void controlReadJoypad(s32 player) {
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlGetGunBarrelPos.s")
 
 // TODO: This is clearly wrong, but it works.
-s32 controlPlayerTiltList(Object *obj) {
-    Object_Racer *player = &obj->racer[1];
-    return &player->pad68[0x90];
+s16 *controlPlayerTiltList(Object *obj) {
+    ControlPlayer *player = (ControlPlayer *) &obj->racer[1];
+    return &player->playerTiltList;
 }
 
 // TODO: same as above
-s32 controlSidekickTiltList(Object *obj) {
-    Object_Racer *player = &obj->racer[0];
-    return &player->pad68[0x2E];
+s16 *controlSidekickTiltList(Object *obj) {
+    ControlPlayer *player = (ControlPlayer *) &obj->racer[0];
+    return &player->sidekickTiltList;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/charControl/controlGravity.s")
