@@ -4,6 +4,18 @@
 #include "gameVi.h"
 #include "functions.h"
 #include "font.h"
+#include "overlays/overlay9.h"
+#include "overlays/overlay12.h"
+#include "overlays/overlay14.h"
+#include "overlays/overlay31.h"
+#include "overlays/overlay37.h"
+#include "overlays/overlay40.h"
+#include "overlays/overlay42.h"
+#include "overlays/overlay57.h"
+#include "overlays/overlay58.h"
+#include "overlays/overlay61.h"
+#include "overlays/overlay62.h"
+#include "overlays/overlay63.h"
 
 extern u16 SFXVolume;
 extern u16 musicVolume;
