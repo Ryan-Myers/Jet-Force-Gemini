@@ -1,8 +1,8 @@
 #include "common.h"
 #include "math/math.h"
 
-
-typedef struct LobbyCamStruct {
+// Probably just Camera struct from camera.h
+typedef struct StaticCam {
     /* 0x00 */ Vec3s rotation;
     /* 0x06 */ s16 unk6;
     /* 0x08 */ f32 unk8;
@@ -14,50 +14,59 @@ typedef struct LobbyCamStruct {
     /* 0x20 */ f32 unk20;
     /* 0x24 */ f32 unk24;
     /* 0x2C */ f32 unk2C;
-} LobbyCamStruct;
+} StaticCam;
 
-extern LobbyCamStruct *gLobbyCam;
-extern s32 gStaticCam;
+StaticCam *gLobbyCam;
+StaticCam *gStaticCam;
 
 void staticcamFree(void) {
-    gStaticCam = 0;
+    gStaticCam = NULL;
 }
 
-void staticcamAdd(s32 arg0) {
-    gStaticCam = arg0;
+void staticcamAdd(StaticCam *cam) {
+    gStaticCam = cam;
 }
 
-void staticcamDelete(s32 arg0) {
-    if (arg0 == gStaticCam) {
-        gStaticCam = 0;
+void staticcamDelete(StaticCam *cam) {
+    if (cam == gStaticCam) {
+        gStaticCam = NULL;
     }
 }
 
-LobbyCamStruct *lobbycamInuse(void) {
+StaticCam *lobbycamInuse(void) {
     return gLobbyCam;
 }
 
-s32 staticcamInuse(void) {
+StaticCam *staticcamInuse(void) {
     return gStaticCam;
 }
 
-void lobbycamGetFocalPoint(LobbyCamStruct *arg0, f32 *arg1, f32 *arg2, f32 *arg3) {
+void lobbycamGetFocalPoint(StaticCam *cam, f32 *arg1, f32 *arg2, f32 *arg3) {
     Vec3f direction;
-    direction.x = arg0->unk14;
-    direction.y = arg0->unk18;
-    direction.z = arg0->unk1C;
-    if (arg0->unk6 != 0) {
-        mathOneFloatYPR(&arg0->rotation, &direction);
+    direction.x = cam->unk14;
+    direction.y = cam->unk18;
+    direction.z = cam->unk1C;
+    if (cam->unk6 != 0) {
+        mathOneFloatYPR(&cam->rotation, &direction);
     } else {
-        mathOneFloatRPY(&arg0->rotation, &direction);
+        mathOneFloatRPY(&cam->rotation, &direction);
     }
-    *arg1 = direction.f[0] + arg0->unk8;
-    *arg2 = direction.f[1] + arg0->unkC;
-    *arg3 = direction.f[2] + arg0->unk10;
+    *arg1 = direction.f[0] + cam->unk8;
+    *arg2 = direction.f[1] + cam->unkC;
+    *arg3 = direction.f[2] + cam->unk10;
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/staticcamera/func_800427E8_433E8.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/staticcamera/lobbycamPosition.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/staticcamera/staticcamPosition.s")
+void staticcamPosition(StaticCam *cam) {
+    if (gStaticCam != NULL) {
+        cam->unkC = gStaticCam->unkC;
+        cam->unk10 = gStaticCam->unk10;
+        cam->unk14 = gStaticCam->unk14;
+        cam->rotation.z = gStaticCam->rotation.z;
+        cam->rotation.y = -gStaticCam->rotation.y;
+        cam->rotation.x = 0x8000 - gStaticCam->rotation.x;
+    }
+}

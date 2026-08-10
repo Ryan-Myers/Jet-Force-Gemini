@@ -432,7 +432,7 @@ segments:
       - { type: .bss, vram: 0x800F7060, name: boot }
       - { type: .bss, vram: 0x800F94D0, name: hasm/entrypoint }
       - { type: bss, vram: 0x800FA4D0, name: camera }
-      - { type: bss, vram: 0x800FB080, name: staticcamera }
+      - { type: .bss, vram: 0x800FB080, name: staticcamera }
       - { type: .bss, vram: 0x800FB090, name: controller }
       - { type: bss, vram: 0x800FB110, name: level }
       - { type: bss, vram: 0x800FB400, name: main }
