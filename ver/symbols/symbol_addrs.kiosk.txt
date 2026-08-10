@@ -2359,6 +2359,7 @@ msgQueues = 0x800FFEB0;
 hideinstruments = 0x800FFFF0;
 globalflags = 0x800FFFF8;
 someResVar = 0x80100064;
+widescreenVOffset = 0x80100067;
 SFXVolume = 0x80100068;
 speakerSetting = 0x8010006C;
 musicVolume = 0x8010006A;
@@ -2582,7 +2583,7 @@ D_800AD390_ADF90 = 0x800ADF40; // force_not_migration:True
 // __BSS_SECTION_START = main_BSS_START;   /* Entrypoint addresses */
 // __BSS_SECTION_SIZE = main_BSS_SIZE;     /* Entrypoint addresses */
 
-// xprintf.c 
+// xprintf.c
 _spaces = 0x800AA8D0; // type:asciz
 _zeroes = 0x800AA8F4; // type:asciz
 

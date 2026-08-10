@@ -1,9 +1,11 @@
 #include "audio.h"
 #include "common.h"
 #include "gsSnd.h"
+#include "gameVi.h"
 
 extern u16 SFXVolume;
 extern u16 musicVolume;
+extern s8 widescreenVOffset;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setLanguage.s")
 
@@ -81,9 +83,15 @@ s32 frontGetWorldLevel(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetLevelScreenMode.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetWideAdjust.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetWideAdjust.s")
+s8 frontGetWideAdjust(void) {
+    return widescreenVOffset;
+}
+
+void frontSetWideAdjust(s32 arg0) {
+    viSetWideAdjust(arg0);
+    widescreenVOffset = viGetWideAdjust();
+}
 
 extern u8 speakerSetting;
 u8 frontGetStereoMode(void) {
