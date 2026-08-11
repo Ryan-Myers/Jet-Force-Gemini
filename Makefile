@@ -230,7 +230,7 @@ LD_SCRIPT  = ver/$(BASENAME).$(VERSION).ld
 
 LD_FLAGS   = -T $(LD_SCRIPT) -T $(SYMBOLS_DIR)/undefined_syms.txt -T $(SYMBOLS_DIR)/undefined_funcs_auto.$(VERSION).txt 
 LD_FLAGS  += -T $(SYMBOLS_DIR)/undefined_syms_auto.$(VERSION).txt -T $(SYMBOLS_DIR)/libultra_undefined_syms.$(VERSION).txt
-LD_FLAGS  += -T $(SYMBOLS_DIR)/undefined_syms.$(VERSION).txt
+LD_FLAGS  += -T $(SYMBOLS_DIR)/undefined_syms.$(VERSION).txt -T $(SYMBOLS_DIR)/overlay_traps.txt
 LD_FLAGS  += -Map $(TARGET).map
 
 ASM_PROCESSOR_DIR := $(TOOLS_DIR)/asm-processor
