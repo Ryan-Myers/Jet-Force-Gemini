@@ -1,5 +1,5 @@
-#include "common.h"
 #include "charControl.h"
+#include "common.h"
 #include "math/math.h"
 
 const char D_800AC5E0[] = "charAnimSoundTick: Illegal soundtype\n";

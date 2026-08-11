@@ -1,20 +1,8 @@
-#include "common.h"
-#include "math/math.h"
+#include "staticcamera.h"
 #include "camera.h"
 #include "charControl.h"
-
-// Seems to be different from the regular camera struct because it's loading floats in the first few positions.
-typedef struct LobbyCamStruct {
-    Vec3f unk0;
-    f32 unkC;
-    u8 pad10[0x4];
-    f32 unk14;
-    f32 unk18;
-    u8 pad1C[0x8];
-    f32 unk24;
-    f32 unk28;
-    f32 unk2C;
-} LobbyCamStruct;
+#include "common.h"
+#include "math/math.h"
 
 LobbyCamStruct *gLobbyCam;
 Camera *gStaticCam;
@@ -56,6 +44,9 @@ void lobbycamGetFocalPoint(Camera *cam, f32 *arg1, f32 *arg2, f32 *arg3) {
     *arg3 = direction.f[2] + cam->trans.y_position;
 }
 
+void func_800427E8_433E8(Camera *cam1, Camera *cam2, s32 exp, s32 smoothed);
+
+// I dunno, there's just so much damned float regalloc.
 #ifdef NON_EQUIVALENT
 void func_800427E8_433E8(Camera *cam1, Camera *cam2, s32 exp, s32 smoothed) {
     s16 sp8E;
@@ -110,7 +101,117 @@ void func_800427E8_433E8(Camera *cam1, Camera *cam2, s32 exp, s32 smoothed) {
 #pragma GLOBAL_ASM("asm/nonmatchings/staticcamera/func_800427E8_433E8.s")
 #endif
 
+#ifdef NON_EQUIVALENT
+void lobbycamPosition(Camera *cam1, Camera *cam2, s32 exp, s32 smoothed) {
+    s32 sp88;
+    f32 sp7C;
+    f32 sp78;
+    f32 sp74;
+    f32 sp70;
+    f32 sp6C;
+    f32 sp68;
+    f32 sp64;
+    f32 sp5C;
+    f32 sp50;
+    f32 sp48;
+    f32 sp40;
+    f32 temp_f0;
+    f32 temp_f0_2;
+    f32 temp_f10;
+    f32 temp_f12_2;
+    f32 temp_f14;
+    f32 temp_f16;
+    f32 temp_f18;
+    f32 temp_f18_2;
+    f32 temp_f20;
+    f32 var_f14_2;
+    f32 var_f16;
+    f32 var_f18;
+    f32 var_f20;
+    s16 temp_a0;
+
+    if (gLobbyCam->unk22 < 0x100) {
+        func_800427E8_433E8(cam1, cam2, exp, smoothed);
+        return;
+    }
+    sp7C = 1.0f;
+    sp78 = 1.0f;
+    if (smoothed != 0) {
+        sp7C = 1.0f - Powerf(0.9f, exp);
+        sp78 = 1.0f - Powerf(0.9375f, exp);
+    }
+    cam1->trans.position.z = gLobbyCam->unk24;
+    cam1->cam_unk_18 = gLobbyCam->unk28;
+    cam1->boomLength = gLobbyCam->unk2C;
+    lobbycamGetFocalPoint(cam1, &sp6C, &sp68, &sp64);
+    sp74 = gLobbyCam->unk0.x;
+    sp70 = gLobbyCam->unk0.z;
+    if (gLobbyCam->unk1C != 0.0f) {
+        sp48 = Sinf(gLobbyCam->unk20);
+        temp_f0 = Cosf(gLobbyCam->unk20);
+        temp_f16 = sp6C - gLobbyCam->unk0.x;
+        temp_f18 = sp64 - gLobbyCam->unk0.z;
+        var_f20 = (temp_f16 * temp_f0) - (temp_f18 * sp48);
+        temp_f10 = (temp_f16 * sp48) + (temp_f18 * temp_f0);
+        if (var_f20 < -gLobbyCam->unk1C) {
+            var_f20 = -gLobbyCam->unk1C;
+        }
+        if (gLobbyCam->unk1C < var_f20) {
+            var_f20 = gLobbyCam->unk1C;
+        }
+        if (temp_f10 < 0.0f) {
+            temp_f10 = -temp_f10;
+        }
+        if (temp_f10 < gLobbyCam->unk14) {
+            if (gLobbyCam->unk14 < sqrtf((var_f20 * var_f20) + (temp_f10 * temp_f10))) {
+                temp_f0_2 = sqrtf((gLobbyCam->unk14 * gLobbyCam->unk14) - (temp_f10 * temp_f10));
+                if (var_f20 < 0.0f) {
+                    var_f20 += temp_f0_2;
+                } else {
+                    var_f20 -= temp_f0_2;
+                }
+            } else {
+                var_f20 = 0.0f;
+            }
+        }
+        sp70 -= var_f20 * sp48;
+        sp74 += var_f20 * temp_f0;
+    }
+    var_f20 = sp74 - sp6C;
+    var_f14_2 = sp70 - sp64;
+    temp_f12_2 = (var_f20 * var_f20) + (var_f14_2 * var_f14_2);
+    if (temp_f12_2 > 0.0f) {
+        temp_f12_2 = sqrtf(temp_f12_2);
+        var_f20 *= gLobbyCam->unk14 / temp_f12_2;
+        var_f14_2 *= gLobbyCam->unk14 / temp_f12_2;
+    }
+    temp_f16 = sp6C + var_f20;
+    sp50 = gLobbyCam->unk18 + sp68;
+    temp_f18_2 = sp64 + var_f14_2;
+    temp_a0 = Arctanf(gLobbyCam->unk0.x - temp_f16, gLobbyCam->unk0.z - temp_f18_2) - gLobbyCam->unk20;
+    if ((temp_a0 != 0x7FFF) && ((temp_a0 < -gLobbyCam->unk22) || (gLobbyCam->unk22 < temp_a0))) {
+        temp_f16 = sp74;
+        temp_f18_2 = sp70;
+    } else if (temp_f12_2 < gLobbyCam->unk14) {
+        temp_f16 = sp74;
+        temp_f18_2 = sp70;
+    }
+    cam2->trans.position.x += ((temp_f16 - cam2->trans.position.x) * sp7C);
+    cam2->trans.position.y += ((sp50 - cam2->trans.position.y) * sp7C);
+    cam2->trans.position.z += ((temp_f18_2 - cam2->trans.position.z) * sp7C);
+    temp_f20 = cam2->trans.position.x - sp6C;
+    sp5C = cam2->trans.position.y - sp68;
+    temp_f14 = cam2->trans.position.z - sp64;
+    sp40 = sqrtf((temp_f20 * temp_f20) + (temp_f14 * temp_f14));
+    sp88 = 0x8000 - Arctanf(temp_f20, temp_f14);
+    Arctanf(sp5C, sp40);
+    cam2->trans.rotation.x = dAngle(cam2->trans.rotation.x, sp88, sp78);
+    cam2->trans.rotation.y = dAngle(cam2->trans.rotation.y, 0, sp78);
+    cam2->trans.rotation.z = dAngle(cam2->trans.rotation.z, 0, sp78);
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/staticcamera/lobbycamPosition.s")
+#endif
 
 void staticcamPosition(Camera *cam) {
     if (gStaticCam != NULL) {
