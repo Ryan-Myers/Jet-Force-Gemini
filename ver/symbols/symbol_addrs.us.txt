@@ -1913,6 +1913,7 @@ allweaponsCheat = 0x800A5078;
 rainbowblood = 0x800A5080;
 deformedchars = 0x800A5084;
 antsasmrpants = 0x800A5088;
+frontEndMode = 0x800A51B0;
 frR = 0x800A51B4;
 frB = 0x800A51BC;
 front_text = 0x800A51C8;
