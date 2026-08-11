@@ -1993,6 +1993,9 @@ gameType = 0x800A5A3C;
 invulnerabilityCheat = 0x800A5A40;
 infiniteammoCheat = 0x800A5A44;
 allweaponsCheat = 0x800A5A48;
+D_800A51A0_A5DA0 = 0x800A5B64;
+D_800A51A4_A5DA4 = 0x800A5B68;
+D_800A51A8_A5DA8 = 0x800A5B6C;
 frontEndMode = 0x800A5B74;
 frR = 0x800A5B78;
 frB = 0x800A5B80;
@@ -2359,9 +2362,12 @@ msgQueues = 0x800FFEB0;
 hideinstruments = 0x800FFFF0;
 globalflags = 0x800FFFF8;
 someResVar = 0x80100064;
+D_800FF386_B1D86 = 0x80100066;
+widescreenVOffset = 0x80100067;
 SFXVolume = 0x80100068;
-speakerSetting = 0x8010006C;
 musicVolume = 0x8010006A;
+speakerSetting = 0x8010006C;
+selectedControlModes = 0x8010006D;
 frontgfx = 0x80100078;
 frontmtx = 0x8010007C;
 frontvtx = 0x80100080;
@@ -2582,7 +2588,7 @@ D_800AD390_ADF90 = 0x800ADF40; // force_not_migration:True
 // __BSS_SECTION_START = main_BSS_START;   /* Entrypoint addresses */
 // __BSS_SECTION_SIZE = main_BSS_SIZE;     /* Entrypoint addresses */
 
-// xprintf.c 
+// xprintf.c
 _spaces = 0x800AA8D0; // type:asciz
 _zeroes = 0x800AA8F4; // type:asciz
 
