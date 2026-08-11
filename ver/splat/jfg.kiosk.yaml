@@ -499,7 +499,7 @@ segments:
   - name: overlay_1
     type: code
     start: 0x1A80D60
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x1010
     align: 0x8
     dir: overlays_kiosk/o1
@@ -513,7 +513,7 @@ segments:
   - name: overlay_2
     type: code
     start: 0x1A81C20
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x47A0
     align: 0x8
     dir: overlays_kiosk/o2
@@ -526,7 +526,7 @@ segments:
   - name: overlay_3
     type: code
     start: 0x1A82720
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0xE10
     align: 0x8
     dir: overlays_kiosk/o3
@@ -540,7 +540,7 @@ segments:
   - name: overlay_4
     type: code
     start: 0x1AA3560
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x160
     align: 0x8
     dir: overlays_kiosk/o4
@@ -554,7 +554,7 @@ segments:
   - name: overlay_5
     type: code
     start: 0x1AA5008
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0xA0
     align: 0x8
     dir: overlays_kiosk/o5
@@ -568,7 +568,7 @@ segments:
   - name: overlay_6
     type: code
     start: 0x1AA6188
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0xF0
     align: 0x8
     dir: overlays_kiosk/o6
@@ -582,7 +582,7 @@ segments:
   - name: overlay_7
     type: code
     start: 0x1AA8310
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x1B0
     align: 0x8
     dir: overlays_kiosk/o7
@@ -596,7 +596,7 @@ segments:
   - name: overlay_8
     type: code
     start: 0x1AAC280
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x15A0
     align: 0x8
     dir: overlays_kiosk/o8
@@ -610,7 +610,7 @@ segments:
   - name: overlay_9
     type: code
     start: 0x1AADE78
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x4E40
     align: 0x8
     dir: overlays_kiosk/o9
@@ -624,7 +624,7 @@ segments:
   - name: overlay_10
     type: code
     start: 0x1AB39B0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x140
     align: 0x8
     dir: overlays_kiosk/o10
@@ -638,7 +638,7 @@ segments:
   - name: overlay_11
     type: code
     start: 0x1AB41F8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x3E0
     align: 0x8
     dir: overlays_kiosk/o11
@@ -652,7 +652,7 @@ segments:
   - name: overlay_12
     type: code
     start: 0x1AB6048
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x60
     align: 0x8
     dir: overlays_kiosk/o12
@@ -666,7 +666,7 @@ segments:
   - name: overlay_13
     type: code
     start: 0x1AB8A08
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o13
@@ -680,7 +680,7 @@ segments:
   - name: overlay_14
     type: code
     start: 0x1ABA680
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x20
     align: 0x8
     dir: overlays_kiosk/o14
@@ -694,7 +694,7 @@ segments:
   - name: overlay_15
     type: code
     start: 0x1AC05B8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x20
     align: 0x8
     dir: overlays_kiosk/o15
@@ -708,7 +708,7 @@ segments:
   - name: overlay_16
     type: code
     start: 0x1ACA670
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x10
     align: 0x8
     dir: overlays_kiosk/o16
@@ -722,7 +722,7 @@ segments:
   - name: overlay_17
     type: code
     start: 0x1AD3BB0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x10
     align: 0x8
     dir: overlays_kiosk/o17
@@ -736,7 +736,7 @@ segments:
   - name: overlay_18
     type: code
     start: 0x1ADB480
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x150
     align: 0x8
     dir: overlays_kiosk/o18
@@ -750,7 +750,7 @@ segments:
   - name: overlay_19
     type: code
     start: 0x1AE4DB8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x70
     align: 0x8
     dir: overlays_kiosk/o19
@@ -764,7 +764,7 @@ segments:
   - name: overlay_20
     type: code
     start: 0x1AE7270
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o20
@@ -778,7 +778,7 @@ segments:
   - name: overlay_22
     type: code
     start: 0x1AE7700
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x20
     align: 0x8
     dir: overlays_kiosk/o22
@@ -792,7 +792,7 @@ segments:
   - name: overlay_23
     type: code
     start: 0x1AEBEE8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x40
     align: 0x8
     dir: overlays_kiosk/o23
@@ -806,7 +806,7 @@ segments:
   - name: overlay_24
     type: code
     start: 0x1AEC950
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x10
     align: 0x8
     dir: overlays_kiosk/o24
@@ -820,7 +820,7 @@ segments:
   - name: overlay_25
     type: code
     start: 0x1AEE668
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o25
@@ -833,7 +833,7 @@ segments:
   - name: overlay_26
     type: code
     start: 0x1AEF260
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o26
@@ -847,7 +847,7 @@ segments:
   - name: overlay_27
     type: code
     start: 0x1AF05C8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o27
@@ -861,7 +861,7 @@ segments:
   - name: overlay_28
     type: code
     start: 0x1AF0AF8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o28
@@ -875,7 +875,7 @@ segments:
   - name: overlay_29
     type: code
     start: 0x1AF2950
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x50
     align: 0x8
     dir: overlays_kiosk/o29
@@ -889,7 +889,7 @@ segments:
   - name: overlay_30
     type: code
     start: 0x1AF3F98
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o30
@@ -902,7 +902,7 @@ segments:
   - name: overlay_31
     type: code
     start: 0x1AF5B00
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x540
     align: 0x8
     dir: overlays_kiosk/o31
@@ -916,7 +916,7 @@ segments:
   - name: overlay_32
     type: code
     start: 0x1AFB208
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o32
@@ -930,7 +930,7 @@ segments:
   - name: overlay_33
     type: code
     start: 0x1AFEB38
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o33
@@ -943,7 +943,7 @@ segments:
   - name: overlay_34
     type: code
     start: 0x1AFEDC8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o34
@@ -956,7 +956,7 @@ segments:
   - name: overlay_35
     type: code
     start: 0x1AFF418
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o35
@@ -969,7 +969,7 @@ segments:
   - name: overlay_36
     type: code
     start: 0x1AFF818
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o36
@@ -983,7 +983,7 @@ segments:
   - name: overlay_37
     type: code
     start: 0x1B00470
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x60
     align: 0x8
     dir: overlays_kiosk/o37
@@ -997,7 +997,7 @@ segments:
   - name: overlay_38
     type: code
     start: 0x1B029C8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o38
@@ -1011,7 +1011,7 @@ segments:
   - name: overlay_39
     type: code
     start: 0x1B02DD0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x30
     align: 0x8
     dir: overlays_kiosk/o39
@@ -1025,7 +1025,7 @@ segments:
   - name: overlay_40
     type: code
     start: 0x1B03758
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x60
     align: 0x8
     dir: overlays_kiosk/o40
@@ -1039,7 +1039,7 @@ segments:
   - name: overlay_41
     type: code
     start: 0x1B06E48
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x20
     align: 0x8
     dir: overlays_kiosk/o41
@@ -1053,7 +1053,7 @@ segments:
   - name: overlay_42
     type: code
     start: 0x1B08BB8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x2000
     align: 0x8
     dir: overlays_kiosk/o42
@@ -1067,7 +1067,7 @@ segments:
   - name: overlay_43
     type: code
     start: 0x1B0D490
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o43
@@ -1081,7 +1081,7 @@ segments:
   - name: overlay_44
     type: code
     start: 0x1B0DB90
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x5F0
     align: 0x8
     dir: overlays_kiosk/o44
@@ -1095,7 +1095,7 @@ segments:
   - name: overlay_45
     type: code
     start: 0x1B0E980
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o45
@@ -1109,7 +1109,7 @@ segments:
   - name: overlay_46
     type: code
     start: 0x1B0F570
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x40
     align: 0x8
     dir: overlays_kiosk/o46
@@ -1123,7 +1123,7 @@ segments:
   - name: overlay_47
     type: code
     start: 0x1B12310
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x10
     align: 0x8
     dir: overlays_kiosk/o47
@@ -1137,7 +1137,7 @@ segments:
   - name: overlay_48
     type: code
     start: 0x1B12C80
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0xA0
     align: 0x8
     dir: overlays_kiosk/o48
@@ -1151,7 +1151,7 @@ segments:
   - name: overlay_49
     type: code
     start: 0x1B13AB0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x10
     align: 0x8
     dir: overlays_kiosk/o49
@@ -1165,7 +1165,7 @@ segments:
   - name: overlay_50
     type: code
     start: 0x1B16228
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x10
     align: 0x8
     dir: overlays_kiosk/o50
@@ -1179,7 +1179,7 @@ segments:
   - name: overlay_51
     type: code
     start: 0x1B184F0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x10
     align: 0x8
     dir: overlays_kiosk/o51
@@ -1193,7 +1193,7 @@ segments:
   - name: overlay_52
     type: code
     start: 0x1B1AD78
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x40
     align: 0x8
     dir: overlays_kiosk/o52
@@ -1207,7 +1207,7 @@ segments:
   - name: overlay_53
     type: code
     start: 0x1B1F268
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o53
@@ -1221,7 +1221,7 @@ segments:
   - name: overlay_54
     type: code
     start: 0x1B1FE18
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o54
@@ -1235,7 +1235,7 @@ segments:
   - name: overlay_56
     type: code
     start: 0x1B20A90
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o56
@@ -1249,7 +1249,7 @@ segments:
   - name: overlay_57
     type: code
     start: 0x1B21A78
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x40
     align: 0x8
     dir: overlays_kiosk/o57
@@ -1263,7 +1263,7 @@ segments:
   - name: overlay_58
     type: code
     start: 0x1B23338
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x50
     align: 0x8
     dir: overlays_kiosk/o58
@@ -1277,7 +1277,7 @@ segments:
   - name: overlay_59
     type: code
     start: 0x1B243B8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o59
@@ -1290,7 +1290,7 @@ segments:
   - name: overlay_60
     type: code
     start: 0x1B24E28
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x1D0
     align: 0x8
     dir: overlays_kiosk/o60
@@ -1304,7 +1304,7 @@ segments:
   - name: overlay_61
     type: code
     start: 0x1B29250
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0xE0
     align: 0x8
     dir: overlays_kiosk/o61
@@ -1318,7 +1318,7 @@ segments:
   - name: overlay_62
     type: code
     start: 0x1B2DB90
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x30
     align: 0x8
     dir: overlays_kiosk/o62
@@ -1332,7 +1332,7 @@ segments:
   - name: overlay_63
     type: code
     start: 0x1B2F378
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o63
@@ -1346,7 +1346,7 @@ segments:
   - name: overlay_64
     type: code
     start: 0x1B30198
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o64
@@ -1360,7 +1360,7 @@ segments:
   - name: overlay_65
     type: code
     start: 0x1B308E8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o65
@@ -1373,7 +1373,7 @@ segments:
   - name: overlay_66
     type: code
     start: 0x1B31358
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o66
@@ -1387,7 +1387,7 @@ segments:
   - name: overlay_67
     type: code
     start: 0x1B36E70
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0xD30
     align: 0x8
     dir: overlays_kiosk/o67
@@ -1401,7 +1401,7 @@ segments:
   - name: overlay_68
     type: code
     start: 0x1B4C710
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x20
     align: 0x8
     dir: overlays_kiosk/o68
@@ -1415,7 +1415,7 @@ segments:
   - name: overlay_69
     type: code
     start: 0x1B4EE00
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o69
@@ -1428,7 +1428,7 @@ segments:
   - name: overlay_70
     type: code
     start: 0x1B4EEF8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o70
@@ -1441,7 +1441,7 @@ segments:
   - name: overlay_71
     type: code
     start: 0x1B4EF90
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o71
@@ -1455,7 +1455,7 @@ segments:
   - name: overlay_72
     type: code
     start: 0x1B4F4B8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o72
@@ -1469,7 +1469,7 @@ segments:
   - name: overlay_73
     type: code
     start: 0x1B500E0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o73
@@ -1483,7 +1483,7 @@ segments:
   - name: overlay_74
     type: code
     start: 0x1B50358
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x30
     align: 0x8
     dir: overlays_kiosk/o74
@@ -1497,7 +1497,7 @@ segments:
   - name: overlay_75
     type: code
     start: 0x1B51F40
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o75
@@ -1511,7 +1511,7 @@ segments:
   - name: overlay_76
     type: code
     start: 0x1B52F00
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o76
@@ -1525,7 +1525,7 @@ segments:
   - name: overlay_77
     type: code
     start: 0x1B53850
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o77
@@ -1538,7 +1538,7 @@ segments:
   - name: overlay_78
     type: code
     start: 0x1B53928
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o78
@@ -1551,7 +1551,7 @@ segments:
   - name: overlay_79
     type: code
     start: 0x1B539C0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o79
@@ -1565,7 +1565,7 @@ segments:
   - name: overlay_80
     type: code
     start: 0x1B55180
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x60
     align: 0x8
     dir: overlays_kiosk/o80
@@ -1579,7 +1579,7 @@ segments:
   - name: overlay_81
     type: code
     start: 0x1B55FA0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x30
     align: 0x8
     dir: overlays_kiosk/o81
@@ -1593,7 +1593,7 @@ segments:
   - name: overlay_82
     type: code
     start: 0x1B57F98
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o82
@@ -1607,7 +1607,7 @@ segments:
   - name: overlay_83
     type: code
     start: 0x1B594E0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o83
@@ -1620,7 +1620,7 @@ segments:
   - name: overlay_84
     type: code
     start: 0x1B595B8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o84
@@ -1633,7 +1633,7 @@ segments:
   - name: overlay_85
     type: code
     start: 0x1B59908
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o85
@@ -1647,7 +1647,7 @@ segments:
   - name: overlay_86
     type: code
     start: 0x1B59F88
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o86
@@ -1661,7 +1661,7 @@ segments:
   - name: overlay_87
     type: code
     start: 0x1B5B640
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o87
@@ -1675,7 +1675,7 @@ segments:
   - name: overlay_88
     type: code
     start: 0x1B5B9D0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o88
@@ -1689,7 +1689,7 @@ segments:
   - name: overlay_89
     type: code
     start: 0x1B5BEE0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o89
@@ -1703,7 +1703,7 @@ segments:
   - name: overlay_90
     type: code
     start: 0x1B5C718
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o90
@@ -1717,7 +1717,7 @@ segments:
   - name: overlay_91
     type: code
     start: 0x1B5D8A0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o91
@@ -1731,7 +1731,7 @@ segments:
   - name: overlay_92
     type: code
     start: 0x1B5E128
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o92
@@ -1745,7 +1745,7 @@ segments:
   - name: overlay_93
     type: code
     start: 0x1B5E528
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o93
@@ -1759,7 +1759,7 @@ segments:
   - name: overlay_94
     type: code
     start: 0x1B5E708
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x20
     align: 0x8
     dir: overlays_kiosk/o94
@@ -1773,7 +1773,7 @@ segments:
   - name: overlay_95
     type: code
     start: 0x1B60068
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o95
@@ -1787,7 +1787,7 @@ segments:
   - name: overlay_96
     type: code
     start: 0x1B60770
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o96
@@ -1801,7 +1801,7 @@ segments:
   - name: overlay_97
     type: code
     start: 0x1B60BB0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o97
@@ -1814,7 +1814,7 @@ segments:
   - name: overlay_98
     type: code
     start: 0x1B60C48
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o98
@@ -1828,7 +1828,7 @@ segments:
   - name: overlay_99
     type: code
     start: 0x1B614C0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o99
@@ -1842,7 +1842,7 @@ segments:
   - name: overlay_100
     type: code
     start: 0x1B617F0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o100
@@ -1856,7 +1856,7 @@ segments:
   - name: overlay_101
     type: code
     start: 0x1B62AA8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o101
@@ -1870,7 +1870,7 @@ segments:
   - name: overlay_102
     type: code
     start: 0x1B63488
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o102
@@ -1884,7 +1884,7 @@ segments:
   - name: overlay_103
     type: code
     start: 0x1B63750
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o103
@@ -1898,7 +1898,7 @@ segments:
   - name: overlay_104
     type: code
     start: 0x1B63ED0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o104
@@ -1912,7 +1912,7 @@ segments:
   - name: overlay_105
     type: code
     start: 0x1B65E98
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o105
@@ -1926,7 +1926,7 @@ segments:
   - name: overlay_106
     type: code
     start: 0x1B680E8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x190
     align: 0x8
     dir: overlays_kiosk/o106
@@ -1940,7 +1940,7 @@ segments:
   - name: overlay_107
     type: code
     start: 0x1B69340
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o107
@@ -1954,7 +1954,7 @@ segments:
   - name: overlay_108
     type: code
     start: 0x1B695E0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o108
@@ -1968,7 +1968,7 @@ segments:
   - name: overlay_109
     type: code
     start: 0x1B6A400
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o109
@@ -1981,7 +1981,7 @@ segments:
   - name: overlay_110
     type: code
     start: 0x1B6A810
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o110
@@ -1993,7 +1993,7 @@ segments:
   - name: overlay_111
     type: code
     start: 0x1B6A820
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o111
@@ -2007,7 +2007,7 @@ segments:
   - name: overlay_112
     type: code
     start: 0x1B6BF18
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o112
@@ -2021,7 +2021,7 @@ segments:
   - name: overlay_113
     type: code
     start: 0x1B6CD60
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o113
@@ -2035,7 +2035,7 @@ segments:
   - name: overlay_114
     type: code
     start: 0x1B6D380
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o114
@@ -2048,7 +2048,7 @@ segments:
   - name: overlay_115
     type: code
     start: 0x1B6D808
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o115
@@ -2062,7 +2062,7 @@ segments:
   - name: overlay_116
     type: code
     start: 0x1B6DE40
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o116
@@ -2076,7 +2076,7 @@ segments:
   - name: overlay_117
     type: code
     start: 0x1B6EB10
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o117
@@ -2090,7 +2090,7 @@ segments:
   - name: overlay_118
     type: code
     start: 0x1B6F4E0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o118
@@ -2104,7 +2104,7 @@ segments:
   - name: overlay_119
     type: code
     start: 0x1B6F618
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o119
@@ -2118,7 +2118,7 @@ segments:
   - name: overlay_120
     type: code
     start: 0x1B702F0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o120
@@ -2132,7 +2132,7 @@ segments:
   - name: overlay_121
     type: code
     start: 0x1B713D0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o121
@@ -2146,7 +2146,7 @@ segments:
   - name: overlay_122
     type: code
     start: 0x1B72738
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o122
@@ -2159,7 +2159,7 @@ segments:
   - name: overlay_123
     type: code
     start: 0x1B72B98
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o123
@@ -2173,7 +2173,7 @@ segments:
   - name: overlay_124
     type: code
     start: 0x1B73670
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o124
@@ -2187,7 +2187,7 @@ segments:
   - name: overlay_125
     type: code
     start: 0x1B73CD8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x300
     align: 0x8
     dir: overlays_kiosk/o125
@@ -2201,7 +2201,7 @@ segments:
   - name: overlay_126
     type: code
     start: 0x1B75170
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x50
     align: 0x8
     dir: overlays_kiosk/o126
@@ -2215,7 +2215,7 @@ segments:
   - name: overlay_127
     type: code
     start: 0x1B769C0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o127
@@ -2229,7 +2229,7 @@ segments:
   - name: overlay_128
     type: code
     start: 0x1B76CF0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x40
     align: 0x8
     dir: overlays_kiosk/o128
@@ -2243,7 +2243,7 @@ segments:
   - name: overlay_129
     type: code
     start: 0x1B784B8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o129
@@ -2257,7 +2257,7 @@ segments:
   - name: overlay_130
     type: code
     start: 0x1B78B60
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o130
@@ -2271,7 +2271,7 @@ segments:
   - name: overlay_131
     type: code
     start: 0x1B79460
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o131
@@ -2285,7 +2285,7 @@ segments:
   - name: overlay_132
     type: code
     start: 0x1B79808
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o132
@@ -2297,7 +2297,7 @@ segments:
   - name: overlay_133
     type: code
     start: 0x1B79818
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o133
@@ -2310,7 +2310,7 @@ segments:
   - name: overlay_134
     type: code
     start: 0x1B79918
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x20
     align: 0x8
     dir: overlays_kiosk/o134
@@ -2324,7 +2324,7 @@ segments:
   - name: overlay_135
     type: code
     start: 0x1B7C790
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o135
@@ -2338,7 +2338,7 @@ segments:
   - name: overlay_136
     type: code
     start: 0x1B7E7D0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x240
     align: 0x8
     dir: overlays_kiosk/o136
@@ -2352,7 +2352,7 @@ segments:
   - name: overlay_137
     type: code
     start: 0x1B80258
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o137
@@ -2366,7 +2366,7 @@ segments:
   - name: overlay_138
     type: code
     start: 0x1B805D8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x90
     align: 0x8
     dir: overlays_kiosk/o138
@@ -2380,7 +2380,7 @@ segments:
   - name: overlay_139
     type: code
     start: 0x1B80AA8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o139
@@ -2394,7 +2394,7 @@ segments:
   - name: overlay_140
     type: code
     start: 0x1B80EF0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o140
@@ -2408,7 +2408,7 @@ segments:
   - name: overlay_141
     type: code
     start: 0x1B81338
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x40
     align: 0x8
     dir: overlays_kiosk/o141
@@ -2422,7 +2422,7 @@ segments:
   - name: overlay_142
     type: code
     start: 0x1B82DB0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x300
     align: 0x8
     dir: overlays_kiosk/o142
@@ -2436,7 +2436,7 @@ segments:
   - name: overlay_143
     type: code
     start: 0x1B86500
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o143
@@ -2448,7 +2448,7 @@ segments:
   - name: overlay_144
     type: code
     start: 0x1B86510
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o144
@@ -2461,7 +2461,7 @@ segments:
   - name: overlay_145
     type: code
     start: 0x1B86948
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x10
     align: 0x8
     dir: overlays_kiosk/o145
@@ -2475,7 +2475,7 @@ segments:
   - name: overlay_146
     type: code
     start: 0x1B87CE8
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o146
@@ -2489,7 +2489,7 @@ segments:
   - name: overlay_147
     type: code
     start: 0x1B883C0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o147
@@ -2502,7 +2502,7 @@ segments:
   - name: overlay_148
     type: code
     start: 0x1B88620
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x40
     align: 0x8
     dir: overlays_kiosk/o148
@@ -2516,7 +2516,7 @@ segments:
   - name: overlay_149
     type: code
     start: 0x1B8AD60
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o149
@@ -2529,7 +2529,7 @@ segments:
   - name: overlay_150
     type: code
     start: 0x1B8B0A0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0xD0
     align: 0x8
     dir: overlays_kiosk/o150
@@ -2543,7 +2543,7 @@ segments:
   - name: overlay_151
     type: code
     start: 0x1B8C320
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x440
     align: 0x8
     dir: overlays_kiosk/o151
@@ -2557,7 +2557,7 @@ segments:
   - name: overlay_152
     type: code
     start: 0x1B8D558
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o152
@@ -2571,7 +2571,7 @@ segments:
   - name: overlay_153
     type: code
     start: 0x1B8DA00
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x1A0
     align: 0x8
     dir: overlays_kiosk/o153
@@ -2585,7 +2585,7 @@ segments:
   - name: overlay_154
     type: code
     start: 0x1B8F888
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x1310
     align: 0x8
     dir: overlays_kiosk/o154
@@ -2599,7 +2599,7 @@ segments:
   - name: overlay_155
     type: code
     start: 0x1B941B0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o155
@@ -2611,7 +2611,7 @@ segments:
   - name: overlay_156
     type: code
     start: 0x1B941E0
-    vram: 0xF0000000
+    vram: 0x0
     bss_size: 0x0
     align: 0x8
     dir: overlays_kiosk/o156

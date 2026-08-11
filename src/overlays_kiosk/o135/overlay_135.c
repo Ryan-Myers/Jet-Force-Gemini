@@ -36,7 +36,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o135/overlay_135/AIPointInit.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o135/overlay_135/func_overlay_135_F0001740_1B7DED0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o135/overlay_135/func_overlay_135_00001740_1B7DED0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o135/overlay_135/SquadronInit.s")
 

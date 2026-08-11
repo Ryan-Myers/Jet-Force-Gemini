@@ -2665,3 +2665,5 @@ rspF3DDKRDramStart = 0x8009FC60;
 // ucode_data
 aspMainDataStart = 0x800B0770;
 rspF3DDKRDataDramStart = 0x800B0EB0;
+
+D_00000400 = 0x00000400; //ignore:True
