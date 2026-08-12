@@ -465,6 +465,7 @@ $(GLOBAL_ASM_O_FILES): $(BUILD_DIR)/%.c.o: %.c
 	$(call print,Compiling:,$<,$@)
 	$(V)$(CC_CHECK) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
 	$(V)$(CC) -c $(CFLAGS) $(LIBULTRA_VERSION_DEFINE) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+	$(PYTHON) $(TOOLS_DIR)/patch_symbol.py $@ $@
 endif
 
 # non asm-processor recipe

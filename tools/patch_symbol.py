@@ -3,11 +3,10 @@
 import sys
 import struct
 from elftools.elf.elffile import ELFFile
-from elftools.elf.sections import Section, SymbolTableSection, Symbol
+from elftools.elf.sections import SymbolTableSection, Symbol
 
 
-def patch_symbol(input_path, output_path,
-                 old_name="mantisLightingGetFog_Trap",
+def patch_symbol(input_path, output_path, old_name,
                  new_name="TrapDanglingJump"):
 
     with open(input_path, "rb") as f:
@@ -160,4 +159,7 @@ if __name__ == "__main__":
         print(f"Usage: {sys.argv[0]} input.o output.o")
         sys.exit(1)
 
-    patch_symbol(sys.argv[1], sys.argv[2])
+    
+
+    patch_symbol(sys.argv[1], sys.argv[2], "mantisLightingGetFog")
+    patch_symbol(sys.argv[1], sys.argv[2], "dayGetFog")
