@@ -236,6 +236,15 @@ LD_FLAGS  += -Map $(TARGET).map
 ASM_PROCESSOR_DIR := $(TOOLS_DIR)/asm-processor
 ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 
+# Patches symbol trapping into compiled objects for the main section.
+PATCH_SYMBOLS = $(PYTHON) $(TOOLS_DIR)/patch_symbol.py ver/symbols/overlay_funcs_to_trap.txt
+
+# Don't patch symbols for overlays
+$(foreach dir,$(SRC_OVERLAYS_DIRS),$(BUILD_DIR)/$(dir)/%.c.o): PATCH_SYMBOLS := :
+# Don't patch symbols for libultra files
+$(foreach dir,$(LIBULTRA_SRC_DIRS),$(BUILD_DIR)/$(dir)/%.c.o): PATCH_SYMBOLS := :
+$(foreach dir,$(OLD_LIBULTRA_DIR),$(BUILD_DIR)/$(dir)/%.c.o): PATCH_SYMBOLS := :
+
 ### Optimisation Overrides
 ####################### LIBULTRA #########################
 
@@ -465,7 +474,7 @@ $(GLOBAL_ASM_O_FILES): $(BUILD_DIR)/%.c.o: %.c
 	$(call print,Compiling:,$<,$@)
 	$(V)$(CC_CHECK) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
 	$(V)$(CC) -c $(CFLAGS) $(LIBULTRA_VERSION_DEFINE) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
-	$(PYTHON) $(TOOLS_DIR)/patch_symbol.py $@ $@
+	$(V)$(PATCH_SYMBOLS) $@ $@
 endif
 
 # non asm-processor recipe
@@ -473,6 +482,7 @@ $(BUILD_DIR)/%.c.o: %.c
 	$(call print,Compiling:,$<,$@)
 	$(V)$(CC_CHECK) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
 	$(V)$(CC) -c $(CFLAGS) $(LIBULTRA_VERSION_DEFINE) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+	$(V)$(PATCH_SYMBOLS) $@ $@
 
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: $(LIBULTRA_DIR)/src/libc/llcvt.c
 	$(call print,Compiling mips3:,$<,$@)

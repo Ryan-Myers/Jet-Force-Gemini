@@ -6,9 +6,7 @@ from elftools.elf.elffile import ELFFile
 from elftools.elf.sections import SymbolTableSection, Symbol
 
 
-def patch_symbol(input_path, output_path, old_name,
-                 new_name="TrapDanglingJump"):
-
+def patch_symbol(input_path, output_path, old_name, new_name="TrapDanglingJump"):
     with open(input_path, "rb") as f:
         data = bytearray(f.read())
 
@@ -36,8 +34,9 @@ def patch_symbol(input_path, output_path, old_name,
                 target_symbol = sym
                 break
 
+        # Don't process things if the target symbol wasn't found.
         if target_symbol is None:
-            raise RuntimeError(f"Symbol '{old_name}' not found")
+            return
 
         print(f"Found symbol {target_index}: {old_name}")
 
@@ -153,13 +152,19 @@ def patch_symbol(input_path, output_path, old_name,
 
     print(f"Patched {old_name} -> {new_name}")
 
+def read_symbol_names(function_list_path):
+    with open(function_list_path, "r") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            yield line
+
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print(f"Usage: {sys.argv[0]} input.o output.o")
+    if len(sys.argv) != 4:
+        print(f"Usage: {sys.argv[0]} ver/symbols/overlay_funcs_to_trap.txt input.o output.o")
         sys.exit(1)
 
-    
-
-    patch_symbol(sys.argv[1], sys.argv[2], "mantisLightingGetFog")
-    patch_symbol(sys.argv[1], sys.argv[2], "dayGetFog")
+    for function in read_symbol_names(sys.argv[1]):
+        patch_symbol(sys.argv[2], sys.argv[3], function)
