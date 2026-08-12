@@ -3,6 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void cloneTasksQueueAndWait_Trap(void);
+void cloneTasksQueueAndWait(void);
 
 #endif

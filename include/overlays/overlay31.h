@@ -3,6 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void sprintFreeInstruments_Trap(void);
+void sprintFreeInstruments(void);
 
 #endif

@@ -3,6 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void frontCleanupMap_Trap(void);
+void frontCleanupMap(void);
 
 #endif

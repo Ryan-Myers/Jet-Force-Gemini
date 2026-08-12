@@ -34,7 +34,7 @@ extern u8 selectedControlModes[];
 
 void frontFreeMode(void) {
     if (runlinkIsModuleLoaded(0xC) != 0) {
-        frontFreeMenuFrame_Trap();
+        frontFreeMenuFrame();
     }
     if (D_800A51A0_A5DA0 != 0) {
         switch (frontEndMode) {
@@ -42,55 +42,55 @@ void frontFreeMode(void) {
                 fontWindowFlushStrings(1);
                 break;
             case 2:
-                frontCleanupRarepage_Trap();
+                frontCleanupRarepage();
                 break;
             case 3:
-                frontCleanupStartScreen_Trap();
+                frontCleanupStartScreen();
                 break;
             case 4:
-                frontCleanupOptionsPage_Trap();
+                frontCleanupOptionsPage();
                 break;
             case 5:
-                frontCleanupCharSelect_Trap();
+                frontCleanupCharSelect();
                 break;
             case 6:
-                frontCleanupMultiSelect_Trap();
+                frontCleanupMultiSelect();
                 break;
             case 8:
-                frontCleanupMultiModeSelect_Trap();
+                frontCleanupMultiModeSelect();
                 break;
             case 18:
             case 19:
             case 20:
             case 21:
             case 22:
-                frontCleanupMultiStats_Trap();
+                frontCleanupMultiStats();
                 break;
             case 24:
-                frontKeyboardCleanup_Trap();
+                frontKeyboardCleanup();
                 break;
             case 16:
 #ifdef VERSION_us
                 if (((multiPlayerGame != 0) && (multiGameType == 4)) || (racingInGame != 0)) {
-                    sprintFreeInstruments_Trap();
+                    sprintFreeInstruments();
                 } else if (numberOfPlayers == 1) {
-                    frontCleanupInstruments_Trap();
+                    frontCleanupInstruments();
                 } else {
-                    frontCleanupMultiInstruments_Trap();
+                    frontCleanupMultiInstruments();
                 }
 #endif
 #ifdef VERSION_kiosk
                 if ((multiGameType == 4) || (racingInGame != 0)) {
-                    sprintFreeInstruments_Trap();
+                    sprintFreeInstruments();
                 } else if (numberOfPlayers == 1) {
-                    frontCleanupInstruments_Trap();
+                    frontCleanupInstruments();
                 } else {
-                    frontCleanupMultiInstruments_Trap();
+                    frontCleanupMultiInstruments();
                 }
 #endif
                 break;
             case 17:
-                frontCleanupMap_Trap();
+                frontCleanupMap();
                 runlinkFreeCode(9);
                 break;
         }
