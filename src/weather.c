@@ -809,8 +809,8 @@ void func_8005CAD0_5D6D0(UNUSED s32 updateRate) {
     f32 sinOffset;
 
     length = 1152.0f - (f32) (gLightningFrequency >> 6);
-    cosOffset = Sinf(-0x8000 - gWeatherCamera->trans.y_rotation);
-    sinOffset = Cosf(-0x8000 - gWeatherCamera->trans.y_rotation);
+    cosOffset = Sinf(-0x8000 - gWeatherCamera->trans.rotation.x);
+    sinOffset = Cosf(-0x8000 - gWeatherCamera->trans.rotation.x);
     xPos = gWeatherCamera->trans.x_position - (length * cosOffset);
     yPos = gWeatherCamera->trans.y_position;
     zPos = gWeatherCamera->trans.z_position - (length * sinOffset);

@@ -1623,19 +1623,33 @@ LEAF(matrixID)
     jr         ra
 END(matrixID)
 
+/**
+ * Computes the power of a floating-point number.
+ *
+ * Official Name: Powerf
+ *
+ * Arguments:
+ *   fa0 = base (float)
+ *   a1  = exponent (int)
+ *
+ * Returns:
+ *   fv0 = result (float)
+
+ * float Powerf(float base, int exp);
+ */
 LEAF(Powerf)
     li.s       fv0, 1.0
-    beqz       a1, .L80049F28
-    blez       a1, .L80049F20
+    beqz       a1, .L80049F28 /* If exponent is 0, return 1.0 */
+    blez       a1, .L80049F20 /* If exponent is negative, compute reciprocal */
     .L80049F08:
-    addiu      a1, -0x1
-    mul.s      fv0, fa0
-    bnez       a1, .L80049F08
+    addiu      a1, -0x1 /* Decrement exponent */
+    mul.s      fv0, fa0 /* Multiply result by base */
+    bnez       a1, .L80049F08 /* Repeat until exponent is 0 */
     jr         ra
     .L80049F20:
-    addiu      a1, 0x1
-    div.s      fv0, fa0
-    bnez       a1, .L80049F20
+    addiu      a1, 0x1 /* Increment exponent (since it's negative) */
+    div.s      fv0, fa0 /* Divide result by base */
+    bnez       a1, .L80049F20 /* Repeat until exponent is 0 */
     .L80049F28:
     jr         ra
 END(Powerf)

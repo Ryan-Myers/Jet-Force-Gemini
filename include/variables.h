@@ -19,7 +19,7 @@ extern s32 controlKeys;
 extern s32 controlXjoy;
 extern s32 controlYjoy;
 extern f32 controlchr_gravity;
-extern s32 D_800A2DB4_A39B4[];
+extern f32 D_800A2DB4_A39B4[];
 
 //objects.c
 extern s8 D_800F2C60_F3860;
