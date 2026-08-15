@@ -47,6 +47,15 @@ typedef struct Camera {
 Camera *camGetPtr(void);
 Matrix *camGetRotationMtx(void);
 Mtx *camGetProjOrgMtx(void);
-void camDoSprite(Gfx**, Mtx**, Vertex**, void*, Sprite*, s32, s32); /* extern */
+void camDoSprite(Gfx**, Mtx**, Vertex**, void*, Sprite*, s32, s32);
+void camDisableUserView(s32, s32);
+void camEnableUserView(s32, s32);
+void camResetView(Gfx**);
+void camSetNo(s32);
+void camSetView(Gfx**, Mtx**);
+void camUserViewTick(void);
+void camlightDraw(Gfx**, Mtx**, Vertex**);
+void camlightUpdateAll(void);
+void camlightVisibilityCheck(void);
 
 #endif

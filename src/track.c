@@ -1,9 +1,229 @@
+#include "camera.h"
 #include "common.h"
+#include "fx.h"
+#include "overlays/overlay1.h"
+#include "overlays/overlay10.h"
 #include "overlays/overlay39.h"
+#include "weather.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/trackUpdateFX.s")
+typedef struct {
+    u8 pad0[0x69];
+    s8 unk69;
+    u8 pad6A[0x6C - 0x6A];
+    s8 unk6C;
+    u8 pad6D[0xA0 - 0x6D];
+    s16 unkA0;
+    u8 padA2[0xB2 - 0xA2];
+    s8 unkB2;
+    s8 unkB3;
+    TextureHeader *unkB4;
+    s16 unkB8;
+    s16 unkBA;
+    PulsatingLightData *unkBC;
+    u8 padC0[0xCD - 0xC0];
+    s8 unkCD;
+} TrackLevel;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/trackDraw.s")
+typedef struct {
+    u8 pad0[0x12];
+    u16 unk12;
+    u16 unk14;
+} WaterEffectTexture;
+
+typedef struct {
+    u8 pad0[0x1E];
+    s16 unk1E;
+} Track;
+
+// .bss
+extern s16 fadeA; // 0x801046EE
+extern Gfx *D_800F2F70_B1750;
+extern Mtx *D_800F2F74_B1754;
+extern Vertex *D_800F2F78_B1758;
+extern Triangle *D_800F2F7C_B175C;
+// missing D_800F2F80_B1760
+extern s32 D_800F2F84_B1764;
+extern s32 D_800F2F8C_B176C;
+// missing D_800F2F90_B1770
+// missing D_800F2F94_B1774
+extern s32 D_800F2F98_B1778;
+// missing D_800F2F9C_B177C
+extern s32 globflags; // 0x800F2FA0
+extern s32 skyframe;  // 0x800F2FA4
+extern u32 skyflags;  // 0x800F2FA8
+
+// .data
+extern s8 D_800A0CD0_A18D0;
+extern u8 beamScrollFlag;                      // 0x800A0CE0
+extern Track *track;                           // 0x800A0D60
+extern TrackLevel *level;                      // 0x800A0D64
+extern WaterEffectTexture *watereffecttexture; // 0x800A0D68
+extern s32 watereffectframe;                   // 0x800A0D6C
+
+// main .data
+extern u8 gameInWindow; // 0x800A321C
+
+// anim .data
+extern s32 numanimlockons; // 0x800A74E0
+
+// TODO: Move to .h files
+void diRcpTrace(Gfx *, const char *, s32);
+void levelUpdateColourCycling(s32);
+s32 mainGetPauseMode(void);
+void objClearFlashes(s32);
+void shadowChangeBuffer(void);
+void shadowGenerate(s32, s32);
+
+// forward declarations
+void func_800127A4_133A4(s32);
+void func_800129AC_135AC(s32);
+void func_80013454_14054(void);
+void func_80013820_14420(s32, s32);
+void func_800158BC_164BC(void);
+void func_8001BE04_1CA04(s32, s32);
+void func_8001BF9C_1CB9C(s32);
+
+// either func_80012BAC_137AC or func_800136B8_142B8 take an argument, probably not both
+void func_80012BAC_137AC(void);
+void func_800136B8_142B8(s32);
+
+void trackUpdateFX(s32 arg0) {
+    if (runlinkIsModuleLoaded(1) != 0) {
+        dropletUpdateAll_Trap(arg0);
+    }
+    if (runlinkIsModuleLoaded(8) != 0) {
+        bloodSpurtUpdateAll_Trap(arg0);
+    }
+    if (runlinkIsModuleLoaded(10) != 0) {
+        sparkUpdate_Trap(arg0);
+    }
+}
+
+void trackDraw(Gfx **arg0, Mtx **arg1, Vertex **arg2, Triangle **arg3, s32 arg4) {
+    PulsatingLightData *temp_a0;
+    s32 temp_s2;
+    s32 var_s3;
+    s32 var_v0;
+
+    temp_s2 = mainGetNumberOfCameras();
+    if (TrapDanglingJump() == 0) {
+        return;
+    }
+
+    D_800F2F70_B1750 = *arg0;
+    D_800F2F74_B1754 = *arg1;
+    D_800F2F78_B1758 = *arg2;
+    D_800F2F7C_B175C = *arg3;
+    diRcpTrace(D_800F2F70_B1750, "track/track.c", 504);
+    camSetNo(0);
+    D_800F2F98_B1778 = 1;
+    D_800F2F8C_B176C = 0;
+    if (mainGetPauseMode() != 0) {
+        var_s3 = 0;
+    } else {
+        var_s3 = arg4;
+    }
+    if (watereffecttexture != NULL) {
+        var_v0 = watereffectframe;
+        var_v0 += (watereffecttexture->unk14 * var_s3);
+        while (var_v0 >= watereffecttexture->unk12) {
+            var_v0 -= watereffecttexture->unk12;
+        }
+        watereffectframe = var_v0;
+    }
+    shadowGenerate(1, arg4);
+    levelUpdateColourCycling(var_s3);
+    temp_a0 = level->unkBC;
+    // Cursed
+    if (temp_a0 != (PulsatingLightData *) -1) {
+        updateMixCycle(temp_a0, var_s3);
+    }
+    if (level->unk6C == 2) {
+        D_800A0CD0_A18D0 = 0;
+    } else {
+        D_800A0CD0_A18D0 = 1;
+    }
+    if (level->unk6C == 1 || level->unk6C == 2 || level->unkCD != 0) {
+        globflags = 1;
+    }
+    if (level->unk69 == -1) {
+        var_v0 = ((level->unkB4->width << 9) - 1);
+        level->unkB8 = (level->unkB8 + (level->unkB2 * var_s3)) & var_v0;
+        var_v0 = ((level->unkB4->height << 9) - 1);
+        level->unkBA = (level->unkBA + (level->unkB3 * var_s3)) & var_v0;
+        texAnimateTexture(level->unkB4, &skyflags, &skyframe, var_s3);
+    }
+    texDPInit(&D_800F2F70_B1750);
+
+    // some borked version of gSPNumLights?
+    gMoveWd(D_800F2F70_B1750++, G_MW_NUMLIGHT, 0, 0);
+    gSPClearGeometryMode(D_800F2F70_B1750++, G_CULL_FRONT);
+    gDPSetBlendColor(D_800F2F70_B1750++, 0x00, 0x00, 0x00, 0x64);
+    gDPSetPrimColor(D_800F2F70_B1750++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+    gDPSetEnvColor(D_800F2F70_B1750++, 0xFF, 0xFF, 0xFF, 0);
+    rainSetFog();
+    func_8001BE04_1CA04(temp_s2, var_s3);
+    if (track->unk1E > 0) {
+        func_800129AC_135AC(var_s3);
+    }
+    if (beamScrollFlag != 0) {
+        TrapDanglingJump(var_s3);
+    }
+    fxUpdateLevelEffects(var_s3);
+    if (gameInWindow != 0 && temp_s2 == 1) {
+        camEnableUserView(0, 1);
+        camUserViewTick();
+    }
+    for (D_800F2F84_B1764 = 0; D_800F2F84_B1764 < temp_s2; D_800F2F84_B1764++) {
+        func_8001BF9C_1CB9C(D_800F2F84_B1764);
+        gDPPipeSync(D_800F2F70_B1750++);
+        camSetNo(D_800F2F84_B1764);
+        camSetView(&D_800F2F70_B1750, &D_800F2F74_B1754);
+        func_800158BC_164BC();
+        objClearFlashes(1);
+        fxSetClipWindow(D_800F2F84_B1764);
+        if (temp_s2 < 2) {
+            if (level->unk69 == -1) {
+                func_80012BAC_137AC();
+            } else {
+                func_800136B8_142B8(arg4);
+            }
+        } else {
+            func_80013454_14054();
+        }
+        diRcpTrace(D_800F2F70_B1750, "track/track.c", 637);
+        gDPPipeSync(D_800F2F70_B1750++);
+        func_80013820_14420(temp_s2, arg4);
+        setWeatherLimits(-1, -0x200);
+        if (level->unkA0 > 0 && temp_s2 < 2) {
+            doWeather(&D_800F2F70_B1750, &D_800F2F74_B1754, &D_800F2F78_B1758, &D_800F2F7C_B175C, var_s3);
+        }
+        if (temp_s2 < 2) {
+            camlightUpdateAll();
+            camlightVisibilityCheck();
+            camlightDraw(&D_800F2F70_B1750, &D_800F2F74_B1754, &D_800F2F78_B1758);
+            func_800127A4_133A4(var_s3);
+            fxDrawNightVision(&D_800F2F70_B1750);
+        }
+    }
+    if (numanimlockons > 0) {
+        TrapDanglingJump(&D_800F2F70_B1750);
+    }
+    TrapDanglingJump(&D_800F2F70_B1750);
+    if (fadeA != 0) {
+        TrapDanglingJump(&D_800F2F70_B1750);
+    }
+    camDisableUserView(0, 1);
+    camResetView(&D_800F2F70_B1750);
+    gDPPipeSync(D_800F2F70_B1750++);
+    // some borked version of gSPNumLights?
+    gMoveWd(D_800F2F70_B1750++, G_MW_NUMLIGHT, 0, 0);
+    shadowChangeBuffer();
+    *arg0 = D_800F2F70_B1750;
+    *arg1 = D_800F2F74_B1754;
+    *arg2 = D_800F2F78_B1758;
+    *arg3 = D_800F2F7C_B175C;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/func_800127A4_133A4.s")
 

@@ -3,6 +3,7 @@
 
 #include <PR/ultratypes.h>
 
-void sparkUpdate_Trap(void);
+// sometimes take one arg, sometimes doesn't
+void sparkUpdate_Trap();
 
 #endif

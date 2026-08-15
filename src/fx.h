@@ -2,6 +2,7 @@
 #define _FX_H_
 
 #include <PR/ultratypes.h>
+#include <PR/gbi.h>
 
 typedef struct UnkScreenStruct {
     u8 unk0;
@@ -16,5 +17,9 @@ extern s32 D_800A6784_A7384;
 
 s32 fxFadeOn(void);
 void setupClearScreen(UnkScreenStruct*);
+
+void fxDrawNightVision(Gfx**);
+void fxSetClipWindow(s32);
+void fxUpdateLevelEffects(s32);
 
 #endif
