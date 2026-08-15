@@ -21,5 +21,6 @@ void setupClearScreen(UnkScreenStruct*);
 void fxDrawNightVision(Gfx**);
 void fxSetClipWindow(s32);
 void fxUpdateLevelEffects(s32);
+void fxSPDPRipple(Gfx**, s32, s32, s32, s32, s32);
 
 #endif

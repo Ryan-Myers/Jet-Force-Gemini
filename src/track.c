@@ -2,10 +2,11 @@
 #include "common.h"
 #include "fx.h"
 #include "gameVi.h"
-#include "math.h"
+#include "math/math.h"
 #include "overlays/overlay1.h"
 #include "overlays/overlay10.h"
 #include "overlays/overlay39.h"
+#include "track.h"
 #include "weather.h"
 
 typedef struct {
@@ -32,8 +33,35 @@ typedef struct {
     u16 unk14;
 } WaterEffectTexture;
 
+/* Size: 0x8 Bytes */
 typedef struct {
-    u8 pad0[0x1E];
+    TextureHeader *unk0;
+    u32 pad4;
+} Track_Unk0;
+
+/* Size: 0x10 Bytes */
+typedef struct {
+    u8 unk0;
+    u8 pad1[0xA - 0x1];
+    u16 unkA;
+    u32 unkC;
+} Track_Unk4_UnkC;
+
+/* Size: 0x48 Bytes */
+typedef struct {
+    u8 pad0[0xC];
+    Track_Unk4_UnkC *unkC;
+    u8 pad10[0x28 - 0x10];
+    s16 unk28;
+    u8 pad2A[0x48 - 0x2A];
+} Track_Unk4;
+
+typedef struct {
+    Track_Unk0 *unk0;
+    Track_Unk4 *unk4;
+    u8 pad8[0x1A - 0x8];
+    s16 unk1A;
+    u16 pad1C;
     s16 unk1E;
 } Track;
 
@@ -227,9 +255,86 @@ void trackDraw(Gfx **arg0, Mtx **arg1, Vertex **arg2, Triangle **arg3, s32 arg4)
     *arg3 = D_800F2F7C_B175C;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800127A4_133A4.s")
+void func_800127A4_133A4(s32 arg0) {
+    s32 var_s0;
+    s32 sp60;
+    s32 sp5C;
+    f32 sp58;
+    f32 sp54;
+    Camera* camera;
+    s32 sp4C;
+    f32 sp48;
+    f32 sp44;
+    f32 temp_f0;
+    f32 var_f20;
+    s32 pad;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_800129AC_135AC.s")
+    camera = camGetPtr();
+    if (camGetWaterLine(camGetNo()) == 0) {
+        return;
+    }
+
+    sp58 = camera->trans.position.f[0] - (Sinf(camera->trans.rotation.s[0] + 0x8000) * 10.0f);
+    var_f20 = camera->trans.position.f[2] - (Cosf(camera->trans.rotation.s[0] + 0x8000) * 10.0f);
+    if ((trackPolyHeight(sp58, var_f20, &sp54, 0x2000) & 0x2000) == 0) {
+        return;
+    }
+
+    if ((camera->trans.position.f[1] - 16.0f) < sp54) {
+        viGetCurrentSize(&sp60, &sp5C);
+        sp44 = Sinf(camera->trans.rotation.s[1]);
+        temp_f0 = Cosf(camera->trans.rotation.s[1]);
+        sp54 = sp54 - camera->trans.position.f[1];
+        if (sp54 >= 10.0f) {
+            fxSPDPRipple(&D_800F2F70_B1750, 0, 0, sp60, sp5C, arg0);
+            D_801008B4_BB0F4 = 0;
+            return;
+        }
+
+        var_f20 = (sp54 * sp44) - (10.0f * temp_f0);
+        sp54 = (sp54 * temp_f0) + (10.0f * sp44);
+        if (var_f20 > 0.0f) {
+            var_f20 = -var_f20;
+        }
+        if (camProjectPoint(0, sp54, var_f20, &sp4C, &sp48, 0) != 0) {
+            var_s0 = sp48;
+            if (var_s0 < sp5C) {
+                if (var_s0 < 0) {
+                    var_s0 = 0;
+                }
+                fxSPDPRipple(&D_800F2F70_B1750, 0, var_s0, sp60, sp5C, arg0);
+                D_801008B4_BB0F4 = var_s0;
+            }
+        }
+    }
+}
+
+void func_800129AC_135AC(s32 arg0) {
+    s32 sp6C;
+    TextureHeader* temp_a0;
+    s32 var_s1;
+    Track_Unk4_UnkC* var_s0;
+    Track_Unk4* var_s3;
+    s32 sp58;
+
+    sp6C = 0;
+    var_s3 = track->unk4;
+    for (sp6C = 0; sp6C < track->unk1A; sp6C++) {
+        var_s0 = var_s3[sp6C].unkC;
+        for (var_s1 = 0; var_s1 < var_s3[sp6C].unk28; var_s1++) {
+            if (var_s0[var_s1].unkC & 0x10000) {
+                if (var_s0[var_s1].unk0 != 0xFF) {
+                    temp_a0 = track->unk0[var_s0[var_s1].unk0].unk0;
+                    if ((temp_a0->numOfTextures != 0x100) && (temp_a0->frameAdvanceDelay != 0)) {
+                        sp58 = var_s0[var_s1].unkA;
+                        texAnimateTexture(temp_a0, &var_s0[var_s1].unkC, &sp58, arg0);
+                        var_s0[var_s1].unkA = sp58;
+                    }
+                }
+            }
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/initSky.s")
 

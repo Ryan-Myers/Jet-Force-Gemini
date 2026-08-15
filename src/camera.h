@@ -48,6 +48,6 @@ void camlightUpdateAll(void);
 void camlightVisibilityCheck(void);
 s32 camGetNo(void);
 u8 camGetWaterLine(s32 arg0);
-s32 camProjectPoint(s32, f32, f32, void*, f32*, s32);
+s32 camProjectPoint(f32, f32, f32, void*, f32*, s32);
 
 #endif

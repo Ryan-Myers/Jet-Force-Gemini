@@ -3,6 +3,8 @@
 
 #include <PR/ultratypes.h>
 
+extern s32 D_801008B4_BB0F4;
+
 void initWeather(void);
 void setWeatherLimits(s16 near, s16 far);
 void freeWeather(void);
