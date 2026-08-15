@@ -311,12 +311,10 @@ s32 levelObjectFlagSet(s32 arg0) {
     s32 index;
     s32 flag;
 
-    // TODO: expand D_800FB118_B5958 to cover unk102 instead of [1] ?
-    if ((D_800FB118_B5958[1].unk16[0x28] == 0) || (D_800FB118_B5958[1].unk16[0x28] == 0xFF) || (D_800A31C4_A3DC4 == NULL)) {
+    if ((D_800FB118_B5958->unk102 == 0) || (D_800FB118_B5958->unk102 == 0xFF) || (D_800A31C4_A3DC4 == NULL)) {
         return 0;
     }
     index = arg0 >> 3;
     flag = arg0 & 7;
     return (D_800A31C4_A3DC4->unk1[index] & (1 << flag)) != 0;
 }
-
