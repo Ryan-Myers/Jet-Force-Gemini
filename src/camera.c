@@ -7,6 +7,36 @@ const char D_800ACC9C[] = "%f\n";
 const char D_800ACCA0[] = "\nCam do 2D sprite called with NULL pointer!";
 const char D_800ACCCC[] = "CAM Error!! Convlist overflow.\n";
 
+typedef struct {
+    /* 0x00 */ Matrix *mtx;
+    /* 0x04 */ s16 count;
+} ConvListEntry;
+
+typedef struct {
+    /* 0x0 */ s16 attackEnd;
+    /* 0x2 */ s16 sustainEnd;
+    /* 0x4 */ s16 totalEnd;
+    /* 0x6 */ s16 timer;
+    /* 0x8 */ s32 magnitude;
+} CameraShake;
+
+extern u8 D_800A3178_A3D78[];
+extern Camera cameraActorArray[];
+extern ScreenViewport D_800A2ED4_A3AD4[];
+extern CameraShake D_800FA600_B1880[];
+extern s32 D_800A2ED0_A3AD0;
+extern ConvListEntry D_800FA658_B18D8[];
+extern Matrix D_800FAFB8_B2238;
+extern s32 D_800FA630_B18B0;
+extern s32 D_800FA634_B18B4;
+extern s32 D_800FAA58_B5298;
+extern f32 D_800FB078_B22F8;
+extern s32 D_800FAA5C_B1CDC;
+extern f32 D_800FAA60_B1CE0;
+extern f32 D_800FAA64_B1CE4;
+extern u8 D_800A3174_A3D74[4];
+extern f32 D_800A317C_A3D7C[4];
+
 #if 0
 extern s32 D_B0000578;
 extern s32 D_800FB0F4; //gActiveCameraID;
@@ -58,13 +88,23 @@ void camInit(void) {
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camInit.s")
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camUseShake.s")
+void camUseShake(void) {
+    D_800FAA58_B5298 = 1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camIgnoreShake.s")
+void camIgnoreShake(void) {
+    D_800FAA58_B5298 = 0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camGetFOV.s")
+f32 camGetFOV(void) {
+    return D_800FB078_B22F8;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camOverrideProjScales.s")
+void camOverrideProjScales(f32 scaleX, f32 scaleY) {
+    D_800FAA60_B1CE0 = scaleX;
+    D_800FAA64_B1CE4 = scaleY;
+    D_800FAA5C_B1CDC = 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camSetFOV.s")
 
@@ -72,17 +112,32 @@ void camInit(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/func_8003FAEC_406EC.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camGetMode.s")
+s32 camGetMode(void) {
+    return D_800FA630_B18B0;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camSetMode.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camGetNo.s")
+s32 camGetNo(void) {
+    return D_800FA634_B18B4;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camSetNo.s")
+void camSetNo(s32 camNo) {
+    if ((camNo < 0) || (camNo >= 4)) {
+        camNo = 0;
+    }
+    D_800FA634_B18B4 = camNo;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camGetWaterLine.s")
+u8 camGetWaterLine(s32 arg0) {
+    return D_800A3178_A3D78[arg0];
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camSetWaterLine.s")
+void camSetWaterLine(s32 camNo, s32 waterLine) {
+    if ((camNo >= 0) && (camNo < 4)) {
+        D_800A3178_A3D78[camNo] = waterLine;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camUserViewTick.s")
 
@@ -90,7 +145,9 @@ void camInit(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camDisableUserView.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camIsUserView.s")
+s32 camIsUserView(s32 arg0) {
+    return D_800A2ED4_A3AD4[arg0].flags & 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camSetUserView.s")
 
@@ -120,7 +177,7 @@ void camInit(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camResetView.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camOffsetZero.s")
+void camOffsetZero(Gfx **dlist, Mtx **mtx) {}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camDoSprite.s")
 
@@ -144,11 +201,17 @@ void camPopModelMtx(Gfx **dlist) {
     gSPSelectMatrixDKR((*dlist)++, G_MTX_DKR_INDEX_0);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camGetPtr.s")
+Camera *camGetPtr(void) {
+    return (Camera *)((u8 *)cameraActorArray + D_800FA634_B18B4 * 0x4C);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camGetListPtr.s")
+Camera *camGetListPtr(void) {
+    return cameraActorArray;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camGetInvProjMtx.s")
+Matrix *camGetInvProjMtx(void) {
+    return &D_800FAFB8_B2238;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camGetProjOrgMtx.s")
 
@@ -166,12 +229,40 @@ void camPopModelMtx(Gfx **dlist) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camStartShake.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camStopShakes.s")
+void camStopShakes(void) {
+    s32 i;
+    Camera* cam;
+    CameraShake* shake;
+
+    D_800FAA58_B5298 = 0;
+    cam = cameraActorArray;
+    shake = D_800FA600_B1880;
+
+    /* IDO: line-join for regalloc */
+    for (i = 4; i--; cam++, shake++) { \
+        cam->shake.x = 0.0f; \
+        cam->shake.y = 0.0f; \
+        cam->shake.z = 0.0f; \
+        shake->magnitude = 0; \
+    } \
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camScreenShake.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camSetZoom.s")
+void camSetZoom(s32 camNo, f32 zoom) {
+    if ((camNo >= 0) && (camNo < 4)) {
+        D_800A3174_A3D74[camNo] = 1;
+        D_800A317C_A3D7C[camNo] = zoom;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camConvertMatrixList.s")
+void camConvertMatrixList(Matrix *mtx, s32 count) {
+    s32 temp = D_800A2ED0_A3AD0;
+    ConvListEntry *entry = &D_800FA658_B18D8[temp];
+
+    entry->mtx = mtx;
+    D_800A2ED0_A3AD0 = temp + 1;
+    entry->count = count;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camTick.s")
