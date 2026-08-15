@@ -1,4 +1,6 @@
+#include "audio.h"
 #include "common.h"
+#include "math/math.h"
 
 const char D_800AAAE0[] = "OUT OF AUDIO POINTS\n";
 
@@ -46,25 +48,14 @@ s32 amCalcSfxStereo(f32 x, f32 y, f32 z) {
 void amCreateAudioPoint(u16 soundId, f32 x, f32 y, f32 z, u8 arg4, u8 arg5, u8 volume, u16 distance, u8 arg8, u8 pitch,
                         u8 argA, u8 argB, SoundMask **soundMask);
 
-/* Size: 0x0A bytes */
-typedef struct SoundData {
-    u16 soundBite; // Audio file index.
-    u8 volume;     // Multiplied by 256. 128 = 32768, max volume.
-    u8 unk3;
-    u8 pitch; // Fractional. 100 = 1.0f.
-    u8 unk5;
-    u16 distance; // Ingame units distance, same as any other.
-    u8 unk8;
-    u8 unk9;
-} SoundData;
 extern SoundData *D_800F29F0_F35F0;
 
 void amSndPlayXYZ(u16 soundId, f32 x, f32 y, f32 z, u8 arg4, SoundMask **soundMask) {
 
     if (soundMask == NULL || *soundMask == NULL) {
-        amCreateAudioPoint(D_800F29F0_F35F0[soundId].soundBite, x, y, z, arg4, D_800F29F0_F35F0[soundId].unk3,
-                           D_800F29F0_F35F0[soundId].volume, D_800F29F0_F35F0[soundId].distance, 0,
-                           D_800F29F0_F35F0[soundId].pitch, D_800F29F0_F35F0[soundId].unk8,
+        amCreateAudioPoint(D_800F29F0_F35F0[soundId].soundBite, x, y, z, arg4, D_800F29F0_F35F0[soundId].minVolume,
+                           D_800F29F0_F35F0[soundId].volume, D_800F29F0_F35F0[soundId].range, 0,
+                           D_800F29F0_F35F0[soundId].pitch, D_800F29F0_F35F0[soundId].priority,
                            D_800F29F0_F35F0[soundId].unk5, soundMask);
     }
 }

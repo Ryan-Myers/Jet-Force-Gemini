@@ -22,7 +22,6 @@ const char D_800AAA2C[] = "amTuneRestart:Jump failed - not previously pushed ont
 void n_alCSPVoiceLimit(N_ALCSPlayer *seqp, u8 value);
 u32 gsSndpGetGlobalVolume(void);                    // sndp_get_global_volume
 void gsSndpSetMasterVolume(u8 channel, u16 volume); // sndp_set_group_volume
-void amSndPlay(u16 soundID, SoundHandle *handlePtr);
 void amAmbientSetVolume(u8 volume);
 extern u8 sfxRelativeVolume;
 extern u8 gAudioVolumeSetting;

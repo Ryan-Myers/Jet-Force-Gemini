@@ -19,7 +19,7 @@ extern s32 controlKeys;
 extern s32 controlXjoy;
 extern s32 controlYjoy;
 extern f32 controlchr_gravity;
-extern s32 D_800A2DB4_A39B4[];
+extern f32 D_800A2DB4_A39B4[];
 
 //objects.c
 extern s8 D_800F2C60_F3860;
@@ -313,12 +313,6 @@ extern s8 sResolutionIndex;
 // audio_manager_36D0.c
 extern Matrix D_800F2A08_F3608; //.data
 extern s8 D_800F2A04_F3604; //.data
-
-//level.c
-extern LevelHeader *D_800FB118_B5958;
-extern s32 D_800A5D18_A6918; // gWeatherType
-extern s32 D_800A5D1C_A691C; // gLightningFrequency
-extern s32 D_800A5D28_A6928; // gRainOpacity
 
 //menu.c
 extern MultiPlayer multiPlayer[4]; // Size: 0xA0 - Total Size: 0x280
