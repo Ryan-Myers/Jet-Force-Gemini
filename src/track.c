@@ -1,6 +1,8 @@
 #include "camera.h"
 #include "common.h"
 #include "fx.h"
+#include "gameVi.h"
+#include "math.h"
 #include "overlays/overlay1.h"
 #include "overlays/overlay10.h"
 #include "overlays/overlay39.h"
