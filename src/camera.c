@@ -202,7 +202,7 @@ void camPopModelMtx(Gfx **dlist) {
 }
 
 Camera *camGetPtr(void) {
-    return (Camera *)((u8 *)cameraActorArray + D_800FA634_B18B4 * 0x4C);
+    return &cameraActorArray[D_800FA634_B18B4];
 }
 
 Camera *camGetListPtr(void) {
