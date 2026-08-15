@@ -4,41 +4,37 @@ import sys
 import struct
 from elftools.elf.elffile import ELFFile
 from elftools.elf.sections import SymbolTableSection, Symbol
+from io import BytesIO
 
-
-def patch_symbol(input_path, output_path, old_name, new_name="TrapDanglingJump"):
+def patch_symbols(input_path, output_path, old_names, new_name="TrapDanglingJump"):
     with open(input_path, "rb") as f:
         data = bytearray(f.read())
 
-    with open(input_path, "rb") as f:
-        elf = ELFFile(f)
+    elf = ELFFile(BytesIO(data))
 
-        symtab : SymbolTableSection = elf.get_section_by_name(".symtab")
-        strtab : SymbolTableSection = elf.get_section_by_name(".strtab")
+    symtab : SymbolTableSection = elf.get_section_by_name(".symtab")
+    strtab : SymbolTableSection = elf.get_section_by_name(".strtab")
 
-        if symtab is None:
-            raise RuntimeError("No .symtab found")
+    if symtab is None:
+        raise RuntimeError("No .symtab found")
 
-        if strtab is None:
-            raise RuntimeError("No .strtab found")
+    if strtab is None:
+        raise RuntimeError("No .strtab found")
 
-        target_index : int = 0
-        target_symbol : Symbol | None = None
+    target_index : int = 0
+    target_symbol : Symbol | None = None
 
-        # For now assume it only found one symbol with that name. 
-        # If there are multiple, we should probably patch all of them, but that would be a more complex change.
-        
-        for index, sym in enumerate(symtab.iter_symbols()):
-            if sym.name == old_name:
-                target_index = index
-                target_symbol = sym
-                break
+    symbols: dict[str, tuple[int, Symbol]] = dict()
+    for index, sym in enumerate(symtab.iter_symbols()):
+        symbols[sym.name] = (index, sym)
 
+    for old_name in old_names:
         # Don't process things if the target symbol wasn't found.
-        if target_symbol is None:
-            return
+        if old_name not in symbols:
+            continue
+        (target_index, target_symbol) = symbols[old_name]
 
-        print(f"Found symbol {target_index}: {old_name}")
+        print(f"Patching index {target_index} with old symbol {old_name} to {new_name}")
 
         strtab_offset = strtab["sh_offset"] # Section file offset
         strtab_size = strtab["sh_size"] # Section size in bytes
@@ -150,7 +146,6 @@ def patch_symbol(input_path, output_path, old_name, new_name="TrapDanglingJump")
     with open(output_path, "wb") as f:
         f.write(data)
 
-    print(f"Patched {old_name} -> {new_name}")
 
 def read_symbol_names(function_list_path):
     with open(function_list_path, "r") as f:
@@ -166,5 +161,6 @@ if __name__ == "__main__":
         print(f"Usage: {sys.argv[0]} ver/symbols/overlay_funcs_to_trap.txt input.o output.o")
         sys.exit(1)
 
-    for function in read_symbol_names(sys.argv[1]):
-        patch_symbol(sys.argv[2], sys.argv[3], function)
+    # Pre-collect symbols to process once
+    functions = list(read_symbol_names(sys.argv[1]))
+    patch_symbols(sys.argv[2], sys.argv[3], functions)
