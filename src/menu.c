@@ -4,6 +4,7 @@
 #include "functions.h"
 #include "gameVi.h"
 #include "gsSnd.h"
+#include "runLink.h"
 #include "overlays/overlay12.h"
 #include "overlays/overlay14.h"
 #include "overlays/overlay31.h"

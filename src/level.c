@@ -140,13 +140,13 @@ s32 levelGetWorldRegions(s32 arg0, u8* arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelInit.s")
 
 void levelTunePlay(f32 tempo) {
-    if (D_800FBBD8->seqNum != 0) {
-        if (D_800FBBD8->seqNum != amTuneGetSeqNo()) {
+    if (D_800FB118_B5958->seqNum != 0) {
+        if (D_800FB118_B5958->seqNum != amTuneGetSeqNo()) {
             amTuneResetChls();
-            amTunePlay(D_800FBBD8->seqNum);
+            amTunePlay(D_800FB118_B5958->seqNum);
             amTuneResetFade();
             amTuneScaleTempo(tempo);
-            amTuneSetChlMask(D_800FBBD8->chlMask);
+            amTuneSetChlMask(D_800FB118_B5958->chlMask);
         }
     } else {
         amTuneStop();
@@ -158,7 +158,7 @@ void levelUpdateColourCycling(s32 arg0) {
 
     for (i = 0; i < 7; i++) {
         // TODO: array on `weatherType`?
-        if ((&D_800FBBD8->weatherType)[i] != -1) {
+        if ((&D_800FB118_B5958->weatherType)[i] != -1) {
             updateColourCycle(&D_800FB170_B17B0[i], arg0);
         }
     }
@@ -173,13 +173,13 @@ s32 levelGetNumber(void) {
 }
 
 u8 levelGetType(void) {
-    return D_800FBBD8->unk6C;
+    return D_800FB118_B5958->unk6C;
 }
 
 u8 levelGetCamera(void) {
-    if (D_800FBBD8 != NULL) {
+    if (D_800FB118_B5958 != NULL) {
         // TODO: make struct bigger instead of [1]?
-        return D_800FBBD8[1].unk16[9];
+        return D_800FB118_B5958[1].unk16[9];
     }
     return 0;
 }
@@ -204,7 +204,7 @@ void levelFreeAll(void) {
     fxFreeNightVision(1);
     fxClearLevelEffects();
     rcpSetScreenColour(0, 0, 0);
-    mmFree(D_800FBBD8);
+    mmFree(D_800FB118_B5958);
     amAmbientStop();
     freeLights();
     camlightFlush();
@@ -213,11 +213,11 @@ void levelFreeAll(void) {
     amResetAudioMap();
     D_800A089C_A149C = 0;
     amSetMuteMode(0);
-    if (D_800FBBD8->unkA0 > 0) {
+    if (D_800FB118_B5958->unkA0 > 0) {
         freeWeather();
     }
-    if (D_800FBBD8->unk69 == -1) {
-        texFreeTexture(D_800FBBD8->unkB4_ptr);
+    if (D_800FB118_B5958->unk69 == -1) {
+        texFreeTexture(D_800FB118_B5958->unkB4_ptr);
     }
     runlinkFlushModules();
     fxCpuTextureFlush();
@@ -271,8 +271,8 @@ void levelGetRegionFlags(void) {
     Unk_800FB1E0_B1820* temp_t9;
     u8 temp_v0;
 
-    // TODO: expand D_800FBBD8 to cover unk103 instead of [1] ?
-    temp_v0 = D_800FBBD8[1].fogR;
+    // TODO: expand D_800FB118_B5958 to cover unk103 instead of [1] ?
+    temp_v0 = D_800FB118_B5958[1].fogR;
     if (temp_v0 >= 0x20) {
         D_800A31C4_A3DC4 = NULL;
     } else {
@@ -312,8 +312,8 @@ s32 levelObjectFlagSet(s32 arg0) {
     s32 index;
     s32 flag;
 
-    // TODO: expand D_800FBBD8 to cover unk102 instead of [1] ?
-    if ((D_800FBBD8[1].unk16[0x28] == 0) || (D_800FBBD8[1].unk16[0x28] == 0xFF) || (D_800A31C4_A3DC4 == NULL)) {
+    // TODO: expand D_800FB118_B5958 to cover unk102 instead of [1] ?
+    if ((D_800FB118_B5958[1].unk16[0x28] == 0) || (D_800FB118_B5958[1].unk16[0x28] == 0xFF) || (D_800A31C4_A3DC4 == NULL)) {
         return 0;
     }
     index = arg0 >> 3;
