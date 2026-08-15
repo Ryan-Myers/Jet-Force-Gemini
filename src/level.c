@@ -178,8 +178,7 @@ u8 levelGetType(void) {
 
 u8 levelGetCamera(void) {
     if (D_800FB118_B5958 != NULL) {
-        // TODO: make struct bigger instead of [1]?
-        return D_800FB118_B5958[1].unk16[9];
+        return D_800FB118_B5958->cameraLevel;
     }
     return 0;
 }
