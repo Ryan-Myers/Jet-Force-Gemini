@@ -731,7 +731,8 @@ typedef struct LevelHeader {
     /* 0xC4 */ u8 padC4[0x1F];
     /* 0xE3 */ u8 cameraLevel;
     /* 0xE4 */ u8 padE4[0x1E];
-    /* 0x102 */ u8 unk102;
+    /* 0x102 */ u8 objectFlag;
+    /* 0x103 */ u8 regionFlag;
 } LevelHeader;
 
 typedef struct SubMiscAssetObjectHeader24 {

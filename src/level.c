@@ -270,8 +270,7 @@ void levelGetRegionFlags(void) {
     Unk_800FB1E0_B1820* temp_t9;
     u8 temp_v0;
 
-    // TODO: expand D_800FB118_B5958 to cover unk103 instead of [1] ?
-    temp_v0 = D_800FB118_B5958[1].fogR;
+    temp_v0 = D_800FB118_B5958->regionFlag;
     if (temp_v0 >= 0x20) {
         D_800A31C4_A3DC4 = NULL;
     } else {
@@ -311,7 +310,7 @@ s32 levelObjectFlagSet(s32 arg0) {
     s32 index;
     s32 flag;
 
-    if ((D_800FB118_B5958->unk102 == 0) || (D_800FB118_B5958->unk102 == 0xFF) || (D_800A31C4_A3DC4 == NULL)) {
+    if ((D_800FB118_B5958->objectFlag == 0) || (D_800FB118_B5958->objectFlag == 0xFF) || (D_800A31C4_A3DC4 == NULL)) {
         return 0;
     }
     index = arg0 >> 3;
