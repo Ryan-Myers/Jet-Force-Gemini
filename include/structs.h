@@ -662,7 +662,7 @@ typedef struct LevelHeader {
     };
     /* 0x6A */ u8 unk6A; // values between 1 and 6
     /* 0x6B */ u8 unk6B; // values between 1 and 6
-    /* 0x6C */ s8 unk6C; // values between 0 and 4
+    /* 0x6C */ s8 levelType; // values between 0 and 4
     /* 0x6D */ s8 unk6D; // values between 0 and 2 except in Hot Top Volcano where it's -2
     /* 0x6E */ s16 unk6E; // possible values: 3,5
   

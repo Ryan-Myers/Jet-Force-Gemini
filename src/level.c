@@ -14,9 +14,9 @@ extern LevelHeader *D_800FB118_B5958;
 
 typedef struct {
     u8 unk0;
-    s8 unk1;
-    u8 unk2;
-    u8 unk3;
+    s8 unk1; // world
+    u8 unk2; // region
+    u8 unk3; // screenmode
     u8 unk4;
 } Level_B176C;
 
@@ -173,7 +173,7 @@ s32 levelGetNumber(void) {
 }
 
 u8 levelGetType(void) {
-    return D_800FB118_B5958->unk6C;
+    return D_800FB118_B5958->levelType;
 }
 
 u8 levelGetCamera(void) {
