@@ -165,9 +165,17 @@ extern s32 D_800FB114_B1754;
 
 void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     u32 lvlStart, lvlSize;
+    LevelHeader *hdr;
     s32 lvlCount;
     s32 *offsets;
+    s32 j;
+    s32 off;
+    s16 *ptr;
+    s32 shouldPlay;
+    s32 freeSlot;      /* last — let it fall to the stack */
+    s16 tune;
     s32 i;
+
 
     rumbleKill(1);
     D_800FB110_B1750 = piRomLoad(0x1E);
@@ -301,17 +309,6 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     runlinkFreeCode(0x18);
     runlinkFreeCode(0x1E);
 
-    /* tune management */
-    {
-        s32 j;
-        s32 i;             /* stop index — aiming for s1 */
-        s32 off;
-        s32 shouldPlay;
-        s16 tune;
-        LevelHeader *hdr;
-        s16 *ptr;
-        s32 freeSlot;      /* last — let it fall to the stack */
-
         /* stop tunes that are playing but not wanted by the new level */
         ptr = D_800A31BC_A3DBC;
         i = 0;
@@ -369,7 +366,6 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
             off += 2;
             hdr = (LevelHeader *)((u8 *)hdr + 2);
         } while (off != 6);
-    }
 }
 
 void levelTunePlay(f32 tempo) {
