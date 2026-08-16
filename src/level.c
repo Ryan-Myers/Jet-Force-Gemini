@@ -40,7 +40,7 @@ extern s32 D_800A089C_A149C;
 extern u8* D_800A31A0_A3DA0;
 extern Unk_800FB1E0_B1820* D_800A31C4_A3DC4;
 
-extern u32* D_800FB110_B1750; /* loaded ROM offset table, -1 terminated */
+extern s32* D_800FB110_B1750; /* loaded ROM offset table, -1 terminated */
 extern s32 D_800FB114_B1754; // gLevelNumber
 extern s32 D_800FB124_B1764;
 extern Level_B176C* D_800FB12C_B176C[];
@@ -164,17 +164,15 @@ extern s16 D_800A31BC_A3DBC[3];
 extern s32 D_800FB114_B1754;
 
 void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
-    u32 lvlStart, lvlSize;
-    LevelHeader *hdr;
-    s32 lvlCount;
-    s32 *offsets;
-    s32 j;
-    s32 off;
-    s16 *ptr;
-    s32 shouldPlay;
-    s32 freeSlot;      /* last — let it fall to the stack */
     s16 tune;
-    s32 i;
+    s32 lvlStart;
+    u32 lvlSize;
+    s32 lvlCount;
+    s32 j;
+    s32 shouldPlay;
+    s32 pad;
+    s32 off;
+    s32 freeSlot;
 
 
     rumbleKill(1);
@@ -200,14 +198,11 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
 
     /* count entries in the -1-terminated ROM offset table */
     lvlCount = 0;
-    if (*(s32 *)&D_800FB110_B1750[0] != -1) {
-        offsets = (s32 *)D_800FB110_B1750;
-        do {
-            lvlCount++;
-            offsets++;
-        } while (*offsets != -1);
+    while (D_800FB110_B1750[lvlCount] != -1) {
+        lvlCount++;
     }
-    if (lvlIdx >= lvlCount - 1) {
+    lvlCount--;
+    if (lvlIdx >= lvlCount) {
         lvlIdx = 0;
     }
 
@@ -220,15 +215,16 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     D_800FB114_B1754 = lvlIdx;
     levelGetRegionFlags();
 
-    for (i = 0; i < 7; i++) {
-        if ((&D_800FB118_B5958->weatherType)[i] != -1) {
-            initColourCycle((unkResetColourCycle*)(&D_800FB170_B17B0[i]), (&D_800FB118_B5958->weatherType)[i]);
+    for (lvlStart = 0; lvlStart < 7; lvlStart++) {
+        if ((&D_800FB118_B5958->weatherType)[lvlStart] != -1) {
+            initColourCycle((unkResetColourCycle*)(&D_800FB170_B17B0[lvlStart]), (&D_800FB118_B5958->weatherType)[lvlStart]);
         }
     }
     amTuneVoiceLimit(D_800FB118_B5958->BGColourTopB);
     amTuneResetFade();
     mainPreNMI();
-    setupLights(D_800FB118_B5958->light_count, 8, 0x10);
+    lvlCount = 8;
+    setupLights(D_800FB118_B5958->light_count, lvlCount, 0x10);
     mainPreNMI();
     squadsInitialiseBeforeObjects();
     mainPreNMI();
@@ -246,12 +242,12 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     if ((D_800FB118_B5958->fogNear2 == 0) && (D_800FB118_B5958->fogFar2 == 0)
      && (D_800FB118_B5958->fogR2 == 0) && (D_800FB118_B5958->fogG2 == 0)
      && (D_800FB118_B5958->fogB2 == 0)) {
-        for (i = 0; i < 4; i++) {
-            trackSetFogOff(i);
+        for (lvlStart = 0; lvlStart < 4; lvlStart++) {
+            trackSetFogOff(lvlStart);
         }
     } else {
-        for (i = 0; i < 4; i++) {
-            trackSetFog(i, D_800FB118_B5958->fogNear2, D_800FB118_B5958->fogFar2,
+        for (lvlStart = 0; lvlStart < 4; lvlStart++) {
+            trackSetFog(lvlStart, D_800FB118_B5958->fogNear2, D_800FB118_B5958->fogFar2,
                         D_800FB118_B5958->unk5E, D_800FB118_B5958->fogR2,
                         D_800FB118_B5958->fogG2, D_800FB118_B5958->fogB2,
                         D_800FB118_B5958->unk63);
@@ -260,7 +256,7 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
 
     if (D_800FB118_B5958->unkA0 > 0) {
         setupWeather(D_800FB118_B5958->unkA3, D_800FB118_B5958->unkA0, D_800FB118_B5958->unkA6 << 8,
-                     D_800FB118_B5958->unkA8 << 8, D_800FB118_B5958->unkAA << 8,
+                     D_800FB118_B5958->unkA8 << 8, D_800FB118_B5958->unkAA << lvlCount,
                      D_800FB118_B5958->unkA4_b * 0x101, D_800FB118_B5958->unkA5 * 0x101);
         setWeatherLimits(-1, -0x200);
     }
@@ -277,8 +273,8 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     viFrameRateReset();
     levelTunePlay(1.0f);
 
-    for (i = 0; i < 4; i++) {
-        camSetNo(i);
+    for (lvlStart = 0; lvlStart < 4; lvlStart++) {
+        camSetNo(lvlStart);
         camSetFOV((f32) D_800FB118_B5958->camera_fov, 1);
     }
     camSetNo(0);
@@ -309,63 +305,43 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     runlinkFreeCode(0x18);
     runlinkFreeCode(0x1E);
 
-        /* stop tunes that are playing but not wanted by the new level */
-        ptr = D_800A31BC_A3DBC;
-        i = 0;
-        do {
-            hdr = D_800FB118_B5958;
-            tune = *ptr;
-            shouldPlay = 1;
-            j = 0;
-            do {
-                j += 2;
-                if (hdr->tunes[0] == tune) {
-                    shouldPlay = 0;
-                }
-                hdr = (LevelHeader *)((u8 *)hdr + 2);
-            } while (j != 6);
-            if (shouldPlay != 0) {
-                if (D_800A31B0_A3DB0[i] != 0) {
-                    *ptr = -1;
-                    amSndStop(D_800A31B0_A3DB0[i], tune, shouldPlay, ptr);
-                }
+    for (off = 0; off < 3; off++) {
+        shouldPlay = 1;
+        for (j = 0; j < 3; j++) {
+            if (D_800FB118_B5958->tunes[j] == D_800A31BC_A3DBC[off]) {
+                shouldPlay = 0;
             }
-            i++;
-            ptr++;
-        } while (i < 3);
-
-        if (osCartDmaTest4_6105_Trap() == 0) {
-            D_800FB118_B5958->fogNear2 = 0x384;
-            D_800FB118_B5958->fogFar2 = 0x398;
         }
+        if (shouldPlay != 0) {
+            if (D_800A31B0_A3DB0[off] != 0) {
+                D_800A31BC_A3DBC[off] = -1;
+                amSndStop(D_800A31B0_A3DB0[off]);
+            }
+        }
+    }
 
-        /* start tunes the new level wants that aren't already playing */
-        hdr = D_800FB118_B5958;
-        off = 0;
-        do {
-            tune = hdr->tunes[0];
-            shouldPlay = 1;
-            j = 0;
-            if (tune != -1) {
-                ptr = D_800A31BC_A3DBC;
-                do {
-                    if (tune == *ptr) {
-                        shouldPlay = 0;
-                    } else if (*ptr == -1) {
-                        freeSlot = j;
-                    }
-                    j++;
-                    ptr++;
-                } while (j != 3);
-                if (shouldPlay != 0) {
-                    amSndPlay(tune & 0xFFFF, &D_800A31B0_A3DB0[freeSlot]);
-                    hdr = (LevelHeader *)((u8 *)D_800FB118_B5958 + off);
-                    D_800A31BC_A3DBC[freeSlot] = hdr->tunes[0];
+    if (osCartDmaTest4_6105_Trap() == 0) {
+        D_800FB118_B5958->fogNear2 = 0x384;
+        D_800FB118_B5958->fogFar2 = 0x398;
+    }
+
+    /* start tunes the new level wants that aren't already playing */
+    for (off = 0; off < 3; off++) {
+        tune = 1;
+        if (D_800FB118_B5958->tunes[off] != -1) {
+            for (j = 0; j < 3; j++) {
+                if (D_800FB118_B5958->tunes[off] == D_800A31BC_A3DBC[j]) {
+                    tune = 0;
+                } else if (D_800A31BC_A3DBC[j] == -1) {
+                    freeSlot = j;
                 }
             }
-            off += 2;
-            hdr = (LevelHeader *)((u8 *)hdr + 2);
-        } while (off != 6);
+            if (tune != 0) {
+                amSndPlay(D_800FB118_B5958->tunes[off], &D_800A31B0_A3DB0[freeSlot]);
+                D_800A31BC_A3DBC[freeSlot] = D_800FB118_B5958->tunes[off];
+            }
+        }
+    }
 }
 
 void levelTunePlay(f32 tempo) {
