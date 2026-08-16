@@ -1,5 +1,6 @@
 #include "common.h"
 #include "math.h"
+#include "objects.h"
 
 const char D_800AAB50[] = "Objects out of ram(1) !!\n";
 const char D_800AAB6C[] = "Char %d, Disguise %d\n";

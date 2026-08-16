@@ -6,6 +6,7 @@
 #include "overlays/overlay1.h"
 #include "overlays/overlay10.h"
 #include "overlays/overlay39.h"
+#include "objects.h"
 #include "textures.h"
 #include "track.h"
 #include "weather.h"
@@ -52,18 +53,19 @@ typedef struct {
     u32 unkC;
 } Track_Unk4_UnkC;
 
+// LevelModelSegment in DKR
 /* Size: 0x48 Bytes */
 typedef struct {
     u8 pad0[0xC];
-    Track_Unk4_UnkC *unkC;
+    Track_Unk4_UnkC *batches;
     u8 pad10[0x28 - 0x10];
     s16 unk28;
     u8 pad2A[0x48 - 0x2A];
 } Track_Unk4;
 
 typedef struct {
-    Track_Unk0 *unk0;
-    Track_Unk4 *unk4;
+    Track_Unk0 *unk0; // textures? in DKR
+    Track_Unk4 *segments;
     u8 pad8[0x1A - 0x8];
     s16 unk1A;
     u16 pad1C;
@@ -72,8 +74,8 @@ typedef struct {
 
 // .bss
 extern s16 fadeA; // 0x801046EE
-extern Gfx *D_800F2F70_B1750;
-extern Mtx *D_800F2F74_B1754;
+extern Gfx *gTrackDL;
+extern Mtx *gTrackMtxPtr;
 extern Vertex *gTrackVtxPtr;
 extern Triangle *gTrackTriPtr;
 // missing D_800F2F80_B1760
@@ -82,7 +84,7 @@ extern Object* D_800F2F88_B1768;
 extern s32 D_800F2F8C_B176C;
 // missing D_800F2F90_B1770
 // missing D_800F2F94_B1774
-extern s32 D_800F2F98_B1778;
+extern s32 gSceneRenderSkyDome;
 // missing D_800F2F9C_B177C
 extern s32 globflags; // 0x800F2FA0
 extern s32 skyframe;  // 0x800F2FA4
@@ -110,22 +112,22 @@ void levelUpdateColourCycling(s32);
 s32 mainGetPauseMode(void);
 void objClearFlashes(s32);
 void shadowChangeBuffer(void);
-void shadowGenerate(s32, s32);
-Object* objSetupObject(ObjSetup*, s32);
+void shadowGenerate(s32, s32 updateRate);
+Object* objSetupObject(LevelObjectEntryCommon*, s32);
 void camOffsetZero(Gfx **dlist, Mtx **mtx);
 
 // forward declarations
 void func_800127A4_133A4(s32);
-void func_800129AC_135AC(s32);
+void func_800129AC_135AC(s32 updateRate);
 void func_80013454_14054(void);
-void func_80013820_14420(s32, s32);
+void func_80013820_14420(s32, s32 updateRate);
 void func_800158BC_164BC(void);
 void func_8001BE04_1CA04(s32, s32);
 void func_8001BF9C_1CB9C(s32);
 
 // either func_80012BAC_137AC or func_800136B8_142B8 take an argument, probably not both
 void func_80012BAC_137AC(void);
-void func_800136B8_142B8(s32);
+void func_800136B8_142B8(s32 updateRate);
 
 void trackUpdateFX(s32 arg0) {
     if (runlinkIsModuleLoaded(1) != 0) {
@@ -139,10 +141,10 @@ void trackUpdateFX(s32 arg0) {
     }
 }
 
-void trackDraw(Gfx **arg0, Mtx **arg1, Vertex **arg2, Triangle **arg3, s32 arg4) {
+void trackDraw(Gfx **dList, Mtx **mtx, Vertex **vtx, Triangle **tris, s32 updateRate) {
     PulsatingLightData *temp_a0;
     s32 temp_s2;
-    s32 var_s3;
+    s32 targetUpdateRate;
     s32 var_v0;
 
     temp_s2 = mainGetNumberOfCameras();
@@ -150,33 +152,33 @@ void trackDraw(Gfx **arg0, Mtx **arg1, Vertex **arg2, Triangle **arg3, s32 arg4)
         return;
     }
 
-    D_800F2F70_B1750 = *arg0;
-    D_800F2F74_B1754 = *arg1;
-    gTrackVtxPtr = *arg2;
-    gTrackTriPtr = *arg3;
-    diRcpTrace(D_800F2F70_B1750, "track/track.c", 504);
+    gTrackDL = *dList;
+    gTrackMtxPtr = *mtx;
+    gTrackVtxPtr = *vtx;
+    gTrackTriPtr = *tris;
+    diRcpTrace(gTrackDL, "track/track.c", 504);
     camSetNo(0);
-    D_800F2F98_B1778 = 1;
+    gSceneRenderSkyDome = 1;
     D_800F2F8C_B176C = 0;
     if (mainGetPauseMode() != 0) {
-        var_s3 = 0;
+        targetUpdateRate = 0;
     } else {
-        var_s3 = arg4;
+        targetUpdateRate = updateRate;
     }
     if (watereffecttexture != NULL) {
         var_v0 = watereffectframe;
-        var_v0 += (watereffecttexture->unk14 * var_s3);
+        var_v0 += (watereffecttexture->unk14 * targetUpdateRate);
         while (var_v0 >= watereffecttexture->unk12) {
             var_v0 -= watereffecttexture->unk12;
         }
         watereffectframe = var_v0;
     }
-    shadowGenerate(1, arg4);
-    levelUpdateColourCycling(var_s3);
+    shadowGenerate(1, updateRate);
+    levelUpdateColourCycling(targetUpdateRate);
     temp_a0 = level->unkBC;
     // Cursed
     if (temp_a0 != (PulsatingLightData *) -1) {
-        updateMixCycle(temp_a0, var_s3);
+        updateMixCycle(temp_a0, targetUpdateRate);
     }
     if (level->unk6C == 2) {
         D_800A0CD0_A18D0 = 0;
@@ -188,37 +190,36 @@ void trackDraw(Gfx **arg0, Mtx **arg1, Vertex **arg2, Triangle **arg3, s32 arg4)
     }
     if (level->unk69 == -1) {
         var_v0 = ((level->unkB4->width << 9) - 1);
-        level->unkB8 = (level->unkB8 + (level->unkB2 * var_s3)) & var_v0;
+        level->unkB8 = (level->unkB8 + (level->unkB2 * targetUpdateRate)) & var_v0;
         var_v0 = ((level->unkB4->height << 9) - 1);
-        level->unkBA = (level->unkBA + (level->unkB3 * var_s3)) & var_v0;
-        texAnimateTexture(level->unkB4, &skyflags, &skyframe, var_s3);
+        level->unkBA = (level->unkBA + (level->unkB3 * targetUpdateRate)) & var_v0;
+        texAnimateTexture(level->unkB4, &skyflags, &skyframe, targetUpdateRate);
     }
-    texDPInit(&D_800F2F70_B1750);
+    texDPInit(&gTrackDL);
 
-    // some borked version of gSPNumLights?
-    gMoveWd(D_800F2F70_B1750++, G_MW_NUMLIGHT, 0, 0);
-    gSPClearGeometryMode(D_800F2F70_B1750++, G_CULL_FRONT);
-    gDPSetBlendColor(D_800F2F70_B1750++, 0x00, 0x00, 0x00, 0x64);
-    gDPSetPrimColor(D_800F2F70_B1750++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
-    gDPSetEnvColor(D_800F2F70_B1750++, 0xFF, 0xFF, 0xFF, 0);
+    gDkrDisableBillboard(dList++);
+    gSPClearGeometryMode(gTrackDL++, G_CULL_FRONT);
+    gDPSetBlendColor(gTrackDL++, 0x00, 0x00, 0x00, 0x64);
+    gDPSetPrimColor(gTrackDL++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+    gDPSetEnvColor(gTrackDL++, 0xFF, 0xFF, 0xFF, 0);
     rainSetFog();
-    func_8001BE04_1CA04(temp_s2, var_s3);
+    func_8001BE04_1CA04(temp_s2, targetUpdateRate);
     if (track->unk1E > 0) {
-        func_800129AC_135AC(var_s3);
+        func_800129AC_135AC(targetUpdateRate);
     }
     if (beamScrollFlag != 0) {
-        TrapDanglingJump(var_s3);
+        TrapDanglingJump(targetUpdateRate);
     }
-    fxUpdateLevelEffects(var_s3);
+    fxUpdateLevelEffects(targetUpdateRate);
     if (gameInWindow != 0 && temp_s2 == 1) {
         camEnableUserView(0, 1);
         camUserViewTick();
     }
     for (D_800F2F84_B1764 = 0; D_800F2F84_B1764 < temp_s2; D_800F2F84_B1764++) {
         func_8001BF9C_1CB9C(D_800F2F84_B1764);
-        gDPPipeSync(D_800F2F70_B1750++);
+        gDPPipeSync(gTrackDL++);
         camSetNo(D_800F2F84_B1764);
-        camSetView(&D_800F2F70_B1750, &D_800F2F74_B1754);
+        camSetView(&gTrackDL, &gTrackMtxPtr);
         func_800158BC_164BC();
         objClearFlashes(1);
         fxSetClipWindow(D_800F2F84_B1764);
@@ -226,43 +227,42 @@ void trackDraw(Gfx **arg0, Mtx **arg1, Vertex **arg2, Triangle **arg3, s32 arg4)
             if (level->unk69 == -1) {
                 func_80012BAC_137AC();
             } else {
-                func_800136B8_142B8(arg4);
+                func_800136B8_142B8(updateRate);
             }
         } else {
             func_80013454_14054();
         }
-        diRcpTrace(D_800F2F70_B1750, "track/track.c", 637);
-        gDPPipeSync(D_800F2F70_B1750++);
-        func_80013820_14420(temp_s2, arg4);
+        diRcpTrace(gTrackDL, "track/track.c", 637);
+        gDPPipeSync(gTrackDL++);
+        func_80013820_14420(temp_s2, updateRate);
         setWeatherLimits(-1, -0x200);
         if (level->unkA0 > 0 && temp_s2 < 2) {
-            doWeather(&D_800F2F70_B1750, &D_800F2F74_B1754, &gTrackVtxPtr, &gTrackTriPtr, var_s3);
+            doWeather(&gTrackDL, &gTrackMtxPtr, &gTrackVtxPtr, &gTrackTriPtr, targetUpdateRate);
         }
         if (temp_s2 < 2) {
             camlightUpdateAll();
             camlightVisibilityCheck();
-            camlightDraw(&D_800F2F70_B1750, &D_800F2F74_B1754, &gTrackVtxPtr);
-            func_800127A4_133A4(var_s3);
-            fxDrawNightVision(&D_800F2F70_B1750);
+            camlightDraw(&gTrackDL, &gTrackMtxPtr, &gTrackVtxPtr);
+            func_800127A4_133A4(targetUpdateRate);
+            fxDrawNightVision(&gTrackDL);
         }
     }
     if (numanimlockons > 0) {
-        TrapDanglingJump(&D_800F2F70_B1750);
+        TrapDanglingJump(&gTrackDL);
     }
-    TrapDanglingJump(&D_800F2F70_B1750);
+    TrapDanglingJump(&gTrackDL);
     if (fadeA != 0) {
-        TrapDanglingJump(&D_800F2F70_B1750);
+        TrapDanglingJump(&gTrackDL);
     }
     camDisableUserView(0, 1);
-    camResetView(&D_800F2F70_B1750);
-    gDPPipeSync(D_800F2F70_B1750++);
-    // some borked version of gSPNumLights?
-    gMoveWd(D_800F2F70_B1750++, G_MW_NUMLIGHT, 0, 0);
+    camResetView(&gTrackDL);
+    gDPPipeSync(gTrackDL++);
+    gDkrDisableBillboard(dList++);
     shadowChangeBuffer();
-    *arg0 = D_800F2F70_B1750;
-    *arg1 = D_800F2F74_B1754;
-    *arg2 = gTrackVtxPtr;
-    *arg3 = gTrackTriPtr;
+    *dList = gTrackDL;
+    *mtx = gTrackMtxPtr;
+    *vtx = gTrackVtxPtr;
+    *tris = gTrackTriPtr;
 }
 
 void func_800127A4_133A4(s32 arg0) {
@@ -296,7 +296,7 @@ void func_800127A4_133A4(s32 arg0) {
         temp_f0 = Cosf(camera->trans.rotation.s[1]);
         sp54 = sp54 - camera->trans.position.f[1];
         if (sp54 >= 10.0f) {
-            fxSPDPRipple(&D_800F2F70_B1750, 0, 0, sp60, sp5C, arg0);
+            fxSPDPRipple(&gTrackDL, 0, 0, sp60, sp5C, arg0);
             D_801008B4_BB0F4 = 0;
             return;
         }
@@ -312,33 +312,33 @@ void func_800127A4_133A4(s32 arg0) {
                 if (var_s0 < 0) {
                     var_s0 = 0;
                 }
-                fxSPDPRipple(&D_800F2F70_B1750, 0, var_s0, sp60, sp5C, arg0);
+                fxSPDPRipple(&gTrackDL, 0, var_s0, sp60, sp5C, arg0);
                 D_801008B4_BB0F4 = var_s0;
             }
         }
     }
 }
 
-void func_800129AC_135AC(s32 arg0) {
-    s32 sp6C;
+// track_tex_anim in DKR
+void func_800129AC_135AC(s32 updateRate) {
+    s32 segmentNumber;
     TextureHeader* temp_a0;
-    s32 var_s1;
-    Track_Unk4_UnkC* var_s0;
-    Track_Unk4* var_s3;
+    s32 batchNumber;
+    Track_Unk4_UnkC* batch;
+    Track_Unk4* segments;
     s32 sp58;
 
-    sp6C = 0;
-    var_s3 = track->unk4;
-    for (sp6C = 0; sp6C < track->unk1A; sp6C++) {
-        var_s0 = var_s3[sp6C].unkC;
-        for (var_s1 = 0; var_s1 < var_s3[sp6C].unk28; var_s1++) {
-            if (var_s0[var_s1].unkC & 0x10000) {
-                if (var_s0[var_s1].unk0 != 0xFF) {
-                    temp_a0 = track->unk0[var_s0[var_s1].unk0].unk0;
+    segments = track->segments;
+    for (segmentNumber = 0; segmentNumber < track->unk1A; segmentNumber++) {
+        batch = segments[segmentNumber].batches;
+        for (batchNumber = 0; batchNumber < segments[segmentNumber].unk28; batchNumber++) {
+            if (batch[batchNumber].unkC & 0x10000) {
+                if (batch[batchNumber].unk0 != 0xFF) {
+                    temp_a0 = track->unk0[batch[batchNumber].unk0].unk0;
                     if ((temp_a0->numOfTextures != 0x100) && (temp_a0->frameAdvanceDelay != 0)) {
-                        sp58 = var_s0[var_s1].unkA;
-                        texAnimateTexture(temp_a0, &var_s0[var_s1].unkC, &sp58, arg0);
-                        var_s0[var_s1].unkA = sp58;
+                        sp58 = batch[batchNumber].unkA;
+                        texAnimateTexture(temp_a0, &batch[batchNumber].unkC, &sp58, updateRate);
+                        batch[batchNumber].unkA = sp58;
                     }
                 }
             }
@@ -347,18 +347,18 @@ void func_800129AC_135AC(s32 arg0) {
 }
 
 void initSky(s32 arg0) {
-    ObjSetup sp1C;
+    LevelObjectEntryCommon spawnObject;
 
     if (arg0 == -1) {
         D_800F2F88_B1768 = NULL;
         D_800F2FAC_B178C = arg0;
     } else {
-        sp1C.x = 0;
-        sp1C.y = 0;
-        sp1C.z = 0;
-        sp1C.unk2 = 0xA;
-        sp1C.unk0 = arg0;
-        D_800F2F88_B1768 = objSetupObject(&sp1C, 2);
+        spawnObject.x = 0;
+        spawnObject.y = 0;
+        spawnObject.z = 0;
+        spawnObject.size = sizeof(LevelObjectEntryCommon) + 2;
+        spawnObject.objectID = arg0;
+        D_800F2F88_B1768 = objSetupObject(&spawnObject, OBJECT_SPAWN_UNK02);
         D_800F2FAC_B178C = arg0;
         if (D_800F2F88_B1768 != NULL) {
             D_800F2F88_B1768->segment.unk3C = 0;
@@ -367,8 +367,8 @@ void initSky(s32 arg0) {
     }
 }
 
-void trackSkySet(s32 arg0) {
-    D_800F2F98_B1778 = arg0;
+void trackSkySet(s32 skyDome) {
+    gSceneRenderSkyDome = skyDome;
 }
 
 // trackbg_render_flashy in DKR
@@ -483,13 +483,13 @@ void func_80012BAC_137AC(void) {
     uCoords[8] = (s16) ((2.0f * xCos) - pos.z) + var_v0;
     vCoords[8] = (s16) ((2.0f * pos.x) + var_f16) + var_v1;
 
-    camOffsetZero(&D_800F2F70_B1750, &D_800F2F74_B1754);
-    texDPTextureX(&D_800F2F70_B1750, texHeader, 0x10, skyframe << 8);
-    gDPSetPrimColor(D_800F2F70_B1750++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
-    gDPSetEnvColor(D_800F2F70_B1750++, 0xFF, 0xFF, 0xFF, 0xFF);
-    gSPVertexJFG(D_800F2F70_B1750++, OS_K0_TO_PHYSICAL(gTrackVtxPtr), 9, 0);
-    gSPPolygon(D_800F2F70_B1750++, OS_K0_TO_PHYSICAL(gTrackTriPtr), 8, 1);
-    gDPPipeSync(D_800F2F70_B1750++);
+    camOffsetZero(&gTrackDL, &gTrackMtxPtr);
+    texDPTextureX(&gTrackDL, texHeader, 0x10, skyframe << 8);
+    gDPSetPrimColor(gTrackDL++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+    gDPSetEnvColor(gTrackDL++, 0xFF, 0xFF, 0xFF, 0xFF);
+    gSPVertexJFG(gTrackDL++, OS_K0_TO_PHYSICAL(gTrackVtxPtr), 9, 0);
+    gSPPolygon(gTrackDL++, OS_K0_TO_PHYSICAL(gTrackTriPtr), 8, 1);
+    gDPPipeSync(gTrackDL++);
 
     vertY = camera->trans.position.f[1] + 192.0f;
     for (i = 0; i < 9; i++) {

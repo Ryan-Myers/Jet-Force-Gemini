@@ -155,15 +155,6 @@ typedef struct Vec2i {
     };
 } Vec2i;
 
-typedef struct ObjSetup {
-/*00*/  s16 unk0; // probably an id
-/*02*/  u8 unk2;
-/*03*/  u8 pad3;
-/*04*/  s16 x;
-/*06*/  s16 y;
-/*08*/  s16 z;
-} ObjSetup;
-
 typedef struct Object_Racer {
   /* 0x000 */ u8 pad00[0x64];
   /* 0x064 */ f32 unk64;
