@@ -155,6 +155,15 @@ typedef struct Vec2i {
     };
 } Vec2i;
 
+typedef struct ObjSetup {
+/*00*/  s16 unk0; // probably an id
+/*02*/  u8 unk2;
+/*03*/  u8 pad3;
+/*04*/  s16 x;
+/*06*/  s16 y;
+/*08*/  s16 z;
+} ObjSetup;
+
 typedef struct Object_Racer {
   /* 0x000 */ u8 pad00[0x64];
   /* 0x064 */ f32 unk64;
@@ -223,18 +232,20 @@ typedef struct ObjectTransform {
 
 typedef struct ObjectSegment {
   /* 0x0000 */ ObjectTransform trans;
-  /* 0x0018 */ u8 pad18[0x28];
-  /* 0x0048 */ ObjectHeader *header;
+  /* 0x0018 */ u8 pad18[0x3C - 0x18];
+  /* 0x003C */ s32 unk3C;
+  /* 0x0040 */ ObjectHeader *header;
 } ObjectSegment;
 
 typedef struct Object {
   /* 0x0000 */ ObjectSegment segment;
   /* 0x0046 */ u8 pad46[0x4];
   /* 0x0048 */ s16 behaviorId;
-  /* 0x0049 */ u8 pad49[0x1B];
+  /* 0x004A */ s16 unk4A;
+  /* 0x004C */ u8 pad4C[0x68 - 0x4C];
   /* 0x0068 */ Object_Racer *racer; //Object_64 in DKR.
-  /* 0x0070 */ u8 pad70[8];
-  /* 0x0074 */ u32 *unk74;
+  /* 0x0068 */ u8 pad70[8];
+  /* 0x0070 */ u32 *unk70;
 } Object;
 
 typedef struct VertexPosition {

@@ -177,7 +177,7 @@ f32 lightDirectionCalc(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg
 void lightSetupLightSources(Object *obj) {
     s32 i;
     for (i = 0; i < obj->segment.header->unk25; i++) {
-        obj->unk74[i] = addObjectLight(obj, &obj->segment.header->unk48[i]);
+        obj->unk70[i] = addObjectLight(obj, &obj->segment.header->unk48[i]);
     }
 }
 

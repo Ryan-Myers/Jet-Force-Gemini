@@ -73,6 +73,7 @@ extern Vertex *D_800F2F78_B1758;
 extern Triangle *D_800F2F7C_B175C;
 // missing D_800F2F80_B1760
 extern s32 D_800F2F84_B1764;
+extern Object* D_800F2F88_B1768;
 extern s32 D_800F2F8C_B176C;
 // missing D_800F2F90_B1770
 // missing D_800F2F94_B1774
@@ -81,6 +82,7 @@ extern s32 D_800F2F98_B1778;
 extern s32 globflags; // 0x800F2FA0
 extern s32 skyframe;  // 0x800F2FA4
 extern u32 skyflags;  // 0x800F2FA8
+extern s16 D_800F2FAC_B178C;
 
 // .data
 extern s8 D_800A0CD0_A18D0;
@@ -103,6 +105,7 @@ s32 mainGetPauseMode(void);
 void objClearFlashes(s32);
 void shadowChangeBuffer(void);
 void shadowGenerate(s32, s32);
+Object* objSetupObject(ObjSetup*, s32);
 
 // forward declarations
 void func_800127A4_133A4(s32);
@@ -336,7 +339,26 @@ void func_800129AC_135AC(s32 arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/initSky.s")
+void initSky(s32 arg0) {
+    ObjSetup sp1C;
+
+    if (arg0 == -1) {
+        D_800F2F88_B1768 = NULL;
+        D_800F2FAC_B178C = arg0;
+    } else {
+        sp1C.x = 0;
+        sp1C.y = 0;
+        sp1C.z = 0;
+        sp1C.unk2 = 0xA;
+        sp1C.unk0 = arg0;
+        D_800F2F88_B1768 = objSetupObject(&sp1C, 2);
+        D_800F2FAC_B178C = arg0;
+        if (D_800F2F88_B1768 != NULL) {
+            D_800F2F88_B1768->segment.unk3C = 0;
+            D_800F2F88_B1768->unk4A = -1;
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackSkySet.s")
 
