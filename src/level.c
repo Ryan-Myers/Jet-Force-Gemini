@@ -158,10 +158,9 @@ extern s16 D_800A31BC_A3DBC[3];
 extern s32 D_800FB114_B1754;
 
 void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
-    LevelHeader *header;
     u32 lvlStart, lvlSize;
     s32 lvlCount;
-    u32 *offsets;
+    s32 *offsets;
     s32 i, j;
     s32 players;
     s16 tune;
@@ -175,20 +174,28 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
 
     players = mainGetNumberOfPlayers();
     switch (players) {
-        case 2:  gsSndpLimitVoices(0xC);  break;
-        case 3:  gsSndpLimitVoices(0x10); break;
-        case 4:  gsSndpLimitVoices(0x10); break;
-        default: gsSndpLimitVoices(8);    break;
+        case 4:
+            gsSndpLimitVoices(0x10);
+            break;
+        case 3:
+            gsSndpLimitVoices(0x10);
+            break;
+        case 2:
+            gsSndpLimitVoices(0xC);
+            break;
+        default:
+            gsSndpLimitVoices(8);
+            break;
     }
 
     /* count entries in the -1-terminated ROM offset table */
     lvlCount = 0;
-    if (D_800FB110_B1750[0] != -1U) {
-        offsets = D_800FB110_B1750;
+    if (*(s32 *)&D_800FB110_B1750[0] != -1) {
+        offsets = (s32 *)D_800FB110_B1750;
         do {
             lvlCount++;
             offsets++;
-        } while (offsets[1] != -1U);
+        } while (*offsets != -1);
     }
     if (lvlIdx >= lvlCount - 1) {
         lvlIdx = 0;   /* likely paired with "LOADLEVEL Error: Level out of range\n" */
@@ -203,16 +210,15 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     D_800FB114_B1754 = lvlIdx;
     levelGetRegionFlags();
 
-    header = D_800FB118_B5958;
     for (i = 0; i < 7; i++) {
-        if ((&header->weatherType)[i] != -1) {
-            initColourCycle((unkResetColourCycle*)(&D_800FB170_B17B0[i]), (&header->weatherType)[i]);
+        if ((&D_800FB118_B5958->weatherType)[i] != -1) {
+            initColourCycle((unkResetColourCycle*)(&D_800FB170_B17B0[i]), (&D_800FB118_B5958->weatherType)[i]);
         }
     }
-    amTuneVoiceLimit(header->BGColourTopB);
+    amTuneVoiceLimit(D_800FB118_B5958->BGColourTopB);
     amTuneResetFade();
     mainPreNMI();
-    setupLights(D_800FB118_B5958->unk104, 8, 0x10);
+    setupLights(D_800FB118_B5958->light_count, 8, 0x10);
     mainPreNMI();
     squadsInitialiseBeforeObjects();
     mainPreNMI();
@@ -242,98 +248,118 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
         }
     }
 
-    header = D_800FB118_B5958;
-    if (header->unkA0 > 0) {
-        setupWeather(header->unkA3, header->unkA0, header->unkA6 << 8,
-                     header->unkA8 << 8, header->unkAA << 8,
-                     header->unkA4_b * 0x101, header->unkA5 * 0x101);
+    if (D_800FB118_B5958->unkA0 > 0) {
+        setupWeather(D_800FB118_B5958->unkA3, D_800FB118_B5958->unkA0, D_800FB118_B5958->unkA6 << 8,
+                     D_800FB118_B5958->unkA8 << 8, D_800FB118_B5958->unkAA << 8,
+                     D_800FB118_B5958->unkA4_b * 0x101, D_800FB118_B5958->unkA5 * 0x101);
         setWeatherLimits(-1, -0x200);
     }
-    if (header->unk69 == -1) {
-        D_800FB118_B5958->unkB4 = texLoadTexture(header->unkB4);
-        D_800FB118_B5958->bossRaceID = 0;
+    if (D_800FB118_B5958->unk69 == -1) {
+        D_800FB118_B5958->unkB4_ptr = texLoadTexture(D_800FB118_B5958->unkB4);
+        D_800FB118_B5958->unkB8 = 0;
         D_800FB118_B5958->unkBA = 0;
     }
-    if (header->unkBC != 0xff) {
-        D_800FB118_B5958->unkBC = objGetTable(header->unkBC);
+    if (D_800FB118_B5958->unkBC != -1) {
+        D_800FB118_B5958->unkBC_ptr = objGetTable(D_800FB118_B5958->unkBC);
         resetMixCycle((PulsatingLightData *) D_800FB118_B5958->unkBC);
     }
-    rcpSetScreenColour(header->screen_color_r, header->screen_color_g, header->screen_color_b);
+    rcpSetScreenColour(D_800FB118_B5958->screen_color_r, D_800FB118_B5958->screen_color_g, D_800FB118_B5958->screen_color_b);
     viFrameRateReset();
     levelTunePlay(1.0f);
 
     for (i = 0; i < 4; i++) {
         camSetNo(i);
-        camSetFOV((f32) D_800FB118_B5958->screen_color_r, 1);
+        camSetFOV((f32) D_800FB118_B5958->camera_fov, 1);
     }
     camSetNo(0);
 
     if (D_800FB118_B5958->unkE4 == -1) {
         D_800FB118_B5958->unkE4 = 0;
     } else {
-        D_800FB118_B5958->unkE4 = objGetTable(D_800FB118_B5958->unkE4);
+        D_800FB118_B5958->unkE4_ptr = objGetTable(D_800FB118_B5958->unkE4);
     }
     mainPreNMI();
 
-    header = D_800FB118_B5958;
-    if (header->unk107 != 0) {
+    if (D_800FB118_B5958->unk107 != 0) {
         fxInitNightVision(1);
     }
-    if (header->BGColourTopG != 0) {
+    if (D_800FB118_B5958->BGColourTopG != 0) {
         TrapDanglingJump();
     }
-    if (header->unkC8 != 0) {
+    if (D_800FB118_B5958->unkC8 != 0) {
         TrapDanglingJump();
     }
-    if (header->unkF7 != 0) {
-        TrapDanglingJump((s16) header->unkF7);
+    if (D_800FB118_B5958->unkF7 != 0) {
+        TrapDanglingJump(D_800FB118_B5958);
     }
-    if (header->unk101 != 0) {
-        TrapDanglingJump(12.0f, header->unk101 * 0x3C);
+    if (D_800FB118_B5958->unk101 != 0) {
+        TrapDanglingJump(12.0f, D_800FB118_B5958->unk101 * 0x3C);
     }
     mainPreNMI();
     runlinkFreeCode(0x18);
     runlinkFreeCode(0x1E);
 
     /* stop tunes that are playing but not wanted by the new level */
-    for (i = 0; i < 3; i++) {
-        tune = D_800A31BC_A3DBC[i];
-        j = 1;                              /* "not needed" flag */
-        {
-            s32 k;
-            for (k = 0; k < 3; k++) {
-                if (D_800FB118_B5958->tunes[k] == tune) {
-                    j = 0;
-                }
-            }
-        }
-        if (j != 0 && D_800A31B0_A3DB0[i] != 0) {
-            D_800A31BC_A3DBC[i] = -1;
-            amSndStop(D_800A31B0_A3DB0[i], tune, j, &D_800A31BC_A3DBC[i]); /* verify real signature */
-        }
-    }
+    {
+        s32 i, shouldPlay;
+        s32 off;               /* inner counter / byte offset */
+        s16 tune;
+        s32 freeSlot;
+        LevelHeader *hdr;
+        s16 *ptr;
 
-    /* start tunes the new level wants that aren't already playing */
-    if (TrapDanglingJump() == 0) {               /* #6, before the fog-default writes */
-        D_800FB118_B5958->fogNear2 = 0x384;
-        D_800FB118_B5958->fogFar2 = 0x398;
-    }
-    for (i = 0; i < 3; i++) {
-        tune = D_800FB118_B5958->tunes[i];
-        if (tune != -1) {
-            s32 shouldPlay = 1;
-            for (j = 0; j < 3; j++) {
-                if (D_800A31BC_A3DBC[j] == tune) {
+        ptr = D_800A31BC_A3DBC;
+        for (i = 0; i < 3; i++, ptr++) {
+            hdr = D_800FB118_B5958;      /* header FIRST */
+            tune = *ptr;                 /* then tune    */
+            shouldPlay = 1;
+            off = 0;
+            do {
+                off += 2;
+                if (hdr->tunes[0] == tune) {
                     shouldPlay = 0;
-                } else if (D_800A31BC_A3DBC[j] == -1) {
-                    freeSlot = j;
+                }
+                hdr = (LevelHeader *)((u8 *)hdr + 2);
+            } while (off != 6);
+            if (shouldPlay != 0) {
+                if (D_800A31B0_A3DB0[i] != 0) {
+                    *ptr = -1;
+                    amSndStop(D_800A31B0_A3DB0[i], tune, shouldPlay, ptr);
                 }
             }
-            if (shouldPlay) {
-                amSndPlay(tune & 0xFFFF, &D_800A31B0_A3DB0[freeSlot]);
-                D_800A31BC_A3DBC[freeSlot] = D_800FB118_B5958->tunes[i];
-            }
         }
+
+        if (TrapDanglingJump() == 0) {               /* #6, before the fog-default writes */
+            D_800FB118_B5958->fogNear2 = 0x384;
+            D_800FB118_B5958->fogFar2 = 0x398;
+        }
+        /* start tunes the new level wants that aren't already playing */
+        hdr = D_800FB118_B5958;
+        off = 0;
+        do {
+            tune = hdr->tunes[0];
+            shouldPlay = 1;
+            off = 0;
+            if (tune != -1) {
+                ptr = D_800A31BC_A3DBC;
+                do {
+                    if (tune == *ptr) {
+                        shouldPlay = 0;
+                    } else if (*ptr == -1) {
+                        freeSlot = off;
+                    }
+                    off++;
+                    ptr++;
+                } while (off != 3);
+                if (shouldPlay != 0) {
+                    amSndPlay(tune & 0xFFFF, &D_800A31B0_A3DB0[freeSlot]);
+                    hdr = (LevelHeader *)((u8 *)D_800FB118_B5958 + off);
+                    D_800A31BC_A3DBC[freeSlot] = hdr->tunes[0];
+                }
+            }
+            off += 2;
+            hdr = (LevelHeader *)((u8 *)hdr + 2);
+        } while (off != 6);
     }
 }
 

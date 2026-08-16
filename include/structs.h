@@ -640,11 +640,9 @@ typedef struct LevelHeader {
   
     /* 0x52 */ u8 music;
     /* 0x53 */ u8 unk53;
-    /* 0x54 */ u16 instruments;
-    /* 0x56 */ u8 unk56; // values between 2 and 8 (except 5 and 7), used to determine waves count?
-    /* 0x57 */ u8 unk57; // possible values: 2,4,8,16,20, related to waves
-    /* 0x58 */ u8 unk58; // possible values: 1,2,4
-    /* 0x59 */ u8 unk59; // always 0?
+    /* 0x54 */ s16 instruments;
+    /* 0x56 */ s16 unk56; // values between 2 and 8 (except 5 and 7), used to determine waves count?
+    /* 0x58 */ s16 unk58; // possible values: 1,2,4
     /* 0x5A */ s16 fogNear2;
     /* 0x5C */ s16 fogFar2;
     /* 0x5E */ s16 unk5E; // values between 512 and 4963
@@ -657,7 +655,7 @@ typedef struct LevelHeader {
             /* 0x60 */ u8 fogR2;
             /* 0x61 */ u8 fogG2;
             /* 0x62 */ u8 fogB2;
-            /* 0x63 */ s8 unk63;
+            /* 0x63 */ u8 unk63;
         };
     };
     /* 0x64 */ s16 unk64; // Always 153 except in Smokey Castle where it's 0 and the title screen where it's 256 (Some form of secondary power)
@@ -707,7 +705,7 @@ typedef struct LevelHeader {
     /* 0x9F */ u8 bgColorBlue;
     /* 0xA0 */ s16 unkA0;
     /* 0xA2 */ u8 unkA2;
-    /* 0xA3 */ s8 unkA3;
+    /* 0xA3 */ u8 unkA3;
     union {
         /* 0xA4 */ TextureHeader *unkA4;      /* canonical — used by matched code */
         struct {
@@ -721,10 +719,10 @@ typedef struct LevelHeader {
     union {
          /* 0xAC */ PulsatingLightData *pulseLightData;
         struct {
-        /* 0xAC */ u8 screen_color_r;
-        /* 0xAD */ u8 screen_color_g;
-        /* 0xAE */ u8 screen_color_b;
-        /* 0xAF */ u8 unkAF;
+        /* 0xAC */ s8 camera_fov;
+        /* 0xAD */ u8 screen_color_r;
+        /* 0xAE */ u8 screen_color_g;
+        /* 0xAF */ u8 screen_color_b;
         };
     };
     /* 0xB0 */ s16 unkB0;
@@ -733,26 +731,23 @@ typedef struct LevelHeader {
     union {
         TextureHeader* unkB4_ptr;
         struct {
-    /* 0xB4 */ u8 unkB4;
-    /* 0xB5 */ u8 unkB5;
-    /* 0xB6 */ u8 unkB6;
-    /* 0xB7 */ u8 unkB7;
+        /* 0xB4 */ s32 unkB4;
         };
     };
-    /* 0xB8 */ s8 bossRaceID;
-    /* 0xB9 */ u8 unkB9;
+    /* 0xB8 */ s16 unkB8;
     /* 0xBA */ s16 unkBA;
-    /* 0xBC */ u8 unkBC;
-    /* 0xBD */ s8 unkBD;
-    // Multiplayer gradient background
-    /* 0xBE */ u8 BGColourBottomR;
-    /* 0xBF */ u8 BGColourBottomG;
+    union {
+        s32* unkBC_ptr; // objGetTable
+        struct {
+        /* 0xBC */ s32 unkBC;
+        };
+    };
     /* 0xC0 */ u8 BGColourBottomB;
     /* 0xC1 */ u8 BGColourTopR;
-    /* 0xC2 */ u8 BGColourTopG;
+    /* 0xC2 */ s8 BGColourTopG;
     /* 0xC3 */ u8 BGColourTopB;
     /* 0xC4 */ u8 padC4[4];
-    /* 0xC8 */ u8 unkC8;
+    /* 0xC8 */ s8 unkC8;
     /* 0xC9 */ u8 unkC9;
     /* 0xCA */ s16 unkCA;
     /* 0xCC */ u8 padCC[0x17];
@@ -761,14 +756,16 @@ typedef struct LevelHeader {
     /* 0xE4 */ void *unkE4_ptr;
     /* 0xE4 */ s32 unkE4;
     };
-    /* 0xE8 */ s32 unkE8;
+    /* 0xE8 */ s16 unkE8;
+    /* 0xEA */ s16 unkEA;
     /* 0xEC */ u8 padEC[0xB];
     /* 0xF7 */ u8 unkF7;
     /* 0xF8 */ u8 padF8[9];
     /* 0x101 */ u8 unk101;
     /* 0x102 */ u8 objectFlag;
     /* 0x103 */ u8 regionFlag;
-    /* 0x104 */ s16 unk104;
+    /* 0x104 */ u8 light_count;
+    /* 0x105 */ u8 unk105;
     /* 0x106 */ u8 unk106;
     /* 0x107 */ u8 unk107;
     /* 0x108 */ s16 tunes[3];
