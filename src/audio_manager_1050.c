@@ -1,5 +1,6 @@
 #include "audio.h"
 #include "common.h"
+#include "gsSnd.h"
 #include "naudio/n_seqp.h"
 #include "naudio/n_sndp.h"
 #include "PR/n_libaudio.h"
@@ -351,7 +352,9 @@ void amAmbientSetVolume(u8 volume) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amDittyPlaying.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amSndStop.s")
+void amSndStop(ALSoundState* handle) {
+    gsSndpStop(handle);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amSndPlay.s")
 

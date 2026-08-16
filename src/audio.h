@@ -47,6 +47,7 @@ void amSndSetVolXYZ(SoundMask *soundMask, u8 volume);
 void amSndSetXYZ(SoundMask *soundMask, f32 x, f32 y, f32 z);
 void func_80003B74_4774(s32 arg0);
 void amSndStopXYZ(SoundMask *soundMask);
+void amSndStop(ALSoundState* handle);
 void amSndPlayXYZ(u16 soundId, f32 x, f32 y, f32 z, u8 arg4, SoundMask **soundMask);
 void amSndPlay(u16 soundID, SoundHandle *handlePtr);
 void amTuneSetGlobalVolume(u32 volume);

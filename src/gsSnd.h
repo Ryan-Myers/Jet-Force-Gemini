@@ -75,5 +75,6 @@ typedef union {
 } ALSndpEvent;
 
 void gsSndpSetGlobalVolume(u32 volume);
+void gsSndpStop(ALSoundState *state);
 
 #endif
