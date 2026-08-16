@@ -1,9 +1,9 @@
-#include "common.h"
 #include "audio.h"
 #include "camlight.h"
+#include "common.h"
 #include "fx.h"
-#include "hit.h"
 #include "gameVi.h"
+#include "hit.h"
 #include "memory.h"
 #include "rcpFast3d.h"
 #include "runLink.h"
@@ -31,22 +31,20 @@ typedef struct {
     u8 unk1[0x10];
 } Unk_800FB1E0_B1820;
 
-
 const char D_800ACD20[] = "LOADLEVEL Error: Level out of range\n";
 const char D_800ACD48[] = "levelGetRegionFlags: Ran out of levelRegionFlag structures!!\n";
 const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
 
 extern s32 D_800A089C_A149C;
-extern u8* D_800A31A0_A3DA0;
-extern Unk_800FB1E0_B1820* D_800A31C4_A3DC4;
+extern u8 *D_800A31A0_A3DA0;
+extern Unk_800FB1E0_B1820 *D_800A31C4_A3DC4;
 
-extern s32* D_800FB110_B1750; /* loaded ROM offset table, -1 terminated */
-extern s32 D_800FB114_B1754; // gLevelNumber
+extern s32 *D_800FB110_B1750; /* loaded ROM offset table, -1 terminated */
+extern s32 D_800FB114_B1754;  // gLevelNumber
 extern s32 D_800FB124_B1764;
-extern Level_B176C* D_800FB12C_B176C[];
+extern Level_B176C *D_800FB12C_B176C[];
 extern Unk_800FB170 D_800FB170_B17B0[];
 extern Unk_800FB1E0_B1820 D_800FB1E0_B1820[0x20];
-
 
 #pragma GLOBAL_ASM("asm/nonmatchings/level/levelGetCounts.s")
 
@@ -90,7 +88,7 @@ s32 levelGetScreenMode(s32 arg0) {
 s32 levelGetBlurEffect(s32 arg0) {
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
         // TODO: weird casting and shifting to get instructions. might be bitfields?
-        return ((u32)D_800FB12C_B176C[0][arg0].unk3 << 0x1B) >> 0x1E;
+        return ((u32) D_800FB12C_B176C[0][arg0].unk3 << 0x1B) >> 0x1E;
     }
     return 0;
 }
@@ -101,7 +99,7 @@ u32 levelGetGfxIndex(s32 arg0) {
 
     var_v0 = mainGetNumberOfCameras() - 1;
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        temp_t0 = (u32)D_800FB12C_B176C[0][arg0].unk3 >> 5;
+        temp_t0 = (u32) D_800FB12C_B176C[0][arg0].unk3 >> 5;
         if (temp_t0 != 0) {
             var_v0 = temp_t0;
         }
@@ -109,7 +107,7 @@ u32 levelGetGfxIndex(s32 arg0) {
     return var_v0;
 }
 
-s32 levelGetWorldRegions(s32 arg0, u8* arg1) {
+s32 levelGetWorldRegions(s32 arg0, u8 *arg1) {
     s32 found;
     s32 j;
     s32 i;
@@ -121,7 +119,7 @@ s32 levelGetWorldRegions(s32 arg0, u8* arg1) {
             if (D_800FB12C_B176C[0][i].unk2 != 0) {
                 found = FALSE;
                 if (D_800FB12C_B176C[0][i].unk2 != 0xFF) {
-                    for(j = 0; j < var_v1; j++) {
+                    for (j = 0; j < var_v1; j++) {
                         if (arg1[j] == D_800FB12C_B176C[0][i].unk2) {
                             found = TRUE;
                             j = var_v1;
@@ -138,23 +136,23 @@ s32 levelGetWorldRegions(s32 arg0, u8* arg1) {
     return var_v1;
 }
 
-void animseqSetupGroup(s32);                           /* extern */
-void camSetFOV(f32, s32);                                /* extern */
-void camSetNo(s32);                                    /* extern */
-void fxInitNightVision(s32);                             /* extern */
-void gsSndpLimitVoices(s32 arg0);                             /* extern */
-void hitReset();                                       /* extern */
-void levelGetRegionFlags(void);                           /* extern */
-void levelTunePlay(f32 tempo);                                /* extern */
-s32 mainGetNumberOfPlayers();                       /* extern */
-void objSetAnimGroup(s32);                             /* extern */
+void animseqSetupGroup(s32);      /* extern */
+void camSetFOV(f32, s32);         /* extern */
+void camSetNo(s32);               /* extern */
+void fxInitNightVision(s32);      /* extern */
+void gsSndpLimitVoices(s32 arg0); /* extern */
+void hitReset();                  /* extern */
+void levelGetRegionFlags(void);   /* extern */
+void levelTunePlay(f32 tempo);    /* extern */
+s32 mainGetNumberOfPlayers();     /* extern */
+void objSetAnimGroup(s32);        /* extern */
 void setWeatherLimits(s16 near, s16 far);
-void setupLights(s32 count, s32 arg1, s32 arg2);                            /* extern */
-void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);   /* extern */
-void squadsInitialiseAfterObjects();                   /* extern */
-void squadsInitialiseBeforeObjects();                  /* extern */
+void setupLights(s32 count, s32 arg1, s32 arg2);                                         /* extern */
+void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6); /* extern */
+void squadsInitialiseAfterObjects();                                                     /* extern */
+void squadsInitialiseBeforeObjects();                                                    /* extern */
 void dayInit_Trap(f32, s32);
-void trackInit_Trap(s32, s32,s32, s32,s32, s32);
+void trackInit_Trap(s32, s32, s32, s32, s32, s32);
 void refractInit_Trap();
 void blurInit_Trap();
 void underWaterLightsInit_Trap();
@@ -173,7 +171,6 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     s32 pad;
     s32 off;
     s32 freeSlot;
-
 
     rumbleKill(1);
     D_800FB110_B1750 = piRomLoad(0x1E);
@@ -207,8 +204,8 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     }
 
     lvlStart = D_800FB110_B1750[lvlIdx];
-    lvlSize  = D_800FB110_B1750[lvlIdx + 1] - lvlStart;
-    D_800FB118_B5958 = (LevelHeader *)mmAlloc(lvlSize, 0xFFFF00FF);
+    lvlSize = D_800FB110_B1750[lvlIdx + 1] - lvlStart;
+    D_800FB118_B5958 = (LevelHeader *) mmAlloc(lvlSize, 0xFFFF00FF);
     piRomLoadSection(0x1F, (u32) D_800FB118_B5958, lvlStart, lvlSize);
     mainPreNMI();
     mmFree(D_800FB110_B1750);
@@ -217,7 +214,8 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
 
     for (lvlStart = 0; lvlStart < 7; lvlStart++) {
         if ((&D_800FB118_B5958->weatherType)[lvlStart] != -1) {
-            initColourCycle((unkResetColourCycle*)(&D_800FB170_B17B0[lvlStart]), (&D_800FB118_B5958->weatherType)[lvlStart]);
+            initColourCycle((unkResetColourCycle *) (&D_800FB170_B17B0[lvlStart]),
+                            (&D_800FB118_B5958->weatherType)[lvlStart]);
         }
     }
     amTuneVoiceLimit(D_800FB118_B5958->BGColourTopB);
@@ -231,25 +229,22 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     hitReset();
     objSetAnimGroup(arg3);
     mainPreNMI();
-    trackInit_Trap(D_800FB118_B5958->instruments, D_800FB118_B5958->unk58, arg1,
-                   D_800FB118_B5958->unk56, (s32) D_800FB118_B5958->unkCA,
-                   (s32) D_800FB118_B5958->unkE8);
+    trackInit_Trap(D_800FB118_B5958->instruments, D_800FB118_B5958->unk58, arg1, D_800FB118_B5958->unk56,
+                   (s32) D_800FB118_B5958->unkCA, (s32) D_800FB118_B5958->unkE8);
     mainPreNMI();
     animseqSetupGroup(arg3);
     mainPreNMI();
     squadsInitialiseAfterObjects();
 
-    if ((D_800FB118_B5958->fogNear2 == 0) && (D_800FB118_B5958->fogFar2 == 0)
-     && (D_800FB118_B5958->fogR2 == 0) && (D_800FB118_B5958->fogG2 == 0)
-     && (D_800FB118_B5958->fogB2 == 0)) {
+    if ((D_800FB118_B5958->fogNear2 == 0) && (D_800FB118_B5958->fogFar2 == 0) && (D_800FB118_B5958->fogR2 == 0) &&
+        (D_800FB118_B5958->fogG2 == 0) && (D_800FB118_B5958->fogB2 == 0)) {
         for (lvlStart = 0; lvlStart < 4; lvlStart++) {
             trackSetFogOff(lvlStart);
         }
     } else {
         for (lvlStart = 0; lvlStart < 4; lvlStart++) {
-            trackSetFog(lvlStart, D_800FB118_B5958->fogNear2, D_800FB118_B5958->fogFar2,
-                        D_800FB118_B5958->unk5E, D_800FB118_B5958->fogR2,
-                        D_800FB118_B5958->fogG2, D_800FB118_B5958->fogB2,
+            trackSetFog(lvlStart, D_800FB118_B5958->fogNear2, D_800FB118_B5958->fogFar2, D_800FB118_B5958->unk5E,
+                        D_800FB118_B5958->fogR2, D_800FB118_B5958->fogG2, D_800FB118_B5958->fogB2,
                         D_800FB118_B5958->unk63);
         }
     }
@@ -269,7 +264,8 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
         D_800FB118_B5958->unkBC_ptr = objGetTable(D_800FB118_B5958->unkBC);
         resetMixCycle((PulsatingLightData *) D_800FB118_B5958->unkBC);
     }
-    rcpSetScreenColour(D_800FB118_B5958->screen_color_r, D_800FB118_B5958->screen_color_g, D_800FB118_B5958->screen_color_b);
+    rcpSetScreenColour(D_800FB118_B5958->screen_color_r, D_800FB118_B5958->screen_color_g,
+                       D_800FB118_B5958->screen_color_b);
     viFrameRateReset();
     levelTunePlay(1.0f);
 
@@ -369,7 +365,7 @@ void levelUpdateColourCycling(s32 arg0) {
     }
 }
 
-Unk_800FB170* levelGetColourCycling(void) {
+Unk_800FB170 *levelGetColourCycling(void) {
     return D_800FB170_B17B0;
 }
 
@@ -392,7 +388,7 @@ LevelHeader *levelGetLevel(void) {
     return D_800FB118_B5958;
 }
 
-u8* levelGetName(s32 arg0) {
+u8 *levelGetName(s32 arg0) {
     *D_800A31A0_A3DA0 = 0;
     if (arg0 < D_800FB124_B1764) {
         D_800FB110_B1750 = piRomLoad(0x1E);
@@ -462,7 +458,7 @@ s32 levelGetPrevOfWorld(s32 arg0, s8 arg1) {
 void levelInitRegionFlags(void) {
     s32 j;
     s32 i;
-    
+
     for (i = 0; i < ARRAY_COUNT(D_800FB1E0_B1820); i++) {
         for (j = 0; j < ARRAY_COUNT(D_800FB1E0_B1820[i].unk1); j++) {
             D_800FB1E0_B1820[i].unk1[j] = 0;
@@ -472,7 +468,7 @@ void levelInitRegionFlags(void) {
 }
 
 void levelGetRegionFlags(void) {
-    Unk_800FB1E0_B1820* temp_t9;
+    Unk_800FB1E0_B1820 *temp_t9;
     u8 temp_v0;
 
     temp_v0 = D_800FB118_B5958->regionFlag;

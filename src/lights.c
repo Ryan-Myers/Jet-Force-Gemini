@@ -1,5 +1,5 @@
-#include "common.h"
 #include "camlight.h"
+#include "common.h"
 #include "math.h"
 
 extern void *D_800A1010_A1C10;

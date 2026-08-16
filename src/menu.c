@@ -4,7 +4,6 @@
 #include "functions.h"
 #include "gameVi.h"
 #include "gsSnd.h"
-#include "runLink.h"
 #include "overlays/overlay12.h"
 #include "overlays/overlay14.h"
 #include "overlays/overlay31.h"
@@ -17,6 +16,7 @@
 #include "overlays/overlay62.h"
 #include "overlays/overlay63.h"
 #include "overlays/overlay9.h"
+#include "runLink.h"
 
 extern u16 SFXVolume;
 extern u16 musicVolume;

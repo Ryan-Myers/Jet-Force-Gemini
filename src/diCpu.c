@@ -2,8 +2,8 @@
 #include "gameVi.h"
 #include "PR/rdb.h"
 #include "PRinternal/rmonint.h"
-#include "stdarg.h"
 #include "runLink.h"
+#include "stdarg.h"
 
 extern OSThread *__osGetActiveQueue(void);
 
