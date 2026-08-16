@@ -60,4 +60,7 @@ void amTuneScaleTempo(f32);
 void amTuneSetChlMask(u16);
 void amTuneStop(void);
 
+void amSndStop(s32, s16, s32, s16 *);
+void amTuneVoiceLimit(u8 voiceLimit);
+
 #endif

@@ -3,6 +3,7 @@
 #include "camlight.h"
 #include "fx.h"
 #include "hit.h"
+#include "gameVi.h"
 #include "memory.h"
 #include "rcpFast3d.h"
 #include "runLink.h"
@@ -39,7 +40,7 @@ extern s32 D_800A089C_A149C;
 extern u8* D_800A31A0_A3DA0;
 extern Unk_800FB1E0_B1820* D_800A31C4_A3DC4;
 
-extern u32* D_800FB110_B1750;
+extern u32* D_800FB110_B1750; /* loaded ROM offset table, -1 terminated */
 extern s32 D_800FB114_B1754; // gLevelNumber
 extern s32 D_800FB124_B1764;
 extern Level_B176C* D_800FB12C_B176C[];
@@ -137,7 +138,204 @@ s32 levelGetWorldRegions(s32 arg0, u8* arg1) {
     return var_v1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/level/levelInit.s")
+void animseqSetupGroup(s32);                           /* extern */
+void camSetFOV(f32, s32);                                /* extern */
+void camSetNo(s32);                                    /* extern */
+void fxInitNightVision(s32);                             /* extern */
+void gsSndpLimitVoices(s32 arg0);                             /* extern */
+void hitReset();                                       /* extern */
+void levelGetRegionFlags(void);                           /* extern */
+void levelTunePlay(f32 tempo);                                /* extern */
+s32 mainGetNumberOfPlayers();                       /* extern */
+void objSetAnimGroup(s32);                             /* extern */
+void setWeatherLimits(s16 near, s16 far);
+void setupLights(s32 count, s32 arg1, s32 arg2);                            /* extern */
+void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);   /* extern */
+void squadsInitialiseAfterObjects();                   /* extern */
+void squadsInitialiseBeforeObjects();                  /* extern */
+extern SoundHandle D_800A31B0_A3DB0[3];
+extern s16 D_800A31BC_A3DBC[3];
+extern s32 D_800FB114_B1754;
+
+void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
+    LevelHeader *header;
+    u32 lvlStart, lvlSize;
+    s32 lvlCount;
+    u32 *offsets;
+    s32 i, j;
+    s32 players;
+    s16 tune;
+    s32 freeSlot;   /* NOTE: read before first write in original (sp54) — see notes */
+
+    rumbleKill(1);
+    D_800FB110_B1750 = piRomLoad(0x1E);
+    if (arg3 < 0) {
+        arg3 = 0;
+    }
+
+    players = mainGetNumberOfPlayers();
+    switch (players) {
+        case 2:  gsSndpLimitVoices(0xC);  break;
+        case 3:  gsSndpLimitVoices(0x10); break;
+        case 4:  gsSndpLimitVoices(0x10); break;
+        default: gsSndpLimitVoices(8);    break;
+    }
+
+    /* count entries in the -1-terminated ROM offset table */
+    lvlCount = 0;
+    if (D_800FB110_B1750[0] != -1U) {
+        offsets = D_800FB110_B1750;
+        do {
+            lvlCount++;
+            offsets++;
+        } while (offsets[1] != -1U);
+    }
+    if (lvlIdx >= lvlCount - 1) {
+        lvlIdx = 0;   /* likely paired with "LOADLEVEL Error: Level out of range\n" */
+    }
+
+    lvlStart = D_800FB110_B1750[lvlIdx];
+    lvlSize  = D_800FB110_B1750[lvlIdx + 1] - lvlStart;
+    D_800FB118_B5958 = (LevelHeader *)mmAlloc(lvlSize, 0xFFFF00FF);
+    piRomLoadSection(0x1F, (u32) D_800FB118_B5958, lvlStart, lvlSize);
+    mainPreNMI();
+    mmFree(D_800FB110_B1750);
+    D_800FB114_B1754 = lvlIdx;
+    levelGetRegionFlags();
+
+    header = D_800FB118_B5958;
+    for (i = 0; i < 7; i++) {
+        if ((&header->weatherType)[i] != -1) {
+            initColourCycle((unkResetColourCycle*)(&D_800FB170_B17B0[i]), (&header->weatherType)[i]);
+        }
+    }
+    amTuneVoiceLimit(header->BGColourTopB);
+    amTuneResetFade();
+    mainPreNMI();
+    setupLights(D_800FB118_B5958->unk104, 8, 0x10);
+    mainPreNMI();
+    squadsInitialiseBeforeObjects();
+    mainPreNMI();
+    hitReset();
+    objSetAnimGroup(arg3);
+    mainPreNMI();
+    TrapDanglingJump(D_800FB118_B5958->instruments, D_800FB118_B5958->unk58, arg1,
+                     D_800FB118_B5958->unk56, (s32) D_800FB118_B5958->unkCA,
+                     (s32) D_800FB118_B5958->unkE8);
+    mainPreNMI();
+    animseqSetupGroup(arg3);
+    mainPreNMI();
+    squadsInitialiseAfterObjects();
+
+    if ((D_800FB118_B5958->fogNear2 == 0) && (D_800FB118_B5958->fogFar2 == 0)
+     && (D_800FB118_B5958->fogR2 == 0) && (D_800FB118_B5958->fogG2 == 0)
+     && (D_800FB118_B5958->fogB2 == 0)) {
+        for (i = 0; i < 4; i++) {
+            trackSetFogOff(i);
+        }
+    } else {
+        for (i = 0; i < 4; i++) {
+            trackSetFog(i, D_800FB118_B5958->fogNear2, D_800FB118_B5958->fogFar2,
+                        D_800FB118_B5958->unk5E, D_800FB118_B5958->fogR2,
+                        D_800FB118_B5958->fogG2, D_800FB118_B5958->fogB2,
+                        D_800FB118_B5958->unk63);
+        }
+    }
+
+    header = D_800FB118_B5958;
+    if (header->unkA0 > 0) {
+        setupWeather(header->unkA3, header->unkA0, header->unkA6 << 8,
+                     header->unkA8 << 8, header->unkAA << 8,
+                     header->unkA4_b * 0x101, header->unkA5 * 0x101);
+        setWeatherLimits(-1, -0x200);
+    }
+    if (header->unk69 == -1) {
+        D_800FB118_B5958->unkB4 = texLoadTexture(header->unkB4);
+        D_800FB118_B5958->bossRaceID = 0;
+        D_800FB118_B5958->unkBA = 0;
+    }
+    if (header->unkBC != 0xff) {
+        D_800FB118_B5958->unkBC = objGetTable(header->unkBC);
+        resetMixCycle((PulsatingLightData *) D_800FB118_B5958->unkBC);
+    }
+    rcpSetScreenColour(header->screen_color_r, header->screen_color_g, header->screen_color_b);
+    viFrameRateReset();
+    levelTunePlay(1.0f);
+
+    for (i = 0; i < 4; i++) {
+        camSetNo(i);
+        camSetFOV((f32) D_800FB118_B5958->screen_color_r, 1);
+    }
+    camSetNo(0);
+
+    if (D_800FB118_B5958->unkE4 == -1) {
+        D_800FB118_B5958->unkE4 = 0;
+    } else {
+        D_800FB118_B5958->unkE4 = objGetTable(D_800FB118_B5958->unkE4);
+    }
+    mainPreNMI();
+
+    header = D_800FB118_B5958;
+    if (header->unk107 != 0) {
+        fxInitNightVision(1);
+    }
+    if (header->BGColourTopG != 0) {
+        TrapDanglingJump();
+    }
+    if (header->unkC8 != 0) {
+        TrapDanglingJump();
+    }
+    if (header->unkF7 != 0) {
+        TrapDanglingJump((s16) header->unkF7);
+    }
+    if (header->unk101 != 0) {
+        TrapDanglingJump(12.0f, header->unk101 * 0x3C);
+    }
+    mainPreNMI();
+    runlinkFreeCode(0x18);
+    runlinkFreeCode(0x1E);
+
+    /* stop tunes that are playing but not wanted by the new level */
+    for (i = 0; i < 3; i++) {
+        tune = D_800A31BC_A3DBC[i];
+        j = 1;                              /* "not needed" flag */
+        {
+            s32 k;
+            for (k = 0; k < 3; k++) {
+                if (D_800FB118_B5958->tunes[k] == tune) {
+                    j = 0;
+                }
+            }
+        }
+        if (j != 0 && D_800A31B0_A3DB0[i] != 0) {
+            D_800A31BC_A3DBC[i] = -1;
+            amSndStop(D_800A31B0_A3DB0[i], tune, j, &D_800A31BC_A3DBC[i]); /* verify real signature */
+        }
+    }
+
+    /* start tunes the new level wants that aren't already playing */
+    if (TrapDanglingJump() == 0) {               /* #6, before the fog-default writes */
+        D_800FB118_B5958->fogNear2 = 0x384;
+        D_800FB118_B5958->fogFar2 = 0x398;
+    }
+    for (i = 0; i < 3; i++) {
+        tune = D_800FB118_B5958->tunes[i];
+        if (tune != -1) {
+            s32 shouldPlay = 1;
+            for (j = 0; j < 3; j++) {
+                if (D_800A31BC_A3DBC[j] == tune) {
+                    shouldPlay = 0;
+                } else if (D_800A31BC_A3DBC[j] == -1) {
+                    freeSlot = j;
+                }
+            }
+            if (shouldPlay) {
+                amSndPlay(tune & 0xFFFF, &D_800A31B0_A3DB0[freeSlot]);
+                D_800A31BC_A3DBC[freeSlot] = D_800FB118_B5958->tunes[i];
+            }
+        }
+    }
+}
 
 void levelTunePlay(f32 tempo) {
     if (D_800FB118_B5958->seqNum != 0) {

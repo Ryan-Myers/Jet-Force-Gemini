@@ -645,12 +645,21 @@ typedef struct LevelHeader {
     /* 0x57 */ u8 unk57; // possible values: 2,4,8,16,20, related to waves
     /* 0x58 */ u8 unk58; // possible values: 1,2,4
     /* 0x59 */ u8 unk59; // always 0?
-    /* 0x5A */ s16 unk5A; // values between 512 and 4608
-    /* 0x5C */ u8 unk5C; // possible values: 1,2,4
-    /* 0x5D */ u8 unk5D; // always 0?
+    /* 0x5A */ s16 fogNear2;
+    /* 0x5C */ s16 fogFar2;
     /* 0x5E */ s16 unk5E; // values between 512 and 4963
-    /* 0x60 */ s16 unk60; // possible values: 120, 130, 157, 178, 187
-    /* 0x62 */ s16 wavePower; // always 256
+    union {
+        struct {
+            /* 0x60 */ s16 unk60; // possible values: 120, 130, 157, 178, 187
+            /* 0x62 */ s16 wavePower; // always 256
+        };
+        struct {
+            /* 0x60 */ u8 fogR2;
+            /* 0x61 */ u8 fogG2;
+            /* 0x62 */ u8 fogB2;
+            /* 0x63 */ s8 unk63;
+        };
+    };
     /* 0x64 */ s16 unk64; // Always 153 except in Smokey Castle where it's 0 and the title screen where it's 256 (Some form of secondary power)
     /* 0x66 */ s16 unk66; // values between 908 and 2560
     union {
@@ -699,11 +708,25 @@ typedef struct LevelHeader {
     /* 0xA0 */ s16 unkA0;
     /* 0xA2 */ u8 unkA2;
     /* 0xA3 */ s8 unkA3;
-    /* 0xA4 */ TextureHeader *unkA4;
+    union {
+        /* 0xA4 */ TextureHeader *unkA4;      /* canonical — used by matched code */
+        struct {
+            /* 0xA4 */ u8 unkA4_b;            /* weather colour, * 0x101 */
+            /* 0xA5 */ u8 unkA5;              /* weather colour, * 0x101 */
+            /* 0xA6 */ s16 unkA6;             /* weather velocity, << 8 */
+        };
+    };
     /* 0xA8 */ s16 unkA8;
     /* 0xAA */ s16 unkAA;
-    /* 0xAC */ PulsatingLightData *pulseLightData;
-  
+    union {
+         /* 0xAC */ PulsatingLightData *pulseLightData;
+        struct {
+        /* 0xAC */ u8 screen_color_r;
+        /* 0xAD */ u8 screen_color_g;
+        /* 0xAE */ u8 screen_color_b;
+        /* 0xAF */ u8 unkAF;
+        };
+    };
     /* 0xB0 */ s16 unkB0;
     /* 0xB2 */ u8 unkB2;
     /* 0xB3 */ u8 voiceLimit;
@@ -728,11 +751,27 @@ typedef struct LevelHeader {
     /* 0xC1 */ u8 BGColourTopR;
     /* 0xC2 */ u8 BGColourTopG;
     /* 0xC3 */ u8 BGColourTopB;
-    /* 0xC4 */ u8 padC4[0x1F];
+    /* 0xC4 */ u8 padC4[4];
+    /* 0xC8 */ u8 unkC8;
+    /* 0xC9 */ u8 unkC9;
+    /* 0xCA */ s16 unkCA;
+    /* 0xCC */ u8 padCC[0x17];
     /* 0xE3 */ u8 cameraLevel;
-    /* 0xE4 */ u8 padE4[0x1E];
+    union {
+    /* 0xE4 */ void *unkE4_ptr;
+    /* 0xE4 */ s32 unkE4;
+    };
+    /* 0xE8 */ s32 unkE8;
+    /* 0xEC */ u8 padEC[0xB];
+    /* 0xF7 */ u8 unkF7;
+    /* 0xF8 */ u8 padF8[9];
+    /* 0x101 */ u8 unk101;
     /* 0x102 */ u8 objectFlag;
     /* 0x103 */ u8 regionFlag;
+    /* 0x104 */ s16 unk104;
+    /* 0x106 */ u8 unk106;
+    /* 0x107 */ u8 unk107;
+    /* 0x108 */ s16 tunes[3];
 } LevelHeader;
 
 typedef struct SubMiscAssetObjectHeader24 {
