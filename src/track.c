@@ -6,17 +6,22 @@
 #include "overlays/overlay1.h"
 #include "overlays/overlay10.h"
 #include "overlays/overlay39.h"
+#include "textures.h"
 #include "track.h"
 #include "weather.h"
 
+// LevelHeader in DKR
 typedef struct {
+    // 0x10 offset added here somewhere?
     u8 pad0[0x69];
     s8 unk69;
     u8 pad6A[0x6C - 0x6A];
     s8 unk6C;
     u8 pad6D[0xA0 - 0x6D];
     s16 unkA0;
-    u8 padA2[0xB2 - 0xA2];
+    u8 padA2[0xB0 - 0xA2];
+    u8 unkB0;
+    u8 unkB1;
     s8 unkB2;
     s8 unkB3;
     TextureHeader *unkB4;
@@ -69,8 +74,8 @@ typedef struct {
 extern s16 fadeA; // 0x801046EE
 extern Gfx *D_800F2F70_B1750;
 extern Mtx *D_800F2F74_B1754;
-extern Vertex *D_800F2F78_B1758;
-extern Triangle *D_800F2F7C_B175C;
+extern Vertex *gTrackVtxPtr;
+extern Triangle *gTrackTriPtr;
 // missing D_800F2F80_B1760
 extern s32 D_800F2F84_B1764;
 extern Object* D_800F2F88_B1768;
@@ -91,6 +96,7 @@ extern Track *track;                           // 0x800A0D60
 extern TrackLevel *level;                      // 0x800A0D64
 extern WaterEffectTexture *watereffecttexture; // 0x800A0D68
 extern s32 watereffectframe;                   // 0x800A0D6C
+extern u8 D_800A0D90_A1990[];
 
 // main .data
 extern u8 gameInWindow; // 0x800A321C
@@ -106,6 +112,7 @@ void objClearFlashes(s32);
 void shadowChangeBuffer(void);
 void shadowGenerate(s32, s32);
 Object* objSetupObject(ObjSetup*, s32);
+void camOffsetZero(Gfx **dlist, Mtx **mtx);
 
 // forward declarations
 void func_800127A4_133A4(s32);
@@ -145,8 +152,8 @@ void trackDraw(Gfx **arg0, Mtx **arg1, Vertex **arg2, Triangle **arg3, s32 arg4)
 
     D_800F2F70_B1750 = *arg0;
     D_800F2F74_B1754 = *arg1;
-    D_800F2F78_B1758 = *arg2;
-    D_800F2F7C_B175C = *arg3;
+    gTrackVtxPtr = *arg2;
+    gTrackTriPtr = *arg3;
     diRcpTrace(D_800F2F70_B1750, "track/track.c", 504);
     camSetNo(0);
     D_800F2F98_B1778 = 1;
@@ -229,12 +236,12 @@ void trackDraw(Gfx **arg0, Mtx **arg1, Vertex **arg2, Triangle **arg3, s32 arg4)
         func_80013820_14420(temp_s2, arg4);
         setWeatherLimits(-1, -0x200);
         if (level->unkA0 > 0 && temp_s2 < 2) {
-            doWeather(&D_800F2F70_B1750, &D_800F2F74_B1754, &D_800F2F78_B1758, &D_800F2F7C_B175C, var_s3);
+            doWeather(&D_800F2F70_B1750, &D_800F2F74_B1754, &gTrackVtxPtr, &gTrackTriPtr, var_s3);
         }
         if (temp_s2 < 2) {
             camlightUpdateAll();
             camlightVisibilityCheck();
-            camlightDraw(&D_800F2F70_B1750, &D_800F2F74_B1754, &D_800F2F78_B1758);
+            camlightDraw(&D_800F2F70_B1750, &D_800F2F74_B1754, &gTrackVtxPtr);
             func_800127A4_133A4(var_s3);
             fxDrawNightVision(&D_800F2F70_B1750);
         }
@@ -254,8 +261,8 @@ void trackDraw(Gfx **arg0, Mtx **arg1, Vertex **arg2, Triangle **arg3, s32 arg4)
     shadowChangeBuffer();
     *arg0 = D_800F2F70_B1750;
     *arg1 = D_800F2F74_B1754;
-    *arg2 = D_800F2F78_B1758;
-    *arg3 = D_800F2F7C_B175C;
+    *arg2 = gTrackVtxPtr;
+    *arg3 = gTrackTriPtr;
 }
 
 void func_800127A4_133A4(s32 arg0) {
@@ -360,9 +367,162 @@ void initSky(s32 arg0) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/trackSkySet.s")
+void trackSkySet(s32 arg0) {
+    D_800F2F98_B1778 = arg0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80012BAC_137AC.s")
+// trackbg_render_flashy in DKR
+void func_80012BAC_137AC(void) {
+    Triangle *tris;
+    Vertex *verts;
+    s32 vCoordMask;
+    s32 uCoordMask;
+    f32 scaledXSin;
+    f32 scaledXCos;
+    f32 var_f16;
+    s16 uCoords[9];
+    s16 vCoords[9];
+    f32 xCos;
+    f32 xSin;
+    f32 pad_sp108;
+    Camera *camera;
+    f32 pad_sp100;
+    f32 xPositions[9];
+    f32 zPositions[9];
+    Vec3f pos;
+    s32 i;
+    s32 var_v0;
+    s32 var_v1;
+    s32 var_a1;
+    s32 var_a2;
+    s32 var_a3;
+    u8 *var_v0_3;
+    f32 var_f14;
+    s16 vertY;
+    s16 vTempCoord;
+    s16 uTempCoord;
+    LevelHeader_70 *pad2;
+    LevelHeader_70 *var_t2;
+    LevelHeader_70 *levelHeader;
+    TextureHeader *texHeader;
+
+    verts = gTrackVtxPtr;
+    tris = gTrackTriPtr;
+
+    camera = camGetPtr();
+    texHeader = level->unkB4;
+    D_800F2FAC_B178C = -1;
+
+    uCoordMask = (texHeader->width << 5) - 1;
+    vCoordMask = (texHeader->height << 5) - 1;
+    xSin = Sinf(-camera->trans.rotation.s[0]);
+    xCos = Cosf(-camera->trans.rotation.s[0]);
+    
+    scaledXSin = xSin * 1280.0f;
+    scaledXCos = xCos * 1280.0f;
+    pad_sp100 = 2.0f * scaledXSin;
+    xPositions[0] = -scaledXCos - (xSin * 1280.0f);
+    zPositions[0] = -scaledXCos + (xSin * 1280.0f);
+    xPositions[1] = scaledXCos - (xSin * 1280.0f);
+    zPositions[1] = -scaledXCos - (xSin * 1280.0f);
+    xPositions[2] = scaledXCos + scaledXSin;
+    zPositions[2] = scaledXCos - (xSin * 1280.0f);
+    xPositions[3] = -scaledXCos + (xSin * 1280.0f);
+    zPositions[3] = scaledXCos + (xSin * 1280.0f);
+    xPositions[4] = 0.0f;
+    zPositions[4] = 0.0f;
+
+    xPositions[5] = -(xCos * 1280.0f) - (2.0f * scaledXSin);
+    zPositions[5] = scaledXSin + -(2.0f * (xCos * 1280.0f));
+    xPositions[6] = (xCos * 1280.0f) - (2.0f * scaledXSin);
+    zPositions[6] = -(2.0f * (xCos * 1280.0f)) - scaledXSin;
+    xPositions[7] = (xCos * 1280.0f) + (2.0f * scaledXSin);
+    zPositions[7] = (2.0f * (xCos * 1280.0f)) - scaledXSin;
+    xPositions[8] = -(xCos * 1280.0f) + (2.0f * scaledXSin);
+    zPositions[8] = (2.0f * (xCos * 1280.0f)) + scaledXSin;
+
+    scaledXCos = 1280.0f;
+    var_f14 = scaledXCos * 0.25f;
+
+    var_a1 = texHeader->width * 16 * level->unkB0;
+    var_a2 = texHeader->height * 16 * level->unkB1;
+
+    var_v0 = ((s32) (camera->trans.x_position * ((scaledXCos * 0.25f) / var_a1)) + (level->unkB8 >> 4)) &
+             uCoordMask;
+    var_v1 = ((s32) (camera->trans.z_position * ((scaledXCos * 0.25f) / var_a2)) + (level->unkBA >> 4)) &
+             vCoordMask;
+
+    var_f14 = var_a1 * xCos;
+    pos.z = var_a1 * xCos;
+    pos.x = var_a1 * xCos;
+    var_f16 = var_a2 * xSin;
+    xCos = var_f16;
+    pad_sp108 = var_f16;
+
+    // @fake
+    var_a2 = texHeader->height * 16 * level->unkB1;
+
+    uCoords[0] = (s16) (-var_f14 - pad_sp108) + var_v0;
+    vCoords[0] = (s16) (var_f16 - var_f14) + var_v1;
+    uCoords[1] = (s16) (var_f14 - pad_sp108) + var_v0;
+    vCoords[1] = (s16) (-var_f14 - var_f16) + var_v1;
+    uCoords[2] = (s16) (var_f14 + var_f16) + var_v0;
+    vCoords[2] = (s16) (var_f14 - var_f16) + var_v1;
+    uCoords[3] = (s16) (var_f16 - var_f14) + var_v0;
+    vCoords[3] = (s16) (var_f14 + var_f16) + var_v1;
+
+    uCoords[4] = var_v0;
+    vCoords[4] = var_v1;
+
+    uCoords[5] = (s16) (-var_f14 - (2.0f * xCos)) + var_v0;
+    vCoords[5] = (s16) (var_f16 - (2.0f * var_f14)) + var_v1;
+    uCoords[6] = (s16) (var_f14 - (2.0f * xCos)) + var_v0;
+    vCoords[6] = (s16) ((-(2.0f * var_f14)) - var_f16) + var_v1;
+    uCoords[7] = (s16) (pos.f[2] + (2.0f * xCos)) + var_v0;
+    vCoords[7] = (s16) ((2.0f * pos.x) - var_f16) + var_v1;
+    uCoords[8] = (s16) ((2.0f * xCos) - pos.z) + var_v0;
+    vCoords[8] = (s16) ((2.0f * pos.x) + var_f16) + var_v1;
+
+    camOffsetZero(&D_800F2F70_B1750, &D_800F2F74_B1754);
+    texDPTextureX(&D_800F2F70_B1750, texHeader, 0x10, skyframe << 8);
+    gDPSetPrimColor(D_800F2F70_B1750++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+    gDPSetEnvColor(D_800F2F70_B1750++, 0xFF, 0xFF, 0xFF, 0xFF);
+    gSPVertexJFG(D_800F2F70_B1750++, OS_K0_TO_PHYSICAL(gTrackVtxPtr), 9, 0);
+    gSPPolygon(D_800F2F70_B1750++, OS_K0_TO_PHYSICAL(gTrackTriPtr), 8, 1);
+    gDPPipeSync(D_800F2F70_B1750++);
+
+    vertY = camera->trans.position.f[1] + 192.0f;
+    for (i = 0; i < 9; i++) {
+        verts->x = camera->trans.position.f[0] + xPositions[i];
+        verts->y = vertY;
+        verts->z = camera->trans.position.f[2] + zPositions[i];
+        verts->r = 0xFF;
+        verts->g = 0xFF;
+        verts->b = 0xFF;
+        verts->a = (i <= 4) ? (255) : (0);
+        verts++;
+    }
+
+    var_v0_3 = D_800A0D90_A1990;
+    for (i = 0; i < 8; i++) {
+        tris->flags = BACKFACE_DRAW;
+        tris->vi0 = *var_v0_3;
+        tris->uv0.u = uCoords[*var_v0_3];
+        tris->uv0.v = vCoords[*var_v0_3];
+        var_v0_3 += 1;
+        tris->vi1 = *var_v0_3;
+        tris->uv1.u = uCoords[*var_v0_3];
+        tris->uv1.v = vCoords[*var_v0_3];
+        var_v0_3 += 1;
+        tris->vi2 = *var_v0_3;
+        tris->uv2.u = uCoords[*var_v0_3];
+        tris->uv2.v = vCoords[*var_v0_3];
+        var_v0_3 += 1;
+        tris++;
+    }
+    gTrackVtxPtr = verts;
+    gTrackTriPtr = tris;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/func_80013454_14054.s")
 
