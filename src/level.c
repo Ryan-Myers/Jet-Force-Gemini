@@ -49,26 +49,23 @@ extern Unk_800FB170 D_800FB170_B17B0[];
 extern Unk_800FB1E0_B1820 D_800FB1E0_B1820[0x20];
 
 // new
-extern u8 *D_800FB120_B1760[];      /* level name pointer table (relocated) */
+extern u8 **D_800FB120_B1760;       /* level name pointer table (relocated) */
 extern s32 D_800FB128_B1768;        /* world count = max(world index) + 1 */
-extern Unk_800FB170* D_800FB130_B1770[0x10];  /* per-world level counts, 16 entries (B130..B170) */
+extern s32 D_800FB130_B1770[0x10];  /* per-world level counts, 16 words (B130..B170) */
 
 void levelGetCounts(void) {
-    LevelHeader *hdrBuf;     /* sp4C — 0x114 scratch */
-    u8 *nameData;            /* sp48 */
-    s32 nameSize;            /* sp50 */
-    s32 alignedSize;
-    s32 i, count;
-    s8 world;
+    LevelHeader *hdrBuf;
+    u8 *nameData;
+    s32 nameSize;
+    s32 i;
+    s32 count;
+    s32 world;
 
     hdrBuf = (LevelHeader *) mmAlloc(0x114, 0xFFFF00FF);
     D_800FB110_B1750 = (s32 *) piRomLoad(0x1E);
 
-    for (i = 0; i < 16; i++) {
-        D_800FB130_B1770[i]->unk0 = 0;
-        D_800FB130_B1770[i]->unk1 = 0;
-        D_800FB130_B1770[i]->unk2 = 0;
-        D_800FB130_B1770[i]->unk3 = 0;
+    for (i = 0; i < 0x10; i++) {
+        D_800FB130_B1770[i] = 0;
     }
 
     D_800FB124_B1764 = 0;
@@ -81,7 +78,7 @@ void levelGetCounts(void) {
     D_800FB128_B1768 = -1;
     D_800FB118_B5958 = hdrBuf;
 
-    if (D_800FB124_B1764 > 0) {
+    {
         for (i = 0; i < D_800FB124_B1764; i++) {
             piRomLoadSection(0x1F, (u32) D_800FB118_B5958, D_800FB110_B1750[i], 0x114);
 
@@ -93,13 +90,13 @@ void levelGetCounts(void) {
                 D_800FB130_B1770[world]++;
             }
 
-            D_800FB12C_B176C[i]->unk0 = D_800FB118_B5958->levelType;
-            D_800FB12C_B176C[i]->unk1 = (s8) D_800FB118_B5958->unk20;
-            D_800FB12C_B176C[i]->unk2 = (u8) D_800FB118_B5958->objectFlag;
-            D_800FB12C_B176C[i]->unk3 = (D_800FB118_B5958->unk23 << 5)         | (D_800FB12C_B176C[i]->unk3 & 0x1F);
-            D_800FB12C_B176C[i]->unk3 = ((D_800FB118_B5958->unkC8 * 8) & 0x18) | (D_800FB12C_B176C[i]->unk3 & 0xE7);
-            D_800FB12C_B176C[i]->unk3 = (D_800FB118_B5958->unkC9 & 7)          | (D_800FB12C_B176C[i]->unk3 & 0xF8);
-            D_800FB12C_B176C[i]->unk4 = (u8) D_800FB118_B5958->seqNum;
+            D_800FB12C_B176C[0][i].unk0 = D_800FB118_B5958->levelType;
+            D_800FB12C_B176C[0][i].unk1 = (s8) D_800FB118_B5958->unk20;
+            D_800FB12C_B176C[0][i].unk2 = (u8) D_800FB118_B5958->objectFlag;
+            D_800FB12C_B176C[0][i].unk3 = (D_800FB118_B5958->unk23 << 5)         | (D_800FB12C_B176C[0][i].unk3 & 0xFF1F);
+            D_800FB12C_B176C[0][i].unk3 = ((D_800FB118_B5958->unkC8 * 8) & 0x18) | (D_800FB12C_B176C[0][i].unk3 & 0xFFE7);
+            D_800FB12C_B176C[0][i].unk3 = (D_800FB118_B5958->unkC9 & 7)          | (D_800FB12C_B176C[0][i].unk3 & 0xFFF8);
+            D_800FB12C_B176C[0][i].unk4 = (u8) D_800FB118_B5958->seqNum;
         }
     }
 
@@ -111,13 +108,15 @@ void levelGetCounts(void) {
     D_800A31A0_A3DA0 = (u8 *) mmAlloc(0x20, 0xFFFF00FF);
     D_800FB110_B1750 = (s32 *) piRomLoad(0x22);
 
-    for (count = 0; D_800FB110_B1750[count] != -1; count++) {}
+    count = 0;
+    while (D_800FB110_B1750[count] != -1) {
+        count++;
+    }
     count--;
 
     nameSize = D_800FB110_B1750[count] - D_800FB110_B1750[0];
-    alignedSize = (nameSize + 3) & ~3;
-    nameData = (u8 *) mmAlloc(alignedSize + count * 4, 0xFFFF00FF);
-    *(u8 ***)&D_800FB120_B1760 = (u8 **)(nameData + alignedSize);
+    nameData = (u8 *) mmAlloc((s32) mmAlign4((u8 *) nameSize) + (count * 4), 0xFFFF00FF);
+    D_800FB120_B1760 = (u8 **)(mmAlign4((u8 *) nameSize) + (s32) nameData);
     piRomLoadSection(0x23, (u32) nameData, 0, nameSize);
 
     for (i = 0; i < count; i++) {
