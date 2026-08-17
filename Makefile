@@ -405,6 +405,8 @@ ifeq ($(VERSION),us)
 	mkdir -p asm/nonmatchings/libultra/n_synremoveplayer
 	touch asm/nonmatchings/libultra/n_synremoveplayer/n_alSynRemovePlayer.s
 endif
+# Update the calls to TrapDanglingJump to use the real symbol name.
+	$(PYTHON) $(TOOLS_DIR)/patch_asm.py --version $(VERSION) --rom baseroms/baserom.${VERSION}.z64 --asm-dir asm/nonmatchings
 
 extractall:
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).kiosk.yaml
