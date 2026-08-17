@@ -237,7 +237,7 @@ ASM_PROCESSOR_DIR := $(TOOLS_DIR)/asm-processor
 ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 
 # Patches symbol trapping into compiled objects for the main section.
-PATCH_SYMBOLS = $(PYTHON) $(TOOLS_DIR)/patch_symbol.py ver/symbols/overlay_funcs_to_trap.txt
+PATCH_SYMBOLS = $(PYTHON) $(TOOLS_DIR)/patch_symbols.py ver/symbols/overlay_funcs_to_trap.txt
 
 # Don't patch symbols for overlays
 $(foreach dir,$(SRC_OVERLAYS_DIRS),$(BUILD_DIR)/$(dir)/%.c.o): PATCH_SYMBOLS := :
