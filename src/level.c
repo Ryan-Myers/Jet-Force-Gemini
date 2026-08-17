@@ -54,19 +54,18 @@ extern s32 D_800FB128_B1768;        /* world count = max(world index) + 1 */
 extern s32 D_800FB130_B1770[0x10];  /* per-world level counts, 16 words (B130..B170) */
 
 void levelGetCounts(void) {
-    LevelHeader *hdrBuf;
-    u8 *nameData;
-    s32 nameSize;
     s32 i;
+    LevelHeader *hdrBuf = (LevelHeader *) mmAlloc(0x114, 0xFFFF00FF);
     s32 count;
-    s32 world;
+    u8 *nameData;
 
-    hdrBuf = (LevelHeader *) mmAlloc(0x114, 0xFFFF00FF);
     D_800FB110_B1750 = (s32 *) piRomLoad(0x1E);
 
-    for (i = 0; i < 0x10; i++) {
+    i = 0;
+    do {
         D_800FB130_B1770[i] = 0;
-    }
+        i++;
+    } while (i != 0x10);
 
     D_800FB124_B1764 = 0;
     while (D_800FB110_B1750[D_800FB124_B1764] != -1) {
@@ -74,30 +73,28 @@ void levelGetCounts(void) {
     }
     D_800FB124_B1764--;
 
-    *(void **)&D_800FB12C_B176C = mmAlloc(D_800FB124_B1764 * 5, 0xFFFF00FF);
+    *D_800FB12C_B176C = (Level_B176C *)mmAlloc(D_800FB124_B1764 * 5, 0xFFFF00FF);
     D_800FB128_B1768 = -1;
+
     D_800FB118_B5958 = hdrBuf;
+    for (i = 0; i < D_800FB124_B1764; i++) {
+        piRomLoadSection(0x1F, (u32) D_800FB118_B5958, D_800FB110_B1750[i], 0x114);
 
-    {
-        for (i = 0; i < D_800FB124_B1764; i++) {
-            piRomLoadSection(0x1F, (u32) D_800FB118_B5958, D_800FB110_B1750[i], 0x114);
-
-            if (D_800FB128_B1768 < D_800FB118_B5958->unk20) {
-                D_800FB128_B1768 = D_800FB118_B5958->unk20;
-            }
-            world = D_800FB118_B5958->levelType;
-            if ((world >= 0) && (world < 0x10)) {
-                D_800FB130_B1770[world]++;
-            }
-
-            D_800FB12C_B176C[0][i].unk0 = D_800FB118_B5958->levelType;
-            D_800FB12C_B176C[0][i].unk1 = (s8) D_800FB118_B5958->unk20;
-            D_800FB12C_B176C[0][i].unk2 = (u8) D_800FB118_B5958->objectFlag;
-            D_800FB12C_B176C[0][i].unk3 = (D_800FB118_B5958->unk23 << 5)         | (D_800FB12C_B176C[0][i].unk3 & 0xFF1F);
-            D_800FB12C_B176C[0][i].unk3 = ((D_800FB118_B5958->unkC8 * 8) & 0x18) | (D_800FB12C_B176C[0][i].unk3 & 0xFFE7);
-            D_800FB12C_B176C[0][i].unk3 = (D_800FB118_B5958->unkC9 & 7)          | (D_800FB12C_B176C[0][i].unk3 & 0xFFF8);
-            D_800FB12C_B176C[0][i].unk4 = (u8) D_800FB118_B5958->seqNum;
+        if (D_800FB128_B1768 < D_800FB118_B5958->unk20) {
+            D_800FB128_B1768 = D_800FB118_B5958->unk20;
         }
+
+        if ((D_800FB118_B5958->levelType >= 0) && (D_800FB118_B5958->levelType < 0x10)) {
+            D_800FB130_B1770[D_800FB118_B5958->levelType]++;
+        }
+
+        D_800FB12C_B176C[0][i].unk0 = D_800FB118_B5958->levelType;
+        D_800FB12C_B176C[0][i].unk1 = (s8) D_800FB118_B5958->unk20;
+        D_800FB12C_B176C[0][i].unk2 = (u8) D_800FB118_B5958->objectFlag;
+        D_800FB12C_B176C[0][i].unk3 = (D_800FB118_B5958->unk23 << 5)         | (D_800FB12C_B176C[0][i].unk3 & 0xFF1F);
+        D_800FB12C_B176C[0][i].unk3 = ((D_800FB118_B5958->unkC8 * 8) & 0x18) | (D_800FB12C_B176C[0][i].unk3 & 0xFFE7);
+        D_800FB12C_B176C[0][i].unk3 = (D_800FB118_B5958->unkC9 & 7)          | (D_800FB12C_B176C[0][i].unk3 & 0xFFF8);
+        D_800FB12C_B176C[0][i].unk4 = (u8) D_800FB118_B5958->seqNum;
     }
 
     D_800FB128_B1768++;
@@ -108,19 +105,19 @@ void levelGetCounts(void) {
     D_800A31A0_A3DA0 = (u8 *) mmAlloc(0x20, 0xFFFF00FF);
     D_800FB110_B1750 = (s32 *) piRomLoad(0x22);
 
-    count = 0;
-    while (D_800FB110_B1750[count] != -1) {
-        count++;
+    i = 0;
+    while (D_800FB110_B1750[i] != -1) {
+        i++;
     }
-    count--;
+    i--;
 
-    nameSize = D_800FB110_B1750[count] - D_800FB110_B1750[0];
-    nameData = (u8 *) mmAlloc((s32) mmAlign4((u8 *) nameSize) + (count * 4), 0xFFFF00FF);
-    D_800FB120_B1760 = (u8 **)(mmAlign4((u8 *) nameSize) + (s32) nameData);
-    piRomLoadSection(0x23, (u32) nameData, 0, nameSize);
+    hdrBuf = (LevelHeader *) (D_800FB110_B1750[i] - D_800FB110_B1750[0]);
+    nameData = (u8*)mmAlloc(mmAlign4((u8*)hdrBuf) + (i * 4), 0xFFFF00FF);
+    D_800FB120_B1760 = mmAlign4((u8*)hdrBuf) + (u32)nameData;
+    piRomLoadSection(0x23, (u32) nameData, 0, (s32) hdrBuf);
 
-    for (i = 0; i < count; i++) {
-        D_800FB120_B1760[i] = nameData + D_800FB110_B1750[i];
+    for (count = 0; count < i; count++) {
+        D_800FB120_B1760[count] = nameData + D_800FB110_B1750[count];
     }
     mmFree(D_800FB110_B1750);
 }
