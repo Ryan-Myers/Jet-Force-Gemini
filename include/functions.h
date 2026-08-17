@@ -16,7 +16,6 @@
 #endif
 
 void squadsPreInit(RomDefHeader *list, s32 listSize);
-s32 runlinkDownloadCode(s32);
 void *ad_sndp_play(ALBank *arg0, s16 arg1, u16 arg2, u8 arg3, f32 arg4, u8 arg5, void **arg6);
 ALLink *func_80085B20_86720(ALBank *arg0, ALSound *arg1);
 u16 amGetSfxCount(void);
@@ -48,6 +47,8 @@ void func_80066D28_67928(void *arg0);
 void stop_all_threads_except_main(void);
 void func_80066E14_67A14(void);
 void camlightDelete(void *arg0); //TODO: arg0 typing is incorrect
+void func_800676F8(void *arg0);
+void func_800677E4(void);
 
 
 typedef enum HorizontalAlignmentFlags {
@@ -90,8 +91,6 @@ void debug_text_background(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry);
 void RevealReturnAddresses(void);
 void piInit(void);
 void rcpInit(OSSched *sc);
-void runlinkFreeCode(s32 arg0);
-void runlinkInitialise(void);
 void rzipInit(void);
 void viInit(OSSched *sc);
 
@@ -254,16 +253,8 @@ s32 viGetVideoMode(void);
 // level
 LevelHeader *levelGetLevel(void);
 
-// track
-void trackSetFog(s32 fogIdx, s16 near, s16 far, s16 arg3, u8 red, u8 green, u8 blue, s8 arg7);
-void trackSetFogOff(s32 playerID);
-void trackFadeFog(s32 fogIdx, s32 red, s32 green, s32 blue, s32 near, s32 far, f32 timer);
-
 //camera 
 s32 camGetMode(void);
-
-//rcpFast3d
-s32 rcpWaitDP(void);
 
 // This function is unique in that it has no specific limit on arguments, 
 // and they can change even within the same function call it.

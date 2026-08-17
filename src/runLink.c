@@ -1,3 +1,4 @@
+#include "runLink.h"
 #include "common.h"
 #include "mips.h"
 

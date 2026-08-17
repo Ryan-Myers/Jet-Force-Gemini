@@ -610,7 +610,10 @@ typedef struct LevelHeader {
     /* 0x08 */ f32 course_height;
     /* 0x0C */ u8 unkC[10];
     /* 0x16 */ u8 unk16[10];
-    /* 0x20 */ s8 *AILevelTable;
+    /* 0x20 */ s8 unk20;
+    /* 0x21 */ u8 unk21;
+    /* 0x22 */ u8 unk22;
+    /* 0x23 */ s8 unk23;
   
     /* 0x24 */ u8 pad24[6];
     /* 0x2A */ u8 unk2A;
@@ -640,23 +643,36 @@ typedef struct LevelHeader {
   
     /* 0x52 */ u8 music;
     /* 0x53 */ u8 unk53;
-    /* 0x54 */ u16 instruments;
-    /* 0x56 */ u8 unk56; // values between 2 and 8 (except 5 and 7), used to determine waves count?
-    /* 0x57 */ u8 unk57; // possible values: 2,4,8,16,20, related to waves
-    /* 0x58 */ u8 unk58; // possible values: 1,2,4
-    /* 0x59 */ u8 unk59; // always 0?
-    /* 0x5A */ s16 unk5A; // values between 512 and 4608
-    /* 0x5C */ u8 unk5C; // possible values: 1,2,4
-    /* 0x5D */ u8 unk5D; // always 0?
+    /* 0x54 */ s16 instruments;
+    /* 0x56 */ s16 unk56; // values between 2 and 8 (except 5 and 7), used to determine waves count?
+    /* 0x58 */ s16 unk58; // possible values: 1,2,4
+    /* 0x5A */ s16 fogNear2;
+    /* 0x5C */ s16 fogFar2;
     /* 0x5E */ s16 unk5E; // values between 512 and 4963
-    /* 0x60 */ s16 unk60; // possible values: 120, 130, 157, 178, 187
-    /* 0x62 */ s16 wavePower; // always 256
+    union {
+        struct {
+            /* 0x60 */ s16 unk60; // possible values: 120, 130, 157, 178, 187
+            /* 0x62 */ s16 wavePower; // always 256
+        };
+        struct {
+            /* 0x60 */ u8 fogR2;
+            /* 0x61 */ u8 fogG2;
+            /* 0x62 */ u8 fogB2;
+            /* 0x63 */ u8 unk63;
+        };
+    };
     /* 0x64 */ s16 unk64; // Always 153 except in Smokey Castle where it's 0 and the title screen where it's 256 (Some form of secondary power)
     /* 0x66 */ s16 unk66; // values between 908 and 2560
+    union {
     /* 0x68 */ s16 textureId; // always 62 except in the trophy race where it's 205
+        struct {
+            u8 pad68;
+            s8 unk69;
+        };
+    };
     /* 0x6A */ u8 unk6A; // values between 1 and 6
     /* 0x6B */ u8 unk6B; // values between 1 and 6
-    /* 0x6C */ s8 unk6C; // values between 0 and 4
+    /* 0x6C */ s8 levelType; // values between 0 and 4
     /* 0x6D */ s8 unk6D; // values between 0 and 2 except in Hot Top Volcano where it's -2
     /* 0x6E */ s16 unk6E; // possible values: 3,5
   
@@ -666,10 +682,16 @@ typedef struct LevelHeader {
         struct {
     /* 0x70 */ u8 darkVertexColours; // always 1 except in Hot Top Volcano where it's 0
     /* 0x71 */ u8 unk71; // possible values: 0,1
+    /* 0x72 */ u8 seqNum;
         };
     };
   
+    union {
     /* 0x74 */ LevelHeader_70 *unk74[7];
+        struct {
+    /* 0x74 */ u16 chlMask; // used in levelTunePlay
+        };
+    };
   
     // Weather related?
     /* 0x90 */ s16 weatherEnable; // This affects snow density, but for rain, it simply needs to be nonzero.
@@ -686,31 +708,70 @@ typedef struct LevelHeader {
     /* 0x9F */ u8 bgColorBlue;
     /* 0xA0 */ s16 unkA0;
     /* 0xA2 */ u8 unkA2;
-    /* 0xA3 */ s8 unkA3;
-    /* 0xA4 */ TextureHeader *unkA4;
+    /* 0xA3 */ u8 unkA3;
+    union {
+        /* 0xA4 */ TextureHeader *unkA4;      /* canonical — used by matched code */
+        struct {
+            /* 0xA4 */ u8 unkA4_b;            /* weather colour, * 0x101 */
+            /* 0xA5 */ u8 unkA5;              /* weather colour, * 0x101 */
+            /* 0xA6 */ s16 unkA6;             /* weather velocity, << 8 */
+        };
+    };
     /* 0xA8 */ s16 unkA8;
     /* 0xAA */ s16 unkAA;
-    /* 0xAC */ PulsatingLightData *pulseLightData;
-  
+    union {
+         /* 0xAC */ PulsatingLightData *pulseLightData;
+        struct {
+        /* 0xAC */ s8 camera_fov;
+        /* 0xAD */ u8 screen_color_r;
+        /* 0xAE */ u8 screen_color_g;
+        /* 0xAF */ u8 screen_color_b;
+        };
+    };
     /* 0xB0 */ s16 unkB0;
     /* 0xB2 */ u8 unkB2;
     /* 0xB3 */ u8 voiceLimit;
-    /* 0xB4 */ u8 unkB4;
-    /* 0xB5 */ u8 unkB5;
-    /* 0xB6 */ u8 unkB6;
-    /* 0xB7 */ u8 unkB7;
-    /* 0xB8 */ s8 bossRaceID;
-    /* 0xB9 */ u8 unkB9;
+    union {
+        TextureHeader* unkB4_ptr;
+        struct {
+        /* 0xB4 */ s32 unkB4;
+        };
+    };
+    /* 0xB8 */ s16 unkB8;
     /* 0xBA */ s16 unkBA;
-    /* 0xBC */ u8 unkBC;
-    /* 0xBD */ s8 unkBD;
-    // Multiplayer gradient background
-    /* 0xBE */ u8 BGColourBottomR;
-    /* 0xBF */ u8 BGColourBottomG;
+    union {
+        s32* unkBC_ptr; // objGetTable
+        struct {
+        /* 0xBC */ s32 unkBC;
+        };
+    };
     /* 0xC0 */ u8 BGColourBottomB;
     /* 0xC1 */ u8 BGColourTopR;
-    /* 0xC2 */ u8 BGColourTopG;
+    /* 0xC2 */ s8 BGColourTopG;
     /* 0xC3 */ u8 BGColourTopB;
+    /* 0xC4 */ u8 padC4[4];
+    /* 0xC8 */ s8 unkC8;
+    /* 0xC9 */ u8 unkC9;
+    /* 0xCA */ s16 unkCA;
+    /* 0xCC */ u8 padCC[0x17];
+    /* 0xE3 */ u8 cameraLevel;
+    union {
+    /* 0xE4 */ void *unkE4_ptr;
+    /* 0xE4 */ s32 unkE4;
+    };
+    /* 0xE8 */ s16 unkE8;
+    /* 0xEA */ s16 unkEA;
+    /* 0xEC */ u8 padEC[0xB];
+    /* 0xF7 */ u8 unkF7;
+    /* 0xF8 */ u8 padF8[9];
+    /* 0x101 */ u8 unk101;
+    /* 0x102 */ u8 objectFlag;
+    /* 0x103 */ u8 regionFlag;
+    /* 0x104 */ u8 light_count;
+    /* 0x105 */ u8 unk105;
+    /* 0x106 */ u8 unk106;
+    /* 0x107 */ u8 unk107;
+    /* 0x108 */ s16 tunes[3];
 } LevelHeader;
 
 typedef struct SubMiscAssetObjectHeader24 {

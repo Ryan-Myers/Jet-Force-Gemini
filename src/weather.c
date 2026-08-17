@@ -7,6 +7,7 @@
 #include "models.h"
 #include "overlays/overlay5.h"
 #include "textures.h"
+#include "track.h"
 
 typedef enum WeatherType { WEATHER_SNOW, WEATHER_RAIN, WEATHER_UNK } WeatherType;
 

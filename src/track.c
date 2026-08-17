@@ -1,5 +1,6 @@
 #include "common.h"
 #include "overlays/overlay39.h"
+#include "runLink.h"
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/trackUpdateFX.s")
 

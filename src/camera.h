@@ -26,28 +26,23 @@
 #define CAMERA_MAX_FOV 90.0f
 #define CAMERA_SCALE 1.0f
 
-/* Size: 0x44 bytes */
-// Copied from DKR
+/* Size: 0x4C (DKR copy was 0x44; stride from camGetPtr / cam++) */
 typedef struct Camera {
-    /* 0x0000 */ ObjectTransform trans;
-    /* 0x0018 */ f32 cam_unk_18;
-    /* 0x001C */ f32 boomLength;
-    /* 0x0020 */ f32 cam_unk_20;
-    /* 0x0024 */ f32 x_velocity;
-    /* 0x0028 */ f32 y_velocity;
-    /* 0x002C */ f32 z_velocity;
-    /* 0x0030 */ f32 shakeMagnitude;
-    /* 0x0034 */ s16 cameraSegmentID;
-    /* 0x0036 */ s16 mode;
-    /* 0x0038 */ s16 pitch;
-    /* 0x003A */ s8 shakeTimer;
-    /* 0x003B */ u8 zoom;
-    /* 0x003C */ u8 unk3C;
-    /* 0x003D */ u8 unk3D;
-    /* 0x003E */ u8 unk3E;
-    /* 0x003F */ u8 unk3F;
-    /* 0x0040 */ ObjectHeader *header;
-  } Camera;
+    /* 0x00 */ ObjectTransform trans;
+    /* 0x18 */ f32 cam_unk_18; /* names kept for staticcamera.c */
+    /* 0x1C */ f32 boomLength;
+    /* 0x20 */ f32 unk20;
+    /* 0x24 */ f32 unk24;
+    /* 0x28 */ f32 unk28;
+    /* 0x2C */ f32 fov;
+    /* 0x30 */ Vec3f shake;
+    /* 0x3C */ u8 unk3C;
+    /* 0x3D */ u8 unk3D;
+    /* 0x3E */ s16 unk3E;
+    /* 0x40 */ f32 unk40;
+    /* 0x44 */ u8 pad44[6];
+    /* 0x4A */ s16 unk4A; /* added to trans.rotation.x */
+} Camera;
 
 Camera *camGetPtr(void);
 Matrix *camGetRotationMtx(void);
