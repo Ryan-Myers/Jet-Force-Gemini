@@ -246,7 +246,11 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     s32 off;
     s32 freeSlot;
 
-    rumbleKill(1);
+    #ifdef VERSION_kiosk
+        rumbleKill();
+    #else
+        rumbleKill(1);
+    #endif
     D_800FB110_B1750 = piRomLoad(0x1E);
     if (arg3 < 0) {
         arg3 = 0;
