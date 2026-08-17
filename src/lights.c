@@ -1,3 +1,4 @@
+#include "camlight.h"
 #include "common.h"
 #include "math.h"
 

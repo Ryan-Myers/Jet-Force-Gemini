@@ -1,6 +1,7 @@
 #include "common.h"
 #include "mips.h"
 #include "overlays/overlay36.h"
+#include "runLink.h"
 #include "sched.h"
 
 #ifdef VERSION_kiosk
