@@ -40,9 +40,15 @@ UNUSED u8 AnimPathNumbers[0x40];
 s32 MaxPatrolNodes;
 void *PatrolNodes;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsIsTribal.s")
+int squadsIsTribal(s32 arg0) {
+    return ((arg0 >= 0x11C) && (arg0 < 0x121)) || (arg0 == 0x66) || (arg0 == 0x70) || (arg0 == 0x90) ||
+           (arg0 == 0x97) || (arg0 == 0x157) || (arg0 == 0xA5);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsGetSquadronList.s")
+s32 squadsGetSquadronList(s32 *arg0) {
+    *arg0 = D_800FE9F0_B9230;
+    return D_800A38E4_A44E4;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/BaddyTypeToIndex.s")
 
@@ -62,9 +68,75 @@ void *PatrolNodes;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsCheckEnemyPointers.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsCheckGrenades.s")
+void squadsCheckGrenades(Object *arg0) {
+    s32 i;
+    s32 j;
+    Object **list;
+    Object *node;
+    Object_Racer *racer;
+    Object *obj;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/GetFormationInfo.s")
+    i = D_800FE9F0_B9230;
+    j = i--;
+    if (j != 0) {
+        list = (Object **) D_800A38E4_A44E4 + i;
+        do {
+            node = *list--;
+            racer = node->racer;
+            obj = racer->unk58;
+            while (obj != NULL) {
+                node = (Object *) obj->racer;
+                if (((Object_Grenade *) node)->owner == arg0) {
+                    ((Object_Grenade *) node)->owner = NULL;
+                    return;
+                }
+                obj = ((Object_Grenade *) node)->next;
+            }
+            j = i--;
+        } while (j != 0);
+    }
+}
+
+void GetFormationInfo(Object *arg0, u8 *arg1, u8 *arg2, u8 *arg3) {
+    Object_Racer *temp_v0;
+    s16 temp_a0;
+    f32 var_f0;
+
+    temp_v0 = arg0->racer;
+    if ((D_800FEA0C_B924C != NULL) && (temp_v0 != NULL) && (temp_a0 = temp_v0->unk2A, (temp_a0 != 0))) {
+        var_f0 = (f32) D_800FEA0C_B924C->unkA6 / (f32) temp_a0;
+    } else {
+        var_f0 = 1.0f;
+    }
+    if (temp_v0->unk30 == 3) {
+        *arg1 = temp_v0->unk6;
+        *arg2 = temp_v0->unk8;
+        *arg3 = temp_v0->unk7;
+    } else if ((temp_v0->unk30 == 4) || ((var_f0 * 100.0f) < (f32) (0x64 - temp_v0->unkD))) {
+        *arg1 = temp_v0->unk9;
+        *arg2 = temp_v0->unkB;
+        *arg3 = temp_v0->unkA;
+    } else {
+        *arg1 = temp_v0->unk3;
+        *arg2 = temp_v0->unk5;
+        *arg3 = temp_v0->unk4;
+    }
+    temp_v0->unk32 = *arg3;
+    temp_v0->unk31 = *arg1;
+    if ((*arg3 == 8) && (D_800FEA0C_B924C != NULL) && ((*(u32 *) D_800FEA0C_B924C << 9) >> 31)) {
+        *arg3 = 9;
+        temp_v0->unk2E = 0;
+    }
+    temp_a0 = temp_v0->unk33;
+    if (temp_a0 != 0) {
+        if (temp_a0 != 0x1A) {
+            *arg3 = temp_a0;
+            return;
+        }
+        *arg1 = 0xA;
+        *arg3 = temp_v0->unk33;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/ProcessNodeChange.s")
 
@@ -94,6 +166,16 @@ void squadsPreInit(RomDefHeader *list, s32 listSize) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsAddInterestingEvent.s")
+extern void ReallyAddInterestingEvent_Trap(s32 arg0, s16 arg1, s16 arg2, s16 arg3, u8 arg4, u8 arg5, u8 arg6);
+void squadsAddInterestingEvent(s32 arg0, s16 arg1, s16 arg2, s16 arg3, u8 arg4, u8 arg5, u8 arg6) {
+    if (runlinkIsModuleLoaded(3) != 0) {
+        ReallyAddInterestingEvent_Trap(arg0, arg1, arg2, arg3, (s32) arg4, (s32) arg5, (s32) arg6);
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/CopyStaticsToKernel.s")
+void CopyStaticsToKernel(Object *arg0, Object *arg1) {
+    D_800FEA08_B9248 = arg0;
+    D_800FEA0C_B924C = D_800FEA08_B9248 != NULL ? arg0->racer : 0;
+    D_800FEA10_B9250 = arg1;
+    D_800FEA14_B9254 = D_800FEA10_B9250 != NULL ? arg1->racer : 0;
+}

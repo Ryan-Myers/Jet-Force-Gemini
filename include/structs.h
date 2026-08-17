@@ -154,14 +154,48 @@ typedef struct Vec2i {
 } Vec2i;
 
 typedef struct Object_Racer {
-  /* 0x000 */ u8 pad00[0x64];
+  /* 0x000 */ u8 unk0;
+  /* 0x001 */ u8 unk1;
+  /* 0x002 */ u8 unk2;
+  /* 0x003 */ u8 unk3;
+  /* 0x004 */ u8 unk4;
+  /* 0x005 */ u8 unk5;
+  /* 0x006 */ u8 unk6;
+  /* 0x007 */ u8 unk7;
+  /* 0x008 */ u8 unk8;
+  /* 0x009 */ u8 unk9;
+  /* 0x00A */ u8 unkA;
+  /* 0x00B */ u8 unkB;
+  /* 0x00C */ u8 unkC;
+  /* 0x00D */ u8 unkD;
+  /* 0x00E */ u8 padE[0x1C];
+  /* 0x02A */ s16 unk2A;
+  /* 0x02C */ u8 unk2C;
+  /* 0x02D */ u8 unk2D;
+  /* 0x02E */ s16 unk2E;
+  /* 0x030 */ u8 unk30;
+  /* 0x031 */ u8 unk31;
+  /* 0x032 */ u8 unk32;
+  /* 0x033 */ u8 unk33;
+  /* 0x034 */ u8 pad34[0x24];
+  /* 0x058 */ struct Object *unk58;
+  /* 0x05C */ u8 pad5C[0x8];
   /* 0x064 */ f32 unk64;
-  /* 0x068 */ u8 pad68[0xD8];
+  /* 0x068 */ u8 pad68[0x3E];
+  /* 0x0A6 */ s16 unkA6;
+  /* 0x0A8 */ u8 padA8[0x98];
   /* 0x140 */ s16 y_rotation_offset;
-  /* 0x144 */ s16 z_rotation_offset;
-  /* 0x142 */ s16 x_rotation_offset;
+  /* 0x142 */ s16 z_rotation_offset;
+  /* 0x144 */ s16 x_rotation_offset;
   /* 0x146 */ s16 unk146;
 } Object_Racer;
+
+typedef struct Object_Grenade {
+  /* 0x000 */ u8 pad0[0x28];
+  /* 0x028 */ struct Object *next;
+  /* 0x02C */ u8 pad2C[0x7C];
+  /* 0x0A8 */ struct Object *owner;
+} Object_Grenade;
 
 typedef struct ObjHeaderParticleEntry {
   /* 0x00 */ s32 upper;
