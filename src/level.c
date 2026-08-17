@@ -113,10 +113,10 @@ void levelGetCounts(void) {
     }
     i--;
 
-    hdrBuf = (LevelHeader *) (D_800FB110_B1750[i] - D_800FB110_B1750[0]);
-    nameData = (u8*)mmAlloc(mmAlign4((u8*)hdrBuf) + (i * 4), 0xFFFF00FF);
-    D_800FB120_B1760 = mmAlign4((u8*)hdrBuf) + (u32)nameData;
-    piRomLoadSection(0x23, (u32) nameData, 0, (s32) hdrBuf);
+    count = D_800FB110_B1750[i] - D_800FB110_B1750[0];
+    nameData = (u8*)mmAlloc(mmAlign4((u8*)count) + (i * 4), 0xFFFF00FF);
+    D_800FB120_B1760 = mmAlign4((u8*)count) + (u32)nameData;
+    piRomLoadSection(0x23, (u32) nameData, 0, count);
 
     for (count = 0; count < i; count++) {
         D_800FB120_B1760[count] = nameData + D_800FB110_B1750[count];
