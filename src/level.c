@@ -15,9 +15,11 @@ extern LevelHeader *D_800FB118_B5958;
 
 typedef struct {
     u8 unk0;
-    s8 unk1; // world
-    u8 unk2; // region
-    u8 unk3; // screenmode
+    s8 unk1;            // world
+    u8 unk2;            // region
+    u8 gfxIndex : 3;    // unk3 bits 7:5
+    u8 blur : 2;        // unk3 bits 4:3
+    u8 screenMode : 3;  // unk3 bits 2:0
     u8 unk4;
 } Level_B176C;
 
@@ -55,8 +57,8 @@ extern s32 D_800FB130_B1770[0x10];  /* per-world level counts, 16 words (B130..B
 
 void levelGetCounts(void) {
     s32 i;
-    LevelHeader *hdrBuf = (LevelHeader *) mmAlloc(0x114, 0xFFFF00FF);
     s32 count;
+    LevelHeader *hdrBuf = (LevelHeader *) mmAlloc(0x114, 0xFFFF00FF);
     u8 *nameData;
 
     D_800FB110_B1750 = (s32 *) piRomLoad(0x1E);
@@ -91,9 +93,9 @@ void levelGetCounts(void) {
         D_800FB12C_B176C[0][i].unk0 = D_800FB118_B5958->levelType;
         D_800FB12C_B176C[0][i].unk1 = (s8) D_800FB118_B5958->unk20;
         D_800FB12C_B176C[0][i].unk2 = (u8) D_800FB118_B5958->objectFlag;
-        D_800FB12C_B176C[0][i].unk3 = (D_800FB118_B5958->unk23 << 5)         | (D_800FB12C_B176C[0][i].unk3 & 0xFF1F);
-        D_800FB12C_B176C[0][i].unk3 = ((D_800FB118_B5958->unkC8 * 8) & 0x18) | (D_800FB12C_B176C[0][i].unk3 & 0xFFE7);
-        D_800FB12C_B176C[0][i].unk3 = (D_800FB118_B5958->unkC9 & 7)          | (D_800FB12C_B176C[0][i].unk3 & 0xFFF8);
+        D_800FB12C_B176C[0][i].gfxIndex = D_800FB118_B5958->unk23;
+        D_800FB12C_B176C[0][i].blur = D_800FB118_B5958->unkC8;
+        D_800FB12C_B176C[0][i].screenMode = D_800FB118_B5958->unkC9;
         D_800FB12C_B176C[0][i].unk4 = (u8) D_800FB118_B5958->seqNum;
     }
 
@@ -154,15 +156,14 @@ s32 levelGetRegionNo(s32 arg0) {
 
 s32 levelGetScreenMode(s32 arg0) {
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        return D_800FB12C_B176C[0][arg0].unk3 & 7;
+        return D_800FB12C_B176C[0][arg0].screenMode;
     }
     return 0;
 }
 
 s32 levelGetBlurEffect(s32 arg0) {
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        // TODO: weird casting and shifting to get instructions. might be bitfields?
-        return ((u32) D_800FB12C_B176C[0][arg0].unk3 << 0x1B) >> 0x1E;
+        return D_800FB12C_B176C[0][arg0].blur;
     }
     return 0;
 }
@@ -173,7 +174,7 @@ u32 levelGetGfxIndex(s32 arg0) {
 
     var_v0 = mainGetNumberOfCameras() - 1;
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        temp_t0 = (u32) D_800FB12C_B176C[0][arg0].unk3 >> 5;
+        temp_t0 = D_800FB12C_B176C[0][arg0].gfxIndex;
         if (temp_t0 != 0) {
             var_v0 = temp_t0;
         }
