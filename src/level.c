@@ -20,7 +20,9 @@ typedef struct {
     u8 gfxIndex : 3;   // unk3 bits 7:5
     u8 blur : 2;       // unk3 bits 4:3
     u8 screenMode : 3; // unk3 bits 2:0
+#ifdef VERSION_us
     u8 unk4;
+#endif
 } Level_B176C;
 
 typedef struct {
@@ -57,7 +59,7 @@ extern s32 D_800FB130_B1770[0x10]; /* per-world level counts, 16 words (B130..B1
 void levelGetCounts(void) {
     s32 i;
     s32 count;
-    LevelHeader *hdrBuf = (LevelHeader *) mmAlloc(0x114, 0xFFFF00FF);
+    LevelHeader *hdrBuf = (LevelHeader *) mmAlloc(0x114, COLOUR_TAG_YELLOW);
     u8 *nameData;
 
     D_800FB110_B1750 = (s32 *) piRomLoad(0x1E);
@@ -74,7 +76,12 @@ void levelGetCounts(void) {
     }
     D_800FB124_B1764--;
 
-    *D_800FB12C_B176C = (Level_B176C *) mmAlloc(D_800FB124_B1764 * 5, 0xFFFF00FF);
+#ifdef VERSION_kiosk
+    *D_800FB12C_B176C = (Level_B176C *) mmAlloc(D_800FB124_B1764 * 4, COLOUR_TAG_YELLOW);
+#else
+    *D_800FB12C_B176C = (Level_B176C *) mmAlloc(D_800FB124_B1764 * 5, COLOUR_TAG_YELLOW);
+#endif
+
     D_800FB128_B1768 = -1;
 
     D_800FB118_B5958 = hdrBuf;
@@ -95,7 +102,9 @@ void levelGetCounts(void) {
         D_800FB12C_B176C[0][i].gfxIndex = D_800FB118_B5958->unk23;
         D_800FB12C_B176C[0][i].blur = D_800FB118_B5958->unkC8;
         D_800FB12C_B176C[0][i].screenMode = D_800FB118_B5958->unkC9;
+#ifdef VERSION_us
         D_800FB12C_B176C[0][i].unk4 = (u8) D_800FB118_B5958->seqNum;
+#endif
     }
 
     D_800FB128_B1768++;
@@ -103,7 +112,7 @@ void levelGetCounts(void) {
     mmFree(hdrBuf);
 
     /* --- level names --- */
-    D_800A31A0_A3DA0 = (u8 *) mmAlloc(0x20, 0xFFFF00FF);
+    D_800A31A0_A3DA0 = (u8 *) mmAlloc(0x20, COLOUR_TAG_YELLOW);
     D_800FB110_B1750 = (s32 *) piRomLoad(0x22);
 
     i = 0;
@@ -113,7 +122,7 @@ void levelGetCounts(void) {
     i--;
 
     count = D_800FB110_B1750[i] - D_800FB110_B1750[0];
-    nameData = (u8 *) mmAlloc(mmAlign4((u8 *) count) + (i * 4), 0xFFFF00FF);
+    nameData = (u8 *) mmAlloc(mmAlign4((u8 *) count) + (i * 4), COLOUR_TAG_YELLOW);
     D_800FB120_B1760 = mmAlign4((u8 *) count) + (u32) nameData;
     piRomLoadSection(0x23, (u32) nameData, 0, count);
 
@@ -283,9 +292,11 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
 
     lvlStart = D_800FB110_B1750[lvlIdx];
     lvlSize = D_800FB110_B1750[lvlIdx + 1] - lvlStart;
-    D_800FB118_B5958 = (LevelHeader *) mmAlloc(lvlSize, 0xFFFF00FF);
+    D_800FB118_B5958 = (LevelHeader *) mmAlloc(lvlSize, COLOUR_TAG_YELLOW);
     piRomLoadSection(0x1F, (u32) D_800FB118_B5958, lvlStart, lvlSize);
+#ifdef VERSION_us
     mainPreNMI();
+#endif
     mmFree(D_800FB110_B1750);
     D_800FB114_B1754 = lvlIdx;
     levelGetRegionFlags();
@@ -298,20 +309,32 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     }
     amTuneVoiceLimit(D_800FB118_B5958->BGColourTopB);
     amTuneResetFade();
+#ifdef VERSION_us
     mainPreNMI();
+#endif
     lvlCount = 8;
     setupLights(D_800FB118_B5958->light_count, lvlCount, 0x10);
+#ifdef VERSION_us
     mainPreNMI();
+#endif
     squadsInitialiseBeforeObjects();
+#ifdef VERSION_us
     mainPreNMI();
+#endif
     hitReset();
     objSetAnimGroup(arg3);
+#ifdef VERSION_us
     mainPreNMI();
+#endif
     trackInit_Trap(D_800FB118_B5958->instruments, D_800FB118_B5958->unk58, arg1, D_800FB118_B5958->unk56,
                    (s32) D_800FB118_B5958->unkCA, (s32) D_800FB118_B5958->unkE8);
+#ifdef VERSION_us
     mainPreNMI();
+#endif
     animseqSetupGroup(arg3);
+#ifdef VERSION_us
     mainPreNMI();
+#endif
     squadsInitialiseAfterObjects();
 
     if ((D_800FB118_B5958->fogNear2 == 0) && (D_800FB118_B5958->fogFar2 == 0) && (D_800FB118_B5958->fogR2 == 0) &&
@@ -358,7 +381,9 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     } else {
         D_800FB118_B5958->unkE4_ptr = objGetTable(D_800FB118_B5958->unkE4);
     }
+#ifdef VERSION_us
     mainPreNMI();
+#endif
 
     if (D_800FB118_B5958->unk107 != 0) {
         fxInitNightVision(1);
@@ -375,7 +400,9 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     if (D_800FB118_B5958->unk101 != 0) {
         dayInit_Trap(12.0f, D_800FB118_B5958->unk101 * 0x3C);
     }
+#ifdef VERSION_us
     mainPreNMI();
+#endif
     runlinkFreeCode(0x18);
     runlinkFreeCode(0x1E);
 
@@ -423,7 +450,9 @@ void levelTunePlay(f32 tempo) {
         if (D_800FB118_B5958->seqNum != amTuneGetSeqNo()) {
             amTuneResetChls();
             amTunePlay(D_800FB118_B5958->seqNum);
+#ifdef VERSION_us
             amTuneResetFade();
+#endif
             amTuneScaleTempo(tempo);
             amTuneSetChlMask(D_800FB118_B5958->chlMask);
         }
@@ -489,7 +518,9 @@ void levelFreeAll(void) {
     trackFreeAll();
     hitFree();
     amResetAudioMap();
+#ifdef VERSION_us
     D_800A089C_A149C = 0;
+#endif
     amSetMuteMode(0);
     if (D_800FB118_B5958->unkA0 > 0) {
         freeWeather();
