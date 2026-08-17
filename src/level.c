@@ -234,12 +234,12 @@ void setupLights(s32 count, s32 arg1, s32 arg2);                                
 void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6); /* extern */
 void squadsInitialiseAfterObjects();                                                     /* extern */
 void squadsInitialiseBeforeObjects();                                                    /* extern */
-void dayInit_Trap(f32, s32);
-void trackInit_Trap(s32, s32, s32, s32, s32, s32);
-void refractInit_Trap();
-void blurInit_Trap();
-void underWaterLightsInit_Trap();
-s32 osCartDmaTest4_6105_Trap();
+void dayInit(f32, s32);
+void trackInit(s32, s32, s32, s32, s32, s32);
+void refractInit();
+void blurInit();
+void underWaterLightsInit();
+s32 osCartDmaTest4_6105();
 extern SoundHandle D_800A31B0_A3DB0[3];
 extern s16 D_800A31BC_A3DBC[3];
 extern s32 D_800FB114_B1754;
@@ -326,7 +326,7 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
 #ifdef VERSION_us
     mainPreNMI();
 #endif
-    trackInit_Trap(D_800FB118_B5958->instruments, D_800FB118_B5958->unk58, arg1, D_800FB118_B5958->unk56,
+    trackInit(D_800FB118_B5958->instruments, D_800FB118_B5958->unk58, arg1, D_800FB118_B5958->unk56,
                    (s32) D_800FB118_B5958->unkCA, (s32) D_800FB118_B5958->unkE8);
 #ifdef VERSION_us
     mainPreNMI();
@@ -389,16 +389,16 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
         fxInitNightVision(1);
     }
     if (D_800FB118_B5958->BGColourTopG != 0) {
-        refractInit_Trap();
+        refractInit();
     }
     if (D_800FB118_B5958->unkC8 != 0) {
-        blurInit_Trap();
+        blurInit();
     }
     if (D_800FB118_B5958->unkF7 != 0) {
-        underWaterLightsInit_Trap(D_800FB118_B5958);
+        underWaterLightsInit(D_800FB118_B5958);
     }
     if (D_800FB118_B5958->unk101 != 0) {
-        dayInit_Trap(12.0f, D_800FB118_B5958->unk101 * 0x3C);
+        dayInit(12.0f, D_800FB118_B5958->unk101 * 0x3C);
     }
 #ifdef VERSION_us
     mainPreNMI();
@@ -421,7 +421,7 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
         }
     }
 
-    if (osCartDmaTest4_6105_Trap() == 0) {
+    if (osCartDmaTest4_6105() == 0) {
         D_800FB118_B5958->fogNear2 = 0x384;
         D_800FB118_B5958->fogFar2 = 0x398;
     }
