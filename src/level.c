@@ -15,11 +15,11 @@ extern LevelHeader *D_800FB118_B5958;
 
 typedef struct {
     u8 unk0;
-    s8 unk1;            // world
-    u8 unk2;            // region
-    u8 gfxIndex : 3;    // unk3 bits 7:5
-    u8 blur : 2;        // unk3 bits 4:3
-    u8 screenMode : 3;  // unk3 bits 2:0
+    s8 unk1;           // world
+    u8 unk2;           // region
+    u8 gfxIndex : 3;   // unk3 bits 7:5
+    u8 blur : 2;       // unk3 bits 4:3
+    u8 screenMode : 3; // unk3 bits 2:0
     u8 unk4;
 } Level_B176C;
 
@@ -50,10 +50,9 @@ extern Level_B176C *D_800FB12C_B176C[];
 extern Unk_800FB170 D_800FB170_B17B0[];
 extern Unk_800FB1E0_B1820 D_800FB1E0_B1820[0x20];
 
-// new
-extern u8 **D_800FB120_B1760;       /* level name pointer table (relocated) */
-extern s32 D_800FB128_B1768;        /* world count = max(world index) + 1 */
-extern s32 D_800FB130_B1770[0x10];  /* per-world level counts, 16 words (B130..B170) */
+extern u8 **D_800FB120_B1760;      /* level name pointer table (relocated) */
+extern s32 D_800FB128_B1768;       /* world count = max(world index) + 1 */
+extern s32 D_800FB130_B1770[0x10]; /* per-world level counts, 16 words (B130..B170) */
 
 void levelGetCounts(void) {
     s32 i;
@@ -75,7 +74,7 @@ void levelGetCounts(void) {
     }
     D_800FB124_B1764--;
 
-    *D_800FB12C_B176C = (Level_B176C *)mmAlloc(D_800FB124_B1764 * 5, 0xFFFF00FF);
+    *D_800FB12C_B176C = (Level_B176C *) mmAlloc(D_800FB124_B1764 * 5, 0xFFFF00FF);
     D_800FB128_B1768 = -1;
 
     D_800FB118_B5958 = hdrBuf;
@@ -114,8 +113,8 @@ void levelGetCounts(void) {
     i--;
 
     count = D_800FB110_B1750[i] - D_800FB110_B1750[0];
-    nameData = (u8*)mmAlloc(mmAlign4((u8*)count) + (i * 4), 0xFFFF00FF);
-    D_800FB120_B1760 = mmAlign4((u8*)count) + (u32)nameData;
+    nameData = (u8 *) mmAlloc(mmAlign4((u8 *) count) + (i * 4), 0xFFFF00FF);
+    D_800FB120_B1760 = mmAlign4((u8 *) count) + (u32) nameData;
     piRomLoadSection(0x23, (u32) nameData, 0, count);
 
     for (count = 0; count < i; count++) {
@@ -247,11 +246,11 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     s32 off;
     s32 freeSlot;
 
-    #ifdef VERSION_kiosk
-        rumbleKill();
-    #else
-        rumbleKill(1);
-    #endif
+#ifdef VERSION_kiosk
+    rumbleKill();
+#else
+    rumbleKill(1);
+#endif
     D_800FB110_B1750 = piRomLoad(0x1E);
     if (arg3 < 0) {
         arg3 = 0;
