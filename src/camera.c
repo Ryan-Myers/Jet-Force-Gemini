@@ -177,7 +177,8 @@ s32 camIsUserView(s32 arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camResetView.s")
 
-void camOffsetZero(Gfx **dlist, Mtx **mtx) {}
+void camOffsetZero(Gfx **dlist, Mtx **mtx) {
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camDoSprite.s")
 
@@ -231,20 +232,22 @@ Matrix *camGetInvProjMtx(void) {
 
 void camStopShakes(void) {
     s32 i;
-    Camera* cam;
-    CameraShake* shake;
+    Camera *cam;
+    CameraShake *shake;
 
     D_800FAA58_B5298 = 0;
     cam = cameraActorArray;
     shake = D_800FA600_B1880;
 
     /* IDO: line-join for regalloc */
+    // clang-format off
     for (i = 4; i--; cam++, shake++) { \
         cam->shake.x = 0.0f; \
         cam->shake.y = 0.0f; \
         cam->shake.z = 0.0f; \
         shake->magnitude = 0; \
     } \
+    // clang-format on
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camScreenShake.s")

@@ -64,11 +64,9 @@ void levelGetCounts(void) {
 
     D_800FB110_B1750 = (s32 *) piRomLoad(0x1E);
 
-    i = 0;
-    do {
-        D_800FB130_B1770[i] = 0;
-        i++;
-    } while (i != 0x10);
+    // clang-format off
+    for (i = 0; i != 0x10; i++) { D_800FB130_B1770[i] = 0;} // sameline required
+    // clang-format on
 
     D_800FB124_B1764 = 0;
     while (D_800FB110_B1750[D_800FB124_B1764] != -1) {
@@ -327,7 +325,7 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     mainPreNMI();
 #endif
     trackInit(D_800FB118_B5958->instruments, D_800FB118_B5958->unk58, arg1, D_800FB118_B5958->unk56,
-                   (s32) D_800FB118_B5958->unkCA, (s32) D_800FB118_B5958->unkE8);
+              (s32) D_800FB118_B5958->unkCA, (s32) D_800FB118_B5958->unkE8);
 #ifdef VERSION_us
     mainPreNMI();
 #endif
