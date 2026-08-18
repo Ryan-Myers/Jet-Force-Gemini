@@ -99,28 +99,23 @@ void AddToDisactivatedSquaddies(DisactivatedSquaddie *arg0) {
 }
 
 void *GetFirstDisactivatedSquaddie(s32 arg0) {
-    s32 j;
     s32 i;
     DisactivatedSquaddie **slot;
     DisactivatedSquaddie *squaddie;
 
     i = D_800FE9A0_B91E0;
     slot = DisactivatedSquaddies;
-    if (i >= 0x101) {
+    if (i > 0x100) {
         return NULL;
     }
     if (DisactivatedSquaddies != NULL) {
-        j = i--;
-        if (j != 0) {
-            do {
-                squaddie = *slot;
-                if ((squaddie != NULL) && (arg0 == squaddie->unk11)) {
-                    *slot = NULL;
-                    return squaddie;
-                }
-                slot++;
-                j = i--;
-            } while (j != 0);
+        while (i--) {
+            squaddie = *slot;
+            if ((squaddie != NULL) && (arg0 == squaddie->unk11)) {
+                *slot = NULL;
+                return squaddie;
+            }
+            slot++;
         }
     }
     return NULL;
@@ -314,10 +309,10 @@ void squadsPreInit(RomDefHeader *list, s32 listSize) {
     }
 }
 
-extern void ReallyAddInterestingEvent_Trap(s32 arg0, s16 arg1, s16 arg2, s16 arg3, u8 arg4, u8 arg5, u8 arg6);
+extern void ReallyAddInterestingEvent(s32 arg0, s16 arg1, s16 arg2, s16 arg3, u8 arg4, u8 arg5, u8 arg6);
 void squadsAddInterestingEvent(s32 arg0, s16 arg1, s16 arg2, s16 arg3, u8 arg4, u8 arg5, u8 arg6) {
     if (runlinkIsModuleLoaded(3) != 0) {
-        ReallyAddInterestingEvent_Trap(arg0, arg1, arg2, arg3, (s32) arg4, (s32) arg5, (s32) arg6);
+        ReallyAddInterestingEvent(arg0, arg1, arg2, arg3, (s32) arg4, (s32) arg5, (s32) arg6);
     }
 }
 
