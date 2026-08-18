@@ -1,4 +1,5 @@
 #include "common.h"
+#include "main.h"
 
 // TODO: Get a better size for the number of files
 #define NUM_FILES 1

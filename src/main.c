@@ -1,3 +1,4 @@
+#include "main.h"
 #include "common.h"
 #include "mips.h"
 #include "overlays/overlay36.h"

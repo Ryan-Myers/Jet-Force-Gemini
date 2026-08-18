@@ -299,7 +299,7 @@ segments:
       - [0xA4310, data, models]
       - [0xA4320, data, camera]
       - [0xA45E0, .data, controller]
-      - [0xA45F0, data, level]
+      - [0xA45F0, .data, level]
       - [0xA4620, data, main]
       - [0xA4A40, .data, hasm/ido/math_util]
       - [0xA4A50, .data, memory]

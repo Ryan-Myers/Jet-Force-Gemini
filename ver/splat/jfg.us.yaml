@@ -301,7 +301,7 @@ segments:
       - [0xA3AC0, data, models]
       - [0xA3AD0, data, camera]
       - [0xA3D90, .data, controller]
-      - [0xA3DA0, data, level]
+      - [0xA3DA0, .data, level]
       - [0xA3DD0, data, main]
       - [0xA3FE0, .data, hasm/ido/math_util]
       - [0xA3FF0, .data, memory]

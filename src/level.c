@@ -25,11 +25,20 @@
 #include "track.h"
 #include "weather.h"
 
-// .data
-extern u8 *D_800A31A0_A3DA0;
-extern SoundHandle D_800A31B0_A3DB0[3];
-extern s16 D_800A31BC_A3DBC[3];
-extern Unk_800FB1E0_B1820 *D_800A31C4_A3DC4;
+u8 *D_800A31A0_A3DA0 = NULL;
+UNUSED s32 D_800A31A4_A3DA4 = 0;
+
+#ifdef VERSION_kiosk
+UNUSED s32 D_800A31A8_A3DA8 = 0x2D1D;
+#else
+UNUSED s32 D_800A31A8_A3DA8 = 0x2CE9;
+#endif
+
+UNUSED s32 D_800A31AC_A3DAC = 0xB8;
+
+SoundHandle D_800A31B0_A3DB0[3] = { NULL, NULL, NULL };
+s16 D_800A31BC_A3DBC[3] = { 0xFFFF, 0xFFFF, 0xFFFF };
+Unk_800FB1E0_B1820 *D_800A31C4_A3DC4 = NULL;
 
 // .bss
 extern s32 *D_800FB110_B1750; /* loaded ROM offset table, -1 terminated */
