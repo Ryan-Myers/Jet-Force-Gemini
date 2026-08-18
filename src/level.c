@@ -25,10 +25,6 @@
 #include "track.h"
 #include "weather.h"
 
-const char D_800ACD20[] = "LOADLEVEL Error: Level out of range\n";
-const char D_800ACD48[] = "levelGetRegionFlags: Ran out of levelRegionFlag structures!!\n";
-const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
-
 // .data
 extern u8 *D_800A31A0_A3DA0;
 extern SoundHandle D_800A31B0_A3DB0[3];
@@ -253,6 +249,7 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     }
     lvlCount--;
     if (lvlIdx >= lvlCount) {
+        stubbed_printf("LOADLEVEL Error: Level out of range\n");
         lvlIdx = 0;
     }
 
@@ -372,7 +369,8 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
         }
     }
 
-    if (osCartDmaTest4_6105() == 0) {
+    // Anti-Piracy Check
+    if (osCartDmaTest4_6105() == FALSE) {
         D_800FB118_B5958->fogNear2 = 900;
         D_800FB118_B5958->fogFar2 = 920;
     }
@@ -533,6 +531,7 @@ void levelGetRegionFlags(void) {
 
     temp_v0 = D_800FB118_B5958->regionFlag;
     if (temp_v0 >= 0x20) {
+        stubbed_printf("levelGetRegionFlags: Ran out of levelRegionFlag structures!!\n");
         D_800A31C4_A3DC4 = NULL;
     } else {
         D_800A31C4_A3DC4 = &D_800FB1E0_B1820[temp_v0];
@@ -550,6 +549,7 @@ s32 levelGetObjectID(s32 arg0) {
     prevId = D_800A31C4_A3DC4->unk0;
     newId = prevId + arg0;
     if (newId > 0x80) {
+        stubbed_printf("levelGetObjectID - Out of level flags\n");
         return -1;
     }
     D_800A31C4_A3DC4->unk0 = (u8) newId;
