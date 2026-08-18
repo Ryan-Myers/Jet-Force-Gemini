@@ -1,10 +1,10 @@
 #include "saves.h"
 #include "common.h"
+#include "enums.h"
 #include "joy.h"
 #include "menu.h"
 #include "PR/os_flash.h"
 #include "PR/os_pi.h"
-#include "enums.h"
 
 // These are the unique game codes assigned to DKR
 #define NDYJ 0x4E44594A // 'NDYJ' ASCII

@@ -4,6 +4,7 @@
 #include "common.h"
 #include "gameVi.h"
 #include "joy.h"
+#include "menu.h"
 #include "mips.h"
 #include "osBootRamTest.h"
 #include "overlays/overlay36.h"
@@ -13,7 +14,6 @@
 #include "rzip.h"
 #include "saves.h"
 #include "sched.h"
-#include "menu.h"
 
 #ifdef VERSION_kiosk
 const char D_800ACDB0[] = "1.1723";
