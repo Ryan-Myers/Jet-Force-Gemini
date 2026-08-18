@@ -10,7 +10,33 @@
 #include "textures.h"
 #include "track.h"
 #include "weather.h"
+#include "objects.h"
 
+
+void animseqSetupGroup(s32);
+void camSetFOV(f32, s32);
+void camSetNo(s32);
+void fxInitNightVision(s32);
+void gsSndpLimitVoices(s32 arg0);
+void hitReset();
+void levelGetRegionFlags(void);
+void levelTunePlay(f32 tempo);
+s32 mainGetNumberOfPlayers();
+void objSetAnimGroup(s32);
+void setupLights(s32 count, s32 arg1, s32 arg2);
+void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
+void squadsInitialiseAfterObjects();
+void squadsInitialiseBeforeObjects();
+void dayInit(f32, s32);
+void trackInit(s32, s32, s32, s32, s32, s32);
+void refractInit();
+void blurInit();
+void underWaterLightsInit(void *arg0);
+s32 osCartDmaTest4_6105();
+
+extern SoundHandle D_800A31B0_A3DB0[3];
+extern s16 D_800A31BC_A3DBC[3];
+extern s32 D_800FB114_B1754;
 extern LevelHeader *D_800FB118_B5958;
 
 typedef struct {
@@ -41,7 +67,6 @@ const char D_800ACD20[] = "LOADLEVEL Error: Level out of range\n";
 const char D_800ACD48[] = "levelGetRegionFlags: Ran out of levelRegionFlag structures!!\n";
 const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
 
-extern s32 D_800A089C_A149C;
 extern u8 *D_800A31A0_A3DA0;
 extern Unk_800FB1E0_B1820 *D_800A31C4_A3DC4;
 
@@ -59,9 +84,10 @@ extern s32 D_800FB130_B1770[0x10]; /* per-world level counts, 16 words (B130..B1
 void levelGetCounts(void) {
     s32 i;
     s32 count;
-    LevelHeader *hdrBuf = (LevelHeader *) mmAlloc(0x114, COLOUR_TAG_YELLOW);
+    LevelHeader *hdrBuf;
     u8 *nameData;
 
+    hdrBuf = (LevelHeader *) mmAlloc(sizeof(LevelHeader) + 4, COLOUR_TAG_YELLOW);
     D_800FB110_B1750 = (s32 *) piRomLoad(0x1E);
 
     // clang-format off
@@ -84,13 +110,13 @@ void levelGetCounts(void) {
 
     D_800FB118_B5958 = hdrBuf;
     for (i = 0; i < D_800FB124_B1764; i++) {
-        piRomLoadSection(0x1F, (u32) D_800FB118_B5958, D_800FB110_B1750[i], 0x114);
+        piRomLoadSection(0x1F, (u32) D_800FB118_B5958, D_800FB110_B1750[i], sizeof(LevelHeader) + 4);
 
         if (D_800FB128_B1768 < D_800FB118_B5958->unk20) {
             D_800FB128_B1768 = D_800FB118_B5958->unk20;
         }
 
-        if ((D_800FB118_B5958->levelType >= 0) && (D_800FB118_B5958->levelType < 0x10)) {
+        if ((D_800FB118_B5958->levelType >= 0) && (D_800FB118_B5958->levelType < 16)) {
             D_800FB130_B1770[D_800FB118_B5958->levelType]++;
         }
 
@@ -120,8 +146,8 @@ void levelGetCounts(void) {
     i--;
 
     count = D_800FB110_B1750[i] - D_800FB110_B1750[0];
-    nameData = (u8 *) mmAlloc(mmAlign4((u8 *) count) + (i * 4), COLOUR_TAG_YELLOW);
-    D_800FB120_B1760 = mmAlign4((u8 *) count) + (u32) nameData;
+    nameData = (u8 *) mmAlloc((s32) mmAlign4((u8 *) count) + (i * 4), COLOUR_TAG_YELLOW);
+    D_800FB120_B1760 = (u8 **) (mmAlign4((u8 *) count) + (u32) nameData);
     piRomLoadSection(0x23, (u32) nameData, 0, count);
 
     for (count = 0; count < i; count++) {
@@ -217,31 +243,6 @@ s32 levelGetWorldRegions(s32 arg0, u8 *arg1) {
     return var_v1;
 }
 
-void animseqSetupGroup(s32);      /* extern */
-void camSetFOV(f32, s32);         /* extern */
-void camSetNo(s32);               /* extern */
-void fxInitNightVision(s32);      /* extern */
-void gsSndpLimitVoices(s32 arg0); /* extern */
-void hitReset();                  /* extern */
-void levelGetRegionFlags(void);   /* extern */
-void levelTunePlay(f32 tempo);    /* extern */
-s32 mainGetNumberOfPlayers();     /* extern */
-void objSetAnimGroup(s32);        /* extern */
-void setWeatherLimits(s16 near, s16 far);
-void setupLights(s32 count, s32 arg1, s32 arg2);                                         /* extern */
-void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6); /* extern */
-void squadsInitialiseAfterObjects();                                                     /* extern */
-void squadsInitialiseBeforeObjects();                                                    /* extern */
-void dayInit(f32, s32);
-void trackInit(s32, s32, s32, s32, s32, s32);
-void refractInit();
-void blurInit();
-void underWaterLightsInit();
-s32 osCartDmaTest4_6105();
-extern SoundHandle D_800A31B0_A3DB0[3];
-extern s16 D_800A31BC_A3DBC[3];
-extern s32 D_800FB114_B1754;
-
 void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     s16 tune;
     s32 lvlStart;
@@ -258,20 +259,21 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
 #else
     rumbleKill(1);
 #endif
-    D_800FB110_B1750 = piRomLoad(0x1E);
+
+    D_800FB110_B1750 = (s32 *) piRomLoad(0x1E);
     if (arg3 < 0) {
         arg3 = 0;
     }
 
     switch (mainGetNumberOfPlayers()) {
         case 4:
-            gsSndpLimitVoices(0x10);
+            gsSndpLimitVoices(16);
             break;
         case 3:
-            gsSndpLimitVoices(0x10);
+            gsSndpLimitVoices(16);
             break;
         case 2:
-            gsSndpLimitVoices(0xC);
+            gsSndpLimitVoices(12);
             break;
         default:
             gsSndpLimitVoices(8);
@@ -292,9 +294,7 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     lvlSize = D_800FB110_B1750[lvlIdx + 1] - lvlStart;
     D_800FB118_B5958 = (LevelHeader *) mmAlloc(lvlSize, COLOUR_TAG_YELLOW);
     piRomLoadSection(0x1F, (u32) D_800FB118_B5958, lvlStart, lvlSize);
-#ifdef VERSION_us
     mainPreNMI();
-#endif
     mmFree(D_800FB110_B1750);
     D_800FB114_B1754 = lvlIdx;
     levelGetRegionFlags();
@@ -307,32 +307,20 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     }
     amTuneVoiceLimit(D_800FB118_B5958->BGColourTopB);
     amTuneResetFade();
-#ifdef VERSION_us
     mainPreNMI();
-#endif
     lvlCount = 8;
     setupLights(D_800FB118_B5958->light_count, lvlCount, 0x10);
-#ifdef VERSION_us
     mainPreNMI();
-#endif
     squadsInitialiseBeforeObjects();
-#ifdef VERSION_us
     mainPreNMI();
-#endif
     hitReset();
     objSetAnimGroup(arg3);
-#ifdef VERSION_us
     mainPreNMI();
-#endif
     trackInit(D_800FB118_B5958->instruments, D_800FB118_B5958->unk58, arg1, D_800FB118_B5958->unk56,
-              (s32) D_800FB118_B5958->unkCA, (s32) D_800FB118_B5958->unkE8);
-#ifdef VERSION_us
+              D_800FB118_B5958->unkCA, D_800FB118_B5958->unkE8);
     mainPreNMI();
-#endif
     animseqSetupGroup(arg3);
-#ifdef VERSION_us
     mainPreNMI();
-#endif
     squadsInitialiseAfterObjects();
 
     if ((D_800FB118_B5958->fogNear2 == 0) && (D_800FB118_B5958->fogFar2 == 0) && (D_800FB118_B5958->fogR2 == 0) &&
@@ -349,9 +337,9 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     }
 
     if (D_800FB118_B5958->unkA0 > 0) {
-        setupWeather(D_800FB118_B5958->unkA3, D_800FB118_B5958->unkA0, D_800FB118_B5958->unkA6 << 8,
-                     D_800FB118_B5958->unkA8 << 8, D_800FB118_B5958->unkAA << lvlCount,
-                     D_800FB118_B5958->unkA4_b * 0x101, D_800FB118_B5958->unkA5 * 0x101);
+        setupWeather(D_800FB118_B5958->unkA3, D_800FB118_B5958->unkA0, D_800FB118_B5958->unkA6 * 256,
+                     D_800FB118_B5958->unkA8 * 256, D_800FB118_B5958->unkAA << lvlCount,
+                     D_800FB118_B5958->unkA4_b * (256 + 1), D_800FB118_B5958->unkA5 * (256 + 1));
         setWeatherLimits(-1, -0x200);
     }
     if (D_800FB118_B5958->unk69 == -1) {
@@ -360,8 +348,8 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
         D_800FB118_B5958->unkBA = 0;
     }
     if (D_800FB118_B5958->unkBC != -1) {
-        D_800FB118_B5958->unkBC_ptr = objGetTable(D_800FB118_B5958->unkBC);
-        resetMixCycle((PulsatingLightData *) D_800FB118_B5958->unkBC);
+        D_800FB118_B5958->pulsatingLightData = (PulsatingLightData *) objGetTable(D_800FB118_B5958->unkBC);
+        resetMixCycle(D_800FB118_B5958->pulsatingLightData);
     }
     rcpSetScreenColour(D_800FB118_B5958->screen_color_r, D_800FB118_B5958->screen_color_g,
                        D_800FB118_B5958->screen_color_b);
@@ -370,8 +358,9 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
 
     for (lvlStart = 0; lvlStart < 4; lvlStart++) {
         camSetNo(lvlStart);
-        camSetFOV((f32) D_800FB118_B5958->camera_fov, 1);
+        camSetFOV(D_800FB118_B5958->camera_fov, 1);
     }
+
     camSetNo(0);
 
     if (D_800FB118_B5958->unkE4 == -1) {
@@ -379,9 +368,8 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     } else {
         D_800FB118_B5958->unkE4_ptr = objGetTable(D_800FB118_B5958->unkE4);
     }
-#ifdef VERSION_us
+
     mainPreNMI();
-#endif
 
     if (D_800FB118_B5958->unk107 != 0) {
         fxInitNightVision(1);
@@ -396,22 +384,21 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
         underWaterLightsInit(D_800FB118_B5958);
     }
     if (D_800FB118_B5958->unk101 != 0) {
-        dayInit(12.0f, D_800FB118_B5958->unk101 * 0x3C);
+        dayInit(12.0f, D_800FB118_B5958->unk101 * 60); // 60? minutes? Or frames? Or something else?
     }
-#ifdef VERSION_us
+
     mainPreNMI();
-#endif
     runlinkFreeCode(0x18);
     runlinkFreeCode(0x1E);
 
     for (off = 0; off < 3; off++) {
-        shouldPlay = 1;
+        shouldPlay = TRUE;
         for (j = 0; j < 3; j++) {
             if (D_800FB118_B5958->tunes[j] == D_800A31BC_A3DBC[off]) {
-                shouldPlay = 0;
+                shouldPlay = FALSE;
             }
         }
-        if (shouldPlay != 0) {
+        if (shouldPlay) {
             if (D_800A31B0_A3DB0[off] != 0) {
                 D_800A31BC_A3DBC[off] = -1;
                 amSndStop(D_800A31B0_A3DB0[off]);
@@ -420,22 +407,22 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     }
 
     if (osCartDmaTest4_6105() == 0) {
-        D_800FB118_B5958->fogNear2 = 0x384;
-        D_800FB118_B5958->fogFar2 = 0x398;
+        D_800FB118_B5958->fogNear2 = 900;
+        D_800FB118_B5958->fogFar2 = 920;
     }
 
     /* start tunes the new level wants that aren't already playing */
     for (off = 0; off < 3; off++) {
-        tune = 1;
+        tune = TRUE;
         if (D_800FB118_B5958->tunes[off] != -1) {
             for (j = 0; j < 3; j++) {
                 if (D_800FB118_B5958->tunes[off] == D_800A31BC_A3DBC[j]) {
-                    tune = 0;
+                    tune = FALSE;
                 } else if (D_800A31BC_A3DBC[j] == -1) {
                     freeSlot = j;
                 }
             }
-            if (tune != 0) {
+            if (tune) {
                 amSndPlay(D_800FB118_B5958->tunes[off], &D_800A31B0_A3DB0[freeSlot]);
                 D_800A31BC_A3DBC[freeSlot] = D_800FB118_B5958->tunes[off];
             }
@@ -496,7 +483,7 @@ LevelHeader *levelGetLevel(void) {
 u8 *levelGetName(s32 arg0) {
     *D_800A31A0_A3DA0 = 0;
     if (arg0 < D_800FB124_B1764) {
-        D_800FB110_B1750 = piRomLoad(0x1E);
+        D_800FB110_B1750 = (s32 *) piRomLoad(0x1E);
         if (D_800FB110_B1750 != NULL) {
             piRomLoadSection(0x1F, (u32) D_800A31A0_A3DA0, (s32) D_800FB110_B1750[arg0], 0x20);
             mmFree(D_800FB110_B1750);

@@ -741,6 +741,7 @@ typedef struct LevelHeader {
     /* 0xBA */ s16 unkBA;
     union {
         s32* unkBC_ptr; // objGetTable
+        PulsatingLightData* pulsatingLightData;
         struct {
         /* 0xBC */ s32 unkBC;
         };
