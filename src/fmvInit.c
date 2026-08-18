@@ -13,7 +13,7 @@ u32 *Table[2];
 FmvPlayer Player[2];
 
 void fmvInit(void) {
-    FmvPlayer* player;
+    FmvPlayer *player;
     s32 i;
 
     Table[0] = piRomLoad(0x45);
