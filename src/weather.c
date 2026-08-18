@@ -1,7 +1,6 @@
 #include "audio.h"
 #include "camera.h"
 #include "common.h"
-#include "functions.h"
 #include "fx.h"
 #include "math/math.h"
 #include "models.h"
@@ -9,6 +8,7 @@
 #include "pi.h"
 #include "textures.h"
 #include "track.h"
+#include "level.h"
 
 typedef enum WeatherType { WEATHER_SNOW, WEATHER_RAIN, WEATHER_UNK } WeatherType;
 

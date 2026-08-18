@@ -10,5 +10,6 @@ void objSetAnimGroup(s32);
 s32 *objGetTable(s32 index);
 void objUndoPlayerTumble(Object *obj);
 void objDoPlayerTumble(Object *this);
+s32 objTvTimes(s32 timer);
 
 #endif

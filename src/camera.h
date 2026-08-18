@@ -55,5 +55,6 @@ void camDoSprite(Gfx**, Mtx**, Vertex**, void*, Sprite*, s32, s32);
 void camSetFOV(f32, s32);
 void camSetNo(s32);
 void camSetScissor(Gfx **dlist);
+s32 camGetMode(void);
 
 #endif

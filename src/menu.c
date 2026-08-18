@@ -2,7 +2,6 @@
 #include "audio.h"
 #include "common.h"
 #include "font.h"
-#include "functions.h"
 #include "gameVi.h"
 #include "gsSnd.h"
 #include "overlays/overlay12.h"

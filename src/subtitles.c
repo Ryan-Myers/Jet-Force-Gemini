@@ -2,6 +2,7 @@
 #include "font.h"
 #include "menu.h"
 #include "pi.h"
+#include "objects.h"
 
 typedef struct GameTextTableStruct {
     char *entries[128];

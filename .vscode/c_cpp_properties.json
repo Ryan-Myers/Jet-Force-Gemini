@@ -33,7 +33,6 @@
                 "${workspaceFolder}/include/config.h",
                 "${workspaceFolder}/include/enums.h",
                 "${workspaceFolder}/include/f3ddkr.h",
-                "${workspaceFolder}/include/functions.h",
                 "${workspaceFolder}/include/libultra_internal.h",
                 "${workspaceFolder}/include/macros.h",
                 "${workspaceFolder}/include/siint.h",

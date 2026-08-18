@@ -7,6 +7,5 @@
 #include "structs.h"
 #include "variables.h"
 #include "macros.h"
-#include "functions.h"
 #include "f3ddkr.h"
 #include "PRinternal/viint.h"
