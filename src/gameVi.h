@@ -106,6 +106,9 @@ typedef struct ResolutionSettings {
     char name[16];
 } ResolutionSettings;
 
+extern u8 D_800A32A0_A3EA0;
+extern s32 gSuppressWidescreen;
+
 void viInit(OSSched *sc);
 void viChangeMode(s32 videoMode);
 void viReset(void);

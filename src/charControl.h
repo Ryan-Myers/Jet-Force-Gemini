@@ -18,6 +18,17 @@ typedef struct ControlPlayer {
     /* 0x575 */ s8 gravityScaleIndex;
 } ControlPlayer;
 
+extern s32 disablejoy;
+extern s32 controlReleasedKeys;
+extern s32 controlAbsXjoy;
+extern s32 controlAbsYjoy;
+extern s32 controlDkeys;
+extern s32 controlKeys;
+extern s32 controlXjoy;
+extern s32 controlYjoy;
+extern f32 controlchr_gravity;
+extern f32 D_800A2DB4_A39B4[];
+
 s16 dAngle(s16 arg0, s16 arg1, f32 arg2);
 void controlDecapitatePlayer(s32 arg0);
 void controlMakeGravity(ControlPlayer *player);

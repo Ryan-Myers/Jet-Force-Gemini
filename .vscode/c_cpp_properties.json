@@ -40,7 +40,6 @@
                 "${workspaceFolder}/include/types.h",
                 "${workspaceFolder}/include/ultra64.h",
                 "${workspaceFolder}/include/ultrahost.h",
-                "${workspaceFolder}/include/variables.h",
                 "${workspaceFolder}/include/libc/stdarg.h"
             ],
             "defines": [

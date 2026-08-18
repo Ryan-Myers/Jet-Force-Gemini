@@ -13,6 +13,7 @@
 #include "rzip.h"
 #include "saves.h"
 #include "sched.h"
+#include "menu.h"
 
 #ifdef VERSION_kiosk
 const char D_800ACDB0[] = "1.1723";

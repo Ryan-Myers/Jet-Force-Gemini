@@ -1,6 +1,7 @@
 #include "font.h"
 #include "common.h"
 #include "textures.h"
+#include "enums.h"
 
 void fontSetWindow0(s32 width, s32 height) {
     Window->x2 = width - 1;

@@ -4,6 +4,12 @@
 #include <PR/ultratypes.h>
 #include "structs.h"
 
+
+extern s32 D_800A1000_A1C00; //gMaxLights
+extern ObjectLight *D_800A100C_A1C0C;
+extern s32 D_800A1004_A1C04;
+extern ObjectLight **D_800A1008_A1C08; //gActiveLights
+
 void setupLights(s32 count, s32 arg1, s32 arg2);
 void func_80021434_22034(unk800DC950 *arg0, s32 arg1);
 s32 addObjectLight(Object *, ObjectHeader48 *);

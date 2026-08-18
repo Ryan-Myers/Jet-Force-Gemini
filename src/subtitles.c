@@ -3,6 +3,7 @@
 #include "menu.h"
 #include "objects.h"
 #include "pi.h"
+#include "enums.h"
 
 typedef struct GameTextTableStruct {
     char *entries[128];

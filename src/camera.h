@@ -44,6 +44,7 @@ typedef struct Camera {
     /* 0x4A */ s16 unk4A; /* added to trans.rotation.x */
 } Camera;
 
+extern ScreenViewport D_800A3728[4]; //gScreenViewports
 
 void camPopModelMtx(Gfx **dlist);
 void camRestoreModelMtx(Gfx **dlist);

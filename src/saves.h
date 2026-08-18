@@ -6,12 +6,40 @@
 #include <PR/ultratypes.h>
 #include <PR/os_message.h>
 #include <PR/os_pfs.h>
+#include <PR/os_cont.h>
+#include <PR/os_pi.h>
 
 #ifdef VERSION_us
 #define nosMotorInit osMotorInit
 #define nosMotorStart osMotorStart
 #define nosMotorStop osMotorStop
 #endif
+
+typedef struct unkD_800A3EAC {
+    s32 unk0;
+    f32 unk4;
+} unkD_800A3EAC;
+extern unkD_800A3EAC D_800A344C_A404C[3];
+extern OSPfs pfs[MAXCONTROLLERS];
+extern OSMesgQueue *sControllerMesgQueue;
+extern s32 D_800FDDB4_B85F4; //UNUSED
+extern u8 gN64FontCodes[];
+extern s8 *sPackDirectory;
+extern u8 sRumblePaksPresent;
+extern u8 D_800A3448_A4048; //sControllerPakPresent?
+extern OSMesgQueue flashEventQueue;
+extern OSMesg flashEventBuf[1];
+extern OSMesg cartEventBuf[1];
+extern OSMesgQueue cartEventQueue;
+extern OSIoMesg flashMesgReqBlock;
+extern u8 D_800A3464_A4064;
+extern u8 D_800A346C_A406C;
+extern f32 D_800AD4FC;
+extern RumbleStruct rumbleStructArray[];
+extern f32 D_800AD504;
+extern f32 D_800AD500;
+extern RumbleStruct D_800FDF5A_B879A[];
+
 
 SIDeviceStatus packFileSize(s32 controllerIndex, s32 fileNum, s32 *fileSize);
 char *string_to_font_codes(char *inString, char *outString, s32 stringLength);

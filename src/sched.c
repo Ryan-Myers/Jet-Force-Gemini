@@ -1,6 +1,7 @@
 #include "audiomgr.h"
 #include "common.h"
 #include "PRinternal/viint.h"
+#include "sched.h"
 
 /*
  * private typedefs and defines

@@ -5,7 +5,6 @@
 
 #include <ultra64.h>
 #include "structs.h"
-#include "variables.h"
 #include "macros.h"
 #include "f3ddkr.h"
 #include "PRinternal/viint.h"
