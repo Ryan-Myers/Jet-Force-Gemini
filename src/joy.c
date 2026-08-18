@@ -1,7 +1,7 @@
 #include "common.h"
+#include "main.h"
 #include "overlays/overlay45.h"
 #include "saves.h"
-#include "main.h"
 
 UNUSED s32 D_800A3190_A3D90 = 0xFFFFFFFF;
 u16 joySecurity = 0xFFFF; // Used when anti-cheat/anti-tamper has failed.

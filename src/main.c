@@ -1,8 +1,11 @@
 #include "main.h"
 #include "audiomgr.h"
+#include "boot.h"
 #include "common.h"
 #include "gameVi.h"
+#include "joy.h"
 #include "mips.h"
+#include "osBootRamTest.h"
 #include "overlays/overlay36.h"
 #include "pi.h"
 #include "rcpFast3d.h"
@@ -10,9 +13,6 @@
 #include "rzip.h"
 #include "saves.h"
 #include "sched.h"
-#include "osBootRamTest.h"
-#include "joy.h"
-#include "boot.h"
 
 #ifdef VERSION_kiosk
 const char D_800ACDB0[] = "1.1723";
