@@ -28,5 +28,6 @@ extern float sqrtf(float value);
 
 u32 disableInterrupts(void);
 void enableInterrupts(u32 flags);
+s32 mathRnd(s32, s32);
 
 #endif

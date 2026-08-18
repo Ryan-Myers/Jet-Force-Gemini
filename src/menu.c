@@ -1,3 +1,4 @@
+#include "menu.h"
 #include "audio.h"
 #include "common.h"
 #include "font.h"

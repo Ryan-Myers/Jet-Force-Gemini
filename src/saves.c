@@ -1,4 +1,6 @@
+#include "saves.h"
 #include "common.h"
+#include "menu.h"
 #include "PR/os_flash.h"
 #include "PR/os_pi.h"
 

@@ -1,6 +1,8 @@
+#include "lights.h"
 #include "camlight.h"
 #include "common.h"
-#include "math.h"
+#include "math/math.h"
+#include "textures.h"
 
 extern void *D_800A1010_A1C10;
 extern ObjectLightUnk70 *D_800F5B20_F6720;

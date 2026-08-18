@@ -21,6 +21,7 @@
 #include "pi.h"
 #include "rcpFast3d.h"
 #include "runLink.h"
+#include "saves.h"
 #include "squads.h"
 #include "textures.h"
 #include "track.h"

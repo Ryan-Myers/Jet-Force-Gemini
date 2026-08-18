@@ -1,3 +1,4 @@
+#include "objects.h"
 #include "common.h"
 #include "math.h"
 

@@ -7,6 +7,7 @@
 #include "rcpFast3d.h"
 #include "runLink.h"
 #include "rzip.h"
+#include "saves.h"
 #include "sched.h"
 
 #ifdef VERSION_kiosk

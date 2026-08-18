@@ -26,5 +26,16 @@ void texFreeTexture(TextureHeader *tex);
 void updateColourCycle(void*, s32);
 void texDPInit(Gfx **);
 TextureHeader *texLoadTexture(s32 arg0);
+void resetMixCycle(PulsatingLightData *data);
+void updateMixCycle(PulsatingLightData *data, s32 timeDelta);
+void resetColourCycle(unkResetColourCycle *arg0);
+void initColourCycle(unkResetColourCycle *arg0, s32 arg1);
+void texAnimateTexture(TextureHeader *texture, u32 *triangleBatchInfoFlags, s32 *arg2, s32 updateRate);
+void setTexMemColour(s32 tagId);
+void func_800570D8_57CD8(TextureHeader *tex, Gfx *_dlist); //build_tex_display_list in DKR
+void func_8005719C_57D9C(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem);
+void sprSetIA2ColOverride(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5);
+void sprClearIA2ColOverride(void);
+void sprSetTextureFilter(s32 arg0);
 
 #endif

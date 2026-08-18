@@ -1,5 +1,7 @@
 #include "textures.h"
 #include "common.h"
+#include "math/math.h"
+#include "objects.h"
 
 const char D_800ADD40[] = "Error: Texture no %x out of range on load. !!\n";
 const char D_800ADD70[] = "Restore to %x\n";
@@ -211,7 +213,7 @@ void texFreeSprite(Sprite *sprite) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/textures/func_80056D24_57924.s")
 
-// builD_tex_list in DKR
+// build_tex_display_list in DKR
 void func_800570D8_57CD8(TextureHeader *tex, Gfx *_dlist) {
     Gfx *dlist = _dlist;
     if (tex) {}
@@ -228,7 +230,7 @@ void func_800570D8_57CD8(TextureHeader *tex, Gfx *_dlist) {
     tex->numberOfCommands = dlist - tex->cmd;
 }
 
-// Shrunk builD_tex_list
+// Shrunk build_tex_list
 #ifdef NON_EQUIVALENT
 void func_8005719C_57D9C(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem) {
     s32 tileImgSiz;

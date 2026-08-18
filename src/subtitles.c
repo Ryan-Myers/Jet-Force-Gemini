@@ -1,5 +1,6 @@
 #include "common.h"
 #include "font.h"
+#include "menu.h"
 #include "pi.h"
 
 typedef struct GameTextTableStruct {

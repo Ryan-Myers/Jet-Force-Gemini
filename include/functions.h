@@ -9,64 +9,11 @@
 #include "libc/stdarg.h"
 #include "enums.h"
 
-#ifdef VERSION_us
-#define nosMotorInit osMotorInit
-#define nosMotorStart osMotorStart
-#define nosMotorStop osMotorStop
-#endif
-
 f32 Cosf(s32);
 
 
-void func_80021434_22034(unk800DC950 *arg0, s32 arg1);
-s32 *objGetTable(s32 index);
-void resetMixCycle(PulsatingLightData *data);
-void updateMixCycle(PulsatingLightData *data, s32 timeDelta);
-void resetColourCycle(unkResetColourCycle *arg0);
-void initColourCycle(unkResetColourCycle *arg0, s32 arg1);
-s32 mathRnd(s32, s32);
-void texAnimateTexture(TextureHeader *texture, u32 *triangleBatchInfoFlags, s32 *arg2, s32 updateRate);
-void setTexMemColour(s32 tagId);
-//void func_800570D8_57CD8(TextureHeader *tex, u8 *addr); //build_tex_display_list in DKR
-void func_8005719C_57D9C(Gfx **dlist, TextureHeader *tex, s32 rtile, s32 tmem);
-void sprSetIA2ColOverride(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5);
-void sprClearIA2ColOverride(void);
-void sprSetTextureFilter(s32 arg0);
 
-SIDeviceStatus packFileSize(s32 controllerIndex, s32 fileNum, s32 *fileSize);
-char *string_to_font_codes(char *inString, char *outString, s32 stringLength);
-SIDeviceStatus packOpen(s32 controllerIndex);
-s32 packClose(UNUSED s32 controllerIndex);
-SIDeviceStatus packOpenFile(s32 controllerIndex, char *fileName, char *fileExt, s32 *fileNumber);
-s32 frontGetLanguage(void);
-SIDeviceStatus packReadFile(s32 controllerIndex, s32 fileNum, u8 *data, s32 dataLength);
-s32 func_8004D250_4DE50(s32 controllerIndex, s32 fileNum);
-char *font_codes_to_string(char *inString, char *outString, s32 stringLength);
-SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName, char *fileExt, u8 *dataToWrite, s32 fileSize);
-SIDeviceStatus packCopyFile(s32 controllerIndex, s32 fileNumber, s32 secondControllerIndex);
-SIDeviceStatus packDeleteFile(s32 controllerIndex, s32 fileNum);
-void packDirectoryFree(void);
-SIDeviceStatus packFormat(s32 controllerIndex);
-SIDeviceStatus packRepair(s32 controllerIndex);
-SIDeviceStatus packIsPresent(s32 controllerIndex);
-s32 nosMotorInit(OSMesgQueue *mq, OSPfs *pfs, int channel);
-SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char **fileNames, char **fileExtensions, u32 *fileSizes, u8 *fileTypes);
-void flashROMInit(void);
-void packInit(void);
-void flashROMWrite(u32 pageNum, u32 *dramAddr);
-void flashROMRead(u32 pageNum, u32 *dramAddr);
-void rumbleUpdate(void);
-#ifdef VERSION_kiosk
-void rumbleStop(s32 controllerIndex);
-void rumbleKill(void);
-#else
-void rumbleStop(s32 controllerIndex, s32 arg1);
-void rumbleKill(s32 arg0);
-#endif
-void rumbleProcessing(s32 arg0);
-void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2);
-void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2);
-void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2);
+
 void amStop(void);
 void func_80044FAC_45BAC(void);
 void func_800468EC_474EC(s32 arg0);

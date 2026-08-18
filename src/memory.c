@@ -1,8 +1,8 @@
 #include "memory.h"
 #include "common.h"
+#include "math/math.h"
 #include "overlays/overlay10.h"
 #include "runLink.h"
-#include "math/math.h"
 
 #ifndef _ALIGN16
 #define _ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
