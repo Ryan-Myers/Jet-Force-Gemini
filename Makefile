@@ -4,6 +4,7 @@ NON_MATCHING ?= 0
 # Libultra version might be at least J, but still labeled in the header as G for some reason.
 LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6 -DBUILD_VERSION_STRING=\"2.0I\"
 
+.DEFAULT_GOAL := all
 # Whether to hide commands or not
 VERBOSE ?= 0
 ifeq ($(VERBOSE),0)
@@ -369,11 +370,17 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: CC_CHECK := :
 #	     All string	and aggregate constants	are put	into a read/write data
 #	     section.
 
-### Targets
+$(VENV)/bin/activate: requirements.txt
+#Set up a python venv so we don't get warnings about breaking system packages.
+	$(V)python3 -m venv $(VENV)
+#Installing the splat dependencies
+	$(V)$(PYTHON) -m pip install -r requirements.txt
+	$(V)make -C $(TOOLS_DIR)
 
+### Targets
 default: all
 
-all: $(VERIFY)
+all: $(VERIFY) setup
 
 dirs:
 	$(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(HASM_DIRS) $(BIN_DIRS) $(BIN_OVERLAYS_DIRS) $(ASM_OVERLAYS_DIRS) $(SRC_OVERLAYS_DIRS),$(shell mkdir -p $(BUILD_DIR)/$(dir)))
@@ -414,12 +421,7 @@ extractall:
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).pal.yaml
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).jpn.yaml
 
-setup:
-#Set up a python venv so we don't get warnings about breaking system packages.
-	$(V)python3 -m venv $(VENV)
-#Installing the splat dependencies
-	$(V)$(PYTHON) -m pip install -r requirements.txt
-	$(V)make -C $(TOOLS_DIR)
+setup: $(VENV)/bin/activate
 
 clean:
 	rm -rf $(BUILD_DIR)
@@ -531,7 +533,7 @@ $(TARGET).z64: $(TARGET).bin
 	$(V)$(PYTHON) $(TOOLS_DIR)/CopyRom.py $< $@
 
 ### Settings
-.PHONY: all clean cleanextract default
+.PHONY: all clean cleanextract default setup
 SHELL = /bin/bash -e -o pipefail
 
 -include $(BUILD_DIR)/**/*.d
