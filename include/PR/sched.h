@@ -144,5 +144,13 @@ void            osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ);
 void            osScRemoveClient(OSSched *s, OSScClient *c);
 OSMesgQueue     *osScGetCmdQ(OSSched *s);
 
+
+void func_8004FB30_50730(OSSched *sc);
+char *osScGetTaskType(s32 taskID);
+void func_8004FC64_50864(OSScTask *task);
+Gfx *func_8004FF64_50B64(OSSched *sc, 
+    char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
+    char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2);
+
 #endif
 

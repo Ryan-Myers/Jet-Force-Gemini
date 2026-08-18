@@ -27,5 +27,6 @@ void controlReadJoypad(s32 player);
 s16 *controlPlayerTiltList(Object *obj);
 s16 *controlSidekickTiltList(Object *obj);
 void controlClearPlayerSetup(void);
+void *controlGetWeaponDef(s32);
 
 #endif

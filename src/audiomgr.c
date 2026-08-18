@@ -1,3 +1,4 @@
+#include "audiomgr.h"
 #include "common.h"
 
 const char D_800AAA80[] = "audio: ai out of samples\n";

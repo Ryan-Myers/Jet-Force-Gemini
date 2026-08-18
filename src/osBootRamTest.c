@@ -1,4 +1,5 @@
 #include "common.h"
+#include "osBootRamTest.h"
 
 #define READ_ADDRESS_DIRECT(addr) (*(vu32 *) (addr))
 #define WRITE_ADDRESS_DIRECT(addr, x) (*(vu32 *) (addr) = (x))

@@ -1,4 +1,5 @@
 #include "main.h"
+#include "audiomgr.h"
 #include "common.h"
 #include "gameVi.h"
 #include "mips.h"
@@ -9,6 +10,8 @@
 #include "rzip.h"
 #include "saves.h"
 #include "sched.h"
+#include "osBootRamTest.h"
+#include "joy.h"
 
 #ifdef VERSION_kiosk
 const char D_800ACDB0[] = "1.1723";

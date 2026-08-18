@@ -1,6 +1,7 @@
 #include "audio.h"
 #include "common.h"
 #include "math/math.h"
+#include "main.h"
 
 const char D_800AAAE0[] = "OUT OF AUDIO POINTS\n";
 
