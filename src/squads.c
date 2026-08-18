@@ -12,10 +12,10 @@ u32 *BaddyDataArray = NULL;   // Effectively unused
 u32 *D_800A38E4_A44E4 = NULL; // Unknown type
 
 // .bss
-void *D_800FE9A0_B91E0;
-void *DisactivatedSquaddies;
+s32 D_800FE9A0_B91E0;
+DisactivatedSquaddie **DisactivatedSquaddies;
 s32 D_800FE9A8_B91E8;
-s32 D_800FE9AC_B91EC;
+RomDefHeader **D_800FE9AC_B91EC;
 s32 SquadsModuleFlags;
 #ifdef VERSION_kiosk
 u8 D_800FE9B8_B91F8[5];
@@ -52,19 +52,143 @@ s32 squadsGetSquadronList(s32 *arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/BaddyTypeToIndex.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/CreateStaticInstance.s")
+s32 BaddyTypeToIndex();
+Object *objSetupObject(StaticInstanceSpawn *spawn, s32 arg1);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsRememberRomdef.s")
+void CreateStaticInstance(s32 arg0) {
+    u8 *slot;
+    StaticInstanceSpawn spawn;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/AddToDisactivatedSquaddies.s")
+    slot = &D_800FE9B8_B91F8[BaddyTypeToIndex(arg0)];
+    if (*slot == 0) {
+        *slot = 1;
+        D_800FEA14_B9254 = NULL;
+        spawn.objectId = arg0;
+        spawn.unk2 = 0x12;
+        spawn.unk4 = 0;
+        spawn.unk6 = 0;
+        spawn.unk8 = 0;
+        spawn.unkA = 0;
+        spawn.unkC = 0;
+        spawn.unkE = D_800FEA10_B9250->segment.trans.rotation.x;
+        spawn.unk10 = 0;
+        D_800FEA08_B9248 = objSetupObject(&spawn, 4);
+        if (D_800FEA08_B9248 != NULL) {
+            D_800FEA08_B9248->segment.unk3C = 0;
+            D_800FEA0C_B924C = D_800FEA08_B9248->racer;
+            D_800FEA08_B9248->segment.trans.flags |= 0x400;
+            D_800FEA0C_B924C->flags = 0;
+            D_800FEA0C_B924C->bit08 = 1;
+            D_800FEA0C_B924C->unk24 = 0;
+        }
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/GetFirstDisactivatedSquaddie.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsInitialiseBeforeObjects.s")
+void squadsRememberRomdef(RomDefHeader *arg0) {
+    D_800FE9AC_B91EC[D_800FE9A0_B91E0] = arg0;
+    D_800FE9A0_B91E0 = D_800FE9A0_B91E0 + 1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/GetSquadronFromIdentifier.s")
+void AddToDisactivatedSquaddies(DisactivatedSquaddie *arg0) {
+    DisactivatedSquaddies[D_800FE9A8_B91E8] = arg0;
+    D_800FE9A8_B91E8 = D_800FE9A8_B91E8 + 1;
+    if (D_800FE9A8_B91E8 >= D_800FE9A0_B91E0) {
+        D_800FE9A8_B91E8 = 0;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/GetSquaddieFromIdentifiers.s")
+void *GetFirstDisactivatedSquaddie(s32 arg0) {
+    s32 j;
+    s32 i;
+    DisactivatedSquaddie **slot;
+    DisactivatedSquaddie *squaddie;
+
+    i = D_800FE9A0_B91E0;
+    slot = DisactivatedSquaddies;
+    if (i >= 0x101) {
+        return NULL;
+    }
+    if (DisactivatedSquaddies != NULL) {
+        j = i--;
+        if (j != 0) {
+            do {
+                squaddie = *slot;
+                if ((squaddie != NULL) && (arg0 == squaddie->unk11)) {
+                    *slot = NULL;
+                    return squaddie;
+                }
+                slot++;
+                j = i--;
+            } while (j != 0);
+        }
+    }
+    return NULL;
+}
+
+void squadsInitialiseBeforeObjects(void) {
+    D_800FE9AC_B91EC = (RomDefHeader **) mmAlloc(0x400, 0xFFFF00FFU);
+    SquadsModuleFlags = 1;
+    DisactivatedSquaddies = 0;
+    D_800FE9A0_B91E0 = 0;
+    D_800FE9F0_B9230 = 0;
+    SquaddieGrowlTimer = mathRnd(0xF0, 0x168);
+}
+
+
+void *GetSquadronFromIdentifier(s16 arg0) {
+    s32 j;
+    s32 i;
+    Object **list;
+    Object *node;
+
+    i = D_800FE9F0_B9230;
+    j = i--;
+    if (j != 0) {
+        list = (Object **) D_800A38E4_A44E4 + i;
+        do {
+            node = *list--;
+            if ((node->unkA0 == 0) && (arg0 == ((Object_Squadron *) node->racer)->unk64)) {
+                return node;
+            }
+            j = i--;
+        } while (j != 0);
+    }
+    return NULL;
+}
+
+void *GetSquaddieFromIdentifiers(s16 arg0, s16 arg1) {
+    s32 j;
+    s32 i;
+    Object **list;
+    Object *node;
+    Object_Squadron *squadron;
+    Object_Racer *racer;
+    Object *obj;
+
+    i = D_800FE9F0_B9230;
+    j = i--;
+    if (j != 0) {
+        list = (Object **) D_800A38E4_A44E4 + i;
+        do {
+            node = *list--;
+            squadron = (Object_Squadron *) node->racer;
+            if (arg0 == squadron->unk64) {
+                obj = squadron->unk58;
+                while (obj != NULL) {
+                    racer = obj->racer;
+                    if ((obj->unkA0 == 0) && (arg1 == ((Object_Grenade *) racer)->unk15)) {
+                        return obj;
+                    }
+                    obj = ((Object_Grenade *) racer)->next;
+                }
+                return NULL;
+            }
+            j = i--;
+        } while (j != 0);
+    }
+    return NULL;
+}
 
 void squadsCheckEnemyPointers(Object *arg0) {
     s32 j;
@@ -147,7 +271,7 @@ void GetFormationInfo(Object *arg0, u8 *arg1, u8 *arg2, u8 *arg3) {
     }
     temp_v0->unk32 = *arg3;
     temp_v0->unk31 = *arg1;
-    if ((*arg3 == 8) && (D_800FEA0C_B924C != NULL) && ((*(u32 *) D_800FEA0C_B924C << 9) >> 31)) {
+    if ((*arg3 == 8) && (D_800FEA0C_B924C != NULL) && ((D_800FEA0C_B924C->flags << 9) >> 31)) {
         *arg3 = 9;
         temp_v0->unk2E = 0;
     }

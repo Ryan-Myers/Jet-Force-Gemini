@@ -154,10 +154,18 @@ typedef struct Vec2i {
 } Vec2i;
 
 typedef struct Object_Racer {
-  /* 0x000 */ u8 unk0;
-  /* 0x001 */ u8 unk1;
-  /* 0x002 */ u8 unk2;
-  /* 0x003 */ u8 unk3;
+  union {
+    /* 0x000 */ u32 flags;      /* whole-word clear; bit 22 tested in GetFormationInfo */
+    struct {
+      /* 0x000 */ u8 flagsHi4 : 4;   /* 0x80..0x10 */
+      /* 0x000 */ u8 bit08 : 1;      /* 0x08 */
+      /* 0x000 */ u8 flagsLo3 : 3;   /* 0x04..0x01 */
+      /* 0x001 */ u8 unk1;
+      /* 0x002 */ u8 unk2;
+      /* 0x003 */ u8 unk3;
+    };
+    /* 0x000 */ u8 unk0;
+  };
   /* 0x004 */ u8 unk4;
   /* 0x005 */ u8 unk5;
   /* 0x006 */ u8 unk6;
@@ -168,7 +176,9 @@ typedef struct Object_Racer {
   /* 0x00B */ u8 unkB;
   /* 0x00C */ u8 unkC;
   /* 0x00D */ u8 unkD;
-  /* 0x00E */ u8 padE[0x1C];
+  /* 0x00E */ u8 padE[0x16];
+  /* 0x024 */ s32 unk24;
+  /* 0x028 */ u8 pad28[0x2];
   /* 0x02A */ s16 unk2A;
   /* 0x02C */ u8 unk2C;
   /* 0x02D */ u8 unk2D;
@@ -190,14 +200,42 @@ typedef struct Object_Racer {
   /* 0x146 */ s16 unk146;
 } Object_Racer;
 
+/* Stack-built spawn record passed to objSetupObject. */
+typedef struct StaticInstanceSpawn {
+  /* 0x00 */ s16 objectId;
+  /* 0x02 */ s8  unk2;
+  /* 0x03 */ u8  pad3;
+  /* 0x04 */ s16 unk4;
+  /* 0x06 */ s16 unk6;
+  /* 0x08 */ s16 unk8;
+  /* 0x0A */ s16 unkA;
+  /* 0x0C */ s16 unkC;
+  /* 0x0E */ s16 unkE;
+  /* 0x10 */ s8  unk10;
+} StaticInstanceSpawn;
+
+typedef struct DisactivatedSquaddie {
+  /* 0x00 */ u8 pad0[0x11];
+  /* 0x11 */ u8 unk11;
+} DisactivatedSquaddie;
+
 typedef struct Object_Grenade {
-  /* 0x000 */ u8 pad0[0x28];
+  /* 0x000 */ u8 pad0[0x15];
+  /* 0x015 */ u8 unk15;
+  /* 0x016 */ u8 pad16[0x12];
   /* 0x028 */ struct Object *next;
   /* 0x02C */ u8 pad2C[56];
   /* 0x064 */ struct Object *ennemy;
   /* 0x068 */ u8 pad68[0x40];
   /* 0x0A8 */ struct Object *owner;
 } Object_Grenade;
+
+typedef struct Object_Squadron {
+  /* 0x000 */ u8 pad0[0x58];
+  /* 0x058 */ struct Object *unk58;
+  /* 0x05C */ u8 pad5C[0x8];
+  /* 0x064 */ u8 unk64;
+} Object_Squadron;
 
 typedef struct ObjHeaderParticleEntry {
   /* 0x00 */ s32 upper;
@@ -259,8 +297,9 @@ typedef struct ObjectSegment {
   /* 0x0000 */ ObjectTransform trans;
   /* 0x0018 */ u8 pad18[0x10];
   /* 0x0028 */ f32 unk28; /* animation value; sprDPset reads it as float bits */
-  /* 0x002C */ u8 pad2C[0x14];
-  /* 0x0048 */ ObjectHeader *header;
+  /* 0x002C */ u8 pad2C[0x10];
+  /* 0x003C */ s32 unk3C;
+  /* 0x0040 */ ObjectHeader *header;
 } ObjectSegment;
 
 typedef struct Object {
@@ -271,6 +310,8 @@ typedef struct Object {
   /* 0x0068 */ Object_Racer *racer; //Object_64 in DKR.
   /* 0x0070 */ u8 pad70[8];
   /* 0x0074 */ u32 *unk74;
+  /* 0x0078 */ u8 pad78[0x28];
+  /* 0x00A0 */ u8 unkA0;
 } Object;
 
 typedef struct VertexPosition {
