@@ -15,22 +15,6 @@
 #define nosMotorStop osMotorStop
 #endif
 
-void squadsPreInit(RomDefHeader *list, s32 listSize);
-void *ad_sndp_play(ALBank *arg0, s16 arg1, u16 arg2, u8 arg3, f32 arg4, u8 arg5, void **arg6);
-ALLink *func_80085B20_86720(ALBank *arg0, ALSound *arg1);
-u16 amGetSfxCount(void);
-s32 scalevol(s32 vol);
-OSPiHandle *osCartRomInit(void);
-OSPiHandle *osFlashInit(void);
-void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes);
-u8 *rzipUncompress(u8 *compressedInput, u8 *decompressedOutput);
-s32 rzipUncompressSize(u8 *arg0);
-u32 *piRomLoad(u32 assetIndex);
-s32 piRomLoadSection(u32 assetIndex, u32 address, s32 assetOffset, s32 size);
-s32 inflate_block(void);
-void _blkclr(void *, size_t);
-void _bcopy(const void *, void *, size_t);
-
 void mainThread(void *);
 void diCpuTraceInit(void);
 f32 Cosf(s32);

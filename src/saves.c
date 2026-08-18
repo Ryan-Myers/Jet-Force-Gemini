@@ -1,4 +1,6 @@
 #include "common.h"
+#include "PR/os_flash.h"
+#include "PR/os_pi.h"
 
 // These are the unique game codes assigned to DKR
 #define NDYJ 0x4E44594A // 'NDYJ' ASCII

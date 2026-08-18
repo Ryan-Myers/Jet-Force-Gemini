@@ -1,5 +1,6 @@
 #include "common.h"
 #include "font.h"
+#include "pi.h"
 
 typedef struct GameTextTableStruct {
     char *entries[128];

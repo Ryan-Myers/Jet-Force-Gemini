@@ -6,6 +6,7 @@
 #include "math/math.h"
 #include "models.h"
 #include "overlays/overlay5.h"
+#include "pi.h"
 #include "textures.h"
 #include "track.h"
 

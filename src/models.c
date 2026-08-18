@@ -1,5 +1,6 @@
 #include "models.h"
 #include "common.h"
+#include "pi.h"
 
 const char D_800AC900[] = "Error: Model no. out of range on load. !!\n";
 const char D_800AC92C[] = "TEXTURE ERROR!!\n%d,%d\n";

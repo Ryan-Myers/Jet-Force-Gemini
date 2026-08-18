@@ -5,6 +5,8 @@
 #include "runLink.h"
 #include "stdarg.h"
 
+void _bcopy(const void *, void *, size_t);
+
 extern OSThread *__osGetActiveQueue(void);
 
 #ifdef VERSION_kiosk

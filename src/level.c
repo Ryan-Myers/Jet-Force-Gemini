@@ -18,6 +18,7 @@
 #include "overlays/overlay27.h"
 #include "overlays/overlay48.h"
 #include "overlays/overlay98.h"
+#include "pi.h"
 #include "rcpFast3d.h"
 #include "runLink.h"
 #include "squads.h"
