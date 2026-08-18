@@ -66,7 +66,31 @@ s32 squadsGetSquadronList(s32 *arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/GetSquaddieFromIdentifiers.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsCheckEnemyPointers.s")
+void squadsCheckEnemyPointers(Object *arg0) {
+    s32 j;
+    s32 i;
+    Object *node;
+    Object_Racer *racer;
+    Object *obj;
+
+    i = D_800FE9F0_B9230;
+    j = i--;
+    if (j != 0) {
+        do {
+            node = ((Object **) D_800A38E4_A44E4)[i];
+            racer = node->racer;
+            obj = racer->unk58;
+            while (obj != NULL) {
+                node = (Object *) obj->racer;
+                if (((Object_Grenade *) node)->ennemy == arg0) {
+                    ((Object_Grenade *) node)->ennemy = NULL;
+                }
+                obj = ((Object_Grenade *) node)->next;
+            }
+            j = i--;
+        } while (j != 0);
+    }
+}
 
 void squadsCheckGrenades(Object *arg0) {
     s32 i;

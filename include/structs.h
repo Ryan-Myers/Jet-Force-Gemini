@@ -193,7 +193,9 @@ typedef struct Object_Racer {
 typedef struct Object_Grenade {
   /* 0x000 */ u8 pad0[0x28];
   /* 0x028 */ struct Object *next;
-  /* 0x02C */ u8 pad2C[0x7C];
+  /* 0x02C */ u8 pad2C[56];
+  /* 0x064 */ struct Object *ennemy;
+  /* 0x068 */ u8 pad68[0x40];
   /* 0x0A8 */ struct Object *owner;
 } Object_Grenade;
 
