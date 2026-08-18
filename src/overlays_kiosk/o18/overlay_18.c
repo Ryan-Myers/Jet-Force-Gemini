@@ -1,6 +1,6 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F0000000_1ADB480.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_00000000_1ADB480.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/tribalScreenInit.s")
 
@@ -16,17 +16,17 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/weaponScreenCleanup.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F0001114_1ADC594.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_00001114_1ADC594.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F0001164_1ADC5E4.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_00001164_1ADC5E4.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F0001198_1ADC618.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_00001198_1ADC618.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F0001214_1ADC694.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_00001214_1ADC694.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/weaponScreen.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F0001FB4_1ADD434.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_00001FB4_1ADD434.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/menuScreenInit.s")
 
@@ -36,11 +36,11 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/frontGetSelectableCharacter.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F00036AC_1ADEB2C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_000036AC_1ADEB2C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/frontMenuPodiumGetTiltList.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F0003BBC_1ADF03C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_00003BBC_1ADF03C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/healthScreenInit.s")
 
@@ -54,15 +54,15 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/shipScreenCleanup.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F00052C8_1AE0748.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_000052C8_1AE0748.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F00052F0_1AE0770.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_000052F0_1AE0770.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F0005340_1AE07C0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_00005340_1AE07C0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F0005370_1AE07F0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_00005370_1AE07F0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_F0005514_1AE0994.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/func_overlay_18_00005514_1AE0994.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o18/overlay_18/inventoryScreenInit.s")
 

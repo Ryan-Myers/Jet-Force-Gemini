@@ -129,11 +129,7 @@ def generate_splat_segment(overlay: OverlayHeader) -> str:
     lines = []
     
     rom_start = overlay.absolute_rom
-    vram = overlay.vram_base
-    
-    if overlay.vram_base == 0:
-        #vram = 0xF0000000 # Default VRAM for overlays not loaded at fixed address
-        vram = overlay.index << 20 # Use the overlay index to create a unique VRAM base
+    vram = 0x0
     
     # ROM layout: [text][data][reloc_table]
     # VRAM layout: [text][data][bss][reloc_table]
@@ -147,8 +143,7 @@ def generate_splat_segment(overlay: OverlayHeader) -> str:
     
     # Relocation table follows data in ROM (BSS is not stored in ROM)
     reloc_start = data_end
-    reloc_size = overlay.reloc_table_size * 8  # Each reloc entry is 8 bytes
-    reloc_end = reloc_start + reloc_size
+    secondary_reloc_start = reloc_start + overlay.reloc_table_size
     
     # Generate segment
     lines.append(f"  - name: overlay_{overlay.index}")
@@ -157,6 +152,7 @@ def generate_splat_segment(overlay: OverlayHeader) -> str:
     lines.append(f"    vram: 0x{vram:X}")
     lines.append(f"    bss_size: 0x{overlay.bss_size:X}")
     lines.append(f"    align: 0x8")
+    lines.append(f"    subalign: 0x8")
     lines.append(f"    dir: overlays/o{overlay.index}")
     lines.append(f"    exclusive_ram_id: overlay_{overlay.index}")
     lines.append(f"    symbol_name_format: $SEG_$VRAM_$ROM")
@@ -176,6 +172,8 @@ def generate_splat_segment(overlay: OverlayHeader) -> str:
     # Relocation table (as binary data)
     if overlay.reloc_table_size > 0:
         lines.append(f"      - [0x{reloc_start:X}, bin, overlay_{overlay.index}_reloc]")
+    if overlay.secondary_reloc_size > 0:
+        lines.append(f"      - [0x{secondary_reloc_start:X}, bin, overlay_{overlay.index}_secondary_reloc]")
     
     return "\n".join(lines)
 
@@ -192,7 +190,8 @@ def generate_overlay_info(overlay: OverlayHeader) -> str:
     lines.append(f"  #   Text: 0x{overlay.text_size:X} bytes")
     lines.append(f"  #   Data: 0x{overlay.data_size:X} bytes")
     lines.append(f"  #   BSS: 0x{overlay.bss_size:X} bytes")
-    lines.append(f"  #   Reloc entries: {overlay.reloc_table_size}")
+    lines.append(f"  #   Reloc entries: {overlay.reloc_table_size // 8}")
+    lines.append(f"  #   Secondary Reloc entries: {overlay.secondary_reloc_size // 8}")
     
     if overlay.init_function != -1:
         init_addr = overlay.vram_base + overlay.init_function if overlay.vram_base else overlay.init_function

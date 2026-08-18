@@ -44,4 +44,16 @@ typedef union MipsInstruction {
 #define RA_REG 31
 #define ZERO_REG 0
 
+// Relocation types (patchOperation values - destination type)
+#define RELOC_PATCH_WORD 2   // R_MIPS_32: Full 32-bit word
+#define RELOC_PATCH_JAL 4    // R_MIPS_26: JAL target
+#define RELOC_PATCH_HI16 5   // Upper 16 bits (LUI)
+#define RELOC_PATCH_LO16 6   // Lower 16 bits (ADDIU/LW/SW immediate)
+
+// Relocation types (relocType values - source type)  
+#define RELOC_TYPE_EXTERNAL 0  // Reference to external symbol (via overlayRomTable)
+#define RELOC_TYPE_LOCAL 1     // Local offset within overlay
+#define RELOC_TYPE_JUMP 2      // Jump target (relative)
+#define RELOC_TYPE_DATA 3      // Data section relocation
+
 #endif

@@ -180,8 +180,8 @@ download_failed:
     lwc1       fa1, 0x2C($sp)
     lwc1       fa1f, 0x30($sp)
     lw         ra, 0x34($sp)
-    or         v0, zero, zero             /* Return 0 (failure) */
-    or         v1, zero, zero
+    move       v0, zero                   /* Return 0 (failure) */
+    move       v1, zero
     addiu      $sp, $sp, 0x60
     jr         ra
 

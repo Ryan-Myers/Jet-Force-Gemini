@@ -188,11 +188,11 @@ void trackGetFog(s32 playerID, s16 *near, s16 *far, s16 *unk18, u8 *r, u8 *g, u8
     FogData *fogData;
 
     if (runlinkIsModuleLoaded(39) != 0) {
-        mantisLightingGetFog_Trap(near, far, r, g, b);
+        mantisLightingGetFog(near, far, r, g, b);
         *unk18 = 0;
         *unk33 = 0;
     } else if (runlinkIsModuleLoaded(23) != 0) {
-        dayGetFog_Trap(near, far, r, g, b);
+        dayGetFog(near, far, r, g, b);
         *unk18 = 0;
         *unk33 = 0;
     } else {
@@ -206,7 +206,7 @@ void trackGetFog(s32 playerID, s16 *near, s16 *far, s16 *unk18, u8 *r, u8 *g, u8
         *unk33 = fogData->intendedFog.unk33 & 0x7F;
     }
     if (runlinkIsModuleLoaded(29) != 0) {
-        girlMagicFog_Trap(r, g, b, near, far, unk33);
+        girlMagicFog(r, g, b, near, far, unk33);
     }
 }
 

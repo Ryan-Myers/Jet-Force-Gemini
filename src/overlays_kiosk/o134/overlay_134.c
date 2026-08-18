@@ -24,7 +24,7 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o134/overlay_134/multiCharArmSetStatus.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o134/overlay_134/func_overlay_134_F0002834_1B7C14C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o134/overlay_134/func_overlay_134_00002834_1B7C14C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o134/overlay_134/multiCharArmGetTiltList.s")
 

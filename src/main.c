@@ -248,7 +248,7 @@ void mainInitGame(void) {
     piInit();
     rcpInit(&sc);
     runlinkInitialise();
-    mainInitRlo_Trap();
+    mainInitRlo();
     runlinkFreeCode(0x24);
 }
 #else
@@ -278,7 +278,7 @@ void mainInitGame(void) {
     runlinkInitialise();
     mainPreNMI();
     D_800A3290_A3E90 = 1;
-    mainInitRlo_Trap();
+    mainInitRlo();
     mainPreNMI();
     runlinkFreeCode(0x24);
     D_800A3530_A4130 = 0;

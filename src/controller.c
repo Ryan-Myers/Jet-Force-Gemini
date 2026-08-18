@@ -236,12 +236,12 @@ void joySetSecurity(void) {
 #ifdef VERSION_us
 void arithmeticFunction(u8 *challenge, u8 *response) {
     osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
-    osCic6105SendData_Trap(challenge, &joyMessageQueue);
+    osCic6105SendData(challenge, &joyMessageQueue);
     osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
-    osCic6105StartGetData_Trap(&joyMessageQueue);
+    osCic6105StartGetData(&joyMessageQueue);
     osRecvMesg(&joyMessageQueue, NULL, OS_MESG_BLOCK);
     osContStartReadData(&joyMessageQueue);
-    osCic6105GetReadData_Trap(response);
+    osCic6105GetReadData(response);
 }
 #endif
 

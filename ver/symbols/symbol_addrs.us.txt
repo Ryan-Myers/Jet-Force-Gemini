@@ -2603,3 +2603,5 @@ D_800AE834_AF434 = 0x800AE834;
 D_800AE844_AF444 = 0x800AE844;
 D_800AE850_AF450 = 0x800AE850; // force_not_migration:True
 D_800AE858_AF458 = 0x800AE858; // force_not_migration:True
+
+D_00000400 = 0x00000400; //ignore:True

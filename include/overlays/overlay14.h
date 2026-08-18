@@ -3,6 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void frontCleanupInstruments_Trap(void);
+void frontCleanupInstruments(void);
 
 #endif

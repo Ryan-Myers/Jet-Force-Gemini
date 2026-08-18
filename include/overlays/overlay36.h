@@ -3,6 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void mainInitRlo_Trap(void);
+void mainInitRlo(void);
 
 #endif

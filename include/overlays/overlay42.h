@@ -3,6 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void frontKeyboardCleanup_Trap(void);
+void frontKeyboardCleanup(void);
 
 #endif

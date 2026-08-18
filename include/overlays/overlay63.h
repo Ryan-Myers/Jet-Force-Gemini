@@ -3,6 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void frontCleanupStartScreen_Trap(void);
+void frontCleanupStartScreen(void);
 
 #endif
