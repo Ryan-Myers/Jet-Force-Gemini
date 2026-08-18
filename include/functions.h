@@ -161,13 +161,6 @@ void func_800468EC_474EC(s32 arg0);
 void mainChangeLevel(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5);
 void mainInitGame(void);
 void mainSetGameFlag(GameFlags arg0, s32 arg1);
-#ifdef VERSION_kiosk
-// The kiosk doesn't have this function, but it can be used so many times in a single function, 
-// so this is a macro to avoid having to ifdef it out multiple times.
-#define mainPreNMI() 0
-#else
-void mainPreNMI(void);
-#endif
 s32 osBootRamTest1_6105(void);
 s32 osBootRamTest2_6105(void);
 s32 diPrintf(const char *format, ...);

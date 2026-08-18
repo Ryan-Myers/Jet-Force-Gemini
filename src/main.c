@@ -95,8 +95,6 @@ const char D_800AC524_AD124[] = "%d\n";
 const char D_800AC528_AD128[] = "WARNING: couldn't find 'ra=0x666' in function %d\n";
 #endif
 
-void mainPreNMI(void);
-
 void mainThread(UNUSED void *unused) {
     // Anti Piracy - This will zero out all RAM if this is a PAL console.
     if (osTvType == OS_TV_TYPE_PAL) {
