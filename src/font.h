@@ -75,4 +75,7 @@ void fontConvertString(char *inString, char *outString);
 u8 *fontGetLine(s32 font, char *text, s32 arg2, u8 **outString);
 u8 fontYSpacing(s32 font);
 
+void func_8006FD98_70998(Gfx **dList, DialogueBoxBackground *box, char *text, AlignmentFlags alignmentFlags);
+void *func_80071388_71F88(u8); //returns cacheline?
+
 #endif

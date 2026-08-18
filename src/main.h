@@ -11,6 +11,8 @@
 void mainPreNMI(void);
 #endif
 
+void mainThread(void *);
 u8 mainGetNumberOfPlayers(void);
+void RevealReturnAddresses(void);
 
 #endif

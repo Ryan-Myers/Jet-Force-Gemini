@@ -1,11 +1,11 @@
+#include "diCpu.h"
 #include "common.h"
+#include "diprint.h"
 #include "gameVi.h"
 #include "PR/rdb.h"
 #include "PRinternal/rmonint.h"
 #include "runLink.h"
 #include "stdarg.h"
-
-void _bcopy(const void *, void *, size_t);
 
 extern OSThread *__osGetActiveQueue(void);
 

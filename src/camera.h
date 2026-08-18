@@ -44,11 +44,16 @@ typedef struct Camera {
     /* 0x4A */ s16 unk4A; /* added to trans.rotation.x */
 } Camera;
 
+
+void camPopModelMtx(Gfx **dlist);
+void camRestoreModelMtx(Gfx **dlist);
+void camPushModelMtx(Gfx **dList, MatrixS **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
 Camera *camGetPtr(void);
 Matrix *camGetRotationMtx(void);
 Mtx *camGetProjOrgMtx(void);
 void camDoSprite(Gfx**, Mtx**, Vertex**, void*, Sprite*, s32, s32);
 void camSetFOV(f32, s32);
 void camSetNo(s32);
+void camSetScissor(Gfx **dlist);
 
 #endif

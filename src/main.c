@@ -1,8 +1,12 @@
 #include "main.h"
 #include "common.h"
+#include "gameVi.h"
 #include "mips.h"
 #include "overlays/overlay36.h"
+#include "pi.h"
+#include "rcpFast3d.h"
 #include "runLink.h"
+#include "rzip.h"
 #include "sched.h"
 
 #ifdef VERSION_kiosk

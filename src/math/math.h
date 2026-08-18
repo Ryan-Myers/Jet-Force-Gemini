@@ -25,4 +25,8 @@ extern float sinf(float angle); //official name: fsin
 extern float cosf(float angle);
 extern float sqrtf(float value);
 
+
+u32 disableInterrupts(void);
+void enableInterrupts(u32 flags);
+
 #endif

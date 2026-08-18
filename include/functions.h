@@ -15,79 +15,7 @@
 #define nosMotorStop osMotorStop
 #endif
 
-void mainThread(void *);
-void diCpuTraceInit(void);
 f32 Cosf(s32);
-void camPopModelMtx(Gfx **dlist);
-void camRestoreModelMtx(Gfx **dlist);
-void camPushModelMtx(Gfx **dList, MatrixS **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
-
-u32 disableInterrupts(void);
-void enableInterrupts(u32 flags);
-void runlinkLowMemoryPanic(void);
-s32 runlinkIsModuleLoaded(s32 module);
-s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, u32 **arg3);
-void func_80066D28_67928(void *arg0);
-void stop_all_threads_except_main(void);
-void func_80066E14_67A14(void);
-void camlightDelete(void *arg0); //TODO: arg0 typing is incorrect
-void func_800676F8(void *arg0);
-void func_800677E4(void);
-
-
-typedef enum HorizontalAlignmentFlags {
-    HORZ_ALIGN_LEFT   = 0,
-    HORZ_ALIGN_RIGHT  = 1,
-    HORZ_ALIGN_CENTER = 4
-} HorizontalAlignmentFlags;
-
-typedef enum VerticalAlignmentFlags {
-    VERT_ALIGN_TOP    = 0,
-    VERT_ALIGN_BOTTOM = 2,
-    VERT_ALIGN_MIDDLE = 8
-} VerticalAlignmentFlags;
-
-typedef enum AlignmentFlags {
-    ALIGN_TOP_LEFT      = VERT_ALIGN_TOP    | HORZ_ALIGN_LEFT,
-    ALIGN_TOP_CENTER    = VERT_ALIGN_TOP    | HORZ_ALIGN_CENTER,
-    ALIGN_TOP_RIGHT     = VERT_ALIGN_TOP    | HORZ_ALIGN_RIGHT,
-    ALIGN_MIDDLE_LEFT   = VERT_ALIGN_MIDDLE | HORZ_ALIGN_LEFT,
-    ALIGN_MIDDLE_CENTER = VERT_ALIGN_MIDDLE | HORZ_ALIGN_CENTER,
-    ALIGN_MIDDLE_RIGHT  = VERT_ALIGN_MIDDLE | HORZ_ALIGN_RIGHT,
-    ALIGN_BOTTOM_LEFT   = VERT_ALIGN_BOTTOM | HORZ_ALIGN_LEFT,
-    ALIGN_BOTTOM_CENTER = VERT_ALIGN_BOTTOM | HORZ_ALIGN_CENTER,
-    ALIGN_BOTTOM_RIGHT  = VERT_ALIGN_BOTTOM | HORZ_ALIGN_RIGHT
-} AlignmentFlags;
-
-void func_8006FD98_70998(Gfx **dList, DialogueBoxBackground *box, char *text, AlignmentFlags alignmentFlags);
-void fontPrintWindowXY(Gfx **displayList, s32 windowId, s32 xpos, s32 ypos, char *text, AlignmentFlags alignmentFlags);
-
-
-void camSetScissor(Gfx **dlist);
-void fontConvertString(char *inString, char *outString);
-s32 fontStringWidth(char *text, s32 font, s32 convertString);
-void fontSetWindow0(s32 width, s32 height);
-void func_8007128C_71E8C(char *input, char *output, s32 number); //parse_string_with_number
-void *func_80071388_71F88(u8); //returns cacheline?
-void texDPInit(Gfx **);
-void debug_text_background(Gfx **dList, u32 ulx, u32 uly, u32 lrx, u32 lry);
-
-void RevealReturnAddresses(void);
-void piInit(void);
-void rcpInit(OSSched *sc);
-void rzipInit(void);
-void viInit(OSSched *sc);
-
-//s32 vsprintf(char *s, const char *fmt, ...);
-int vsprintf(char *s, const char *fmt, va_list args);
-s32 debug_text_character(Gfx **dList, s32 asciiVal);
-void debug_text_bounds(void);
-void debug_text_origin(void);
-void debug_text_newline(void);
-TextureHeader *load_texture(s32 arg0);
-
-void rcpInitDp(Gfx **dList);
-TextureHeader *texLoadTexture(s32 arg0);
 
 
 void func_80021434_22034(unk800DC950 *arg0, s32 arg1);

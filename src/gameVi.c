@@ -1,5 +1,6 @@
 #include "gameVi.h"
 #include "common.h"
+#include "font.h"
 
 OSMesg gVideoMesgBuf[8];
 OSMesgQueue gVideoMesgQueue[8];

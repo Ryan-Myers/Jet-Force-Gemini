@@ -1,5 +1,7 @@
 #include "boot.h"
 #include "common.h"
+#include "diCpu.h"
+#include "main.h"
 #include "stacks.h"
 
 /************ .bss ************/
