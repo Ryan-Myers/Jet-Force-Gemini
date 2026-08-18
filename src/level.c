@@ -41,16 +41,17 @@ s16 D_800A31BC_A3DBC[3] = { 0xFFFF, 0xFFFF, 0xFFFF };
 Unk_800FB1E0_B1820 *D_800A31C4_A3DC4 = NULL;
 
 // .bss
-extern s32 *D_800FB110_B1750; /* loaded ROM offset table, -1 terminated */
-extern s32 D_800FB114_B1754;  // gLevelNumber
-extern LevelHeader *D_800FB118_B5958;
-extern u8 **D_800FB120_B1760; /* level name pointer table (relocated) */
-extern s32 D_800FB124_B1764;
-extern s32 D_800FB128_B1768; /* world count = max(world index) + 1 */
-extern Level_B176C *D_800FB12C_B176C[];
-extern s32 D_800FB130_B1770[0x10]; /* per-world level counts, 16 words (B130..B170) */
-extern Unk_800FB170 D_800FB170_B17B0[];
-extern Unk_800FB1E0_B1820 D_800FB1E0_B1820[0x20];
+s32 *D_800FB110_B1750; /* loaded ROM offset table, -1 terminated */
+s32 D_800FB114_B1754;  // gLevelNumber
+LevelHeader *D_800FB118_B5958;
+UNUSED s32 *D_800FB11C_B595C;
+u8 **D_800FB120_B1760; /* level name pointer table (relocated) */
+s32 D_800FB124_B1764;
+s32 D_800FB128_B1768; /* world count = max(world index) + 1 */
+Level_B176C *D_800FB12C_B176C[1];
+s32 D_800FB130_B1770[16]; /* per-world level counts, 16 words (B130..B170) */
+Unk_800FB170 D_800FB170_B17B0[7]; // Not really sure about it being an array of 7, but the size lines up.
+Unk_800FB1E0_B1820 D_800FB1E0_B1820[0x20];
 
 void levelGetCounts(void) {
     s32 i;

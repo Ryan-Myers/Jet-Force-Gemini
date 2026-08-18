@@ -434,7 +434,7 @@ segments:
       - { type: bss, vram: 0x800FA4D0, name: camera }
       - { type: .bss, vram: 0x800FB080, name: staticcamera }
       - { type: .bss, vram: 0x800FB090, name: controller }
-      - { type: bss, vram: 0x800FB110, name: level }
+      - { type: .bss, vram: 0x800FB110, name: level }
       - { type: bss, vram: 0x800FB400, name: main }
       - { type: bss, vram: 0x800FD820, name: refractOutputAssembler }
       - { type: .bss, vram: 0x800FD840, name: memory }
