@@ -9,7 +9,7 @@ const char D_800AD900[] = "WARNING:Can't lock to node, no nodes\n";
 
 // .data
 u32 *BaddyDataArray = NULL;   // Effectively unused
-u32 *D_800A38E4_A44E4 = NULL; // Unknown type
+Object** D_800A38E4_A44E4 = NULL; // Unknown type
 
 // .bss
 s32 D_800FE9A0_B91E0;
@@ -45,7 +45,7 @@ int squadsIsTribal(s32 arg0) {
            (arg0 == 0x97) || (arg0 == 0x157) || (arg0 == 0xA5);
 }
 
-s32 squadsGetSquadronList(s32 *arg0) {
+Object** squadsGetSquadronList(s32 *arg0) {
     *arg0 = D_800FE9F0_B9230;
     return D_800A38E4_A44E4;
 }
@@ -132,23 +132,17 @@ void squadsInitialiseBeforeObjects(void) {
 
 
 void *GetSquadronFromIdentifier(s16 arg0) {
-    s32 j;
     s32 i;
-    Object **list;
     Object *node;
 
     i = D_800FE9F0_B9230;
-    j = i--;
-    if (j != 0) {
-        list = (Object **) D_800A38E4_A44E4 + i;
-        do {
-            node = *list--;
-            if ((node->unkA0 == 0) && (arg0 == ((Object_Squadron *) node->racer)->unk64)) {
-                return node;
-            }
-            j = i--;
-        } while (j != 0);
+    while (i--) {
+        node = D_800A38E4_A44E4[i];
+        if ((node->unkA0 == 0) && (arg0 == ((Object_Squadron *) node->racer)->unk64)) {
+            return node;
+        }
     }
+
     return NULL;
 }
 
