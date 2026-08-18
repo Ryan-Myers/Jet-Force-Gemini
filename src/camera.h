@@ -47,6 +47,8 @@ typedef struct Camera {
 Camera *camGetPtr(void);
 Matrix *camGetRotationMtx(void);
 Mtx *camGetProjOrgMtx(void);
-void camDoSprite(Gfx**, Mtx**, Vertex**, void*, Sprite*, s32, s32); /* extern */
+void camDoSprite(Gfx**, Mtx**, Vertex**, void*, Sprite*, s32, s32);
+void camSetFOV(f32, s32);
+void camSetNo(s32);
 
 #endif

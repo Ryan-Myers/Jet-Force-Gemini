@@ -1,85 +1,51 @@
+#include "level.h"
+#include "anim.h"
 #include "audio.h"
+#include "camera.h"
 #include "camlight.h"
 #include "common.h"
 #include "fx.h"
 #include "gameVi.h"
+#include "gsSnd.h"
 #include "hit.h"
+#include "lights.h"
+#include "main.h"
 #include "memory.h"
+#include "objects.h"
+#include "overlays/overlay2.h"
+#include "overlays/overlay23.h"
+#include "overlays/overlay24.h"
+#include "overlays/overlay27.h"
+#include "overlays/overlay48.h"
+#include "overlays/overlay98.h"
 #include "rcpFast3d.h"
 #include "runLink.h"
+#include "squads.h"
 #include "textures.h"
 #include "track.h"
 #include "weather.h"
-#include "objects.h"
-
-
-void animseqSetupGroup(s32);
-void camSetFOV(f32, s32);
-void camSetNo(s32);
-void fxInitNightVision(s32);
-void gsSndpLimitVoices(s32 arg0);
-void hitReset();
-void levelGetRegionFlags(void);
-void levelTunePlay(f32 tempo);
-s32 mainGetNumberOfPlayers();
-void objSetAnimGroup(s32);
-void setupLights(s32 count, s32 arg1, s32 arg2);
-void setupWeather(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6);
-void squadsInitialiseAfterObjects();
-void squadsInitialiseBeforeObjects();
-void dayInit(f32, s32);
-void trackInit(s32, s32, s32, s32, s32, s32);
-void refractInit();
-void blurInit();
-void underWaterLightsInit(void *arg0);
-s32 osCartDmaTest4_6105();
-
-extern SoundHandle D_800A31B0_A3DB0[3];
-extern s16 D_800A31BC_A3DBC[3];
-extern s32 D_800FB114_B1754;
-extern LevelHeader *D_800FB118_B5958;
-
-typedef struct {
-    u8 unk0;
-    s8 unk1;           // world
-    u8 unk2;           // region
-    u8 gfxIndex : 3;   // unk3 bits 7:5
-    u8 blur : 2;       // unk3 bits 4:3
-    u8 screenMode : 3; // unk3 bits 2:0
-#ifdef VERSION_us
-    u8 unk4;
-#endif
-} Level_B176C;
-
-typedef struct {
-    s32 unk0;
-    s32 unk1;
-    s32 unk2;
-    s32 unk3;
-} Unk_800FB170;
-
-typedef struct {
-    u8 unk0;
-    u8 unk1[0x10];
-} Unk_800FB1E0_B1820;
 
 const char D_800ACD20[] = "LOADLEVEL Error: Level out of range\n";
 const char D_800ACD48[] = "levelGetRegionFlags: Ran out of levelRegionFlag structures!!\n";
 const char D_800ACD88[] = "levelGetObjectID - Out of level flags\n";
 
+// .data
 extern u8 *D_800A31A0_A3DA0;
+extern SoundHandle D_800A31B0_A3DB0[3];
+extern s16 D_800A31BC_A3DBC[3];
 extern Unk_800FB1E0_B1820 *D_800A31C4_A3DC4;
 
+// .bss
 extern s32 *D_800FB110_B1750; /* loaded ROM offset table, -1 terminated */
 extern s32 D_800FB114_B1754;  // gLevelNumber
+extern LevelHeader *D_800FB118_B5958;
+extern u8 **D_800FB120_B1760; /* level name pointer table (relocated) */
 extern s32 D_800FB124_B1764;
+extern s32 D_800FB128_B1768; /* world count = max(world index) + 1 */
 extern Level_B176C *D_800FB12C_B176C[];
+extern s32 D_800FB130_B1770[0x10]; /* per-world level counts, 16 words (B130..B170) */
 extern Unk_800FB170 D_800FB170_B17B0[];
 extern Unk_800FB1E0_B1820 D_800FB1E0_B1820[0x20];
-
-extern u8 **D_800FB120_B1760;      /* level name pointer table (relocated) */
-extern s32 D_800FB128_B1768;       /* world count = max(world index) + 1 */
-extern s32 D_800FB130_B1770[0x10]; /* per-world level counts, 16 words (B130..B170) */
 
 void levelGetCounts(void) {
     s32 i;

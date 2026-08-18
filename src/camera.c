@@ -246,7 +246,7 @@ void camStopShakes(void) {
         cam->shake.y = 0.0f; \
         cam->shake.z = 0.0f; \
         shake->magnitude = 0; \
-    } \
+    }
     // clang-format on
 }
 

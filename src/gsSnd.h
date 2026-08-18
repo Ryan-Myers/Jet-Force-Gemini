@@ -75,5 +75,6 @@ typedef union {
 } ALSndpEvent;
 
 void gsSndpSetGlobalVolume(u32 volume);
+void gsSndpLimitVoices(s32 arg0);
 
 #endif
