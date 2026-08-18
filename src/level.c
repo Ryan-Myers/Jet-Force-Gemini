@@ -42,16 +42,16 @@ Unk_800FB1E0_B1820 *D_800A31C4_A3DC4 = NULL;
 
 // .bss
 s32 *D_800FB110_B1750; /* loaded ROM offset table, -1 terminated */
-s32 D_800FB114_B1754;  // gLevelNumber
+s32 gLevelNumber;
 LevelHeader *D_800FB118_B5958;
 UNUSED s32 *D_800FB11C_B595C;
 u8 **D_800FB120_B1760; /* level name pointer table (relocated) */
 s32 D_800FB124_B1764;
 s32 D_800FB128_B1768; /* world count = max(world index) + 1 */
-Level_B176C *D_800FB12C_B176C[1];
-s32 D_800FB130_B1770[16]; /* per-world level counts, 16 words (B130..B170) */
+Level_B176C *D_800FB12C_B176C;
+s32 D_800FB130_B1770[16]; /* per-world level counts */
 Unk_800FB170 D_800FB170_B17B0[7]; // Not really sure about it being an array of 7, but the size lines up.
-Unk_800FB1E0_B1820 D_800FB1E0_B1820[0x20];
+Unk_800FB1E0_B1820 D_800FB1E0_B1820[32];
 
 void levelGetCounts(void) {
     s32 i;
@@ -73,9 +73,9 @@ void levelGetCounts(void) {
     D_800FB124_B1764--;
 
 #ifdef VERSION_kiosk
-    *D_800FB12C_B176C = (Level_B176C *) mmAlloc(D_800FB124_B1764 * 4, COLOUR_TAG_YELLOW);
+    D_800FB12C_B176C = (Level_B176C *) mmAlloc(D_800FB124_B1764 * 4, COLOUR_TAG_YELLOW);
 #else
-    *D_800FB12C_B176C = (Level_B176C *) mmAlloc(D_800FB124_B1764 * 5, COLOUR_TAG_YELLOW);
+    D_800FB12C_B176C = (Level_B176C *) mmAlloc(D_800FB124_B1764 * 5, COLOUR_TAG_YELLOW);
 #endif
 
     D_800FB128_B1768 = -1;
@@ -92,14 +92,14 @@ void levelGetCounts(void) {
             D_800FB130_B1770[D_800FB118_B5958->levelType]++;
         }
 
-        D_800FB12C_B176C[0][i].unk0 = D_800FB118_B5958->levelType;
-        D_800FB12C_B176C[0][i].unk1 = (s8) D_800FB118_B5958->unk20;
-        D_800FB12C_B176C[0][i].unk2 = (u8) D_800FB118_B5958->objectFlag;
-        D_800FB12C_B176C[0][i].gfxIndex = D_800FB118_B5958->unk23;
-        D_800FB12C_B176C[0][i].blur = D_800FB118_B5958->unkC8;
-        D_800FB12C_B176C[0][i].screenMode = D_800FB118_B5958->unkC9;
+        D_800FB12C_B176C[i].unk0 = D_800FB118_B5958->levelType;
+        D_800FB12C_B176C[i].unk1 = (s8) D_800FB118_B5958->unk20;
+        D_800FB12C_B176C[i].unk2 = (u8) D_800FB118_B5958->objectFlag;
+        D_800FB12C_B176C[i].gfxIndex = D_800FB118_B5958->unk23;
+        D_800FB12C_B176C[i].blur = D_800FB118_B5958->unkC8;
+        D_800FB12C_B176C[i].screenMode = D_800FB118_B5958->unkC9;
 #ifdef VERSION_us
-        D_800FB12C_B176C[0][i].unk4 = (u8) D_800FB118_B5958->seqNum;
+        D_800FB12C_B176C[i].unk4 = (u8) D_800FB118_B5958->seqNum;
 #endif
     }
 
@@ -130,7 +130,7 @@ void levelGetCounts(void) {
 
 s32 levelNGetType(s32 arg0) {
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        return D_800FB12C_B176C[0][arg0].unk0;
+        return D_800FB12C_B176C[arg0].unk0;
     }
     return -1;
 }
@@ -138,7 +138,7 @@ s32 levelNGetType(s32 arg0) {
 #ifdef VERSION_us
 s32 levelGetTune(s32 arg0) {
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        return D_800FB12C_B176C[0][arg0].unk4;
+        return D_800FB12C_B176C[arg0].unk4;
     }
     return -1;
 }
@@ -146,28 +146,28 @@ s32 levelGetTune(s32 arg0) {
 
 s32 levelGetWorld(s32 arg0) {
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        return D_800FB12C_B176C[0][arg0].unk1;
+        return D_800FB12C_B176C[arg0].unk1;
     }
     return 0;
 }
 
 s32 levelGetRegionNo(s32 arg0) {
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        return D_800FB12C_B176C[0][arg0].unk2;
+        return D_800FB12C_B176C[arg0].unk2;
     }
     return 0;
 }
 
 s32 levelGetScreenMode(s32 arg0) {
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        return D_800FB12C_B176C[0][arg0].screenMode;
+        return D_800FB12C_B176C[arg0].screenMode;
     }
     return 0;
 }
 
 s32 levelGetBlurEffect(s32 arg0) {
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        return D_800FB12C_B176C[0][arg0].blur;
+        return D_800FB12C_B176C[arg0].blur;
     }
     return 0;
 }
@@ -178,7 +178,7 @@ u32 levelGetGfxIndex(s32 arg0) {
 
     var_v0 = mainGetNumberOfCameras() - 1;
     if ((arg0 >= 0) && (arg0 < D_800FB124_B1764)) {
-        temp_t0 = D_800FB12C_B176C[0][arg0].gfxIndex;
+        temp_t0 = D_800FB12C_B176C[arg0].gfxIndex;
         if (temp_t0 != 0) {
             var_v0 = temp_t0;
         }
@@ -194,18 +194,18 @@ s32 levelGetWorldRegions(s32 arg0, u8 *arg1) {
 
     var_v1 = 0;
     for (i = 0; i < D_800FB124_B1764; i++) {
-        if (arg0 == D_800FB12C_B176C[0][i].unk1) {
-            if (D_800FB12C_B176C[0][i].unk2 != 0) {
+        if (arg0 == D_800FB12C_B176C[i].unk1) {
+            if (D_800FB12C_B176C[i].unk2 != 0) {
                 found = FALSE;
-                if (D_800FB12C_B176C[0][i].unk2 != 0xFF) {
+                if (D_800FB12C_B176C[i].unk2 != 0xFF) {
                     for (j = 0; j < var_v1; j++) {
-                        if (arg1[j] == D_800FB12C_B176C[0][i].unk2) {
+                        if (arg1[j] == D_800FB12C_B176C[i].unk2) {
                             found = TRUE;
                             j = var_v1;
                         }
                     }
                     if (!found) {
-                        arg1[var_v1] = D_800FB12C_B176C[0][i].unk2;
+                        arg1[var_v1] = D_800FB12C_B176C[i].unk2;
                         var_v1++;
                     }
                 }
@@ -269,7 +269,7 @@ void levelInit(s32 lvlIdx, s32 arg1, s32 arg2, s32 arg3) {
     piRomLoadSection(0x1F, (u32) D_800FB118_B5958, lvlStart, lvlSize);
     mainPreNMI();
     mmFree(D_800FB110_B1750);
-    D_800FB114_B1754 = lvlIdx;
+    gLevelNumber = lvlIdx;
     levelGetRegionFlags();
 
     for (lvlStart = 0; lvlStart < 7; lvlStart++) {
@@ -436,7 +436,7 @@ Unk_800FB170 *levelGetColourCycling(void) {
 }
 
 s32 levelGetNumber(void) {
-    return D_800FB114_B1754;
+    return gLevelNumber;
 }
 
 u8 levelGetType(void) {
@@ -498,7 +498,7 @@ s32 levelGetNextOfWorld(s32 arg0, s8 arg1) {
     if (var_v1 >= D_800FB124_B1764) {
         var_v1 = 0;
     }
-    while ((var_v1 != arg0) && (arg1 != (*D_800FB12C_B176C)[var_v1].unk1)) {
+    while ((var_v1 != arg0) && (arg1 != D_800FB12C_B176C[var_v1].unk1)) {
         var_v1 += 1;
         if (var_v1 >= D_800FB124_B1764) {
             var_v1 = 0;
@@ -514,7 +514,7 @@ s32 levelGetPrevOfWorld(s32 arg0, s8 arg1) {
     if (var_v1 < 0) {
         var_v1 = D_800FB124_B1764 - 1;
     }
-    while ((var_v1 != arg0) && (arg1 != D_800FB12C_B176C[0][var_v1].unk1)) {
+    while ((var_v1 != arg0) && (arg1 != D_800FB12C_B176C[var_v1].unk1)) {
         var_v1 -= 1;
         if (var_v1 < 0) {
             var_v1 = D_800FB124_B1764 - 1;

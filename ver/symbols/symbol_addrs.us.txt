@@ -2239,6 +2239,7 @@ sPlayerID = 0x800FB100;
 enabled = 0x800FB104;
 connected = 0x800FB108;
 numberOfJoypads = 0x800FB10C;
+gLevelNumber = 0x800FB114;
 D_800FB118_B5958 = 0x800FB118;
 gfxBase = 0x800FB400;
 gfx = 0x800FB408;
