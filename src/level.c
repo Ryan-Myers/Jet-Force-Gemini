@@ -49,7 +49,7 @@ u8 **D_800FB120_B1760; /* level name pointer table (relocated) */
 s32 D_800FB124_B1764;
 s32 D_800FB128_B1768; /* world count = max(world index) + 1 */
 Level_B176C *D_800FB12C_B176C;
-s32 D_800FB130_B1770[16]; /* per-world level counts */
+s32 D_800FB130_B1770[16];         /* per-world level counts */
 Unk_800FB170 D_800FB170_B17B0[7]; // Not really sure about it being an array of 7, but the size lines up.
 Unk_800FB1E0_B1820 D_800FB1E0_B1820[32];
 
