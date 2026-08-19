@@ -3,6 +3,7 @@
 #include "enums.h"
 #include "joy.h"
 #include "main.h"
+#include "memory.h"
 #include "menu.h"
 #include "PR/os_flash.h"
 #include "PR/os_pi.h"

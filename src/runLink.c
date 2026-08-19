@@ -1,5 +1,6 @@
 #include "runLink.h"
 #include "common.h"
+#include "memory.h"
 #include "mips.h"
 #include "pi.h"
 
