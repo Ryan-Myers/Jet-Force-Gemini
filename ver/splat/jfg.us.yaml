@@ -164,7 +164,7 @@ segments:
       - [0x92080, c, libultra/n_auxbus]
       - [0x92570, c, libultra/n_mainbus]
       - [0x928E0, c, libultra/n_load]
-      - [0x93430, c, libultra/n_alLPFilter] # This may be a custom Rare file.
+      - [0x93430, c, libultra/n_resample2] # This may be a custom Rare file.
       - [0x93850, c, math/math_acosf]
       - [0x93930, c, libultra/n_resample]
       - [0x93BD0, c, math/math_arc]
@@ -403,7 +403,7 @@ segments:
       - [0xB04F0, .rodata, libultra/n_env]
       - [0xB0540, .rodata, math/math_atan]
       - [0xB0560, .rodata, libultra/n_auxbus]
-      - [0xB0570, .rodata, libultra/n_alLPFilter]
+      - [0xB0570, .rodata, libultra/n_resample2]
       - [0xB0580, .rodata, math/math_acosf]
       - [0xB0590, .rodata, libultra/n_resample]
       - [0xB05A0, .rodata, ../libultra/src/gu/sinf]
