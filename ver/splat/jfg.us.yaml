@@ -464,7 +464,7 @@ segments:
       - { type: .bss, vram: 0x80104EA0, name: ../libultra/src/flash/flashinit }
       - { type: bss, vram: 0x80104F60, name: gsSnd }
       - { type: bss, vram: 0x80104FD0, name: libultra/n_csplayer }
-      - { type: bss, vram: 0x80105010, name: libultra/alsurround }
+      - { type: .bss, vram: 0x80105010, name: libultra/alsurround }
       - { type: bss, vram: 0x80105020, name: libultra/n_event }
       - { type: .bss, vram: 0x80105030, name: ../libultra/src/io/pfsisplug }
       - { type: .bss, vram: 0x80105070, name: ../libultra/src/io/motor }

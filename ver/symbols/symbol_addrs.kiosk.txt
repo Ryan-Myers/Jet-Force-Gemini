@@ -2670,6 +2670,10 @@ __osFlashMessageQ = 0x80105B98;
 __osFlashMsgBuf = 0x80105C24;
 gSoundPlayer = 0x80105C30;
 gSoundGroupVolume = 0x80105C94;
+D_80105010_B1750 = 0x80105CE0; // size:0x4
+D_80105014_B1754 = 0x80105CE4; // size:0x2
+D_80105016_B1756 = 0x80105CE6; // size:0x2
+D_80105018_B1758 = 0x80105CE8; // size:0x2
 __osFlashID = 0x80105B70; // type:u32 size:0x10
 
 
