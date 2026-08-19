@@ -8,24 +8,6 @@
 #include "PR/os_flash.h"
 #include "PR/os_pi.h"
 
-// These are the unique game codes assigned to DKR
-#define NDYJ 0x4E44594A // 'NDYJ' ASCII
-#define NDYP 0x4E445950 // 'NDYP' ASCII
-#define NDYE 0x4E445945 // 'NDYE' ASCII
-#define JPN_GAME_CODE NDYJ
-#define PAL_GAME_CODE NDYP
-#define NTSC_GAME_CODE NDYE
-#define CHARFILETYPE 0x43484152
-// This is RARE's unique code
-#define COMPANY_CODE 0x3459
-
-// The size of 1 sector is 128 pages (16K bytes), and each page of 0~0x7f, 0x80~0xff, 0x100~0x17f... is considered to be
-// 1 sector. So basically, flash is written in sectors, and changing a single page needs to read a sector, modify the
-// page, and write back the whole sector.
-#define SECTOR_SIZE 128
-
-
-
 #ifdef VERSION_us
 s32 func_8004B070_4BC70(void) {
     s32 var_v0;
@@ -124,8 +106,9 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
     s32 controllerNum;
 
 #ifdef VERSION_us
-    if (func_8004B070_4BC70() != 0) {
+    if (func_8004B070_4BC70() != 0)
 #endif
+    {
         if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
             controllerNum = joyGetController(controllerIndex);
             rumblePak = &rumbleStructArray[controllerNum];
@@ -148,9 +131,7 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
                 }
             }
         }
-#ifdef VERSION_us
     }
-#endif
 }
 
 #ifdef VERSION_kiosk

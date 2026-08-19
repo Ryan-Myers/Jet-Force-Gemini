@@ -15,6 +15,22 @@
 #define nosMotorStop osMotorStop
 #endif
 
+// These are the unique game codes assigned to DKR
+#define NDYJ 0x4E44594A // 'NDYJ' ASCII
+#define NDYP 0x4E445950 // 'NDYP' ASCII
+#define NDYE 0x4E445945 // 'NDYE' ASCII
+#define JPN_GAME_CODE NDYJ
+#define PAL_GAME_CODE NDYP
+#define NTSC_GAME_CODE NDYE
+#define CHARFILETYPE 0x43484152
+// This is RARE's unique code
+#define COMPANY_CODE 0x3459
+
+// The size of 1 sector is 128 pages (16K bytes), and each page of 0~0x7f, 0x80~0xff, 0x100~0x17f... is considered to be
+// 1 sector. So basically, flash is written in sectors, and changing a single page needs to read a sector, modify the
+// page, and write back the whole sector.
+#define SECTOR_SIZE 128
+
 typedef struct unkD_800A3EAC {
     s32 unk0;
     f32 unk4;

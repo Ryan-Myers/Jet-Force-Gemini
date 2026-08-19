@@ -7,6 +7,9 @@ const char D_800AAAC4[] = "Dma not done\n";
 
 extern s32 nextFrameCount; // = 2;
 
+// This file is heavily bassed on a libultra example file, and should
+// very nearly match audiomgr.c in DKR.
+
 #pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/amCreateAudioMgr.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/__amMain.s")
@@ -30,7 +33,12 @@ s32 amAudioMgrGetNextFrameCount(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/__clearAudioDMA.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/amAudioMgrSetScheduleMode.s")
+void amAudioMgrSetScheduleMode(s32 arg0) {
+    arg0 = (D_800A06DC_A12DC = arg0);
+    if (arg0 == 1) {
+        D_800A06E4_A12E4 = 0;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/amAudioMgrHaveRunALargeFrame.s")
 
