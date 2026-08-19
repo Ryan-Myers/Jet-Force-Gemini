@@ -14,7 +14,7 @@ s32 func_8004B070_4BC70(void) {
 
     var_v0 = D_800A3470_A4070 != 0;
     if (var_v0 != 0) {
-        return mainGetPauseMode() == 0;
+        return mainGetPauseMode() == FALSE;
     }
     // Bug! Doesn't guarantee a return
 }
@@ -283,13 +283,12 @@ UNUSED void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
     }
 }
 
-s32 func_8004BA98_4C698(u8 *arg0, s32 count) {
-    s32 ret;
-    ret = 7;
+s32 packCalculateGameChecksum(u8 *buf, s32 count) {
+    s32 checksum = 7;
     while (count--) {
-        ret += *arg0++;
+        checksum += *buf++;
     }
-    return ret;
+    return checksum;
 }
 
 #ifdef VERSION_us
@@ -313,30 +312,30 @@ s32 packSaveCharacter(s32 arg0, s32 arg1, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadGameEprom.s")
 
 s32 packSaveGameEprom(s32 saveFileNum, Game *game) {
-    u8 *var_s2;
-    u32 sp38;
-    s32 var_s1;
-    u32 sp30;
-    u32 var_s0;
+    FlashSector *sector;
+    u32 pageNum;
+    s32 sectorsToWrite;
+    u32 checksum;
+    u32 sectorNum;
 
-    var_s0 = D_800A3474_A4074[saveFileNum];
-    sp38 = var_s0 + 0x7F;
+    sectorNum = D_800A3474_A4074[saveFileNum];
+    pageNum = sectorNum + 0x7F;
     game->pad[3] = saveFileNum;
-    var_s1 = 0xB;
-    var_s2 = (u8 *) game;
-    sp30 = func_8004BA98_4C698(game, sizeof(Game));
-    if (mainResetPressed() == 0) {
-        osFlashSectorErase(var_s0);
+    sectorsToWrite = 11;
+    sector = (FlashSector *) game;
+    checksum = packCalculateGameChecksum((u8 *) game, sizeof(Game));
+    if (mainResetPressed() == FALSE) {
+        osFlashSectorErase(sectorNum);
 
     // This the is only possible way of making IDO not skip this condition
     write:
-        if (var_s1 != 0) {
-            flashROMWrite(var_s0++, (u32 *) var_s2);
-            var_s1 -= 1;
-            var_s2 += 0x80;
+        if (sectorsToWrite != 0) {
+            flashROMWrite(sectorNum++, (u32 *) sector);
+            sectorsToWrite--;
+            sector++;
             goto write;
         }
-        flashROMWrite(sp38, &sp30);
+        flashROMWrite(pageNum, &checksum);
     }
 #ifdef VERSION_kiosk
     amAudioMgrSetScheduleMode(0);
@@ -344,99 +343,94 @@ s32 packSaveGameEprom(s32 saveFileNum, Game *game) {
     return 0;
 }
 
-s32 packClearGameEprom(s32 saveFileNum, Game *game) {
-    MemoryPoolSlot *temp_v0;
-    u8 *ptr;
+s32 packClearGameEprom(s32 saveFileNum, UNUSED Game *game) {
+    u8 *dataToWrite;
+    u32 pageNum;
     s32 i;
     s32 j;
-    u32 var_s1;
 
-    var_s1 = D_800A3474_A4074[saveFileNum];
-    ptr = mmAlloc(0x80, COLOUR_TAG_WHITE);
+    pageNum = D_800A3474_A4074[saveFileNum];
+    dataToWrite = (u8 *) mmAlloc(SECTOR_SIZE, COLOUR_TAG_WHITE);
 
     // clang-format off
-    for (i = 0; i < 0x80; i++) { ptr[i] = 0xFF; }
+    for (i = 0; i < SECTOR_SIZE; i++) { dataToWrite[i] = 0xFF; }
     // clang-format on
 
-    if (mainResetPressed() == 0) {
-        osFlashSectorErase(var_s1);
-        for (j = 0; j < 0x80; j++) {
-            flashROMWrite(var_s1++, (u32 *) ptr);
+    if (mainResetPressed() == FALSE) {
+        osFlashSectorErase(pageNum);
+        for (j = 0; j < SECTOR_SIZE; j++) {
+            flashROMWrite(pageNum++, (u32 *) dataToWrite);
         }
     }
-    mmFree(ptr);
+
+    mmFree(dataToWrite);
 }
 
 void packEraseEprom(void) {
-    MemoryPoolSlot *temp_v0;
-    u8 *var_v1;
-    s32 j;
+    u8 *dataToWrite;
+    u32 pageNum;
     s32 i;
-    u32 var_a0;
-    u32 var_s1;
-    s32 end;
+    s32 j;
 
-    var_v1 = mmAlloc(0x80, COLOUR_TAG_WHITE);
+    dataToWrite = (u8 *) mmAlloc(SECTOR_SIZE, COLOUR_TAG_WHITE);
 
     // clang-format off
-    for (i = 0; i < 0x80; i++) { var_v1[i] = 0xFF; }
+    for (i = 0; i < SECTOR_SIZE; i++) { dataToWrite[i] = 0xFF; }
     // clang-format on
 
-    if (mainResetPressed() == 0) {
-        var_s1 = 0;
-        for (i = 0; i < 8; i++) {
-            osFlashSectorErase(var_s1);
-            for (j = 0; j < 0x80; j++) {
-                flashROMWrite(var_s1++, (u32 *) var_v1);
+    if (mainResetPressed() == FALSE) {
+        pageNum = 0;
+        for (i = 0; i < NUMBER_OF_SECTORS; i++) {
+            osFlashSectorErase(pageNum);
+            for (j = 0; j < SECTOR_SIZE; j++) {
+                flashROMWrite(pageNum++, (u32 *) dataToWrite);
             }
         }
     }
 
-    if (i) { // FAKE
-         
-    }
-    mmFree(var_v1);
+    if (i) {} // FAKE
+    mmFree(dataToWrite);
 }
 
-s32 func_8004BE44_4CA44(u8 *arg0) {
-    s32 var_a1;
-    s32 var_v1;
+// Calculates a checksum of the first 0x7E bytes of the given buffer, and returns it.
+// The checksum is stored in the last two bytes of the buffer.
+s32 packCalculateGlobalFlagsChecksum(u8 *buf) {
+    s32 bytesToChecksum = FlashSectorSize;
+    s32 checksum = 5;
 
-    var_v1 = 5;
-    var_a1 = 0x7E;
-    while (var_a1--) {
-        var_v1 += *arg0++;
+    while (bytesToChecksum--) {
+        checksum += *buf++;
     }
-    return var_v1;
+    return checksum;
 }
 
-s32 packLoadGlobalFlagsEprom(u64 *flags) {
-    s32 i;
+s32 packLoadGlobalFlagsEprom(FlashSector *save) {
+    s32 bytesToWrite;
     u8 *dst;
     u8 *src;
     s32 end;
 
-    flashROMRead(0x380U, (u32 *) flags);
-    if (func_8004BE44_4CA44(flags) != *((u16 *) flags + 0x3F)) {
-        src = D_800A34AC_A40AC;
-        dst = flags;
-        i = 0x7D;
-        do {
+    flashROMRead(SECTOR(7), (u32 *) save);
+    if (packCalculateGlobalFlagsChecksum((u8 *) save) != save->checksum) {
+        src = D_800A34AC_A40AC; // Load default save data from ROM
+        dst = (u8 *) save;
+        bytesToWrite = FlashSectorSize;
+        while (bytesToWrite--) {
             *dst++ = *src++;
-        } while (i--);
+        }
 
-        *((u16 *) flags + 0x3F) = func_8004BE44_4CA44(flags);
+        save->checksum = packCalculateGlobalFlagsChecksum((u8 *) save);
     }
-    return 1;
+    return TRUE;
 }
 
-s32 packSaveGlobalFlagsEprom(u64 *flags) {
-    *((u16 *) flags + 0x3F) = func_8004BE44_4CA44((u8 *) flags);
-    if (mainResetPressed() == 0) {
-        osFlashSectorErase(0x380U);
-        flashROMWrite(0x380U, (u32 *) flags);
+s32 packSaveGlobalFlagsEprom(FlashSector *save) {
+    save->checksum = packCalculateGlobalFlagsChecksum((u8 *) save);
+    if (mainResetPressed() == FALSE) {
+        osFlashSectorErase(SECTOR(7));
+        flashROMWrite(SECTOR(7), (u32 *) save);
     }
-    return 1;
+    return TRUE;
 }
 
 void flashROMInit(void) {
@@ -621,7 +615,7 @@ SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char *
     }
 
     files_used = maxNumOfFilesOnCpak * 24;
-    sPackDirectory = mmAlloc(files_used, COLOUR_TAG_BLACK);
+    sPackDirectory = (s8 *) mmAlloc(files_used, COLOUR_TAG_BLACK);
     bzero(sPackDirectory, files_used);
     temp_D_800DE440 = sPackDirectory;
 
@@ -661,7 +655,7 @@ SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char *
         fileTypes[i] = 1; // Unknown file type? Possibly from another game?
 
         if ((state.game_code == gameCode) && (state.company_code == COMPANY_CODE)) {
-            fileTypes[i] = func_8004D250_4DE50(controllerIndex, i);
+            fileTypes[i] = packGetFileType(controllerIndex, i);
         }
     }
 
@@ -754,7 +748,7 @@ SIDeviceStatus packCopyFile(s32 controllerIndex, s32 fileNumber, s32 secondContr
         return CONTROLLER_PAK_BAD_DATA;
     }
 
-    alloc = mmAlloc(state.file_size, COLOUR_TAG_BLACK);
+    alloc = (u8 *) mmAlloc(state.file_size, COLOUR_TAG_BLACK);
 
     status = packReadFile(controllerIndex, fileNumber, alloc, state.file_size);
     packClose(controllerIndex);
@@ -984,13 +978,13 @@ char *string_to_font_codes(char *inString, char *outString, s32 stringLength) {
 }
 
 // Essentially the same as get_file_type in DKR
-s32 func_8004D250_4DE50(s32 controllerIndex, s32 fileNum) {
+s32 packGetFileType(s32 controllerIndex, s32 fileNum) {
     s32 *data;
     UNUSED s32 pad;
     s32 ret;
 
     ret = 1;
-    data = mmAlloc(0x100, COLOUR_TAG_BLACK);
+    data = (s32 *) mmAlloc(0x100, COLOUR_TAG_BLACK);
     if (packReadFile(controllerIndex, fileNum, (u8 *) data, 0x100) == CONTROLLER_PAK_GOOD) {
         switch (*data) {
             case CHARFILETYPE:
