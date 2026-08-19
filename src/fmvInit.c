@@ -1,4 +1,5 @@
 #include "common.h"
+#include "pi.h"
 
 typedef struct FmvPlayer {
     s8 unk0;
