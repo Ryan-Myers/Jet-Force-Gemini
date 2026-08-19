@@ -1,5 +1,4 @@
 #include "saves.h"
-#include "audiomgr.h"
 #include "common.h"
 #include "enums.h"
 #include "joy.h"
@@ -7,6 +6,10 @@
 #include "menu.h"
 #include "PR/os_flash.h"
 #include "PR/os_pi.h"
+
+#ifdef VERSION_kiosk
+#include "audiomgr.h"
+#endif
 
 #ifdef VERSION_us
 s32 func_8004B070_4BC70(void) {
@@ -17,6 +20,9 @@ s32 func_8004B070_4BC70(void) {
         return mainGetPauseMode() == FALSE;
     }
     // Bug! Doesn't guarantee a return
+#ifdef AVOID_UB
+    return 0;
+#endif
 }
 
 void rumbleRumbles(s32 arg0) {
@@ -38,21 +44,20 @@ UNUSED void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
     u8 controllerNum;
 
 #ifdef VERSION_us
-    if (func_8004B070_4BC70() != 0) {
+    if (func_8004B070_4BC70() != 0)
 #endif
+    {
         if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
             controllerNum = joyGetController(controllerIndex);
             rumblePak = &rumbleStructArray[controllerNum];
             if (rumblePak->state.upper != 2) {
                 rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
-                rumblePak->unk2 = ((arg1 * arg1) * 0.1000000015f);
+                rumblePak->unk2 = ((arg1 * arg1) * 0.1f);
                 rumblePak->unk4 = rumblePak->unk2;
                 rumblePak->rumbleTime = (arg2 * 60.0f);
             }
         }
-#ifdef VERSION_us
     }
-#endif
 }
 
 #ifdef VERSION_kiosk
@@ -81,13 +86,14 @@ void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
     RumbleStruct *rumblePak;
 
 #ifdef VERSION_us
-    if (func_8004B070_4BC70() != 0) {
+    if (func_8004B070_4BC70() != 0)
 #endif
+    {
         if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
             controllerNum = joyGetController(controllerIndex);
             rumblePak = &D_800FDF5A_B879A[controllerNum];
             if (arg1 != 0) {
-                rumblePak->state.half = ((arg1 * arg1) * 0.1000000015f);
+                rumblePak->state.half = ((arg1 * arg1) * 0.1f);
             }
             rumblePak = &rumbleStructArray[controllerNum];
             if (rumblePak->state.upper != 2 && arg2 != 0.0f) {
@@ -95,9 +101,7 @@ void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
                 rumblePak->rumbleTime = (arg2 * 60.0f);
             }
         }
-#ifdef VERSION_us
     }
-#endif
 }
 
 void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
@@ -118,7 +122,7 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
             }
 #endif
             if (arg1 != 0) {
-                arg1 = ((arg1 * arg1) * 0.1000000015f);
+                arg1 = ((arg1 * arg1) * 0.1f);
                 if (rumblePak->unk2 < arg1) {
                     rumblePak->unk2 = arg1;
                 }
@@ -283,6 +287,9 @@ UNUSED void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
     }
 }
 
+/**
+    Calculates a checksum of the Game struct, and returns it.
+*/
 s32 packCalculateGameChecksum(u8 *buf, s32 count) {
     s32 checksum = 7;
     while (count--) {
@@ -343,7 +350,7 @@ s32 packSaveGameEprom(s32 saveFileNum, Game *game) {
     return 0;
 }
 
-s32 packClearGameEprom(s32 saveFileNum, UNUSED Game *game) {
+void packClearGameEprom(s32 saveFileNum, UNUSED Game *game) {
     u8 *dataToWrite;
     u32 pageNum;
     s32 i;
@@ -392,8 +399,10 @@ void packEraseEprom(void) {
     mmFree(dataToWrite);
 }
 
-// Calculates a checksum of the first 0x7E bytes of the given buffer, and returns it.
-// The checksum is stored in the last two bytes of the buffer.
+/**
+    Calculates a checksum of the first 0x7E bytes of the given buffer, and returns it.
+    The checksum is stored in the last two bytes of the buffer.
+*/
 s32 packCalculateGlobalFlagsChecksum(u8 *buf) {
     s32 bytesToChecksum = FlashSectorSize;
     s32 checksum = 5;

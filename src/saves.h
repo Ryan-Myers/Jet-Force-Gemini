@@ -104,7 +104,7 @@ void rumbleProcessing(s32 arg0);
 void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2);
 void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2);
 void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2);
-s32 packClearGameEprom(s32 saveFileNum, Game *game);
+void packClearGameEprom(s32 saveFileNum, Game *game);
 void packEraseEprom(void);
 s32 packLoadGameEprom(s32 saveFileNum, Game *game);
 s32 packLoadGlobalFlagsEprom(FlashSector *save);
