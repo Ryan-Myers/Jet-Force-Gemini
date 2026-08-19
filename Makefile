@@ -196,7 +196,7 @@ ASM_DEFINES = $(foreach d,$(DEFINES),$(if $(findstring =,$(d)),--defsym $(d),)) 
 
 INCLUDE_CFLAGS  = -I . -I include -I include/libc  -I include/PR -I include/sys -I $(BIN_DIRS) -I $(SRC_DIR) -I $(LIBULTRA_DIR)
 INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/gu -I $(LIBULTRA_DIR)/src/libc -I $(LIBULTRA_DIR)/src/io  -I $(LIBULTRA_DIR)/src/sc 
-INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/os -I $(SRC_DIR)/hasm/ido
+INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/os -I $(SRC_DIR)/hasm/ido -I $(OLD_LIBULTRA_DIR)
 
 ASFLAGS        = -march=vr4300 -32 -G0 $(ASM_DEFINES) $(INCLUDE_CFLAGS)
 OBJCOPYFLAGS   = -O binary
@@ -349,6 +349,9 @@ $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: MIPSISET := -mips2
 
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_alcspchan.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_alcspchan.c.o: MIPSISET := -mips2
+
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_resample2.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_resample2.c.o: MIPSISET := -mips2
 
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: MIPSISET := -mips2

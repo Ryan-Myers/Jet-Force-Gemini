@@ -19,6 +19,7 @@
 -I../include/sys
 -I../assets
 -I../src
+-I../src/libultra
 -I../libultra
 -I../libultra/src/gu
 -I../libultra/src/libc
