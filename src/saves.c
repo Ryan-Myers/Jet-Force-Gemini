@@ -364,7 +364,7 @@ s32 packClearGameEprom(s32 saveFileNum, Game *game) {
     u32 var_s1;
 
     var_s1 = D_800A3474_A4074[saveFileNum];
-    ptr = mmAlloc(0x80, -1U);
+    ptr = mmAlloc(0x80, COLOUR_TAG_WHITE);
 
     // clang-format off
     for (i = 0; i < 0x80; i++) { ptr[i] = 0xFF; }
@@ -388,10 +388,12 @@ void packEraseEprom(void) {
     u32 var_s1;
     s32 end;
 
-    var_v1 = mmAlloc(0x80, -1U);
-    for (i = 0; i < 0x80; i++) {
-        var_v1[i] = 0xFF;
-    }
+    var_v1 = mmAlloc(0x80, COLOUR_TAG_WHITE);
+
+    // clang-format off
+    for (i = 0; i < 0x80; i++) { var_v1[i] = 0xFF; }
+    // clang-format on
+
     if (mainResetPressed() == 0) {
         var_s1 = 0;
         for (i = 0; i < 8; i++) {
