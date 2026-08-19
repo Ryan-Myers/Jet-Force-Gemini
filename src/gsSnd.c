@@ -227,11 +227,11 @@ void gsSndpSetMasterVolume(u8 groupID, u16 volume) {
 
 extern u32 globalVolume; // u32 globalVolume = 0x100;
 
-void gsSndpSetGlobalVolume(u32 arg0) {
-    if (arg0 > 0x100) {
-        arg0 = 0x100;
+void gsSndpSetGlobalVolume(u32 volume) {
+    if (volume > 0x100) {
+        volume = 0x100;
     }
-    globalVolume = arg0;
+    globalVolume = volume;
 }
 
 extern u32 globalVolume;

@@ -65,7 +65,7 @@ segments:
       - [0x3FC30, c, boot]
       - [0x3FD70, c, camera]
       - [0x42E50, c, staticcamera]
-      - [0x43760, c, controller]
+      - [0x43760, c, joy]
       - [0x43E50, c, level]
       - [0x45170, c, main]
       - [0x49A00, hasm, hasm/ido/math_util]
@@ -298,8 +298,8 @@ segments:
       - [0xA2650, data, charControl]
       - [0xA4310, data, models]
       - [0xA4320, data, camera]
-      - [0xA45E0, .data, controller]
-      - [0xA45F0, data, level]
+      - [0xA45E0, .data, joy]
+      - [0xA45F0, .data, level]
       - [0xA4620, data, main]
       - [0xA4A40, .data, hasm/ido/math_util]
       - [0xA4A50, .data, memory]
@@ -428,8 +428,8 @@ segments:
       - { type: .bss, vram: 0x800F9F90, name: hasm/entrypoint }
       - { type: bss, vram: 0x800FAF90, name: camera }
       - { type: .bss, vram: 0x800FBB40, name: staticcamera }
-      - { type: .bss, vram: 0x800FBB50, name: controller }
-      - { type: bss, vram: 0x800FBBD0, name: level }
+      - { type: .bss, vram: 0x800FBB50, name: joy }
+      - { type: .bss, vram: 0x800FBBD0, name: level }
       - { type: bss, vram: 0x800FBEC0, name: main }
       - { type: bss, vram: 0x800FE2F0, name: refractOutputAssembler }
       - { type: .bss, vram: 0x800FE310, name: memory }

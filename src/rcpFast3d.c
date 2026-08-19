@@ -1,3 +1,4 @@
+#include "rcpFast3d.h"
 #include "common.h"
 #include "overlays/overlay4.h"
 

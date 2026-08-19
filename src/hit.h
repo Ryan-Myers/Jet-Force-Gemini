@@ -4,5 +4,6 @@
 #include <PR/ultratypes.h>
 
 void hitFree(void);
+void hitReset(void);
 
 #endif

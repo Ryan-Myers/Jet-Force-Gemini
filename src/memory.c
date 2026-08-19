@@ -1,5 +1,6 @@
 #include "memory.h"
 #include "common.h"
+#include "math/math.h"
 #include "overlays/overlay10.h"
 #include "runLink.h"
 

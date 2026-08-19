@@ -1,6 +1,8 @@
 #include "charControl.h"
 #include "common.h"
+#include "joy.h"
 #include "math/math.h"
+#include "objects.h"
 
 const char D_800AC5E0[] = "charAnimSoundTick: Illegal soundtype\n";
 const char D_800AC608[] = "The maximum number of camera objects has been exceeded.\n";

@@ -1,4 +1,7 @@
+#include "pi.h"
 #include "common.h"
+#include "main.h"
+#include "rzip.h"
 
 // TODO: Get a better size for the number of files
 #define NUM_FILES 1

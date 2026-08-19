@@ -1,3 +1,5 @@
+#include "sched.h"
+#include "audiomgr.h"
 #include "common.h"
 #include "PRinternal/viint.h"
 

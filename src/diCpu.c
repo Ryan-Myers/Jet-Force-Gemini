@@ -1,4 +1,6 @@
+#include "diCpu.h"
 #include "common.h"
+#include "diprint.h"
 #include "gameVi.h"
 #include "PR/rdb.h"
 #include "PRinternal/rmonint.h"

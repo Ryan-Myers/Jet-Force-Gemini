@@ -1,8 +1,12 @@
 #include "audio.h"
 #include "common.h"
+#include "main.h"
 #include "math/math.h"
 
 const char D_800AAAE0[] = "OUT OF AUDIO POINTS\n";
+
+extern Matrix D_800F2A08_F3608; //.data
+extern s8 D_800F2A04_F3604;     //.data
 
 #define SOUND_MASK_HEAP_COUNT 40
 

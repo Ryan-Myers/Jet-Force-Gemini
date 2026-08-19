@@ -1,6 +1,7 @@
 #include "runLink.h"
 #include "common.h"
 #include "mips.h"
+#include "pi.h"
 
 const char D_800ADC90[] = "WARNING: Unimplemented linkage operation %d\n";
 const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";
@@ -83,7 +84,8 @@ typedef struct OverlayHeader {
     /* 0x08 */ s32 TextSize;
     /* 0x0C */ s32 DataSize;
     /* 0x10 */ s32 RodataSize;
-    /* 0x14 */ u16 RelocationTableSize; // This relocation stays in memory after the overlay is loaded, so that other overlays can reference it
+    /* 0x14 */ u16 RelocationTableSize; // This relocation stays in memory after the overlay is loaded, so that other
+                                        // overlays can reference it
     /* 0x16 */ u16 SecondaryRelocationTableSize; // This relocation is freed after the overlay is loaded
     /* 0x18 */ s32 InitFunction;                 // -1 if none, offset from VramBase
     /* 0x1C */ s32 ResumeFunction;               // -1 if none, offset from VramBase
@@ -169,8 +171,8 @@ typedef struct RelocationEntry {
             union {
                 u8 flags;
                 struct {
-                    u8 patchOperation2 : 4; //2=R_MIPS_32, 4=JAL, 5=HI16, 6=LO16
-                    u8 resolveType : 4; // 0=EXTERNAL, 1=LOCAL, 2=JUMP, 3=DATA
+                    u8 patchOperation2 : 4; // 2=R_MIPS_32, 4=JAL, 5=HI16, 6=LO16
+                    u8 resolveType : 4;     // 0=EXTERNAL, 1=LOCAL, 2=JUMP, 3=DATA
                 };
             };
         };
