@@ -30,6 +30,17 @@
 // 1 sector. So basically, flash is written in sectors, and changing a single page needs to read a sector, modify the
 // page, and write back the whole sector.
 #define SECTOR_SIZE 128
+#define SECTOR(sectorNum) ((sectorNum) * SECTOR_SIZE)
+#define NUMBER_OF_SECTORS 8
+
+typedef struct FlashSector {
+    u8 saveData[0x7E];
+    u16 checksum;
+} FlashSector;
+
+// The usable space in a flash sector is 126 bytes, and the checksum is 2 bytes
+// so the total size is 128 bytes
+#define FlashSectorSize (sizeof(FlashSector) - sizeof(u16))
 
 typedef struct unkD_800A3EAC {
     s32 unk0;
@@ -57,7 +68,7 @@ extern f32 D_800AD500;
 extern RumbleStruct D_800FDF5A_B879A[];
 extern u8 D_800A3470_A4070;
 extern s32 D_800A3474_A4074[];
-extern u8 D_800A34AC_A40AC[];
+extern u8 D_800A34AC_A40AC[]; // Looks to be the default state for a new save file, which is copied to the save file if the checksum doesn't match.
 
 
 SIDeviceStatus packFileSize(s32 controllerIndex, s32 fileNum, s32 *fileSize);
@@ -66,7 +77,7 @@ SIDeviceStatus packOpen(s32 controllerIndex);
 s32 packClose(s32 controllerIndex);
 SIDeviceStatus packOpenFile(s32 controllerIndex, char *fileName, char *fileExt, s32 *fileNumber);
 SIDeviceStatus packReadFile(s32 controllerIndex, s32 fileNum, u8 *data, s32 dataLength);
-s32 func_8004D250_4DE50(s32 controllerIndex, s32 fileNum);
+s32 packGetFileType(s32 controllerIndex, s32 fileNum);
 char *font_codes_to_string(char *inString, char *outString, s32 stringLength);
 SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName, char *fileExt, u8 *dataToWrite, s32 fileSize);
 SIDeviceStatus packCopyFile(s32 controllerIndex, s32 fileNumber, s32 secondControllerIndex);
@@ -93,12 +104,12 @@ void rumbleProcessing(s32 arg0);
 void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2);
 void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2);
 void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2);
-s32 packClearGameEprom(s32 saveFileNum, Game *game);
+void packClearGameEprom(s32 saveFileNum, Game *game);
 void packEraseEprom(void);
 s32 packLoadGameEprom(s32 saveFileNum, Game *game);
-s32 packLoadGlobalFlagsEprom(u64 *flags);
+s32 packLoadGlobalFlagsEprom(FlashSector *save);
 s32 packSaveGameEprom(s32 saveFileNum, Game *game);
-s32 packSaveGlobalFlagsEprom(u64 *flags);
+s32 packSaveGlobalFlagsEprom(FlashSector *save);
 void rumbleTick(s32 updateRate);
 
 #endif

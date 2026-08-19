@@ -2,6 +2,7 @@
 #define _MATH_H_
 
 #include "common.h"
+#include "types.h"
 
 #define MATH_PI 3.141592741f
 #define DTOR(deg)  ((deg) * MATH_PI / 180.0f)

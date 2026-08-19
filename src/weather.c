@@ -4,6 +4,7 @@
 #include "fx.h"
 #include "level.h"
 #include "math/math.h"
+#include "memory.h"
 #include "models.h"
 #include "overlays/overlay5.h"
 #include "pi.h"

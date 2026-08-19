@@ -5,6 +5,7 @@
 #include <PR/gbi.h>
 #include <PR/sp.h>
 #include "structs.h"
+#include "types.h"
 
 #define SCREEN_WIDTH 320
 #define SCREEN_HEIGHT 240

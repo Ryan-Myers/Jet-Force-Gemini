@@ -4,6 +4,7 @@
 #include "common.h"
 #include "gameVi.h"
 #include "joy.h"
+#include "memory.h"
 #include "menu.h"
 #include "mips.h"
 #include "osBootRamTest.h"

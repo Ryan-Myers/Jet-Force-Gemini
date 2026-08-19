@@ -2,9 +2,7 @@
 #define _STRUCTS_H_
 
 /* Note: Structs are not complete, take them with a grain of salt. */
-
-#include "types.h"
-#include "memory.h"
+#include <ultra64.h>
 #include "gbi.h"
 
 //Size: 0x538

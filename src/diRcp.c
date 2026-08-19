@@ -1,4 +1,5 @@
 #include "common.h"
+#include "types.h"
 
 // older G_DMAOFFSETS overlaps with G_TRI1
 #define G_DMAOFFSETS (G_IMMFIRST - 0)

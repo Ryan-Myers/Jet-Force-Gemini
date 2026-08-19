@@ -5,6 +5,7 @@
 #include "rcpFast3d.h"
 #include "stdarg.h"
 #include "textures.h"
+#include "types.h"
 
 /************ .data ************/
 
