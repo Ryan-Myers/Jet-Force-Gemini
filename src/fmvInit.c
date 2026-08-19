@@ -1,7 +1,8 @@
 #include "common.h"
+#include "pi.h"
 
 typedef struct FmvPlayer {
-    s32 unk0;
+    s8 unk0;
     u8 pad4[0x10];
     s32 unk14;
     s32 unk18;
@@ -12,4 +13,20 @@ typedef struct FmvPlayer {
 u32 *Table[2];
 FmvPlayer Player[2];
 
-#pragma GLOBAL_ASM("asm/nonmatchings/fmvInit/fmvInit.s")
+void fmvInit(void) {
+    FmvPlayer *player;
+    s32 i;
+
+    Table[0] = piRomLoad(0x45);
+    player = Player;
+
+    i = 2;
+    while (i--) {
+        player->unk0 = -1;
+        player->unk14 = 0;
+        player->unk18 = 0;
+        player->unk1C = 0;
+        player->unk20 = 0;
+        player++;
+    }
+}

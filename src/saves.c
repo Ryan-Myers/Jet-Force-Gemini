@@ -2,6 +2,7 @@
 #include "common.h"
 #include "enums.h"
 #include "joy.h"
+#include "main.h"
 #include "menu.h"
 #include "PR/os_flash.h"
 #include "PR/os_pi.h"
@@ -29,6 +30,8 @@
 
 s32 mainGetPauseMode();
 extern u8 D_800A3470_A4070;
+extern s32 D_800A3474_A4074[];
+extern u8 D_800A34AC_A40AC[];
 
 s32 func_8004B070_4BC70(void) {
     s32 var_v0;
@@ -305,25 +308,148 @@ UNUSED void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004BA98_4C698.s")
+s32 func_8004BA98_4C698(u8 *arg0, s32 count) {
+    s32 ret;
+    ret = 7;
+    while (count--) {
+        ret += *arg0++;
+    }
+    return ret;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadCharacter.s")
+s32 packLoadCharacter(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    return 1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packSaveCharacter.s")
+s32 packSaveCharacter(s32 arg0, s32 arg1, s32 arg2) {
+    return 1;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadGameEprom.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packSaveGameEprom.s")
+s32 packSaveGameEprom(s32 saveFileNum, Game *game) {
+    u8 *var_s2;
+    u32 sp38;
+    s32 var_s1;
+    u32 sp30;
+    u32 var_s0;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packClearGameEprom.s")
+    var_s0 = D_800A3474_A4074[saveFileNum];
+    sp38 = var_s0 + 0x7F;
+    game->pad[3] = saveFileNum;
+    var_s1 = 0xB;
+    var_s2 = (u8 *) game;
+    sp30 = func_8004BA98_4C698(game, sizeof(Game));
+    if (mainResetPressed() == 0) {
+        osFlashSectorErase(var_s0);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packEraseEprom.s")
+    // This the is only possible way of making IDO not skip this condition
+    write:
+        if (var_s1 != 0) {
+            flashROMWrite(var_s0++, (u32 *) var_s2);
+            var_s1 -= 1;
+            var_s2 += 0x80;
+            goto write;
+        }
+        flashROMWrite(sp38, &sp30);
+    }
+    return 0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004BE44_4CA44.s")
+s32 packClearGameEprom(s32 saveFileNum, Game *game) {
+    MemoryPoolSlot *temp_v0;
+    u8 *ptr;
+    s32 i;
+    s32 j;
+    u32 var_s1;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadGlobalFlagsEprom.s")
+    var_s1 = D_800A3474_A4074[saveFileNum];
+    ptr = mmAlloc(0x80, COLOUR_TAG_WHITE);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packSaveGlobalFlagsEprom.s")
+    // clang-format off
+    for (i = 0; i < 0x80; i++) { ptr[i] = 0xFF; }
+    // clang-format on
+
+    if (mainResetPressed() == 0) {
+        osFlashSectorErase(var_s1);
+        for (j = 0; j < 0x80; j++) {
+            flashROMWrite(var_s1++, (u32 *) ptr);
+        }
+    }
+    mmFree(ptr);
+}
+
+void packEraseEprom(void) {
+    MemoryPoolSlot *temp_v0;
+    u8 *var_v1;
+    s32 j;
+    s32 i;
+    u32 var_a0;
+    u32 var_s1;
+    s32 end;
+
+    var_v1 = mmAlloc(0x80, COLOUR_TAG_WHITE);
+
+    // clang-format off
+    for (i = 0; i < 0x80; i++) { var_v1[i] = 0xFF; }
+    // clang-format on
+
+    if (mainResetPressed() == 0) {
+        var_s1 = 0;
+        for (i = 0; i < 8; i++) {
+            osFlashSectorErase(var_s1);
+            for (j = 0; j < 0x80; j++) {
+                flashROMWrite(var_s1++, (u32 *) var_v1);
+            }
+        }
+    }
+
+    if (i) { // FAKE
+         
+    }
+    mmFree(var_v1);
+}
+
+s32 func_8004BE44_4CA44(u8 *arg0) {
+    s32 var_a1;
+    s32 var_v1;
+
+    var_v1 = 5;
+    var_a1 = 0x7E;
+    while (var_a1--) {
+        var_v1 += *arg0++;
+    }
+    return var_v1;
+}
+
+s32 packLoadGlobalFlagsEprom(u64 *flags) {
+    s32 i;
+    u8 *dst;
+    u8 *src;
+    s32 end;
+
+    flashROMRead(0x380U, (u32 *) flags);
+    if (func_8004BE44_4CA44(flags) != *((u16 *) flags + 0x3F)) {
+        src = D_800A34AC_A40AC;
+        dst = flags;
+        i = 0x7D;
+        do {
+            *dst++ = *src++;
+        } while (i--);
+
+        *((u16 *) flags + 0x3F) = func_8004BE44_4CA44(flags);
+    }
+    return 1;
+}
+
+s32 packSaveGlobalFlagsEprom(u64 *flags) {
+    *((u16 *) flags + 0x3F) = func_8004BE44_4CA44((u8 *) flags);
+    if (mainResetPressed() == 0) {
+        osFlashSectorErase(0x380U);
+        flashROMWrite(0x380U, (u32 *) flags);
+    }
+    return 1;
+}
 
 void flashROMInit(void) {
     osCreateMesgQueue(&cartEventQueue, (OSMesg *) &cartEventBuf, 1);
