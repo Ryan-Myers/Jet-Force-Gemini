@@ -1,4 +1,5 @@
 #include "common.h"
+#include "math/math.h"
 #include "pi.h"
 #include "runLink.h"
 
@@ -8,8 +9,8 @@ const char D_800AD8D0[] = "**** WARNING: Duplicate squadron ID:%d ****\n";
 const char D_800AD900[] = "WARNING:Can't lock to node, no nodes\n";
 
 // .data
-u32 *BaddyDataArray = NULL;   // Effectively unused
-Object** D_800A38E4_A44E4 = NULL; // Unknown type
+u32 *BaddyDataArray = NULL;       // Effectively unused
+Object **D_800A38E4_A44E4 = NULL; // Unknown type
 
 // .bss
 s32 D_800FE9A0_B91E0;
@@ -45,12 +46,125 @@ int squadsIsTribal(s32 arg0) {
            (arg0 == 0x97) || (arg0 == 0x157) || (arg0 == 0xA5);
 }
 
-Object** squadsGetSquadronList(s32 *arg0) {
+Object **squadsGetSquadronList(s32 *arg0) {
     *arg0 = D_800FE9F0_B9230;
     return D_800A38E4_A44E4;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/BaddyTypeToIndex.s")
+s32 BaddyTypeToIndex(s32 arg0) {
+    switch (arg0) { /* irregular */
+        case 0x29:
+            return 0;
+        case 0x5F:
+            return 1;
+        case 0xBE:
+            return 2;
+        case 0xBD:
+            return 3;
+        case 0x67:
+            return 4;
+        case 0x78:
+            return 5;
+        case 0x8C:
+            return 6;
+        case 0x83:
+            return 7;
+        case 0x2A:
+            return 9;
+        case 0x2B:
+            return 8;
+        case 0x2D:
+            return 10;
+        case 0x54:
+            return 11;
+        case 0x68:
+            return 12;
+        case 0x8D:
+            return 13;
+        case 0x99:
+            return 14;
+        case 0x9C:
+            return 15;
+        case 0xDF:
+            return 16;
+        case 0xE0:
+            return 17;
+        case 0xE1:
+            return 18;
+        case 0xE6:
+            return 19;
+        case 0xEE:
+            return 20;
+        case 0xEF:
+            return 21;
+        case 0x12F:
+            return 22;
+        case 0xF2:
+            return 23;
+        case 0xF3:
+            return 24;
+        case 0x66:
+            return 25;
+        case 0x11C:
+            return 26;
+        case 0x11D:
+            return 27;
+        case 0x11E:
+            return 28;
+        case 0x11F:
+            return 29;
+        case 0x120:
+            return 30;
+        case 0x121:
+            return 31;
+        case 0xF1:
+            return 32;
+        case 0xF5:
+            return 33;
+        case 0xF6:
+            return 34;
+        case 0x122:
+            return 35;
+        case 0x143:
+            return 36;
+        case 0x144:
+            return 37;
+        case 0x149:
+            return 38;
+        case 0x150:
+            return 39;
+        case 0x151:
+            return 40;
+        case 0x152:
+            return 41;
+        case 0x153:
+            return 42;
+        case 0x166:
+            return 43;
+        case 0x70:
+            return 44;
+        case 0x90:
+            return 45;
+        case 0xA5:
+            return 46;
+        case 0x97:
+            return 47;
+        case 0x157:
+            return 48;
+        case 0x112:
+            return 49;
+        case 0x6D:
+            return 50;
+        case 0x1E5:
+            return 51;
+        case 0x269:
+            return 52;
+        case 0x2CE:
+            return 53;
+        default:
+            return -1;
+    }
+}
 
 s32 BaddyTypeToIndex();
 Object *objSetupObject(StaticInstanceSpawn *spawn, s32 arg1);
@@ -83,7 +197,6 @@ void CreateStaticInstance(s32 arg0) {
         }
     }
 }
-
 
 void squadsRememberRomdef(RomDefHeader *arg0) {
     D_800FE9AC_B91EC[D_800FE9A0_B91E0] = arg0;
@@ -129,7 +242,6 @@ void squadsInitialiseBeforeObjects(void) {
     D_800FE9F0_B9230 = 0;
     SquaddieGrowlTimer = mathRnd(0xF0, 0x168);
 }
-
 
 void *GetSquadronFromIdentifier(s16 arg0) {
     s32 i;
