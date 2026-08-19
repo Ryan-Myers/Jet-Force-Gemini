@@ -1,6 +1,6 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o117/overlay_117/func_overlay_117_F0000000_1B6EB10.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o117/overlay_117/func_overlay_117_00000000_1B6EB10.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o117/overlay_117/robottargetInit.s")
 

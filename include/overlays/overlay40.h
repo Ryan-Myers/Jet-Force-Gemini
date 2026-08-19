@@ -3,6 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void frontCleanupMultiStats_Trap(void);
+void frontCleanupMultiStats(void);
 
 #endif

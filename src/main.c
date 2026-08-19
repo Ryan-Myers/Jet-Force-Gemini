@@ -1,7 +1,18 @@
+#include "main.h"
+#include "audiomgr.h"
+#include "boot.h"
 #include "common.h"
+#include "gameVi.h"
+#include "joy.h"
+#include "menu.h"
 #include "mips.h"
+#include "osBootRamTest.h"
 #include "overlays/overlay36.h"
+#include "pi.h"
+#include "rcpFast3d.h"
 #include "runLink.h"
+#include "rzip.h"
+#include "saves.h"
 #include "sched.h"
 
 #ifdef VERSION_kiosk
@@ -94,8 +105,6 @@ const char D_800AC518_AD118[] = "exploding";
 const char D_800AC524_AD124[] = "%d\n";
 const char D_800AC528_AD128[] = "WARNING: couldn't find 'ra=0x666' in function %d\n";
 #endif
-
-void mainPreNMI(void);
 
 void mainThread(UNUSED void *unused) {
     // Anti Piracy - This will zero out all RAM if this is a PAL console.
@@ -248,7 +257,7 @@ void mainInitGame(void) {
     piInit();
     rcpInit(&sc);
     runlinkInitialise();
-    mainInitRlo_Trap();
+    mainInitRlo();
     runlinkFreeCode(0x24);
 }
 #else
@@ -278,7 +287,7 @@ void mainInitGame(void) {
     runlinkInitialise();
     mainPreNMI();
     D_800A3290_A3E90 = 1;
-    mainInitRlo_Trap();
+    mainInitRlo();
     mainPreNMI();
     runlinkFreeCode(0x24);
     D_800A3530_A4130 = 0;

@@ -19,5 +19,6 @@ void fxFreeNightVision(s32); // guess
 void fxClearLevelEffects(void);
 void fxCpuTextureFlush(void);
 void setupClearScreen(UnkScreenStruct*);
+void fxInitNightVision(s32);
 
 #endif

@@ -3,6 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void frontFreeMenuFrame_Trap(void);
+void frontFreeMenuFrame(void);
 
 #endif

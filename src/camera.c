@@ -240,12 +240,14 @@ void camStopShakes(void) {
     shake = D_800FA600_B1880;
 
     /* IDO: line-join for regalloc */
-    for (i = 4; i--; cam++, shake++) {
-        cam->shake.x = 0.0f;
-        cam->shake.y = 0.0f;
-        cam->shake.z = 0.0f;
-        shake->magnitude = 0;
+    // clang-format off
+    for (i = 4; i--; cam++, shake++) { \
+        cam->shake.x = 0.0f; \
+        cam->shake.y = 0.0f; \
+        cam->shake.z = 0.0f; \
+        shake->magnitude = 0; \
     }
+    // clang-format on
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camScreenShake.s")

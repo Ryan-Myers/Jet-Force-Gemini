@@ -324,12 +324,7 @@ def format_symbols_splat(symbols: list) -> str:
             # Main code - use absolute address
             lines.append(f"{name} = 0x{address:08X}; // type:func")
         elif is_overlay_section(section):
-            # Overlay - use fake VRAM (0xF0000000 + offset) and segment tag
-            # The segment: tag tells splat which segment this symbol belongs to,
-            # matching the segment name in the YAML (e.g., overlay_3)
-            # fake_addr = 0xF0000000 + offset
-            fake_addr = (section << 20) + offset # Use the overlay index to create a unique VRAM base
-            lines.append(f"{name} = 0x{fake_addr:08X}; // segment:overlay_{section} type:func")
+            lines.append(f"{name} = 0x{offset:08X}; // segment:overlay_{section} type:func")
         elif address is not None:
             # Data/BSS sections
             sym_type = "data" if section in (SECTION_DATA_1, SECTION_DATA_2) else "data"

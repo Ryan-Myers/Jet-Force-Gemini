@@ -1,6 +1,7 @@
 #include "runLink.h"
 #include "common.h"
 #include "mips.h"
+#include "pi.h"
 
 const char D_800ADC90[] = "WARNING: Unimplemented linkage operation %d\n";
 const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";
@@ -83,8 +84,9 @@ typedef struct OverlayHeader {
     /* 0x08 */ s32 TextSize;
     /* 0x0C */ s32 DataSize;
     /* 0x10 */ s32 RodataSize;
-    /* 0x14 */ u16 RelocationTableSize;
-    /* 0x16 */ u16 SecondaryRelocationTableSize; // ?
+    /* 0x14 */ u16 RelocationTableSize; // This relocation stays in memory after the overlay is loaded, so that other
+                                        // overlays can reference it
+    /* 0x16 */ u16 SecondaryRelocationTableSize; // This relocation is freed after the overlay is loaded
     /* 0x18 */ s32 InitFunction;                 // -1 if none, offset from VramBase
     /* 0x1C */ s32 ResumeFunction;               // -1 if none, offset from VramBase
 } OverlayHeader;
@@ -159,7 +161,7 @@ typedef struct RelocationEntry {
         u32 info;
         struct {
             u32 targetOffset : 24; // Offset into section where relocation should be applied
-            u32 unused : 4;
+            u32 patchOperation : 4;
             u32 relocType : 4; // Relocation type (R_MIPS_32=0, LOCAL=1, R_MIPS_26=2, SPECIAL=3, HI16=5, LO16=6)
         };
         struct {
@@ -167,10 +169,10 @@ typedef struct RelocationEntry {
             u8 offsetHi; // Upper bits of targetOffset
             u8 offsetMid;
             union {
-                u8 flags; // Upper nibble: additional flags (2=addend, 4=stub if unloaded)
+                u8 flags;
                 struct {
-                    u8 flagsHi : 4;
-                    u8 flagsLo : 4;
+                    u8 patchOperation2 : 4; // 2=R_MIPS_32, 4=JAL, 5=HI16, 6=LO16
+                    u8 resolveType : 4;     // 0=EXTERNAL, 1=LOCAL, 2=JUMP, 3=DATA
                 };
             };
         };
@@ -192,8 +194,8 @@ void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry
     romTableEntry = &overlayRomTable[ortIndex];
     overlayNumber = romTableEntry->entry.OverlayNumber;
     addressOffset = 0;
-    switch (relocEntry->relocType) { // Extract relocType from low 4 bits
-        case 0:                      // R_MIPS_32: Absolute symbol reference
+    switch (relocEntry->relocType) {
+        case RELOC_TYPE_EXTERNAL: // R_MIPS_32: Absolute symbol reference
             switch (overlayNumber) {
                 case 0xFFD: // Data section
                     overlayNumber = 0;
@@ -211,20 +213,20 @@ void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry
             addressBase = overlayTable[overlayNumber].VramBase;
             if (addressBase == 0) {
                 // Overlay not loaded - check if caller wants stub or trap
-                if (relocEntry->flagsHi == 4 || relocEntry->flagsHi == 2) {
+                if (relocEntry->patchOperation == RELOC_PATCH_JAL || relocEntry->patchOperation == RELOC_PATCH_WORD) {
                     return &TrapDanglingJump;
                 } else {
                     return &gUnresolvedSymbolAddr;
                 }
             }
             return (void *) (addressBase + (romTableEntry->entry.FunctionOffset) + addressOffset);
-        case 1: // Local offset relocation (relative to section base)
+        case RELOC_TYPE_LOCAL: // Local offset relocation (relative to section base)
             var_v1 = overlayTable[otIndex].VramBase + relocEntry->symbolIndex;
-            if (relocEntry->flagsHi == 2) {
+            if (relocEntry->patchOperation == RELOC_PATCH_WORD) {
                 var_v1 += patchLocation->word;
             }
             return (void *) var_v1;
-        case 2: // R_MIPS_26: Jump target relocation
+        case RELOC_TYPE_JUMP: // R_MIPS_26: Jump target relocation
             return (void *) ((patchLocation->jump.target << 2) + overlayTable[otIndex].VramBase);
         default:
             return NULL;
@@ -242,10 +244,10 @@ void PatchInstruction(MipsInstruction *instr, u32 address, u8 relocType) {
     u32 temp;
 
     switch (relocType) {
-        case 2: // R_MIPS_32: Store full 32-bit address
+        case RELOC_PATCH_WORD: // R_MIPS_32: Store full 32-bit address
             instr->word = address;
             break;
-        case 4: // R_MIPS_26: Patch jump target (preserve opcode)
+        case RELOC_PATCH_JAL: // R_MIPS_26: Patch jump target (preserve opcode)
             temp = (address >> 2) & 0x03FFFFFF;
             instrWord = instr->word;
             temp ^= instrWord;
@@ -253,14 +255,14 @@ void PatchInstruction(MipsInstruction *instr, u32 address, u8 relocType) {
             temp ^= instrWord;
             instr->word = temp;
             break;
-        case 5: // R_MIPS_HI16: Patch upper 16 bits of address
+        case RELOC_PATCH_HI16: // R_MIPS_HI16: Patch upper 16 bits of address
             temp = address >> 16;
             if (address & 0x8000) {
                 temp++; // Adjust for sign extension of LO16
             }
             instr->itype.upper = (u16) temp;
             break;
-        case 6: // R_MIPS_LO16: Patch lower 16 bits of address
+        case RELOC_PATCH_LO16: // R_MIPS_LO16: Patch lower 16 bits of address
             instr->itype.upper = (u16) address;
             break;
     }
@@ -281,26 +283,26 @@ s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
     MipsInstruction *patchLocation;
     MipsInstruction *nextPatchLocation;
     s32 overlayNumber;
-    s32 flagsHi;
-    s32 flagsLo;
+    s32 patchOperation;
+    s32 resolveType;
     u32 nextLoImmediate;
     u32 currLoImmediate;
 
-    flagsHi = relocEntry->flagsHi;
-    flagsLo = relocEntry->flagsLo;
-    if (relocEntry->relocType == 3) {
+    patchOperation = relocEntry->patchOperation;
+    resolveType = relocEntry->resolveType;
+    if (relocEntry->relocType == RELOC_TYPE_DATA) {
         patchLocation = (MipsInstruction *) &gRelocDataBase[relocEntry->targetOffset];
-        relocEntry->flags &= 0xFFF0;
+        relocEntry->relocType = RELOC_TYPE_EXTERNAL; // Change to external so that it can be resolved normally
     } else {
         patchLocation = (MipsInstruction *) &gRelocTextBase[relocEntry->targetOffset];
     }
     resolvedAddr = ResolveRelocAddress(relocEntry->symbolIndex, otIndex, relocEntry, patchLocation);
-    if (flagsHi == 5) {
+    if (patchOperation == RELOC_PATCH_HI16) {
         overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
         if (overlayNumber >= 0xFFC) {
             overlayNumber = 0;
         }
-        if (relocEntry->relocType == 0 && (overlayTable[overlayNumber].VramBase == 0)) {
+        if (relocEntry->relocType == RELOC_TYPE_EXTERNAL && (overlayTable[overlayNumber].VramBase == 0)) {
             resolvedAddr = (u32) &gUnresolvedSymbolAddr;
         }
         nextPatchLocation = (MipsInstruction *) &gRelocTextBase[relocEntry[1].targetOffset];
@@ -314,25 +316,25 @@ s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
         if (combinedAddr != (u32) &gUnresolvedSymbolAddr) {
             resolvedAddr += combinedAddr;
         }
-        PatchInstruction(patchLocation, resolvedAddr, 5);
-        PatchInstruction(nextPatchLocation, resolvedAddr, 6);
-        relocEntry->flags = (flagsLo & 0xF) | (relocEntry->flags & 0xFFF0);
+        PatchInstruction(patchLocation, resolvedAddr, RELOC_PATCH_HI16);
+        PatchInstruction(nextPatchLocation, resolvedAddr, RELOC_PATCH_LO16);
+        relocEntry->resolveType = resolveType;
         return 2;
     }
-    if (flagsHi == 6) {
+    if (patchOperation == RELOC_PATCH_LO16) {
         overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
         if (overlayNumber >= 0xFFC) {
             overlayNumber = 0;
         }
-        if (relocEntry->relocType == 0 && (overlayTable[overlayNumber].VramBase == 0)) {
+        if (relocEntry->relocType == RELOC_TYPE_EXTERNAL && (overlayTable[overlayNumber].VramBase == 0)) {
             resolvedAddr = (u32) &gUnresolvedSymbolAddr;
         }
-        PatchInstruction(patchLocation, resolvedAddr + patchLocation->itype.upper, 6);
-        relocEntry->flags = (flagsLo & 0xF) | (relocEntry->flags & 0xFFF0);
+        PatchInstruction(patchLocation, resolvedAddr + patchLocation->itype.upper, RELOC_PATCH_LO16);
+        relocEntry->resolveType = resolveType;
         return 1;
     } else {
-        PatchInstruction(patchLocation, resolvedAddr, flagsHi);
-        relocEntry->flags = (flagsLo & 0xF) | (relocEntry->flags & 0xFFF0);
+        PatchInstruction(patchLocation, resolvedAddr, patchOperation);
+        relocEntry->resolveType = resolveType;
         return 1;
     }
 }
@@ -518,8 +520,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
                 }
 
                 if (overlayNum == overlayIndex) {
-                    // Check relocation type - only process R_MIPS_32 (0) or SPECIAL (3)
-                    if ((relocEntry->info & 0xF) == 0 || (relocEntry->info & 0xF) == 3) {
+                    if (relocEntry->relocType == RELOC_TYPE_EXTERNAL || relocEntry->relocType == RELOC_TYPE_DATA) {
                         if (ProcessRelocationEntry(relocEntry, otherIndex) == 2) {
                             relocCount--;
                             relocEntry++;
@@ -626,7 +627,7 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
     s32 relocType;
     s32 found;
     s32 i;
-    s32 flagsHi;
+    s32 patchOperation;
     u32 address;
 
     overlay = &overlayTable[overlayIndex];
@@ -678,28 +679,28 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
 
         if (overlayNum == overlayIndex) {
             // This entry references the overlay being unloaded
-            if (relocEntry->relocType == 3) {
+            if (relocEntry->relocType == RELOC_TYPE_DATA) {
                 // Type 3: data section relocation
                 patchLocation = (MipsInstruction *) ((u8 *) &__DATA_SECTION_START + (relocEntry->targetOffset));
-                relocEntry->flags &= 0xFFF0; // Clear low nibble of flags
+                relocEntry->relocType = RELOC_TYPE_EXTERNAL;
             } else {
                 // Other types: text section relocation
                 patchLocation = (MipsInstruction *) ((u8 *) &__CODE_SECTION_START + (relocEntry->targetOffset));
             }
 
-            // Get flagsHi and determine what to patch
-            flagsHi = relocEntry->flagsHi;
-            if ((flagsHi ^ 0) == 4) { // FAKE MATCH
+            // Get patchOperation and determine what to patch
+            patchOperation = relocEntry->patchOperation;
+            if ((patchOperation ^ 0) == RELOC_PATCH_JAL) { // FAKE MATCH
                 // Patch back to TrapDanglingJump
                 address = (u32) TrapDanglingJump;
             } else {
                 // Clear the reference
                 address = NULL;
             }
-            PatchInstruction(patchLocation, address, flagsHi);
+            PatchInstruction(patchLocation, address, patchOperation);
         }
 
-        relocEntry->flags = ((u8) relocType & 0xF) | (relocEntry->flags & 0xFFF0);
+        relocEntry->relocType = relocType;
 
         relocEntry++;
     }

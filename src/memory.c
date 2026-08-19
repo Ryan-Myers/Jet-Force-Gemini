@@ -1,5 +1,6 @@
 #include "memory.h"
 #include "common.h"
+#include "math/math.h"
 #include "overlays/overlay10.h"
 #include "runLink.h"
 
@@ -369,7 +370,7 @@ void mmFreeTick(void) {
     if (FreeRAM < 0x14000) {
         runlinkLowMemoryPanic();
         if (FreeRAM < 0xC000 && runlinkIsModuleLoaded(3) != 0) {
-            sparkUpdate_Trap(); // Odd function to call here. This isn't even in Overlay 3.
+            sparkUpdate(); // Odd function to call here. This isn't even in Overlay 3.
         }
     }
 #endif

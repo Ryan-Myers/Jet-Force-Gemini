@@ -1,11 +1,12 @@
 #include "audio.h"
 #include "camera.h"
 #include "common.h"
-#include "functions.h"
 #include "fx.h"
+#include "level.h"
 #include "math/math.h"
 #include "models.h"
 #include "overlays/overlay5.h"
+#include "pi.h"
 #include "textures.h"
 #include "track.h"
 
@@ -529,7 +530,7 @@ void func_8005BC44_5C844(s32 arg0, s32 intensity, s32 opacity) {
     gRainSplashDelay = 0;
     gRainVertexFlip = 0;
 
-    rainInit_Trap(arg0, 700, 700, 700, 0x2080E002, 0xA0E0FF04, 550);
+    rainInit(arg0, 700, 700, 700, 0x2080E002, 0xA0E0FF04, 550);
 #ifdef VERSION_us
     D_800A5D44_A6944 = texLoadSprite(0x4A, 0);
     D_800A5D48_A6948 = texLoadTexture(0x1AC);
@@ -557,7 +558,7 @@ void func_8005BD30_5C930(void) {
         gWeatherSoundMask = NULL;
     }
 
-    rainFree_Trap();
+    rainFree();
     gWeatherType = WEATHER_SNOW;
 }
 
@@ -616,7 +617,7 @@ void func_8005C040_5CC40(s32 updateRate) {
         }
     }
 
-    rainMove_Trap(gWeather.velX / 65536.0f, (gWeather.velY / 65536.0f) - 5.0f, gWeather.velZ / 65536.0f, updateRate);
+    rainMove(gWeather.velX / 65536.0f, (gWeather.velY / 65536.0f) - 5.0f, gWeather.velZ / 65536.0f, updateRate);
     func_8005CAD0_5D6D0(updateRate);
     func_8005C188_5CD88(updateRate);
     func_8005C9B8_5D5B8(updateRate);

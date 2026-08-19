@@ -106,8 +106,11 @@ typedef struct ResolutionSettings {
     char name[16];
 } ResolutionSettings;
 
+extern u8 D_800A32A0_A3EA0;
+extern s32 gSuppressWidescreen;
+
 void viInit(OSSched *sc);
-void viChangeMode(s32 arg0);
+void viChangeMode(s32 videoMode);
 void viReset(void);
 void viAllocateZBuffer(s32 width, s32 height);
 void viFreeZBuffer(s32 width, s32 height);
@@ -120,7 +123,7 @@ s32 viFrameSync(s32 mesg);
 s32 viGetVideoMode(void);
 s8 viGetWideAdjust(void);
 void viSetWideAdjust(s32 offset);
-void viSetTrippleBuffer(s32 arg0);
+void viSetTrippleBuffer(s32 resolutionIndex);
 s8 viGetTrippleBuffer(void);
 s32 viChangeBuffers(void);
 void viNoClear(void);

@@ -4,6 +4,7 @@ NON_MATCHING ?= 0
 # Libultra version might be at least J, but still labeled in the header as G for some reason.
 LIBULTRA_VERSION_DEFINE := -DBUILD_VERSION=6 -DBUILD_VERSION_STRING=\"2.0I\"
 
+.DEFAULT_GOAL := all
 # Whether to hide commands or not
 VERBOSE ?= 0
 ifeq ($(VERBOSE),0)
@@ -236,6 +237,15 @@ LD_FLAGS  += -Map $(TARGET).map
 ASM_PROCESSOR_DIR := $(TOOLS_DIR)/asm-processor
 ASM_PROCESSOR      = $(PYTHON) $(ASM_PROCESSOR_DIR)/build.py
 
+# Patches symbol trapping into compiled objects for the main section.
+PATCH_SYMBOLS = $(PYTHON) $(TOOLS_DIR)/patch_symbols.py ver/symbols/overlay_funcs_to_trap.txt
+
+# Don't patch symbols for overlays
+$(foreach dir,$(SRC_OVERLAYS_DIRS),$(BUILD_DIR)/$(dir)/%.c.o): PATCH_SYMBOLS := :
+# Don't patch symbols for libultra files
+$(foreach dir,$(LIBULTRA_SRC_DIRS),$(BUILD_DIR)/$(dir)/%.c.o): PATCH_SYMBOLS := :
+$(foreach dir,$(OLD_LIBULTRA_DIR),$(BUILD_DIR)/$(dir)/%.c.o): PATCH_SYMBOLS := :
+
 ### Optimisation Overrides
 ####################### LIBULTRA #########################
 
@@ -360,11 +370,17 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/%.c.o: CC_CHECK := :
 #	     All string	and aggregate constants	are put	into a read/write data
 #	     section.
 
-### Targets
+$(VENV)/bin/activate: requirements.txt
+#Set up a python venv so we don't get warnings about breaking system packages.
+	$(V)python3 -m venv $(VENV)
+#Installing the splat dependencies
+	$(V)$(PYTHON) -m pip install -r requirements.txt
+	$(V)make -C $(TOOLS_DIR)
 
+### Targets
 default: all
 
-all: $(VERIFY)
+all: $(VERIFY) setup
 
 dirs:
 	$(foreach dir,$(SRC_DIRS) $(ASM_DIRS) $(HASM_DIRS) $(BIN_DIRS) $(BIN_OVERLAYS_DIRS) $(ASM_OVERLAYS_DIRS) $(SRC_OVERLAYS_DIRS),$(shell mkdir -p $(BUILD_DIR)/$(dir)))
@@ -396,6 +412,8 @@ ifeq ($(VERSION),us)
 	mkdir -p asm/nonmatchings/libultra/n_synremoveplayer
 	touch asm/nonmatchings/libultra/n_synremoveplayer/n_alSynRemovePlayer.s
 endif
+# Update the calls to TrapDanglingJump to use the real symbol name.
+	$(PYTHON) $(TOOLS_DIR)/patch_asm.py --version $(VERSION) --rom baseroms/baserom.${VERSION}.z64 --asm-dir asm/nonmatchings
 
 extractall:
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).kiosk.yaml
@@ -403,12 +421,7 @@ extractall:
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).pal.yaml
 	$(PYTHON) $(SPLAT) ver/splat/$(BASENAME).jpn.yaml
 
-setup:
-#Set up a python venv so we don't get warnings about breaking system packages.
-	$(V)python3 -m venv $(VENV)
-#Installing the splat dependencies
-	$(V)$(PYTHON) -m pip install -r requirements.txt
-	$(V)make -C $(TOOLS_DIR)
+setup: $(VENV)/bin/activate
 
 clean:
 	rm -rf $(BUILD_DIR)
@@ -465,6 +478,7 @@ $(GLOBAL_ASM_O_FILES): $(BUILD_DIR)/%.c.o: %.c
 	$(call print,Compiling:,$<,$@)
 	$(V)$(CC_CHECK) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
 	$(V)$(CC) -c $(CFLAGS) $(LIBULTRA_VERSION_DEFINE) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+	$(V)$(PATCH_SYMBOLS) $@ $@
 endif
 
 # non asm-processor recipe
@@ -472,6 +486,7 @@ $(BUILD_DIR)/%.c.o: %.c
 	$(call print,Compiling:,$<,$@)
 	$(V)$(CC_CHECK) -MMD -MP -MT $@ -MF $(BUILD_DIR)/$*.d $<
 	$(V)$(CC) -c $(CFLAGS) $(LIBULTRA_VERSION_DEFINE) $(CC_WARNINGS) $(OPT_FLAGS) $(MIPSISET) -o $@ $<
+	$(V)$(PATCH_SYMBOLS) $@ $@
 
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/libc/llcvt.c.o: $(LIBULTRA_DIR)/src/libc/llcvt.c
 	$(call print,Compiling mips3:,$<,$@)
@@ -518,7 +533,7 @@ $(TARGET).z64: $(TARGET).bin
 	$(V)$(PYTHON) $(TOOLS_DIR)/CopyRom.py $< $@
 
 ### Settings
-.PHONY: all clean cleanextract default
+.PHONY: all clean cleanextract default setup
 SHELL = /bin/bash -e -o pipefail
 
 -include $(BUILD_DIR)/**/*.d

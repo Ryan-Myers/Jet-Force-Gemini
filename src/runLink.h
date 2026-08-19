@@ -3,6 +3,11 @@
 
 #include <PR/ultratypes.h>
 
+// This function is unique in that it has no specific limit on arguments, 
+// and they can change even within the same function call it.
+// This empty signature seems to be the way to handle it.
+s32 TrapDanglingJump(); 
+
 void runlinkFreeCode(s32 arg0);
 void runlinkInitialise(void);
 s32 runlinkDownloadCode(s32);

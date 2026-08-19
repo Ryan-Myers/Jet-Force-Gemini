@@ -3,6 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void frontCleanupOptionsPage_Trap(void);
+void frontCleanupOptionsPage(void);
 
 #endif

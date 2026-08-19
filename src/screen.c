@@ -1,6 +1,9 @@
 #include "common.h"
 #include "gameVi.h"
 #include "memory.h"
+#include "pi.h"
+#include "rzip.h"
+#include "textures.h"
 
 #define SCREEN_HEIGHT_PART (SCREEN_HEIGHT / 40)
 

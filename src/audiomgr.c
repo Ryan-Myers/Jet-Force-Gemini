@@ -1,8 +1,11 @@
+#include "audiomgr.h"
 #include "common.h"
 
 const char D_800AAA80[] = "audio: ai out of samples\n";
 const char D_800AAA9C[] = "OH DEAR - No audio DMA buffers left\n";
 const char D_800AAAC4[] = "Dma not done\n";
+
+extern s32 nextFrameCount; // = 2;
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audiomgr/amCreateAudioMgr.s")
 

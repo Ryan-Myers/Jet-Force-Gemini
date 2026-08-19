@@ -1,3 +1,4 @@
+#include "osBootRamTest.h"
 #include "common.h"
 
 #define READ_ADDRESS_DIRECT(addr) (*(vu32 *) (addr))

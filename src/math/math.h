@@ -11,6 +11,7 @@ s16 asins(s16 x);
 f32 atan2f(f32 x, f32 z);
 f32 acosf(f32 value);
 
+f32 Cosf(s32);
 f32 Sinf(s32);
 u16 Arctanf(f32, f32);
 void mathOneFloatPY(Vec3s*, Vec3f*);
@@ -24,5 +25,10 @@ void pointListRPY(s32 count, Vec3s *rotation, f32 *in, f32 *out);
 extern float sinf(float angle); //official name: fsin
 extern float cosf(float angle);
 extern float sqrtf(float value);
+
+
+u32 disableInterrupts(void);
+void enableInterrupts(u32 flags);
+s32 mathRnd(s32, s32);
 
 #endif

@@ -1,3 +1,4 @@
+#include "audio_manager_1050.h"
 #include "audio.h"
 #include "common.h"
 #include "naudio/n_seqp.h"
