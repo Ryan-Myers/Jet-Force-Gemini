@@ -265,6 +265,9 @@ typedef struct {
     N_ALEvent           nextEvent;
     ALEventQueue        evtq;
     ALMicroTime         frameTime;
+#ifdef VERSION_us
+    s32 pad; //TODO: This pad is not likely in this location
+#endif
     ALChanState        *chanState;      /* 16 channels for MIDI             */
     N_ALVoiceState     *vAllocHead;     /* list head for allocated voices   */
     N_ALVoiceState     *vAllocTail;     /* list tail for allocated voices   */

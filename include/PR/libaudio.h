@@ -503,13 +503,18 @@ enum AL_MIDIctrl {
     AL_MIDI_FX_CTRL_8           = 0x1C,
     AL_MIDI_FX_CTRL_9           = 0x1D,
     AL_MIDI_SUSTAIN_CTRL        = 0x40,
+    AL_MIDI_FXMIX80_CTRL        = 0x41,
     AL_MIDI_FX1_CTRL            = 0x5B,
     AL_MIDI_FX3_CTRL            = 0x5D
 #ifdef RAREDIFFS
     ,
     AL_MIDI_UNK_5F              = 0x5F,
     AL_MIDI_UNK_6A              = 0x6A, /* channel off? */
-    AL_MIDI_UNK_6C              = 0x6C  /* channel on? */
+    AL_MIDI_UNK_6C              = 0x6C, /* channel on? */
+    AL_MIDI_UNK_FC              = 0xFC,
+    AL_MIDI_FADESPEED_CTRL      = 0xFD,
+    AL_MIDI_FADEEND_CTRL        = 0xFF,
+    AL_MIDI_FADESTART_CTRL      = 0xFF
 #endif
 };
 

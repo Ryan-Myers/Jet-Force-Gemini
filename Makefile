@@ -347,6 +347,9 @@ $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/%.c.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: MIPSISET := -mips2
 
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_alcspchan.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_alcspchan.c.o: MIPSISET := -mips2
+
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: MIPSISET := -mips2
 
