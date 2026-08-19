@@ -1,4 +1,5 @@
 #include "saves.h"
+#include "audiomgr.h"
 #include "common.h"
 #include "enums.h"
 #include "joy.h"
@@ -23,16 +24,9 @@
 // page, and write back the whole sector.
 #define SECTOR_SIZE 128
 
+
+
 #ifdef VERSION_us
-#define nosMotorInit osMotorInit
-#define nosMotorStart osMotorStart
-#define nosMotorStop osMotorStop
-
-s32 mainGetPauseMode();
-extern u8 D_800A3470_A4070;
-extern s32 D_800A3474_A4074[];
-extern u8 D_800A34AC_A40AC[];
-
 s32 func_8004B070_4BC70(void) {
     s32 var_v0;
 
@@ -317,13 +311,23 @@ s32 func_8004BA98_4C698(u8 *arg0, s32 count) {
     return ret;
 }
 
+#ifdef VERSION_us
 s32 packLoadCharacter(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     return 1;
 }
+#else
+// Kiosk has a the code for this function, where the US version just stubs it out.
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadCharacter.s")
+#endif
 
+#ifdef VERSION_us
 s32 packSaveCharacter(s32 arg0, s32 arg1, s32 arg2) {
     return 1;
 }
+#else
+// Kiosk has a the code for this function, where the US version just stubs it out.
+#pragma GLOBAL_ASM("asm/nonmatchings/saves/packSaveCharacter.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadGameEprom.s")
 
@@ -353,6 +357,9 @@ s32 packSaveGameEprom(s32 saveFileNum, Game *game) {
         }
         flashROMWrite(sp38, &sp30);
     }
+#ifdef VERSION_kiosk
+    amAudioMgrSetScheduleMode(0);
+#endif
     return 0;
 }
 

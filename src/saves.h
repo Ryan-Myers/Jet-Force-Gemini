@@ -39,6 +39,9 @@ extern RumbleStruct rumbleStructArray[];
 extern f32 D_800AD504;
 extern f32 D_800AD500;
 extern RumbleStruct D_800FDF5A_B879A[];
+extern u8 D_800A3470_A4070;
+extern s32 D_800A3474_A4074[];
+extern u8 D_800A34AC_A40AC[];
 
 
 SIDeviceStatus packFileSize(s32 controllerIndex, s32 fileNum, s32 *fileSize);

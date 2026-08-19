@@ -34,6 +34,7 @@ extern Game *D_800FD7D8_B3B28;
 extern s32 debugMenuEnable;
 extern s32 debugInputCode[14];
 extern s32 debugInputCount;
+extern s8 D_800FD7BD_B3B0D;
 
 //Window Size Vars
 extern s16 mainGameWindowSizeX1;
@@ -71,5 +72,6 @@ s32 mainGetNumberOfCameras(void);
 s32 mainResetPressed(void);
 void mainSetDefaultCharacter(MultiCharacter *character, s32 arg1);
 void mainInitMultiPlayer(void);
+s8 mainGetPauseMode(void);
 
 #endif

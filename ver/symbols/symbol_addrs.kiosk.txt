@@ -2209,6 +2209,7 @@ robotDestroyed = 0x800FE250;
 robotFlags = 0x800FE252;
 tribaltable = 0x800FE268;
 D_800FD7BC_B3B0C = 0x800FE26C;
+D_800FD7BD_B3B0D = 0x800FE26D;
 frame = 0x800FE270;
 mainGameMode = 0x800FE274;
 currentalloc = 0x800FE27C;

@@ -434,7 +434,9 @@ Game *mainGetGame(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetLevelWorld.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/main/mainGetPauseMode.s")
+s8 mainGetPauseMode(void) {
+    return D_800FD7BD_B3B0D;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/main/mainSetPauseMode.s")
 

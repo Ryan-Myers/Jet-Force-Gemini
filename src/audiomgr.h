@@ -5,5 +5,6 @@
 
 s32 amAudioMgrGetNextFrameCount(void);
 void amStop(void);
+void amAudioMgrSetScheduleMode(s32 arg0);
 
 #endif
