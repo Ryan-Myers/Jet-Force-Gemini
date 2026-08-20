@@ -264,10 +264,10 @@ typedef struct {
     u8                  debugFlags;     /* control which error get reported */
     N_ALEvent           nextEvent;
     ALEventQueue        evtq;
-    ALMicroTime         frameTime;
 #ifdef VERSION_us
     s32 pad; //TODO: This pad is not likely in this location
 #endif
+    ALMicroTime         frameTime;
     ALChanState        *chanState;      /* 16 channels for MIDI             */
     N_ALVoiceState     *vAllocHead;     /* list head for allocated voices   */
     N_ALVoiceState     *vAllocTail;     /* list tail for allocated voices   */
@@ -395,6 +395,8 @@ f32 func0003b9d4(s32 arg0);
 void func0003ba64(struct fx *fx, f32 outputrate);
 s16 _getRate(f32 vol, f32 tgt, s32 count, u16 *ratel);
 s16 _getVol(s16 ivol, s32 samples, s16 ratem, u16 ratel);
+
+#define N_AL_VOL_FULL 0x7fff
 
 #ifdef _LANGUAGE_C_PLUS_PLUS
 }

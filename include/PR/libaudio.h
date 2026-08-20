@@ -438,7 +438,9 @@ enum ALMsg {
     AL_CSP_LOOPEND,
     AL_CSP_NOTEOFF_EVT,
     AL_TREM_OSC_EVT,
-    AL_VIB_OSC_EVT
+    AL_VIB_OSC_EVT,
+    AL_SEQP_FXMIX_EVT,
+    AL_SEQP_FXPARAM_EVT
 };
 
 /*
@@ -489,21 +491,47 @@ enum AL_MIDIstatus {
 };
 
 enum AL_MIDIctrl {
+    AL_MIDI_OSC_CTRL            = 0x01, // Used in Defection ambience
+    AL_MIDI_PITCH_CTRL          = 0x02,
+    AL_MIDI_BENDRANGE_MINOR_CTRL = 0x03,
+    AL_MIDI_BENDRANGE_MAJOR_CTRL = 0x04,
     AL_MIDI_VOLUME_CTRL         = 0x07,
     AL_MIDI_PAN_CTRL            = 0x0A,
+    AL_MIDI_VIBTYPE_CTRL        = 0x0B,
+    AL_MIDI_VIBRATE_CTRL        = 0x0C,
+    AL_MIDI_VIBDEPTH_CTRL       = 0x0D,
+    AL_MIDI_VIBDELAY_CTRL       = 0x0E,
+    AL_MIDI_TREMTYPE_CTRL       = 0x0F,
     AL_MIDI_PRIORITY_CTRL       = 0x10, /* use general purpose controller for priority */
+    AL_MIDI_TREMRATE_CTRL       = 0x11,
+    AL_MIDI_TREMDEPTH_CTRL      = 0x12,
+    AL_MIDI_TREMDELAY_CTRL      = 0x13,
+    AL_MIDI_ATTACKTIME_CTRL     = 0x14,
     AL_MIDI_FX_CTRL_0           = 0x14,
     AL_MIDI_FX_CTRL_1           = 0x15,
     AL_MIDI_FX_CTRL_2           = 0x16,
     AL_MIDI_FX_CTRL_3           = 0x17,
     AL_MIDI_FX_CTRL_4           = 0x18,
     AL_MIDI_FX_CTRL_5           = 0x19,
+    AL_MIDI_ATTACKVOL_CTRL      = 0x15,
+    AL_MIDI_DECAYTIME_CTRL      = 0x16,
+    AL_MIDI_DECAYVOL_CTRL       = 0x17,
+    AL_MIDI_RELEASETIME_CTRL    = 0x18,
+    AL_MIDI_TIMEINDEX_CTRL      = 0x19,
+    AL_MIDI_MP3_CTRL            = 0x1A,
     AL_MIDI_FX_CTRL_6           = 0x1A,
     AL_MIDI_FX_CTRL_7           = 0x1B,
     AL_MIDI_FX_CTRL_8           = 0x1C,
     AL_MIDI_FX_CTRL_9           = 0x1D,
+    AL_MIDI_OSMESG_CTRL         = 0x1E,
+    AL_MIDI_INST_MAJOR_CTRL     = 0x20,
+    AL_MIDI_UNK11_CTRL          = 0x21,
+    AL_MIDI_UNK12_CTRL          = 0x22,
+    AL_MIDI_UNK13_CTRL          = 0x23,
     AL_MIDI_SUSTAIN_CTRL        = 0x40,
     AL_MIDI_FXMIX80_CTRL        = 0x41,
+    AL_MIDI_FXMIX7F_CTRL        = 0x5B,
+    AL_MIDI_FXBUS_CTRL          = 0x5C,
     AL_MIDI_FX1_CTRL            = 0x5B,
     AL_MIDI_FX3_CTRL            = 0x5D
 #ifdef RAREDIFFS
@@ -513,6 +541,7 @@ enum AL_MIDIctrl {
     AL_MIDI_UNK_6C              = 0x6C, /* channel on? */
     AL_MIDI_UNK_FC              = 0xFC,
     AL_MIDI_FADESPEED_CTRL      = 0xFD,
+    AL_MIDI_SETFADEINC_CTRL     = 0xFE,
     AL_MIDI_FADEEND_CTRL        = 0xFF,
     AL_MIDI_FADESTART_CTRL      = 0xFF
 #endif
@@ -781,9 +810,6 @@ typedef struct {
     u8          maxChannels;       /* max MIDI channels to support (16)*/
     u8          debugFlags;        /* control which error get reported */
     ALHeap      *heap;             /* ptr to initialized heap          */
-#ifdef RAREDIFFS
-    u8          unknown_0x10;
-#endif
     void        *initOsc;
     void        *updateOsc;
     void        *stopOsc;

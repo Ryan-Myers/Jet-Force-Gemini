@@ -329,7 +329,7 @@ segments:
       - [0xA8B50, .data, hasm/ido/math_data_tables]
       - [0xAAB60, data, osBootRamTest]
       - [0xAAB70, data, gsSnd]
-      - [0xAAB90, data, libultra/n_csplayer]
+      - [0xAAB90, .data, libultra/n_csplayer]
       - [0xAAD90, data, libultra/n_sl]
       - [0xAADA0, data, libultra/n_drvrNew]
       - [0xAADE0, data, libultra/n_env]
@@ -459,7 +459,7 @@ segments:
       - { type: .bss, vram: 0x80105B20, name: fmvInit }
       - { type: .bss, vram: 0x80105B70, name: ../libultra/src/flash/flashinit }
       - { type: bss, vram: 0x80105C30, name: gsSnd }
-      - { type: bss, vram: 0x80105CA0, name: libultra/n_csplayer }
+      - { type: .bss, vram: 0x80105CA0, name: libultra/n_csplayer }
       - { type: .bss, vram: 0x80105CE0, name: libultra/alsurround }
       - { type: bss, vram: 0x80105CF0, name: libultra/n_event }
       - { type: .bss, vram: 0x80105D00, name: ../libultra/src/os/initialize }

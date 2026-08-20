@@ -1330,7 +1330,7 @@ n_alCSPGetTempo = 0x800869C0;
 func_8008662C_8722C = 0x800869FC;
 func_80086634_87234 = 0x80086A04;
 n_alCSPNew = 0x80086A10;
-func_800868B0_874B0 = 0x80086C80;
+__n_CSPVoiceHandler = 0x80086C80;
 func_8008712C_87D2C = 0x800874FC;
 func_8008723C_87E3C = 0x8008760C;
 func_800872E8_87EE8 = 0x800876B8;
@@ -2676,6 +2676,7 @@ __osFlashMessageQ = 0x80105B98;
 __osFlashMsgBuf = 0x80105C24;
 gSoundPlayer = 0x80105C30;
 gSoundGroupVolume = 0x80105C94;
+D_80104FD0_B1750 = 0x80105CA0; // size:0x40
 D_80105010_B1750 = 0x80105CE0; // size:0x4
 D_80105014_B1754 = 0x80105CE4; // size:0x2
 D_80105016_B1756 = 0x80105CE6; // size:0x2
@@ -2686,6 +2687,10 @@ __osFlashID = 0x80105B70; // type:u32 size:0x10
 gIntDisFlag = 0x800A3E40;
 gSineTable = 0x800A7F50; // type:s16
 gArcTanTable = 0x800A9758; // type:s16
+
+g_CspTimeLookup = 0x800A9F90;
+D_800A97BC_AA3BC = 0x800AA18C;
+
 gSoundStateLists = 0x800A9F70; // size:0xC
 gSoundPlayerPtr = 0x800A9F7C;
 globalVolume = 0x800A9F80; // type:u32

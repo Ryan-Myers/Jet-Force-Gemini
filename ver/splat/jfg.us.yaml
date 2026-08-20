@@ -331,7 +331,7 @@ segments:
       - [0xA80B0, data, anim]
       - [0xA8190, .data, hasm/ido/math_data_tables]
       - [0xAA1A0, data, gsSnd]
-      - [0xAA1C0, data, libultra/n_csplayer]
+      - [0xAA1C0, .data, libultra/n_csplayer]
       - [0xAA3C0, data, libultra/n_sl]
       - [0xAA3D0, data, libultra/n_synthesizer]
       - [0xAA3E0, data, libultra/n_drvrNew]
@@ -463,7 +463,7 @@ segments:
       - { type: .bss, vram: 0x80104E50, name: fmvInit }
       - { type: .bss, vram: 0x80104EA0, name: ../libultra/src/flash/flashinit }
       - { type: bss, vram: 0x80104F60, name: gsSnd }
-      - { type: bss, vram: 0x80104FD0, name: libultra/n_csplayer }
+      - { type: .bss, vram: 0x80104FD0, name: libultra/n_csplayer }
       - { type: .bss, vram: 0x80105010, name: libultra/alsurround }
       - { type: bss, vram: 0x80105020, name: libultra/n_event }
       - { type: .bss, vram: 0x80105030, name: ../libultra/src/io/pfsisplug }
