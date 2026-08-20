@@ -18,6 +18,7 @@ CPP_FLAGS = [
     "-Iinclude/sys",
     "-Iassets",
     "-Isrc",
+    "-Isrc/libultra",
     "-Ilibultra",
     "-Ilibultra/src/gu",
     "-Ilibultra/src/libc",

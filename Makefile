@@ -344,17 +344,14 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/exceptasm.s.o: MIPSISET := -mips3 -32
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/%.c.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/%.c.o: MIPSISET := -mips2
 
+# Libultra -g files
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/alsurround.c.o: OPT_FLAGS := -g
-$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/alsurround.c.o: MIPSISET := -mips2
-
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/cents2ratio.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_alsynsetdistort.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: OPT_FLAGS := -g
-$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: MIPSISET := -mips2
-
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_alcspchan.c.o: OPT_FLAGS := -g
-$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_alcspchan.c.o: MIPSISET := -mips2
-
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_resample2.c.o: OPT_FLAGS := -g
-$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_resample2.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_resample2.c.o: OPT_FLAGS := -g
 
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: MIPSISET := -mips2
