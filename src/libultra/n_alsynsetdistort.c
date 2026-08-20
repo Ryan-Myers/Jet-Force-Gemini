@@ -2,6 +2,7 @@
 
 #include "n_synthInternals.h"
 #include <n_libaudio.h>
+#include <ultra64.h>
 
 void n_alSynSetDistort(N_ALVoice *voice, u8 data) {
     ALParam *update;
