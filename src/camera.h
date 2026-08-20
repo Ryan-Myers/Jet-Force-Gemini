@@ -49,11 +49,11 @@ extern ScreenViewport D_800A3728[4]; //gScreenViewports
 
 void camPopModelMtx(Gfx **dlist);
 void camRestoreModelMtx(Gfx **dlist);
-void camPushModelMtx(Gfx **dList, MatrixS **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
+void camPushModelMtx(Gfx **dList, Mtx **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
 Camera *camGetPtr(void);
 Matrix *camGetRotationMtx(void);
 Mtx *camGetProjOrgMtx(void);
-void camDoSprite(Gfx**, Mtx**, Vertex**, void*, Sprite*, s32, s32);
+void camDoSprite(Gfx**, Mtx**, Vertex**, ObjectSegment*, Sprite*, s32, u8);
 void camSetFOV(f32, s32);
 void camSetNo(s32);
 void camSetScissor(Gfx **dlist);
