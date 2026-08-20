@@ -1,5 +1,6 @@
-#include "common.h"
+#include <libaudio.h>
+#include "n_libaudio.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cspgetstate/n_alCSPGetState.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cspgetstate/func_800899D8_8A5D8.s")
+s32 n_alCSPGetState(N_ALCSPlayer *seqp) {
+	return seqp->state;
+}
