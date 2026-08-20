@@ -39,7 +39,24 @@ UNUSED u8 PathLists[0x3C];
 s32 *D_800FEA54_B9294;
 UNUSED u8 AnimPathNumbers[0x40];
 s32 MaxPatrolNodes;
-void *PatrolNodes;
+PatrolNode *PatrolNodes;
+
+Object **objGetObjList(s32 *first, s32 *last);
+extern void GetRomlistInfo(RomDefHeader **list, s32 *size, s32 which);
+extern s32 levelGetObjectID(s32 arg0);
+extern void doorRegisterOpener(s32 arg0, s32 arg1);
+extern s32 objGetControlNo(s16 arg0);
+s32 ProcessNodeChange(s32 arg0);
+s32 levelObjectFlagSet(s32 arg0);
+void AIPointInit(s32 **arg0);
+void BindRegionsToObjects(Object *arg0, s32 arg1);
+void CopyStaticsToSquads(s32 arg0, Object *arg1);
+s32 GetClosestPatrolNode(f32 x, f32 y, f32 z, s32 arg3);
+s32 GetNextNodeNumber(s32 arg0, s32 arg1, s32 arg2, PatrolNode *node);
+void SquaddieControl(Object *arg0, s32 arg1);
+void doorUnlock(s32 arg0, s32 arg1);
+void squadsAddToActiveSquaddies(DisactivatedSquaddie *arg0);
+extern AnimPath **animpath;
 
 int squadsIsTribal(s32 arg0) {
     return ((arg0 >= 0x11C) && (arg0 < 0x121)) || (arg0 == 0x66) || (arg0 == 0x70) || (arg0 == 0x90) ||
@@ -389,7 +406,69 @@ void GetFormationInfo(Object *arg0, u8 *arg1, u8 *arg2, u8 *arg3) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/ProcessNodeChange.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/func_80051CCC_528CC.s")
+void func_80051CCC_528CC(void) {
+    s32 i;
+    Object **list;
+    s32 first;
+    s32 last;
+    RomDefHeader **lp;
+    s32 total;
+    s32 *sp;
+    s32 *endp;
+    RomDefHeader *lists[2];
+    RomDefHeader *entry;
+    Object_Racer *racer;
+    s32 sizes[2];
+    s32 id;
+    Object *obj;
+    s32 door;
+
+    GetRomlistInfo(&lists[1], &sizes[1], 1);
+    GetRomlistInfo(&lists[0], &sizes[0], 0);
+    list = objGetObjList(&first, &last);
+    endp = &sizes[2];
+    for (i = first; i < last; i++) {
+        obj = list[i];
+        if (obj->unkA0 != 0) {
+            continue;
+        }
+        if (obj->behaviorId == 0x17) {
+            racer = obj->racer;
+            if (racer->unk2C == 0x2CE) {
+                continue;
+            }
+            id = levelGetObjectID(racer->unk1);
+            racer->unk88 = id;
+            racer->unk8C = id;
+            door = racer->unk75;
+            if (door != 0) {
+                doorRegisterOpener(door & 0xFFFFFFFFu, 0x20);
+            }
+            lp = &lists[0];
+            sp = &sizes[0];
+            do {
+                entry = *lp;
+                total = 0;
+                while (total < *sp) {
+                    if (objGetControlNo(entry->id) == 0x18) {
+                        if (entry->unk11 == racer->unk64b) {
+                            entry->unk18 = racer->unk8C;
+                            racer->unk8C = racer->unk8C + 1;
+                        }
+                    }
+                    total += entry->size;
+                    entry = (RomDefHeader *) ((u32) entry + entry->size);
+                }
+                sp++;
+                lp++;
+                endp = &sizes[2];
+            } while (sp != endp);
+            if (racer->unk63 >= racer->unk1) {
+                racer->unk30 = 7;
+            }
+        }
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsInitialiseAfterObjects.s")
 
