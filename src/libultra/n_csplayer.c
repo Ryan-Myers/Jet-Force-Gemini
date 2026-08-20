@@ -1110,7 +1110,6 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_csplayer/__n_CSPHandleMIDIMsg.s")
 #endif
 
-#if 1
 void __n_CSPHandleMetaMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 {
 	ALTempoEvent *tevt = &event->msg.tempo;
@@ -1170,11 +1169,7 @@ void __n_CSPHandleMetaMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 		}
 	}
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_csplayer/__n_CSPHandleMetaMsg.s")
-#endif
 
-#if 0
 void __n_CSPRepostEvent(ALEventQueue *evtq, N_ALEventListItem *item)
 {
 	OSIntMask mask;
@@ -1186,6 +1181,9 @@ void __n_CSPRepostEvent(ALEventQueue *evtq, N_ALEventListItem *item)
 	for (node = &evtq->allocList; node != 0; node = node->next) {
 		if (!node->next) {
 			alLink((ALLink *)item, node);
+#ifdef VERSION_us
+            evtq->unkVal++;
+#endif
 			break;
 		} else {
 			nextItem = (N_ALEventListItem *)node->next;
@@ -1193,6 +1191,9 @@ void __n_CSPRepostEvent(ALEventQueue *evtq, N_ALEventListItem *item)
 			if (item->delta < nextItem->delta) {
 				nextItem->delta -= item->delta;
 				alLink((ALLink *)item, node);
+#ifdef VERSION_us
+                evtq->unkVal++;
+#endif
 				break;
 			}
 
@@ -1202,11 +1203,7 @@ void __n_CSPRepostEvent(ALEventQueue *evtq, N_ALEventListItem *item)
 
 	osSetIntMask(mask);
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_csplayer/__n_CSPRepostEvent.s")
-#endif
 
-#if 0
 void __n_setUsptFromTempo(N_ALCSPlayer *seqp, f32 tempo)
 {
 	if (seqp->target) {
@@ -1215,11 +1212,7 @@ void __n_setUsptFromTempo(N_ALCSPlayer *seqp, f32 tempo)
 		seqp->uspt = 488;
 	}
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_csplayer/__n_setUsptFromTempo.s")
-#endif
 
-#if 0
 void __n_CSPPostNextSeqEvent(N_ALCSPlayer *seqp)
 {
 	N_ALEvent evt;
@@ -1238,9 +1231,6 @@ void __n_CSPPostNextSeqEvent(N_ALCSPlayer *seqp)
 	evt.type = AL_SEQ_REF_EVT;
 	n_alEvtqPostEvent(&seqp->evtq, &evt, deltaTicks * seqp->uspt);
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_csplayer/__n_CSPPostNextSeqEvent.s")
-#endif
 
 void n_alCSPVoiceLimit(N_ALCSPlayer *seqp, u8 value) {
 	seqp->voicelimit = value;
