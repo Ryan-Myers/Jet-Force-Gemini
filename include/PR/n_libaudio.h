@@ -264,9 +264,6 @@ typedef struct {
     u8                  debugFlags;     /* control which error get reported */
     N_ALEvent           nextEvent;
     ALEventQueue        evtq;
-#ifdef VERSION_us
-    s32 pad; //TODO: This pad is not likely in this location
-#endif
     ALMicroTime         frameTime;
     ALChanState        *chanState;      /* 16 channels for MIDI             */
     N_ALVoiceState     *vAllocHead;     /* list head for allocated voices   */

@@ -1110,7 +1110,7 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_csplayer/__n_CSPHandleMIDIMsg.s")
 #endif
 
-#if 0
+#if 1
 void __n_CSPHandleMetaMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 {
 	ALTempoEvent *tevt = &event->msg.tempo;
@@ -1134,7 +1134,9 @@ void __n_CSPHandleMetaMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 
 				if (thisNode->evt.type == AL_CSP_NOTEOFF_EVT) {
 					alUnlink((ALLink*)thisNode);
-
+#ifdef VERSION_us
+                    seqp->evtq.unkVal--;
+#endif
 					if (firstTemp) {
 						alLink((ALLink*)thisNode,(ALLink*)firstTemp);
 					} else {

@@ -682,6 +682,9 @@ typedef struct {
 typedef struct {
     ALLink      freeList;
     ALLink      allocList;
+#ifdef VERSION_us
+    s16         unkVal;
+#endif
     s32         eventCount;
 } ALEventQueue;
 
