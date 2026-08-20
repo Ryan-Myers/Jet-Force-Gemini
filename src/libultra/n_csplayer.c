@@ -467,10 +467,8 @@ void func_800872E8_87EE8(N_ALCSPlayer *seqp, u8 channel)
 	}
 }
 
-void snd_start_mp3_by_filenum(u8 arg0);
 f32 _depth2Cents(u8 arg0);
 
-#if 0
 void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 {
 	N_ALVoice          *voice;
@@ -511,7 +509,6 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 	case (AL_MIDI_NoteOn):
 
 		if (vel != 0) /* a real note on */ {
-			oscState = 0;
 
 			/* If we're not playing, don't process note ons. */
 			if (seqp->state != AL_PLAYING || (seqp->chanMask & (1 << chan)) == 0) {
@@ -594,10 +591,10 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 				if (seqp->initOsc) {
 					if (chanstate->usechanparams) {
 						deltaTime = (*seqp->initOsc)(&oscState, &oscValue, chanstate->tremType,
-								chanstate->tremRate, chanstate->tremDepth, chanstate->tremDelay/*, chanstate->timeindex */);
+								chanstate->tremRate, chanstate->tremDepth, chanstate->tremDelay, chanstate->timeindex);
 					} else {
 						deltaTime = (*seqp->initOsc)(&oscState, &oscValue, inst->tremType,
-								inst->tremRate, inst->tremDepth, inst->tremDelay/*, chanstate->timeindex */);
+								inst->tremRate, inst->tremDepth, inst->tremDelay, chanstate->timeindex);
 					}
 
 					if (deltaTime) /* a deltaTime of zero means don't run osc */ {
@@ -627,10 +624,10 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 				if (seqp->initOsc) {
 					if (chanstate->usechanparams) {
 						deltaTime = (*seqp->initOsc)(&oscState, &oscValue, chanstate->vibType,
-								chanstate->vibRate, chanstate->vibDepth, chanstate->vibDelay/*, chanstate->timeindex */);
+								chanstate->vibRate, chanstate->vibDepth, chanstate->vibDelay, chanstate->timeindex);
 					} else {
 						deltaTime = (*seqp->initOsc)(&oscState, &oscValue, inst->vibType,
-								inst->vibRate, inst->vibDepth, inst->vibDelay/*, chanstate->timeindex */);
+								inst->vibRate, inst->vibDepth, inst->vibDelay, chanstate->timeindex);
 					}
 
 					if (deltaTime)  /* a deltaTime of zero means don't run osc. */ {
@@ -872,7 +869,7 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 
 			for (vs = seqp->vAllocHead; vs != 0; vs = vs->next) {
 				if (vs->channel == chan) {
-					n_alSynFilter11(&vs->voice, byte2);
+					n_alSynSetDistort(&vs->voice, byte2);
 				}
 			}
 			break;
@@ -945,39 +942,32 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 			}
 			break;
 		case (AL_MIDI_FXBUS_CTRL):
-			if (byte2 < n_syn->maxAuxBusses) {
+			if (byte2 < n_syn->maxAuxBusses && byte2 >= 0) {
 				seqp->chanState[chan].fxbus = byte2;
 			}
-			break;
-		case (AL_MIDI_MP3_CTRL):
-			snd_start_mp3_by_filenum(byte2);
+            break;
+        case (AL_MIDI_MP3_CTRL):
 			break;
 		case (AL_MIDI_INST_MAJOR_CTRL):
-			seqp->chanState[chan].instmajor = byte2;
+            seqp->chanState[chan].instmajor = byte2; 
 			break;
 		case (AL_MIDI_ATTACKTIME_CTRL):
 			seqp->chanState[chan].attackTime = g_CspTimeLookup[byte2];
-			seqp->chanState[chan].usechanparams = 1;
 			break;
 		case (AL_MIDI_ATTACKVOL_CTRL):
 			seqp->chanState[chan].attackVolume = byte2;
-			seqp->chanState[chan].usechanparams = 1;
 			break;
 		case (AL_MIDI_DECAYTIME_CTRL):
 			seqp->chanState[chan].decayTime = g_CspTimeLookup[byte2];
-			seqp->chanState[chan].usechanparams = 1;
 			break;
 		case (AL_MIDI_DECAYVOL_CTRL):
 			seqp->chanState[chan].decayVolume = byte2;
-			seqp->chanState[chan].usechanparams = 1;
 			break;
 		case (AL_MIDI_RELEASETIME_CTRL):
 			seqp->chanState[chan].releaseTime = g_CspTimeLookup[byte2];
-			seqp->chanState[chan].usechanparams = 1;
 			break;
 		case (AL_MIDI_PITCH_CTRL):
 			seqp->chanState[chan].pitch = byte2 - 64;
-			seqp->chanState[chan].usechanparams = 1;
 			break;
 		case (AL_MIDI_BENDRANGE_MINOR_CTRL):
 			seqp->chanState[chan].bendRange /= 100;
@@ -1094,7 +1084,11 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 					n_alSynSetPitch(&vs->voice, vs->pitch * bendRatio * vs->vibrato);
 
 					if (seqp->chanState[chan].unk11) {
-						n_alSynSetLpf_freq(&vs->voice, 440 * alSemitones2Ratio(vs->key - vs->sound->keyMap->keyBase + seqp->chanState[chan].unk12 - 64) * bendRatio * vs->vibrato);
+						n_alSynSetLpf_freq(&vs->voice, 
+                            440 
+                            * alSemitones2Ratio(vs->key - vs->sound->keyMap->keyBase) 
+                            * bendRatio 
+                            * vs->vibrato);
 					}
 				}
 			}
@@ -1106,9 +1100,6 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 		break;
 	}
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_csplayer/__n_CSPHandleMIDIMsg.s")
-#endif
 
 void __n_CSPHandleMetaMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 {

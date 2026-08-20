@@ -819,7 +819,7 @@ typedef struct {
 } ALSeqpConfig;
 
 typedef ALMicroTime   (*ALOscInit)(void **oscState,f32 *initVal, u8 oscType,
-                                   u8 oscRate, u8 oscDepth, u8 oscDelay);
+                                   u8 oscRate, u8 oscDepth, u8 oscDelay, u8 timeIndex);
 typedef ALMicroTime   (*ALOscUpdate)(void *oscState, f32 *updateVal);
 typedef void          (*ALOscStop)(void *oscState);
 
