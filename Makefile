@@ -352,6 +352,7 @@ $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_alsynsetlpffreq.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_alsynsetlpfgain.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_auxbus.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_csq.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cseq.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_alcspchan.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_resample2.c.o: OPT_FLAGS := -g

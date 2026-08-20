@@ -153,7 +153,7 @@ segments:
       - [0x8F310, c, libultra/n_syngetfxref]
       - [0x8F400, c, libultra/n_synsetfxparam]
       - [0x8F500, c, libultra/n_alsynsetdistort]
-      - [0x8F5B0, c, libultra/n_cseqnextdelta]
+      - [0x8F5B0, c, libultra/n_cseq]
       - [0x8F690, c, libultra/n_syndelete]
       - [0x8F6B0, c, libultra/n_synallocfx]
       - [0x8F740, c, libultra/n_reverb]
