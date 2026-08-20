@@ -1,13 +1,23 @@
 #include "common.h"
+#include "n_libaudio.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cspmessage/n_alCSPSetMessageQ.s")
+// Not 100% confident on the types used here, but it does pass the sniff test.
 
-void func_8008A49C_8B09C(void) {
+void n_alCSPSetMessageQ(N_ALCSPlayer *seqp, OSMesgQueue *mq) {
+    seqp->queue = mq;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cspmessage/n_alCSPSetMessage.s")
+void n_alCSPSetMessage(N_ALCSPlayer *seqp, u8 index, u8 flag) {
+    ALInstrument *inst;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cspmessage/n_alCSPSetChanMessage.s")
+    if (index < seqp->bank->instCount) {
+        inst = seqp->bank->instArray[index];
+        if (inst != NULL) {
+            inst->flags = (flag << 1) | (inst->flags & 1);
+        }
+    }
+}
 
-void func_8008A538_8B138(void) {
+void n_alCSPSetChanMessage(N_ALCSPlayer *seqp, s32 index, u8 flag) {
+    seqp->chanState[index].notemesgflags = flag;
 }
