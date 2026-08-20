@@ -127,7 +127,7 @@ segments:
       - [0x8BB80, c, libultra/n_cspsetchlvol]
       - [0x8BBF0, c, libultra/n_cspsettempo]
       - [0x8BC80, c, libultra/n_cspsetpan]
-      - [0x8BCF0, c, libultra/n_cseq]
+      - [0x8BCF0, c, libultra/n_csq]
       - [0x8C6C0, c, libultra/n_cspsetseq]
       - [0x8C710, c, libultra/n_cspplay]
       - [0x8C750, c, libultra/n_cspstop]
