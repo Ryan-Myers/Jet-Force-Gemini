@@ -243,12 +243,12 @@ void camEnableUserView(s32 camNo, s32 immediate) {
 
     if (immediate != 0) {
         vp = &D_800A2ED4_A3AD4[camNo];
-        vp->flags = (s32) (vp->flags | 1);
+        vp->flags |= 1;
     } else {
         vp = &D_800A2ED4_A3AD4[camNo];
-        vp->flags = (s32) (vp->flags | 2);
+        vp->flags |= 2;
     }
-    vp->flags = (s32) (vp->flags & ~4);
+    vp->flags &= ~4;
 }
 
 void camDisableUserView(s32 camNo, s32 immediate) {
@@ -256,12 +256,12 @@ void camDisableUserView(s32 camNo, s32 immediate) {
 
     if (immediate != 0) {
         vp = &D_800A2ED4_A3AD4[camNo];
-        vp->flags = (s32) (vp->flags & ~1);
+        vp->flags &= ~1;
     } else {
         vp = &D_800A2ED4_A3AD4[camNo];
-        vp->flags = (s32) (vp->flags | 4);
+        vp->flags |= 4;
     }
-    vp->flags = (s32) (vp->flags & ~2);
+    vp->flags &= ~2;
 }
 
 s32 camIsUserView(s32 camNo) {
@@ -271,34 +271,34 @@ s32 camIsUserView(s32 camNo) {
 #pragma GLOBAL_ASM("asm/nonmatchings/camera/camSetUserView.s")
 
 void camSetUserViewSpecial(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
-    ScreenViewport* vp;
+    ScreenViewport *vp;
 
     if (arg1 != 0x8000) {
         vp = &D_800A2ED4_A3AD4[arg0];
         vp->posX = arg1;
-        vp->flags = (s32) (vp->flags | 8);
+        vp->flags |= 8;
     } else {
         vp = &D_800A2ED4_A3AD4[arg0];
-        vp->flags = (s32) (vp->flags & ~8);
+        vp->flags &= ~8;
     }
     if (arg2 != 0x8000) {
         vp->posY = arg2;
-        vp->flags = (s32) (vp->flags | 0x10);
+        vp->flags |= 0x10;
     } else {
-        vp->flags = (s32) (vp->flags & ~0x10);
+        vp->flags &= ~0x10;
     }
     if (arg3 != 0x8000) {
         vp->width = arg3;
-        vp->flags = (s32) (vp->flags | 0x20);
+        vp->flags |= 0x20;
     } else {
-        vp->flags = (s32) (vp->flags & ~0x20);
+        vp->flags &= ~0x20;
     }
     if (arg4 != 0x8000) {
         vp->height = arg4;
-        vp->flags = (s32) (vp->flags | 0x40);
+        vp->flags |= 0x40;
         return;
     }
-    vp->flags = (s32) (vp->flags & ~0x40);
+    vp->flags &= ~0x40;
 }
 
 s32 camGetVisibleUserView(s32 camNo, s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
@@ -315,7 +315,7 @@ s32 camGetVisibleUserView(s32 camNo, s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
     return 1;
 }
 
-void camGetUserView(s32 camNo, s32* x1, s32* y1, s32* x2, s32* y2) {
+void camGetUserView(s32 camNo, s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
     ScreenViewport *vp = &D_800A2ED4_A3AD4[camNo];
     *x1 = vp->x1;
     *y1 = vp->y1;
@@ -344,36 +344,36 @@ void camGetWindowLimits(s32 arg0, s32 arg1, s32 *arg2, s32 *arg3, u32 *arg4, u32
     *arg3 = 0;
 
     switch (arg0) {
-    case 1:
-        if ((videoMode & 1) || frontGet2PlayerSplit()) {
-            if (arg1 == 0) {
-                *arg4 = halfW;
+        case 1:
+            if ((videoMode & 1) || frontGet2PlayerSplit()) {
+                if (arg1 == 0) {
+                    *arg4 = halfW;
+                } else {
+                    *arg2 = halfW;
+                }
             } else {
+                if (arg1 == 0) {
+                    *arg5 = halfH;
+                } else {
+                    *arg3 = halfH;
+                }
+            }
+            break;
+        case 2: /* fallthrough */
+        case 3:
+            if (arg1 & 1) {
                 *arg2 = halfW;
-            }
-        } else {
-            if (arg1 == 0) {
-                *arg5 = halfH;
             } else {
-                *arg3 = halfH;
+                *arg4 = halfW;
             }
-        }
-        break;
-    case 2: /* fallthrough */
-    case 3:
-        if (arg1 & 1) {
-            *arg2 = halfW;
-        } else {
-            *arg4 = halfW;
-        }
-        if (arg1 & 2) {
-            *arg3 = halfH;
-        } else {
-            *arg5 = halfH;
-        }
-        break;
-    case 0:
-        break;
+            if (arg1 & 2) {
+                *arg3 = halfH;
+            } else {
+                *arg5 = halfH;
+            }
+            break;
+        case 0:
+            break;
     }
 }
 
@@ -412,7 +412,7 @@ void camSetView(Gfx **dlist, Mtx **mtx) {
         gSPClipRatio((*dlist)++, FRUSTRATIO_1);
     }
 
-    gDPSetScissor((*dlist)++, 0, win.ulx, win.uly, win.lrx, win.lry);
+    gDPSetScissor((*dlist)++, G_SC_NON_INTERLACE, win.ulx, win.uly, win.lrx, win.lry);
     camSetViewport(dlist, halfWidth, halfHeight, (win.lrx + win.ulx) >> 1, (win.lry + win.uly) >> 1);
 
     if (mtx != NULL) {
@@ -533,7 +533,7 @@ void camResetView(Gfx **arg0) {
     D_800FA634_B18B4 = 4;
     viGetCurrentSize((s32 *) &width, (s32 *) &height);
     if (!(D_800A2ED4_A3AD4[D_800FA634_B18B4].flags & 1)) {
-        gDPSetScissor((*arg0)++, 0, 0, 0, width - 1, height - 1);
+        gDPSetScissor((*arg0)++, G_SC_NON_INTERLACE, 0, 0, width - 1, height - 1);
         camSetViewport(arg0, width >> 1, height >> 1, width >> 1, height >> 1);
     } else {
         camSetScissor(arg0);
@@ -545,8 +545,7 @@ void camResetView(Gfx **arg0) {
 void camOffsetZero(Gfx **dlist, Mtx **mtx) {
 }
 
-void camDoSprite(Gfx **dlist, Mtx **mtx, Vertex **vtx, ObjectSegment *segment,
-                 Sprite *sprite, s32 flags, u8 arg6) {
+void camDoSprite(Gfx **dlist, Mtx **mtx, Vertex **vtx, ObjectSegment *segment, Sprite *sprite, s32 flags, u8 arg6) {
     s32 rot;
     f32 scale;
     f32 aspect;
@@ -563,8 +562,7 @@ void camDoSprite(Gfx **dlist, Mtx **mtx, Vertex **vtx, ObjectSegment *segment,
     gSPVertexJFG((*dlist)++, OS_PHYSICAL_TO_K0(*vtx), 1, 0);
     (*vtx)++;
 
-    rot = *(s16 *)((u8 *)&D_800FA4D4_B1754 + D_800FA634_B18B4 * 0x4C)
-        + segment->trans.rotation.z_rotation;
+    rot = *(s16 *) ((u8 *) &D_800FA4D4_B1754 + D_800FA634_B18B4 * 0x4C) + segment->trans.rotation.z_rotation;
     scale = segment->trans.scale * D_800A3168_A3D68;
     aspect = aspectRatioFloat;
     if (viGetVideoMode() & 1) {
@@ -589,15 +587,14 @@ void camDoSprite(Gfx **dlist, Mtx **mtx, Vertex **vtx, ObjectSegment *segment,
     if (flags & 4) {
         flags |= 1;
     }
-    sprDPset(dlist, sprite, flags & 0xF, *(s32 *)&segment->unk28, arg6);
+    sprDPset(dlist, sprite, flags & 0xF, *(s32 *) &segment->unk28, arg6);
 
     gSPSelectMatrixDKR((*dlist)++, G_MTX_DKR_INDEX_0);
     gDkrDisableBillboard((*dlist)++);
 }
 
-void camDoSpriteDirect(Gfx **dlist, Mtx **mtx, Vertex **vtx, Sprite *sprite,
-                       s16 x, s16 y, s16 z, s16 angle, f32 scale, s32 arg9,
-                       s32 flags, u8 arg11) {
+void camDoSpriteDirect(Gfx **dlist, Mtx **mtx, Vertex **vtx, Sprite *sprite, s16 x, s16 y, s16 z, s16 angle, f32 scale,
+                       s32 arg9, s32 flags, u8 arg11) {
     s32 rot;
     f32 aspect;
     register Vertex *v;
@@ -613,7 +610,7 @@ void camDoSpriteDirect(Gfx **dlist, Mtx **mtx, Vertex **vtx, Sprite *sprite,
     gSPVertexJFG((*dlist)++, OS_PHYSICAL_TO_K0(*vtx), 1, 0);
     (*vtx)++;
 
-    rot = *(s16 *)((u8 *)&D_800FA4D4_B1754 + D_800FA634_B18B4 * 0x4C) + angle;
+    rot = *(s16 *) ((u8 *) &D_800FA4D4_B1754 + D_800FA634_B18B4 * 0x4C) + angle;
     scale *= D_800A3168_A3D68;
     aspect = aspectRatioFloat;
     if (viGetVideoMode() & 1) {
@@ -644,8 +641,7 @@ void camDoSpriteDirect(Gfx **dlist, Mtx **mtx, Vertex **vtx, Sprite *sprite,
     gDkrDisableBillboard((*dlist)++);
 }
 
-void camDo2DSprite(Gfx **dlist, Mtx **mtx, Vertex **vtx, ObjectSegment *segment,
-                   Sprite *sprite, s32 flags, u8 arg6) {
+void camDo2DSprite(Gfx **dlist, Mtx **mtx, Vertex **vtx, ObjectSegment *segment, Sprite *sprite, s32 flags, u8 arg6) {
     Vertex *v;
     f32 scale;
     struct {
@@ -672,8 +668,7 @@ void camDo2DSprite(Gfx **dlist, Mtx **mtx, Vertex **vtx, ObjectSegment *segment,
     D_800FA638_B18B8.rotation.y_rotation = -segment->trans.rotation.y_rotation;
     D_800FA638_B18B8.rotation.x_rotation = -segment->trans.rotation.x_rotation;
     D_800FA638_B18B8.rotation.z_rotation =
-        *(s16 *)((u8 *)&D_800FA4D4_B1754 + D_800FA634_B18B4 * 0x4C)
-        + segment->trans.rotation.z_rotation;
+        *(s16 *) ((u8 *) &D_800FA4D4_B1754 + D_800FA634_B18B4 * 0x4C) + segment->trans.rotation.z_rotation;
     D_800FA638_B18B8.x_position = 0.0f;
     D_800FA638_B18B8.y_position = 0.0f;
     D_800FA638_B18B8.z_position = 0.0f;
@@ -695,7 +690,7 @@ void camDo2DSprite(Gfx **dlist, Mtx **mtx, Vertex **vtx, ObjectSegment *segment,
     gSPMatrix((*dlist)++, OS_PHYSICAL_TO_K0(*mtx), G_MTX_DKR_INDEX_2);
     (*mtx)++;
     gDkrEnableBillboard((*dlist)++);
-    sprDPset(dlist, sprite, flags, *(s32 *)&segment->unk28, arg6);
+    sprDPset(dlist, sprite, flags, *(s32 *) &segment->unk28, arg6);
     gSPSelectMatrixDKR((*dlist)++, G_MTX_DKR_INDEX_0);
     gDkrDisableBillboard((*dlist)++);
 }
@@ -749,11 +744,7 @@ void camPushMuzzleMtx(Gfx **arg0, Mtx **arg1, Vec3f *arg2, Matrix arg3) {
     mathMtxCatF(D_800FAAB0_B1D30, D_800FAAF0_B1D70, D_800FB038_B22B8);
     mathMtxF2L(D_800FB038_B22B8, *arg1);
     D_800FAB30_B1DB0 = *arg1;
-    {
-        Gfx *g = (*arg0)++;
-        g->words.w0 = 0x01010040;
-        g->words.w1 = (u32)((char *)*arg1 + 0x80000000);
-    }
+    gSPMatrix((*arg0)++, OS_PHYSICAL_TO_K0(*arg1), G_MTX_DKR_INDEX_1);
     (*arg1)++;
 }
 
@@ -763,11 +754,7 @@ void camScaleModelMtx(Gfx **dlist, Mtx **mtx, f32 scale) {
         mathMtxCatF(D_800FAAB0_B1D30, D_800FAAF0_B1D70, D_800FB038_B22B8);
         mathMtxF2L(D_800FB038_B22B8, *mtx);
         D_800FAB30_B1DB0 = *mtx;
-        {
-            Gfx *g = (*dlist)++;
-            g->words.w0 = 0x01010040;
-            g->words.w1 = (u32)((char *)*mtx + 0x80000000);
-        }
+        gSPMatrix((*dlist)++, OS_PHYSICAL_TO_K0(*mtx), G_MTX_DKR_INDEX_1);
         (*mtx)++;
     }
 }
@@ -826,14 +813,14 @@ Matrix *camGetRotationMtx(void) {
 f32 camGetProjZ(f32 x, f32 y, f32 z) {
     f32 temp;
     f32 out;
-    
+
     temp = D_800FAF78_B21F8[3][2];
 
     out = temp + (z * D_800FAF78_B21F8[2][2] + (y * D_800FAF78_B21F8[1][2] + D_800FAF78_B21F8[0][2] * (temp = x)));
     temp = y * D_800FAF78_B21F8[1][2] + x * D_800FAF78_B21F8[0][2];
     temp = z * D_800FAF78_B21F8[2][2] + temp;
     out = D_800FAF78_B21F8[3][2] + temp;
-    
+
     return out;
 }
 
