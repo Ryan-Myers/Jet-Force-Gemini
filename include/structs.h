@@ -221,7 +221,9 @@ typedef struct ObjectTransform {
 
 typedef struct ObjectSegment {
   /* 0x0000 */ ObjectTransform trans;
-  /* 0x0018 */ u8 pad18[0x28];
+  /* 0x0018 */ u8 pad18[0x10];
+  /* 0x0028 */ f32 unk28; /* animation value; sprDPset reads it as float bits */
+  /* 0x002C */ u8 pad2C[0x14];
   /* 0x0048 */ ObjectHeader *header;
 } ObjectSegment;
 
