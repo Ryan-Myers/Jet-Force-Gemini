@@ -57,6 +57,7 @@ s32 GetNextNodeNumber(s32 arg0, s32 arg1, s32 arg2, PatrolNode *node);
 void SquaddieControl(Object *arg0, s32 arg1);
 void doorUnlock(s32 arg0, s32 arg1);
 void squadsAddToActiveSquaddies(DisactivatedSquaddie *arg0);
+Object *objSetupObject(StaticInstanceSpawn *spawn, s32 arg1);
 extern AnimPath **animpath;
 
 int squadsIsTribal(s32 arg0) {
@@ -183,9 +184,6 @@ s32 BaddyTypeToIndex(s32 arg0) {
             return -1;
     }
 }
-
-s32 BaddyTypeToIndex();
-Object *objSetupObject(StaticInstanceSpawn *spawn, s32 arg1);
 
 void CreateStaticInstance(s32 arg0) {
     u8 *slot;
