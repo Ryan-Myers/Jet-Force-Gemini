@@ -1,5 +1,3 @@
-#include "common.h"
-
 /*====================================================================
  *
  * Copyright 1993, Silicon Graphics, Inc.
@@ -250,3 +248,99 @@ void n_alEvtqFlushType(ALEventQueue *evtq, s16 type)
 
     osSetIntMask(mask);
 }
+
+
+#ifdef _DEBUG_INTERNAL
+void n_alEvtqPrintEvtQueue(ALEventQueue *evtq) 
+{
+    s32 count1 = 0;
+    s32 count2 = 0;
+    ALLink *node;
+    N_ALEventListItem *item;
+    
+    /* count free events */
+    for (node = evtq->freeList.next; node != 0; node= node->next) {
+        count1++;
+    }
+
+    osSyncPrintf("----- Allocated Events -----\n");
+    for (node = evtq->allocList.next; node != 0; node= node->next) {
+        item = (N_ALEventListItem *)node;
+        
+        osSyncPrintf("\tdelta: %d\ttype %d\n", item->delta, item->evt.type);
+        count2++;
+    }
+    osSyncPrintf("\n");
+
+    osSyncPrintf("free  events\t %d\n", count1);
+    osSyncPrintf("alloc events\t %d\n", count2);
+    osSyncPrintf("total events\t %d\n", count1 + count2);
+}
+
+static char *MidiStatus2Str (char status, char *str);
+
+void
+n_alEvtqPrintAllocEvts(ALEventQueue *evtq) 
+{
+    ALLink *node;
+    N_ALEventListItem *item;
+    ALMicroTime itemTime = 0;
+    char str[32];
+
+    osSyncPrintf("----- Allocated Events -----\n");
+    for (node = evtq->allocList.next; node != 0; node= node->next)
+    {
+        item = (N_ALEventListItem *)node;
+        itemTime += item->delta;
+
+        osSyncPrintf("\tdelta: %d\tabs: %d\t", item->delta, itemTime);
+
+	switch (item->evt.type)
+	{
+	    case AL_NOTE_END_EVT:
+	        osSyncPrintf("NOTE_END\tvox: %x\n", item->evt.msg.note.voice);
+	    break;
+
+	    case AL_SEQP_MIDI_EVT:
+		osSyncPrintf("SEQP_MIDI\t%s\n", MidiStatus2Str(item->evt.msg.midi.status & AL_MIDI_StatusMask, str));
+	    break;
+
+	    case AL_SEQP_PRIORITY_EVT:
+		osSyncPrintf("SEQP_PRIORITY\n");
+	    break;
+
+	    default:
+	        osSyncPrintf("type: %d\n", item->evt.type);
+	    break;
+	}
+
+    }
+    osSyncPrintf("\n");
+
+}
+
+static char *
+MidiStatus2Str (char status, char *str)
+{
+    switch (status)
+    {
+        case AL_MIDI_NoteOn:
+	    sprintf(str, "note on");
+	break;
+
+        case AL_MIDI_NoteOff:
+	    sprintf(str, "note off");
+	break;
+
+        default:
+	    sprintf(str, "status:%d", status);
+	break;
+    }
+
+    return str;
+}
+
+#endif /* _DEBUG_INTERNAL */
+
+
+
