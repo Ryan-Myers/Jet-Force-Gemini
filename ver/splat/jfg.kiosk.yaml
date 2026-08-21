@@ -332,7 +332,7 @@ segments:
       - [0xAAB90, .data, libultra/n_csplayer]
       - [0xAAD90, data, libultra/n_sl]
       - [0xAADA0, .data, libultra/n_drvrNew]
-      - [0xAADE0, data, libultra/n_env]
+      - [0xAADE0, .data, libultra/n_env]
       - [0xAAEE0, .data, math/math_arc]
       - [0xAAFF0, .data, ../libultra/src/io/aisetnextbuf]
       - [0xAB000, .data, ../libultra/src/os/initialize]

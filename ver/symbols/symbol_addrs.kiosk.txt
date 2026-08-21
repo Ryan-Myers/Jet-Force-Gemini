@@ -2710,6 +2710,7 @@ gArcTanTable = 0x800A9758; // type:s16
 
 g_CspTimeLookup = 0x800A9F90;
 D_800A97BC_AA3BC = 0x800AA18C;
+n_eqpower = 0x800AA1E0; //type:s16 size:0x100
 
 gSoundStateLists = 0x800A9F70; // size:0xC
 gSoundPlayerPtr = 0x800A9F7C;

@@ -2053,6 +2053,7 @@ gSoundPlayerPtr = 0x800A95AC;
 globalVolume = 0x800A95B0;
 g_CspTimeLookup = 0x800A95C0;
 D_800A97BC_AA3BC = 0x800A97BC;
+n_eqpower = 0x800A9820; //type:s16 size:0x100
 n_alGlobals = 0x800a97c0;
 n_syn = 0x800a97c4;
 n_currParam = 0x800a97d0;
