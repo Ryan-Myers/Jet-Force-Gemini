@@ -403,7 +403,7 @@ void __n_CSPHandleNextSeqEvent(N_ALCSPlayer *seqp)
 		return;
 	}
 
-	n_alCSeqNextEvent(seqp->target, &evt, 1);
+	n_alCSeqNextEvent(seqp->target, &evt, TRUE);
 
 	switch (evt.type) {
 	case AL_SEQ_MIDI_EVT:

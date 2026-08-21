@@ -25,7 +25,7 @@
 
 static u32 __readVarLen(ALCSeq *s,u32 track);
 static u8  __getTrackByte(ALCSeq *s,u32 track);
-static u32 __n_alCSeqGetTrackEvent(ALCSeq *seq, u32 track, N_ALEvent *event, s32 arg3); 
+static u32 __n_alCSeqGetTrackEvent(ALCSeq *seq, u32 track, N_ALEvent *event, s32 allowLooping); 
 
 void n_alCSeqNew(ALCSeq *seq, u8 *ptr)
 {
@@ -59,7 +59,7 @@ void n_alCSeqNew(ALCSeq *seq, u8 *ptr)
     seq->qnpt = 1.0f/(f32)seq->base->division;
 }
 
-void n_alCSeqNextEvent(ALCSeq *seq,N_ALEvent *evt,s32 arg2)
+void n_alCSeqNextEvent(ALCSeq *seq,N_ALEvent *evt,s32 allowLooping)
 {
     u32     i;
     u32     firstTime = 0xFFFFFFFF;
@@ -87,7 +87,7 @@ void n_alCSeqNextEvent(ALCSeq *seq,N_ALEvent *evt,s32 arg2)
         }
     }
  
-    __n_alCSeqGetTrackEvent(seq,firstTrack,evt,arg2);
+    __n_alCSeqGetTrackEvent(seq,firstTrack,evt,allowLooping);
 
     evt->msg.midi.ticks = firstTime;
     seq->lastTicks += firstTime;
@@ -100,7 +100,7 @@ void n_alCSeqNextEvent(ALCSeq *seq,N_ALEvent *evt,s32 arg2)
 
 
 /* only call n_alCSeqGetTrackEvent with a valid track !! */
-static u32 __n_alCSeqGetTrackEvent(ALCSeq *seq, u32 track, N_ALEvent *event, s32 arg3) 
+static u32 __n_alCSeqGetTrackEvent(ALCSeq *seq, u32 track, N_ALEvent *event, s32 allowLooping) 
 {
     u32     offset;
     u8      status, loopCt, curLpCt, *tmpPtr;
@@ -148,7 +148,7 @@ static u32 __n_alCSeqGetTrackEvent(ALCSeq *seq, u32 track, N_ALEvent *event, s32
             tmpPtr = seq->curLoc[track];
             loopCt = *tmpPtr++;
             curLpCt = *tmpPtr;
-            if(curLpCt == 0 || !arg3) /* done looping */
+            if(curLpCt == 0 || allowLooping == FALSE) /* done looping */
             {
                 *tmpPtr = loopCt; /* reset current loop count */
                 seq->curLoc[track] = tmpPtr + 5; /* move pointer to end of event */
@@ -212,10 +212,9 @@ static u32 __n_alCSeqGetTrackEvent(ALCSeq *seq, u32 track, N_ALEvent *event, s32
     return TRUE;
 }
 
-s32 alCSeqGetTicks(ALCSeq *seq) {
+s32 n_alCSeqGetTicks(ALCSeq *seq) {
     return seq->lastTicks;
 }
-
 
 /* non-aligned byte reading routines */
 static u8 __getTrackByte(ALCSeq *seq,u32 track)
