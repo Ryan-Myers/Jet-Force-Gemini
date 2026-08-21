@@ -1,3 +1,11 @@
-#include "common.h"
+#include <libaudio.h>
+#include "n_libaudio.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cspplay/n_alCSPPlay.s")
+void n_alCSPPlay(N_ALCSPlayer *seqp)
+{
+	N_ALEvent evt;
+
+	evt.type = AL_SEQP_PLAY_EVT;
+
+	n_alEvtqPostEvent(&seqp->evtq, &evt, 0);
+}

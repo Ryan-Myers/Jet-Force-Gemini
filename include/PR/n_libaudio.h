@@ -280,6 +280,9 @@ typedef struct {
 } N_ALCSPlayer;
 
 
+void            n_alEvtqPostExternEvent(N_ALCSPlayer *seqp, ALEventQueue *evtq, s16 *type, ALMicroTime delta);
+
+
 /*
  * Sequence data representation routines
  */
