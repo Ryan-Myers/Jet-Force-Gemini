@@ -23,8 +23,16 @@
 // #include <math.h>
 #include <assert.h>
 
-
 #define N_MICRO
+
+struct var8009c340 {
+    u8 surround;
+    u8 mono;
+    u8 headphone;
+    u8 unk03;
+};
+
+extern struct var8009c340 D_80105010_B1750;
 
 #ifdef AUD_PROFILE
 extern u32 cnt_index, env_num, env_cnt, env_max, env_min, lastCnt[];
@@ -60,296 +68,314 @@ s16 n_eqpower[ N_EQPOWER_LENGTH ] = {
 };
 
 #ifndef N_MICRO
-extern	f32	__pow(f32, f32);
-extern f32 _frexpf(f32 value, s32 *eptr);
-extern f32 _ldexpf(f32 in, s32 ex);
+extern	f64	__pow(f64, f64);
+extern f64 _frexpf(f64 value, s32 *eptr);
+extern f64 _ldexpf(f64 in, s32 ex);
 #endif
 
 /*
  * prototypes for private enveloper functions
  */
- Acmd *_pullSubFrame(N_PVoice *pv, s16 *inp, s16 *outp, s32 outCount,
+static  Acmd *_pullSubFrame(N_PVoice *pv, s16 *inp, s16 *outp, s32 outCount,
                              Acmd *p) ;
 
- s16 _getRate(f32 vol, f32 tgt, s32 count, u16* ratel);
+static  s16 _getRate(f32 vol, f32 tgt, s32 count, u16* ratel);
      
      
 #ifndef N_MICRO
 static  f32 _getVol(f32 ivol, s32 samples, s16 ratem, u16 ratel);
 #else
-  s16 _getVol(s16 ivol, s32 samples, s16 ratem, u16 ratel);
+static  s16 _getVol(s16 ivol, s32 samples, s16 ratem, u16 ratel);
 #endif
-
-struct var8009c340 {
-    u8 surround;
-    u8 mono;
-    u8 headphone;
-    u8 unk03;
-};
-
-extern struct var8009c340 D_80105010_B1750;
      
 /***********************************************************************
   * Enveloper filter public interfaces
  ***********************************************************************/
-Acmd *n_alEnvmixerPull(N_PVoice *filter, s32 sampleOffset, Acmd *p)
+Acmd *n_alEnvmixerPull(N_PVoice *filter, s32 sampleOffset, Acmd *p) 
 {
-	Acmd     *ptr = p;
-	N_PVoice *e = (N_PVoice *)filter;
-	s16      inp;
-	s32      lastOffset;
-	s32      thisOffset = sampleOffset;
-	s32      samples;
-	s16      loutp = 0;
-	s32      fVol;
-	ALParam  *thisParam;
-	s32      outCount = FIXED_SAMPLE;
+  Acmd        *ptr = p;
 
-	/*
-	 * Force the input to be the resampler output
-	 */
-	inp = N_AL_RESAMPLER_OUT;
+  
+  N_PVoice	*e = (N_PVoice *)filter;
+  
+  s16         inp;
+  s32         lastOffset;
+  s32         thisOffset = sampleOffset;
+  s32         samples;
+  s16         loutp = 0;
+  s32         fVol;
+  ALParam     *thisParam;
+  s32 outCount = FIXED_SAMPLE;
+  
+#ifdef AUD_PROFILE
+  lastCnt[++cnt_index] = osGetCount();
+#endif
+  
+  /*
+   * Force the input to be the resampler output
+   */
+#ifndef N_MICRO
+  inp = AL_RESAMPLER_OUT;
+#else
+  inp = N_AL_RESAMPLER_OUT;
+#endif
+  
+  while (e->em_ctrlList != 0) {
+    
+    lastOffset = thisOffset;
+    thisOffset = e->em_ctrlList->delta;
 
-	while (e->em_ctrlList != 0) {
-		lastOffset = thisOffset;
-		thisOffset = e->em_ctrlList->delta;
+    samples = SAMPLE184(thisOffset - lastOffset);
+    if (!samples) {
+	  thisOffset = lastOffset;
+    }
 
-		samples = SAMPLE184(thisOffset - lastOffset);
+#if 0
+    if (samples > FIXED_SAMPLE)
+      break;
+#else
+    if (samples > outCount)
+      break;
+#endif
+    
+    assert(samples >= 0);
+#ifndef N_MICRO
+    assert(samples <= AL_MAX_RSP_SAMPLES);
+#else
+    assert(samples <= FIXED_SAMPLE);
+#endif
 
-		if (!samples) {
-			thisOffset = lastOffset;
-		}
-
-		if (samples > outCount) {
-			break;
-		}
-
-		switch (e->em_ctrlList->type) {
-		case (AL_FILTER_START_VOICE_ALT):
-			{
-				ALStartParamAlt *param = (ALStartParamAlt *)e->em_ctrlList;
-				s32 tmp;
-
-				if (param->unity) {
-					e->rs_upitch = 1;
-				}
-
-				n_alLoadParam(e, AL_FILTER_SET_WAVETABLE, param->wave);
-
-				e->em_motion = AL_PLAYING;
-				e->em_first  = 1;
-				e->em_delta  = 0;
-				e->em_segEnd = SAMPLE184(param->samples);
-
-				tmp = (param->volume + param->volume) / 2;
-
-				e->em_volume = tmp;
-				e->em_pan    = param->pan;
-				e->em_dryamt = (n_eqpower[param->fxMix & 0x7f] & 0xfffe) | (param->fxMix >> 7);
-
-				if (!D_80105010_B1750.surround) {
-					e->em_dryamt &= 0xfffe;
-				}
-
-				e->em_wetamt = n_eqpower[N_EQPOWER_LENGTH - (param->fxMix & 0x7f) - 1] & 0xfffe;
-
-				if (D_80105010_B1750.headphone) {
-					e->em_pan = (e->em_pan >> 1) + 32;
-				} else if (D_80105010_B1750.mono) {
-					e->em_pan = 64;
-				}
-
-				if (param->samples) {
-					e->em_cvolL = 1;
-					e->em_cvolR = 1;
-				} else {
-					/*
-					 * Attack time is zero. Simply set the
-					 * volume. We don't want an attack segment.
-					 */
-					e->em_cvolL = (e->em_volume * n_eqpower[e->em_pan]) >> 15;
-					e->em_cvolR = (e->em_volume * n_eqpower[N_EQPOWER_LENGTH - e->em_pan - 1]) >> 15;
-				}
-
-				e->rs_ratio = param->pitch;
-				e->fx.unk02 = param->unk15;
-				e->fx.unk00 = param->unk18;
-				e->unkb8 = 1;
-				e->unk8c = param->unk14;
-			}
-			break;
-
-		case (AL_FILTER_SET_FXAMT):
-		case (AL_FILTER_SET_PAN):
-		case (AL_FILTER_SET_VOLUME):
-			ptr = _pullSubFrame(e, &inp, &loutp, samples, ptr);
-
-			if (e->em_delta >= e->em_segEnd){
-				/*
-				 * We should have reached our target, calculate
-				 * target in case e->em_segEnd was 0
-				 */
-				e->em_ltgt = (e->em_volume * n_eqpower[e->em_pan]) >> 15;
-				e->em_rtgt = (e->em_volume * n_eqpower[N_EQPOWER_LENGTH - e->em_pan - 1]) >> 15;
-				e->em_delta = e->em_segEnd;   /* To prevent overflow */
-				e->em_cvolL = e->em_ltgt;
-				e->em_cvolR = e->em_rtgt;
-			} else {
-				/*
-				 * Estimate the current volume
-				 */
-				e->em_cvolL = _getVol(e->em_cvolL, e->em_delta, e->em_lratm, e->em_lratl);
-				e->em_cvolR = _getVol(e->em_cvolR, e->em_delta, e->em_rratm, e->em_rratl);
-			}
-
-			/*
-			 * We can't have volume of zero, because the envelope
-			 * would never go anywhere from there
-			 */
-			if (e->em_cvolL == 0) {
-				e->em_cvolL = 1;
-			}
-
-			if (e->em_cvolR == 0) {
-				e->em_cvolR = 1;
-			}
-
-			if (e->em_ctrlList->type == AL_FILTER_SET_PAN) {
-				/*
-				 * This should result in a change to the current
-				 * segment rate and target
-				 */
-				if (D_80105010_B1750.headphone) {
-					e->em_pan = ((s16)e->em_ctrlList->data.i >> 1) + 32;
-				} else if (D_80105010_B1750.mono) {
-					e->em_pan = 64;
-				} else {
-					e->em_pan = (s16) e->em_ctrlList->data.i;
-				}
-			}
-
-			if (e->em_ctrlList->type == AL_FILTER_SET_VOLUME) {
-				/*
-				 * Switching to a new segment
-				 */
-				e->em_delta = 0;
-
-				/*
-				 * Map volume non-linearly to give something close to
-				 * loudness
-				 */
-				fVol = (e->em_ctrlList->data.i);
-				fVol = (fVol + fVol) / 2;
-
-				e->em_volume = (s16) fVol;
-				e->em_segEnd = SAMPLE184(e->em_ctrlList->moredata.i);
-			}
-
-			if (e->em_ctrlList->type == AL_FILTER_SET_FXAMT) {
-				if (((e->em_dryamt ^ e->em_wetamt) & 1) ^ ((e->em_ctrlList->data.i + 1) >> 7)) {
-					if (D_80105010_B1750.surround) {
-						if (e->em_pan > 64) {
-							e->em_dryamt ^= 1;
-						} else {
-							e->em_wetamt ^= 1;
-						}
-					}
-				}
-
-				e->em_dryamt = (n_eqpower[e->em_ctrlList->data.i & 0x7f] & 0xfffe) | (e->em_dryamt & 1);
-				e->em_wetamt = (n_eqpower[N_EQPOWER_LENGTH - (e->em_ctrlList->data.i & 0x7f) - 1] & 0xfffe) | (e->em_wetamt & 1);
-			}
-
-			/*
-			 * Force a volume update
-			 */
-			e->em_first = 1;
-			break;
-
-		case (AL_FILTER_START_VOICE):
-			{
-				ALStartParam *p = (ALStartParam *)e->em_ctrlList;
-
-				/*
-				 * Changing to PLAYING (since the previous state was
-				 * persumable STOPPED, we'll just bump the output
-				 * pointer rather than pull a subframe of zeros).
-				 */
-				if (p->unity) {
-					e->rs_upitch = 1;
-				}
-
-				n_alLoadParam(e, AL_FILTER_SET_WAVETABLE, p->wave);
-				e->em_motion = AL_PLAYING;
-			}
-			break;
-		case (AL_FILTER_STOP_VOICE):
-			{
-				/*
-				 * Changing to STOPPED and reset the filter
-				 */
-				ptr = _pullSubFrame(e, &inp, &loutp, samples, ptr);
-				n_alEnvmixerParam(e, AL_FILTER_RESET, 0);
-			}
-			break;
-
-		case (AL_FILTER_FREE_VOICE):
-			{
-				N_ALFreeParam *param = (N_ALFreeParam *)e->em_ctrlList;
-				param->pvoice->offset = 0;
-				_n_freePVoice((N_PVoice *)param->pvoice);
-			}
-			break;
-		case (AL_FILTER_SET_PITCH):
-			ptr = _pullSubFrame(e, &inp, &loutp, samples, ptr);
-			e->rs_ratio = e->em_ctrlList->data.f;
-			break;
-		case (AL_FILTER_SET_UNITY_PITCH):
-			ptr = _pullSubFrame(e, &inp, &loutp, samples, ptr);
-			e->rs_upitch = 1;
-			break;
-		case (AL_FILTER_SET_WAVETABLE):
-			ptr = _pullSubFrame(e, &inp, &loutp, samples, ptr);
-			n_alLoadParam(e, AL_FILTER_SET_WAVETABLE, (void *)e->em_ctrlList->data.i);
-			break;
-		default:
-			/*
-			 * Pull the reuired number of samples and then pass the message
-			 * on down the chain
-			 */
-			ptr = _pullSubFrame(e, &inp, &loutp, samples, ptr);
-			n_alEnvmixerParam(e, e->em_ctrlList->type, (void *) e->em_ctrlList->data.i);
-			break;
-		}
-
-		loutp += samples << 1;
-		outCount -= samples;
-
-		/*
-		 * put the param record back on the free list
-		 */
-		thisParam = e->em_ctrlList;
-		e->em_ctrlList = e->em_ctrlList->next;
-
-		if (e->em_ctrlList == 0) {
-			e->em_ctrlTail = 0;
-		}
-
-		_n_freeParam(thisParam);
+    switch (e->em_ctrlList->type) {
+    case (AL_FILTER_START_VOICE_ALT):
+      {                  
+	ALStartParamAlt *param = (ALStartParamAlt *)e->em_ctrlList;
+	s32 tmp;
+	
+	if (param->unity) {
+	  e->rs_upitch = 1;
 	}
+	
+	n_alLoadParam(e, AL_FILTER_SET_WAVETABLE, param->wave);
+	e->em_motion = AL_PLAYING;
+	e->em_first  = 1;
+	e->em_delta  = 0;
 
-	ptr = _pullSubFrame(e, &inp, &loutp, outCount, ptr);
+	e->em_segEnd = SAMPLE184(param->samples);
 
-	/*
-	 * Prevent overflow in e->em_delta
-	 */
-	if (e->em_delta > e->em_segEnd) {
-		e->em_delta = e->em_segEnd;
+	tmp = (param->volume + param->volume) / 2;
+
+
+	e->em_volume = (s16) tmp;
+	e->em_pan    = param->pan;
+	e->em_dryamt = (n_eqpower[param->fxMix & 0x7f] & 0xfffe) | (param->fxMix >> 7);
+
+    if (!D_80105010_B1750.surround) {
+      e->em_dryamt &= 0xfffe;
+    }
+	e->em_wetamt = n_eqpower[N_EQPOWER_LENGTH - (param->fxMix & 0x7f) - 1] & 0xfffe;
+
+    if (D_80105010_B1750.headphone) {
+      e->em_pan = (e->em_pan >> 1) + 32;
+    } else if (D_80105010_B1750.mono) {
+      e->em_pan = 64;
+    }
+
+	if (param->samples) {
+	  e->em_cvolL  = 1;
+	  e->em_cvolR  = 1;
+	} else {
+	  /*
+	   * Attack time is zero. Simply set the
+	   * volume. We don't want an attack segment.
+	   */
+	  e->em_cvolL = (e->em_volume * n_eqpower[e->em_pan]) >> 15;
+	  e->em_cvolR = (e->em_volume *
+			 n_eqpower[N_EQPOWER_LENGTH - e->em_pan - 1]) >> 15;
 	}
+	e->rs_ratio = param->pitch;
+    e->fx.unk02 = param->unk15;
+    e->fx.unk00 = param->unk18;
+    e->unkb8 = 1;
+    e->unk8c = param->unk14;
+      }
+      
+      break;
+      
+    case (AL_FILTER_SET_FXAMT):
+    case (AL_FILTER_SET_PAN):
+    case (AL_FILTER_SET_VOLUME):
+      ptr = _pullSubFrame(e, &inp, &loutp, samples, ptr);
+      
+#if 1
+      if (e->em_delta >= e->em_segEnd){
+#else
+      if (e->em_delta >= e->em_segEnd || samples == 0){
+#endif
+	/*
+	 * We should have reached our target, calculate
+	 * target in case e->em_segEnd was 0
+	 */
+	e->em_ltgt = (e->em_volume * n_eqpower[e->em_pan]) >> 15;
+	e->em_rtgt = (e->em_volume *
+		      n_eqpower[N_EQPOWER_LENGTH - e->em_pan - 1]) >> 15;
+	e->em_delta = e->em_segEnd;   /* To prevent overflow */
+	e->em_cvolL = e->em_ltgt;
+	e->em_cvolR = e->em_rtgt;
+      } else {
+	/* 
+	 * Estimate the current volume
+	 */
+	e->em_cvolL = _getVol(e->em_cvolL, e->em_delta, e->em_lratm, e->em_lratl);
+	e->em_cvolR = _getVol(e->em_cvolR, e->em_delta, e->em_rratm, e->em_rratl);
+      }
+      
+      /*
+       * We can't have volume of zero, because the envelope
+       * would never go anywhere from there
+       */
+      if( e->em_cvolL == 0 ) e->em_cvolL = 1;
+      if( e->em_cvolR == 0 ) e->em_cvolR = 1;
+      
+      if (e->em_ctrlList->type == AL_FILTER_SET_PAN) {
+        /*
+         * This should result in a change to the current
+         * segment rate and target
+         */
+        if (D_80105010_B1750.headphone) {
+          e->em_pan = ((s16)e->em_ctrlList->data.i >> 1) + 32;
+        } else if (D_80105010_B1750.mono) {
+          e->em_pan = 64;
+        } else {
+          e->em_pan = (s16) e->em_ctrlList->data.i;
+        }
+      }
+      
+      if (e->em_ctrlList->type == AL_FILTER_SET_VOLUME){
+	
+	/*
+	 * Switching to a new segment
+	 */
+	e->em_delta = 0;
+	
+	/*
+	 * Map volume non-linearly to give something close to
+	 * loudness
+	 */
+	fVol = (e->em_ctrlList->data.i);
+	fVol = (fVol+fVol)/2;
+	e->em_volume = (s16) fVol;	
+	e->em_segEnd = SAMPLE184(e->em_ctrlList->moredata.i);
+	
+      }
+      
+      if (e->em_ctrlList->type == AL_FILTER_SET_FXAMT){
+        if (((e->em_dryamt ^ e->em_wetamt) & 1) ^ ((e->em_ctrlList->data.i + 1) >> 7)) {
+          if (D_80105010_B1750.surround) {
+            if (e->em_pan > 64) {
+              e->em_dryamt ^= 1;
+            } else {
+              e->em_wetamt ^= 1;
+            }
+          }
+        }
 
-	return ptr;
+        e->em_dryamt = (n_eqpower[e->em_ctrlList->data.i & 0x7f] & 0xfffe) | (e->em_dryamt & 1);
+        e->em_wetamt = (n_eqpower[N_EQPOWER_LENGTH - (e->em_ctrlList->data.i & 0x7f) - 1] & 0xfffe) | (e->em_wetamt & 1);
+      }
+      
+      /*
+       * Force a volume update
+       */
+      e->em_first = 1;
+      break;
+      
+    case (AL_FILTER_START_VOICE):
+      {
+	ALStartParam *p = (ALStartParam *)e->em_ctrlList;
+	
+	/*
+	 * Changing to PLAYING (since the previous state was
+	 * persumable STOPPED, we'll just bump the output
+	 * pointer rather than pull a subframe of zeros).
+	 */
+	if (p->unity) {
+	  e->rs_upitch = 1;
+	}
+	
+	n_alLoadParam(e, AL_FILTER_SET_WAVETABLE, p->wave);
+	e->em_motion = AL_PLAYING;
+      }
+      break;
+    case (AL_FILTER_STOP_VOICE):
+      {
+	/*
+	 * Changing to STOPPED and reset the filter
+	 */
+	ptr = _pullSubFrame(e, &inp, &loutp, samples, ptr);
+	n_alEnvmixerParam(e, AL_FILTER_RESET, 0);
+      }
+      break;
+      
+    case (AL_FILTER_FREE_VOICE):
+      {                  
+	N_ALFreeParam *param = (N_ALFreeParam *)e->em_ctrlList;
+	param->pvoice->offset = 0;
+	_n_freePVoice( (N_PVoice *)param->pvoice);
+      }
+      break;
+#if 1
+    case (AL_FILTER_SET_PITCH):
+      ptr = _pullSubFrame(e, &inp, &loutp, samples, ptr);
+      e->rs_ratio = e->em_ctrlList->data.f;
+      break;
+    case (AL_FILTER_SET_UNITY_PITCH):
+      ptr = _pullSubFrame(e, &inp, &loutp, samples, ptr);
+      e->rs_upitch = 1;
+      break;
+    case (AL_FILTER_SET_WAVETABLE):
+      ptr = _pullSubFrame(e, &inp, &loutp, samples, ptr);
+      n_alLoadParam(e, AL_FILTER_SET_WAVETABLE,
+		       (void *)e->em_ctrlList->data.i);
+      break;
+#endif
+    default:
+      /*
+       * Pull the reuired number of samples and then pass the message
+       * on down the chain
+       */
+      ptr = _pullSubFrame(e, &inp, &loutp, samples, ptr);
+      n_alEnvmixerParam(e, e->em_ctrlList->type,
+		      (void *) e->em_ctrlList->data.i);
+      break;
+    }
+    loutp  += (samples<<1);
+    outCount -= samples;
+    
+    /*
+     * put the param record back on the free list
+     */
+    thisParam = e->em_ctrlList;
+    e->em_ctrlList = e->em_ctrlList->next;
+    if (e->em_ctrlList == 0)
+      e->em_ctrlTail = 0;
+    
+    _n_freeParam(thisParam);
+    
+  }
+  
+  ptr = _pullSubFrame(e, &inp, &loutp, outCount, ptr);
+  
+  /*
+   * Prevent overflow in e->em_delta
+   */
+  if (e->em_delta > e->em_segEnd)
+    e->em_delta = e->em_segEnd;
+  
+#ifdef AUD_PROFILE
+  PROFILE_AUD(env_num, env_cnt, env_max, env_min);
+#endif
+  return ptr;
 }
-
 
 s32
   n_alEnvmixerParam(N_PVoice *filter, s32 paramID, void *param)
@@ -389,55 +415,75 @@ s32
   return 0;
 }
 
-
-Acmd *_pullSubFrame(N_PVoice *filter, s16 *inp, s16 *outp, s32 outCount, Acmd *p)
+static
+  Acmd* _pullSubFrame(N_PVoice *filter, s16 *inp, s16 *outp, s32 outCount,
+		      Acmd *p) 
 {
-	Acmd *ptr = p;
-	N_PVoice *e = filter;
+  Acmd        *ptr = p;
+  N_PVoice	*e = filter;
 
-	/* filter must be playing and request non-zero output samples to pull. */
-	if (e->em_motion != AL_PLAYING || !outCount) {
-		return ptr;
-	}
+  /* filter must be playing and request non-zero output samples to pull. */
+  if (e->em_motion != AL_PLAYING || !outCount)
+    return ptr;
 
-	/*
-	 * ask all filters upstream from us to build their command
-	 * lists.
-	 */
+  /*
+   * ask all filters upstream from us to build their command
+   * lists.
+   */
+  
+  ptr = n_alLPFilterPull(e, inp, outCount, p);
+  
+  /*
+   * construct our portion of the command list
+   */
+#ifndef N_MICRO
+  aSetBuffer(ptr++, A_MAIN, *inp, AL_MAIN_L_OUT, FIXED_SAMPLE<<1);
+  aSetBuffer(ptr++, A_AUX, AL_MAIN_R_OUT , AL_AUX_L_OUT ,
+	     AL_AUX_R_OUT );
+#endif
+  
+  if (e->em_first){
+    e->em_first = 0;
+    
+    /*
+     * Calculate derived parameters
+     */
+    e->em_ltgt = (e->em_volume * n_eqpower[e->em_pan]) >> 15;
+    e->em_lratm = _getRate(e->em_cvolL, e->em_ltgt,
+			   e->em_segEnd, &(e->em_lratl));
+    e->em_rtgt = (e->em_volume *
+		  n_eqpower[N_EQPOWER_LENGTH - e->em_pan - 1]) >> 15;
+    e->em_rratm = _getRate(e->em_cvolR, e->em_rtgt, e->em_segEnd,
+			   &(e->em_rratl));
 
-	ptr = n_alLPFilterPull(e, inp, outCount, p);
-
-	/*
-	 * construct our portion of the command list
-	 */
-	if (e->em_first) {
-		e->em_first = 0;
-
-		/*
-		 * Calculate derived parameters
-		 */
-		e->em_ltgt = (e->em_volume * n_eqpower[e->em_pan]) >> 15;
-		e->em_lratm = _getRate(e->em_cvolL, e->em_ltgt, e->em_segEnd, &(e->em_lratl));
-		e->em_rtgt = (e->em_volume * n_eqpower[N_EQPOWER_LENGTH - e->em_pan - 1]) >> 15;
-		e->em_rratm = _getRate(e->em_cvolR, e->em_rtgt, e->em_segEnd, &(e->em_rratl));
-
-		n_aSetVolume(ptr++, A_LEFT  | A_VOL, e->em_cvolL, e->em_dryamt, e->em_wetamt);
-		n_aSetVolume(ptr++, A_RIGHT | A_VOL, e->em_rtgt, e->em_rratm,  e->em_rratl);
-		n_aSetVolume(ptr++, A_RATE, e->em_ltgt, e->em_lratm, e->em_lratl);
-		n_aEnvMixer (ptr++, A_INIT, e->em_cvolR, osVirtualToPhysical(e->em_state));
-	} else {
-		n_aEnvMixer(ptr++, A_CONTINUE, 0, osVirtualToPhysical(e->em_state));
-	}
-
-	/*
-	 * bump the input buffer pointer
-	 */
-	*inp += (FIXED_SAMPLE << 1);
-	e->em_delta += FIXED_SAMPLE;
-
-	return ptr;
+#ifndef N_MICRO
+    aSetVolume(ptr++, A_LEFT | A_VOL, e->em_cvolL, 0, 0);
+    aSetVolume(ptr++, A_RIGHT | A_VOL, e->em_cvolR, 0, 0);
+    aSetVolume(ptr++, A_LEFT  | A_RATE, e->em_ltgt, e->em_lratm, e->em_lratl);
+    aSetVolume(ptr++, A_RIGHT | A_RATE, e->em_rtgt, e->em_rratm, e->em_rratl);
+    aSetVolume(ptr++, A_AUX, e->em_dryamt, 0, e->em_wetamt);
+    aEnvMixer (ptr++, A_INIT | A_AUX, osVirtualToPhysical(e->em_state));
+  }
+  else
+    aEnvMixer(ptr++, A_CONTINUE | A_AUX, osVirtualToPhysical(e->em_state));
+#else
+    n_aSetVolume(ptr++, A_LEFT  | A_VOL, e->em_cvolL, e->em_dryamt, e->em_wetamt);
+    n_aSetVolume(ptr++, A_RIGHT | A_VOL, e->em_rtgt, e->em_rratm,  e->em_rratl);
+    n_aSetVolume(ptr++, A_RATE, e->em_ltgt, e->em_lratm, e->em_lratl);
+    n_aEnvMixer (ptr++, A_INIT, e->em_cvolR, osVirtualToPhysical(e->em_state));
 }
-
+  else
+    n_aEnvMixer(ptr++, A_CONTINUE, 0, osVirtualToPhysical(e->em_state));
+#endif  
+  /*
+   * bump the input buffer pointer
+   */
+  
+  *inp += (FIXED_SAMPLE<<1);
+  e->em_delta += FIXED_SAMPLE;
+  
+  return ptr;
+}
 
 #ifndef N_MICRO
 #define EXP_MASK  0x7f800000
@@ -535,49 +581,48 @@ static
   
 }
 #else
-
-s16 _getRate(f32 vol, f32 tgt, s32 count, u16 *ratel)
+static
+s16 _getRate(f32 vol, f32 tgt, s32 count, u16* ratel)
 {
-	s16 s;
-	s16 tmp;
-	f32 invn;
-	f32 a;
-	f32 f;
+    s16         s, tmp;
+    f32         invn, a, f;
 
-	if (count == 0) {
-		if (tgt >= vol) {
-			*ratel = 0xffff;
-			return 0x7fff;
-		} else {
-			*ratel = 0;
-			return -0x8000;
-		}
-	}
+#ifdef AUD_PROFILE
+    lastCnt[++cnt_index] = osGetCount();
+#endif
+    
+    if (count == 0){
+        if (tgt >= vol){
+            *ratel = 0xffff;
+            return 0x7fff;
+        }
+        else{
+            *ratel = 0;
+            return -0x8000;
+        }
+    }
 
-	invn = 1 / (f32) count;
+    invn = 1.0f / count;
 
-	if (tgt < 1) {
-		tgt = 1;
-	}
+    if (tgt < 1.0f)
+        tgt = 1.0f;
+    if (vol <= 0.0f) vol = 1.0f;	/* zero and neg values not allowed */
 
-	if (vol <= 0) {
-		vol = 1;
-	}
+    a = (tgt - vol) * invn * 8.0f;
+    s = (s16)a;
+    f = a - (f32)s;
+    s -= 1;
+    f += 1.0f;
+    tmp = (s16)f;
+    s += tmp;
+    f -= (f32)tmp;
 
-	a = (tgt - vol) * invn * 8;
-	s = a;
+#ifdef AUD_PROFILE
+	PROFILE_AUD( rate_num, rate_cnt, rate_max, rate_min);
+#endif
 
-	f = a - s;
-	s--;
-	f++;
-
-	tmp = f;
-	s += tmp;
-	f -= tmp;
-
-	*ratel = 65535 * f;
-
-	return s;
+    *ratel = (u16)(0xffff * f);
+    return s;
 }
 #endif
 
@@ -617,7 +662,7 @@ static
   return ivol;
 }
 #else
-
+static
 s16 _getVol(s16 ivol, s32 samples, s16 ratem, u16 ratel)
 {
     s32 tmp1;
