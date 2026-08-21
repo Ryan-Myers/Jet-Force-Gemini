@@ -300,11 +300,12 @@ typedef struct {
     ALHeap              *heap;
     s32                 outputRate;     /* output sample rate */
 #ifdef RAREDIFFS
-    ALFxId              fxType[2];
+    ALFxId              fxType[4];
+    s32                 *params[2];
 #else
     ALFxId              fxType;
-#endif
     s32                 *params;
+#endif
 } ALSynConfig;
 
 typedef struct ALPlayer_s {
