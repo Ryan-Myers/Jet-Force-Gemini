@@ -7,6 +7,11 @@
 #include "cseq.h"
 #include "n_cseqp.h"
 
+void __n_CSPRepostEvent(ALEventQueue *evtq, N_ALEventListItem *item);
+void __n_setUsptFromTempo(N_ALCSPlayer *seqp, f32 tempo);
+void __n_CSPHandleMetaMsg(N_ALCSPlayer *seqp, N_ALEvent *event);
+ALMicroTime __n_vsDelta(N_ALVoiceState *vs, ALMicroTime t);
+
 u32 D_80104FD0_B1750[16];
 
 // 110000 occurs twice in this table...
@@ -47,26 +52,12 @@ s32 g_CspTimeLookup[] = {
 
 s32 D_800A97BC_AA3BC = 0;
 
-void __n_CSPRepostEvent(ALEventQueue *evtq, N_ALEventListItem *item);
-void __n_setUsptFromTempo(N_ALCSPlayer *seqp, f32 tempo);
-void __n_CSPHandleMetaMsg(N_ALCSPlayer *seqp, N_ALEvent *event);
-ALMicroTime __n_vsDelta(N_ALVoiceState *vs, ALMicroTime t);
-
 void n_alCSPAllChanOn(N_ALCSPlayer *seqp);
 ALMicroTime __n_CSPVoiceHandler(void *node);
 
-void __n_CSPHandleNextSeqEvent(N_ALCSPlayer *seqp);
-void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event);
-
-void n_alSynSetLpf_freq(N_ALVoice *v, f32 arg1);
-u8 __n_vsMix(N_ALVoiceState *vs, N_ALCSPlayer *seqp);
-ALFxRef n_alSynGetOutputLPRef(u8 arg0);
-void n_alSynSetOutputLPParam(struct fx *fx, u8 arg1, void *param);
-f32 alSemitones2Ratio(s32 arg0);
-
-
-void n_alCSPNew(N_ALCSPlayer *seqp, ALSeqpConfig *c) {
-	s32                   i;
+void n_alCSPNew(N_ALCSPlayer *seqp, ALSeqpConfig *c)
+{
+	s32                 i;
     s32                   pad[2];
 	N_ALEventListItem     *items;
 	N_ALVoiceState        *vs;
@@ -141,7 +132,17 @@ void n_alCSPNew(N_ALCSPlayer *seqp, ALSeqpConfig *c) {
 	n_alSynAddSeqPlayer(&seqp->node);
 }
 
-ALMicroTime __n_CSPVoiceHandler(void *node) {
+void __n_CSPHandleNextSeqEvent(N_ALCSPlayer *seqp);
+void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event);
+
+void n_alSynFilter13(N_ALVoice *v, f32 arg1);
+u8 __n_vsMix(N_ALVoiceState *vs, N_ALCSPlayer *seqp);
+ALFxRef n_alSynGetOutputLPRef(u8 arg0);
+void n_alSynSetOutputLPParam(struct fx *fx, u8 arg1, void *param);
+f32 alSemitones2Ratio(s32 arg0);
+
+ALMicroTime __n_CSPVoiceHandler(void *node)
+{
 	N_ALCSPlayer    *seqp = (N_ALCSPlayer *) node;
 	N_ALEvent        evt;
 	N_ALVoice       *voice;
@@ -213,7 +214,7 @@ ALMicroTime __n_CSPVoiceHandler(void *node) {
 
 			if (seqp->chanState[chan].unk11) {
 				n_alSynSetLpf_freq(&vs->voice,
-						440.0f
+						440
 						* alSemitones2Ratio((vs->key - vs->sound->keyMap->keyBase))
 						* seqp->chanState[chan].pitchBend
 						* vs->vibrato);
@@ -945,11 +946,11 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 			if (byte2 < n_syn->maxAuxBusses && byte2 >= 0) {
 				seqp->chanState[chan].fxbus = byte2;
 			}
-            break;
-        case (AL_MIDI_MP3_CTRL):
+			break;
+		case (AL_MIDI_MP3_CTRL):
 			break;
 		case (AL_MIDI_INST_MAJOR_CTRL):
-            seqp->chanState[chan].instmajor = byte2; 
+			seqp->chanState[chan].instmajor = byte2;
 			break;
 		case (AL_MIDI_ATTACKTIME_CTRL):
 			seqp->chanState[chan].attackTime = g_CspTimeLookup[byte2];
@@ -1084,11 +1085,7 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event)
 					n_alSynSetPitch(&vs->voice, vs->pitch * bendRatio * vs->vibrato);
 
 					if (seqp->chanState[chan].unk11) {
-						n_alSynSetLpf_freq(&vs->voice, 
-                            440 
-                            * alSemitones2Ratio(vs->key - vs->sound->keyMap->keyBase) 
-                            * bendRatio 
-                            * vs->vibrato);
+						n_alSynSetLpf_freq(&vs->voice, 440 * alSemitones2Ratio(vs->key - vs->sound->keyMap->keyBase) * bendRatio * vs->vibrato);
 					}
 				}
 			}
@@ -1223,6 +1220,7 @@ void __n_CSPPostNextSeqEvent(N_ALCSPlayer *seqp)
 	n_alEvtqPostEvent(&seqp->evtq, &evt, deltaTicks * seqp->uspt);
 }
 
-void n_alCSPVoiceLimit(N_ALCSPlayer *seqp, u8 value) {
+void n_alCSPVoiceLimit(N_ALCSPlayer *seqp, u8 value)
+{
 	seqp->voicelimit = value;
 }
