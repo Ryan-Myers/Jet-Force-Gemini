@@ -142,7 +142,80 @@ void n_alEvtqPostEvent(ALEventQueue *evtq, N_ALEvent *evt, ALMicroTime delta)
     
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_event/n_alEvtqPostExternEvent.s")
+static s32 externalEventTime;
+
+void n_alEvtqPostExternEvent(N_ALCSPlayer *seqp, ALEventQueue *evtq, N_ALEvent *evt, s32 delta) 
+{
+    N_ALEventListItem  *item;
+    N_ALEventListItem  *nextItem;
+    ALLink             *node;
+    s32                 postAtEnd=0;
+    s32                 sp1C=0;
+    OSIntMask           mask;
+
+    mask = osSetIntMask(OS_IM_NONE);
+
+    item = (N_ALEventListItem *)evtq->freeList.next;
+    if (!item) {
+#ifdef VERSION_us
+        if (evtq->eventCount < 60000) {
+            evtq->eventCount++;
+        }
+#endif
+        osSetIntMask(mask);
+#ifdef _DEBUG
+        __osError(ERR_ALEVENTNOFREE, 0);
+#endif        
+        return;
+    }
+    
+    alUnlink((ALLink *)item);
+    bcopy(evt, &item->evt, sizeof(*evt));
+
+#ifdef VERSION_us
+    evtq->unkVal++;
+    if (evtq->unkVal > evtq->unkVal2) {
+        evtq->unkVal2 = evtq->unkVal;
+    }
+#endif
+
+    if (delta == AL_EVTQ_END) {
+        postAtEnd = -1;
+    } else {
+        externalEventTime += delta;
+        if (externalEventTime < seqp->curTime) {
+            externalEventTime = seqp->curTime;
+        }
+        delta = externalEventTime - seqp->curTime;
+    }
+    
+    for (node = &evtq->allocList; node != 0; node = node->next) {
+        if (!node->next) { /* end of the list */
+            if (postAtEnd)
+                item->delta = 0;
+            else
+                item->delta = delta;
+            alLink((ALLink *)item, node);
+            break;
+        } else {
+            nextItem = (N_ALEventListItem *)node->next;
+
+            if (delta < nextItem->delta) {
+                item->delta = delta;
+                nextItem->delta -= delta;
+                    
+                alLink((ALLink *)item, node);
+                break;
+            }
+                
+            delta -= nextItem->delta;
+
+        }
+    }
+
+    osSetIntMask(mask);
+    
+}
 
 /*
   This routine flushes events according their type.

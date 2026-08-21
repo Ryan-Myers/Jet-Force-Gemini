@@ -461,7 +461,7 @@ segments:
       - { type: bss, vram: 0x80105C30, name: gsSnd }
       - { type: .bss, vram: 0x80105CA0, name: libultra/n_csplayer }
       - { type: .bss, vram: 0x80105CE0, name: libultra/alsurround }
-      - { type: bss, vram: 0x80105CF0, name: libultra/n_event }
+      - { type: .bss, vram: 0x80105CF0, name: libultra/n_event }
       - { type: .bss, vram: 0x80105D00, name: ../libultra/src/os/initialize }
       - { type: .bss, vram: 0x80105D10, name: ../libultra/src/os/seteventmesg }
       - { type: .bss, vram: 0x80105D90, name: ../libultra/src/io/controller }

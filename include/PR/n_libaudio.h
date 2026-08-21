@@ -280,7 +280,7 @@ typedef struct {
 } N_ALCSPlayer;
 
 
-void            n_alEvtqPostExternEvent(N_ALCSPlayer *seqp, ALEventQueue *evtq, s16 *type, ALMicroTime delta);
+void            n_alEvtqPostExternEvent(N_ALCSPlayer *seqp, ALEventQueue *evtq, N_ALEvent *evt, ALMicroTime delta);
 
 
 /*

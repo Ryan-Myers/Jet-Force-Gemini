@@ -35,6 +35,6 @@ void n_alCSPSendMidi(N_ALCSPlayer *seqp, s32 ticks, u8 status, u8 byte1,
     
     deltaTime = ticks;
                     
-    n_alEvtqPostExternEvent(seqp, &seqp->evtq, &evt.type, deltaTime);
+    n_alEvtqPostExternEvent(seqp, &seqp->evtq, &evt, deltaTime);
 }
 
