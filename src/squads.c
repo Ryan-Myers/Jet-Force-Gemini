@@ -1,8 +1,8 @@
 #include "common.h"
 #include "math/math.h"
-#include "src/memory.h"
 #include "pi.h"
 #include "runLink.h"
+#include "src/memory.h"
 
 const char D_800AD890[] = "CRITICAL ERROR: objSetupObject() returned NULL\n";
 const char D_800AD8C0[] = "GFDS:%d ???\n";
@@ -303,28 +303,23 @@ void *GetSquaddieFromIdentifiers(s16 arg0, s16 arg1) {
 }
 
 void squadsCheckEnemyPointers(Object *arg0) {
-    s32 j;
     s32 i;
     Object *node;
     Object_Racer *racer;
     Object *obj;
 
     i = D_800FE9F0_B9230;
-    j = i--;
-    if (j != 0) {
-        do {
-            node = ((Object **) D_800A38E4_A44E4)[i];
-            racer = node->racer;
-            obj = racer->unk58;
-            while (obj != NULL) {
-                node = (Object *) obj->racer;
-                if (((Object_Grenade *) node)->ennemy == arg0) {
-                    ((Object_Grenade *) node)->ennemy = NULL;
-                }
-                obj = ((Object_Grenade *) node)->next;
+    while (i--) {
+        node = D_800A38E4_A44E4[i];
+        racer = node->racer;
+        obj = (Object *) racer->unk58;
+        while (obj != NULL) {
+            node = (Object *) obj->racer;
+            if (((Object_Grenade *) node)->ennemy == arg0) {
+                ((Object_Grenade *) node)->ennemy = NULL;
             }
-            j = i--;
-        } while (j != 0);
+            obj = ((Object_Grenade *) node)->next;
+        }
     }
 }
 
