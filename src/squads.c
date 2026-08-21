@@ -277,34 +277,27 @@ void *GetSquadronFromIdentifier(s16 arg0) {
 }
 
 void *GetSquaddieFromIdentifiers(s16 arg0, s16 arg1) {
-    s32 j;
     s32 i;
-    Object **list;
     Object *node;
     Object_Squadron *squadron;
     Object_Racer *racer;
     Object *obj;
 
     i = D_800FE9F0_B9230;
-    j = i--;
-    if (j != 0) {
-        list = (Object **) D_800A38E4_A44E4 + i;
-        do {
-            node = *list--;
-            squadron = (Object_Squadron *) node->racer;
-            if (arg0 == squadron->unk64) {
-                obj = squadron->unk58;
-                while (obj != NULL) {
-                    racer = obj->racer;
-                    if ((obj->unkA0 == 0) && (arg1 == ((Object_Grenade *) racer)->unk15)) {
-                        return obj;
-                    }
-                    obj = ((Object_Grenade *) racer)->next;
+    while (i--) {
+        node = D_800A38E4_A44E4[i];
+        squadron = (Object_Squadron *) node->racer;
+        if (arg0 == squadron->unk64) {
+            obj = squadron->unk58;
+            while (obj != NULL) {
+                racer = obj->racer;
+                if ((obj->unkA0 == 0) && (arg1 == ((Object_Grenade *) racer)->unk15)) {
+                    return obj;
                 }
-                return NULL;
+                obj = ((Object_Grenade *) racer)->next;
             }
-            j = i--;
-        } while (j != 0);
+            return NULL;
+        }
     }
     return NULL;
 }
