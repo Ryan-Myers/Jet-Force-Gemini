@@ -685,8 +685,11 @@ typedef struct {
     ALLink      allocList;
 #ifdef VERSION_us
     s16         unkVal;
-#endif
+    u16         eventCount;
+    s16         unkVal2;
+#else
     s32         eventCount;
+#endif
 } ALEventQueue;
 
 void            alEvtqNew(ALEventQueue *evtq, ALEventListItem *items,
