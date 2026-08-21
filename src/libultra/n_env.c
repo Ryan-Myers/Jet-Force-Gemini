@@ -123,9 +123,13 @@ Acmd *n_alEnvmixerPull(N_PVoice *filter, s32 sampleOffset, Acmd *p)
   while (e->em_ctrlList != 0) {
     
     lastOffset = thisOffset;
+#if 0
+    thisOffset = SAMPLE184(e->em_ctrlList->delta);
+#else
     thisOffset = e->em_ctrlList->delta;
+#endif
 
-    samples = SAMPLE184(thisOffset - lastOffset);
+    samples    = SAMPLE184(thisOffset - lastOffset);
     if (!samples) {
 	  thisOffset = lastOffset;
     }
@@ -160,9 +164,13 @@ Acmd *n_alEnvmixerPull(N_PVoice *filter, s32 sampleOffset, Acmd *p)
 	e->em_first  = 1;
 	e->em_delta  = 0;
 
+#ifdef FINAL_ROUND
 	e->em_segEnd = SAMPLE184(param->samples);
+#else
+	e->em_segEnd = param->samples;
+#endif
 
-	tmp = (param->volume + param->volume) / 2;
+	tmp = ((s32)param->volume + (s32)param->volume) / 2;
 
 
 	e->em_volume = (s16) tmp;
@@ -263,8 +271,13 @@ Acmd *n_alEnvmixerPull(N_PVoice *filter, s32 sampleOffset, Acmd *p)
 	 */
 	fVol = (e->em_ctrlList->data.i);
 	fVol = (fVol+fVol)/2;
-	e->em_volume = (s16) fVol;	
+	e->em_volume = (s16) fVol;
+	
+#ifdef FINAL_ROUND
 	e->em_segEnd = SAMPLE184(e->em_ctrlList->moredata.i);
+#else
+	e->em_segEnd = e->em_ctrlList->moredata.i;
+#endif
 	
       }
       
