@@ -170,7 +170,7 @@ Acmd *n_alFxPull(s32 sampleOffset,
      * output already in AL_AUX_R_OUT
      *      just copy to AL_AUX_L_OUT
      */
-#if 0
+#ifndef N_MICRO
     aDMEMMove(ptr++, output, AL_AUX_L_OUT, FIXED_SAMPLE<<1);
 #else
     aDMEMMove(ptr++, output, N_AL_AUX_L_OUT, FIXED_SAMPLE<<1);
