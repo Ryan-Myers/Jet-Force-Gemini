@@ -154,14 +154,144 @@ typedef struct Vec2i {
 } Vec2i;
 
 typedef struct Object_Racer {
-  /* 0x000 */ u8 pad00[0x64];
-  /* 0x064 */ f32 unk64;
-  /* 0x068 */ u8 pad68[0xD8];
+  union {
+    struct {
+      union {
+        /* 0x000 */ u32 flags;      /* whole-word clear; bit 22 tested in GetFormationInfo */
+        struct {
+          /* 0x000 */ u8 flagsHi4 : 4;   /* 0x80..0x10 */
+          /* 0x000 */ u8 bit08 : 1;      /* 0x08 */
+          /* 0x000 */ u8 flagsLo3 : 3;   /* 0x04..0x01 */
+          /* 0x001 */ u8 unk1;
+          /* 0x002 */ u8 unk2;
+          /* 0x003 */ u8 unk3;
+        };
+        /* 0x000 */ u8 unk0;
+      };
+      /* 0x004 */ u8 unk4;
+      /* 0x005 */ u8 unk5;
+      /* 0x006 */ u8 unk6;
+      /* 0x007 */ u8 unk7;
+      /* 0x008 */ u8 unk8;
+      /* 0x009 */ u8 unk9;
+      /* 0x00A */ u8 unkA;
+      /* 0x00B */ u8 unkB;
+      /* 0x00C */ u8 unkC;
+      /* 0x00D */ u8 unkD;
+      /* 0x00E */ u8 padE[0x3];
+      /* 0x011 */ u8 unk11;
+      /* 0x012 */ u8 pad12[0x6];
+    };
+    struct {
+      /* 0x000 */ s16 animPathId[4];
+      /* 0x008 */ u8 padAnim[0x4];
+      /* 0x00C */ u8 animNodeIdx[4];
+      /* 0x010 */ u8 padAnim2[0x8];
+    };
+  };
+  /* 0x018 */ u8 pad18[0x2];
+  union {
+    /* 0x01A */ u16 unk1A;
+    struct {
+      /* 0x01A */ u16 f1Ahi : 4;
+      /* 0x01A */ u16 f1Alo : 4;
+      /* 0x01B */ u16 f1Blo : 8;
+    };
+  };
+  /* 0x01C */ u8 pad1C[0x8];
+  /* 0x024 */ s32 unk24;
+  /* 0x028 */ u16 unk28;
+  /* 0x02A */ s16 unk2A;
+  /* 0x02C */ u16 unk2C;
+  /* 0x02E */ s16 unk2E;
+  /* 0x030 */ u8 unk30;
+  /* 0x031 */ u8 unk31;
+  /* 0x032 */ u8 unk32;
+  /* 0x033 */ u8 unk33;
+  /* 0x034 */ u8 pad34[0x8];
+  /* 0x03C */ s16 unk3C;
+  /* 0x03E */ u8 pad3E[0x1A];
+  /* 0x058 */ struct Object *unk58;
+  /* 0x05C */ u8 pad5C[0x7];
+  /* 0x063 */ u8 unk63;
+  union {
+    /* 0x064 */ f32 unk64;
+    /* 0x064 */ u8 unk64b;
+  };
+  /* 0x068 */ u8 pad68[0xD];
+  /* 0x075 */ u8 unk75;
+  /* 0x076 */ u8 pad76[0x12];
+  /* 0x088 */ s32 unk88;
+  /* 0x08C */ s32 unk8C;
+  /* 0x090 */ u8 pad90[0x16];
+  /* 0x0A6 */ s16 unkA6;
+  /* 0x0A8 */ u8 padA8[0x98];
   /* 0x140 */ s16 y_rotation_offset;
-  /* 0x144 */ s16 z_rotation_offset;
-  /* 0x142 */ s16 x_rotation_offset;
+  /* 0x142 */ s16 z_rotation_offset;
+  /* 0x144 */ s16 x_rotation_offset;
   /* 0x146 */ s16 unk146;
 } Object_Racer;
+
+/* Stack-built spawn record passed to objSetupObject. */
+typedef struct StaticInstanceSpawn {
+  /* 0x00 */ s16 objectId;
+  /* 0x02 */ s8  unk2;
+  /* 0x03 */ u8  pad3;
+  /* 0x04 */ s16 unk4;
+  /* 0x06 */ s16 unk6;
+  /* 0x08 */ s16 unk8;
+  /* 0x0A */ s16 unkA;
+  /* 0x0C */ s16 unkC;
+  /* 0x0E */ s16 unkE;
+  /* 0x10 */ s8  unk10;
+} StaticInstanceSpawn;
+
+typedef struct AnimPath {
+  /* 0x00 */ u8 pad0[0x1E];
+  /* 0x1E */ u8 unk1E;
+  /* 0x1F */ u8 pad1F[0x1];
+  /* 0x20 */ struct AnimPath *unk20;
+  /* 0x24 */ u8 pad24[0x4];
+  /* 0x28 */ struct AnimPath *unk28;
+} AnimPath;
+
+typedef struct PatrolNode {
+  /* 0x00 */ u8 pad0[0x16];
+  /* 0x16 */ u8 unk16;
+  union {
+    /* 0x17 */ u8 unk17;
+    struct {
+      /* 0x17 */ u8 f17hi : 2;
+      /* 0x17 */ u8 f17lo : 6;
+    };
+  };
+  /* 0x18 */ u8 pad18[0x17];
+  /* 0x2F */ u8 unk2F;
+  /* 0x30 */ u8 pad30[0x4];
+} PatrolNode;
+
+typedef struct DisactivatedSquaddie {
+  /* 0x00 */ u8 pad0[0x11];
+  /* 0x11 */ u8 unk11;
+} DisactivatedSquaddie;
+
+typedef struct Object_Grenade {
+  /* 0x000 */ u8 pad0[0x15];
+  /* 0x015 */ u8 unk15;
+  /* 0x016 */ u8 pad16[0x12];
+  /* 0x028 */ struct Object *next;
+  /* 0x02C */ u8 pad2C[56];
+  /* 0x064 */ struct Object *ennemy;
+  /* 0x068 */ u8 pad68[0x40];
+  /* 0x0A8 */ struct Object *owner;
+} Object_Grenade;
+
+typedef struct Object_Squadron {
+  /* 0x000 */ u8 pad0[0x58];
+  /* 0x058 */ struct Object *unk58;
+  /* 0x05C */ u8 pad5C[0x8];
+  /* 0x064 */ u8 unk64;
+} Object_Squadron;
 
 typedef struct ObjHeaderParticleEntry {
   /* 0x00 */ s32 upper;
@@ -223,8 +353,9 @@ typedef struct ObjectSegment {
   /* 0x0000 */ ObjectTransform trans;
   /* 0x0018 */ u8 pad18[0x10];
   /* 0x0028 */ f32 unk28; /* animation value; sprDPset reads it as float bits */
-  /* 0x002C */ u8 pad2C[0x14];
-  /* 0x0048 */ ObjectHeader *header;
+  /* 0x002C */ u8 pad2C[0x10];
+  /* 0x003C */ s32 unk3C;
+  /* 0x0040 */ ObjectHeader *header;
 } ObjectSegment;
 
 typedef struct Object {
@@ -235,6 +366,8 @@ typedef struct Object {
   /* 0x0068 */ Object_Racer *racer; //Object_64 in DKR.
   /* 0x0070 */ u8 pad70[8];
   /* 0x0074 */ u32 *unk74;
+  /* 0x0078 */ u8 pad78[0x28];
+  /* 0x00A0 */ u8 unkA0;
 } Object;
 
 typedef struct VertexPosition {
@@ -553,8 +686,12 @@ typedef struct RumbleStruct {
 } RumbleStruct;
 
 typedef struct RomDefHeader {
-    s16 id;
-    u8 size;
+    /* 0x00 */ s16 id;
+    /* 0x02 */ u8 size;
+    /* 0x03 */ u8 pad3[0xE];
+    /* 0x11 */ u8 unk11;
+    /* 0x12 */ u8 pad12[0x6];
+    /* 0x18 */ u8 unk18;
 } RomDefHeader;
 
 /* Size: 0x24 / 36 bytes */
