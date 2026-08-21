@@ -372,6 +372,7 @@ $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspstop.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_drvrNew.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_env.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_event.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_load.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_mainbus.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_reverb.c.o: OPT_FLAGS := -g
 # $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_seqplayer.c.o: OPT_FLAGS := -g
