@@ -393,6 +393,18 @@ extern long long int    n_aspMainDataStart[], n_aspMainDataEnd[];
 
 #define N_AL_VOL_FULL 0x7fff
 
+typedef struct SpeakerMode_s {
+    u8 surround;
+    u8 mono;
+    u8 headphone;
+    u8 unk03;
+} SpeakerMode;
+
+extern SpeakerMode D_80105010_B1750;
+extern u8 D_80105014_B1754[2];
+extern u8 D_80105016_B1756[2];
+extern u8 D_80105018_B1758[4];
+
 #ifdef _LANGUAGE_C_PLUS_PLUS
 }
 #endif

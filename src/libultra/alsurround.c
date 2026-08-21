@@ -8,15 +8,7 @@
 #define SPEAKERMODE_HEADPHONE 3
 #define SPEAKERMODE_SURROUND 4
 
-struct var8009c340 {
-    u8 surround;
-    u8 mono;
-    u8 headphone;
-    u8 unk03;
-};
-
-struct var8009c340 D_80105010_B1750;
-
+SpeakerMode D_80105010_B1750;
 u8 D_80105014_B1754[2];
 u8 D_80105016_B1756[2];
 u8 D_80105018_B1758[4];

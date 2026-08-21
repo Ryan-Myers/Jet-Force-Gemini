@@ -23,16 +23,9 @@
 // #include <math.h>
 #include <assert.h>
 
+extern SpeakerMode D_80105010_B1750;
+
 #define N_MICRO
-
-struct var8009c340 {
-    u8 surround;
-    u8 mono;
-    u8 headphone;
-    u8 unk03;
-};
-
-extern struct var8009c340 D_80105010_B1750;
 
 #ifdef AUD_PROFILE
 extern u32 cnt_index, env_num, env_cnt, env_max, env_min, lastCnt[];
