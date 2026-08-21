@@ -325,30 +325,23 @@ void squadsCheckEnemyPointers(Object *arg0) {
 
 void squadsCheckGrenades(Object *arg0) {
     s32 i;
-    s32 j;
-    Object **list;
     Object *node;
     Object_Racer *racer;
     Object *obj;
 
     i = D_800FE9F0_B9230;
-    j = i--;
-    if (j != 0) {
-        list = (Object **) D_800A38E4_A44E4 + i;
-        do {
-            node = *list--;
-            racer = node->racer;
-            obj = racer->unk58;
-            while (obj != NULL) {
-                node = (Object *) obj->racer;
-                if (((Object_Grenade *) node)->owner == arg0) {
-                    ((Object_Grenade *) node)->owner = NULL;
-                    return;
-                }
-                obj = ((Object_Grenade *) node)->next;
+    while (i--) {
+        node = (Object **) D_800A38E4_A44E4[i];
+        racer = node->racer;
+        obj = (Object *) racer->unk58;
+        while (obj != NULL) {
+            node = (Object *) obj->racer;
+            if (((Object_Grenade *) node)->owner == arg0) {
+                ((Object_Grenade *) node)->owner = NULL;
+                return;
             }
-            j = i--;
-        } while (j != 0);
+            obj = ((Object_Grenade *) node)->next;
+        }
     }
 }
 
