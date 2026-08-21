@@ -1,7 +1,6 @@
 /*====================================================================
- * cspsetvol.c
  *
- * Copyright 1995, Silicon Graphics, Inc.
+ * Copyright 1993, Silicon Graphics, Inc.
  * All Rights Reserved.
  *
  * This is UNPUBLISHED PROPRIETARY SOURCE CODE of Silicon Graphics,
@@ -18,12 +17,16 @@
  * Copyright Laws of the United States.
  *====================================================================*/
 
-#include <n_libaudio.h>
-void n_alCSPSetVol(N_ALCSPlayer *seqp, s16 vol) {
-    N_ALEvent evt;
+#include <libaudio.h>
+#include "n_libaudio.h"
 
-    evt.type = AL_SEQP_VOL_EVT;
-    evt.msg.spvol.vol = vol;
+void n_alCSPSetVol(N_ALCSPlayer *seqp, s16 vol)
+{
+    N_ALEvent       evt;
 
+    evt.type            = AL_SEQP_VOL_EVT;
+    evt.msg.spvol.vol   = vol;
+    
     n_alEvtqPostEvent(&seqp->evtq, &evt, 0);
 }
+
