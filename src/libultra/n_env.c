@@ -69,11 +69,11 @@ extern f64 _ldexpf(f64 in, s32 ex);
 static  Acmd *_pullSubFrame(N_PVoice *pv, s16 *inp, s16 *outp, s32 outCount,
                              Acmd *p) ;
 
-//static  s16 _getRate(f64 vol, f64 tgt, s32 count, u16* ratel);
+static  s16 _getRate(f64 vol, f64 tgt, s32 count, u16* ratel);
      
      
 #ifndef N_MICRO
-//static  f32 _getVol(f32 ivol, s32 samples, s16 ratem, u16 ratel);
+static  f32 _getVol(f32 ivol, s32 samples, s16 ratem, u16 ratel);
 #else
 static  s16 _getVol(s16 ivol, s32 samples, s16 ratem, u16 ratel);
 #endif
@@ -82,8 +82,8 @@ static  s16 _getVol(s16 ivol, s32 samples, s16 ratem, u16 ratel);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_env/n_alEnvmixerParam.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_env/func_80090C58_91858.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_env/_pullSubFrame.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_env/func_80090F3C_91B3C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_env/_getRate.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_env/func_8009114C_91D4C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_env/_getVol.s")
