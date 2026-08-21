@@ -371,6 +371,27 @@ $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspstop.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_drvrNew.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_env.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_event.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_mainbus.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_reverb.c.o: OPT_FLAGS := -g
+# $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_seqplayer.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_sl.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synaddplayer.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synallocfx.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synallocvoice.c.o: OPT_FLAGS := -g
+# $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_syndelete.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synfreevoice.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_syngetfxref.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synremoveplayer.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synsetfxmix.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synsetfxparam.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synsetpan.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synsetpitch.c.o: OPT_FLAGS := -g
+# $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synsetpriority.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synsetvol.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synstartvoiceparam.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synstopvoice.c.o: OPT_FLAGS := -g
+# $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synthesizer.c.o: OPT_FLAGS := -g
 
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: MIPSISET := -mips2
@@ -428,11 +449,6 @@ no_verify: $(TARGET).z64
 extract:
 	$(SPLAT) ver/splat/$(BASENAME).$(VERSION).yaml
 # Add these files to certain versions to have an empty file for the pragmas
-ifeq ($(VERSION),kiosk)
-	mkdir -p asm/nonmatchings/libultra/n_cspgetstate
-	touch asm/nonmatchings/libultra/n_cspgetstate/n_alCSPGetState.s
-	touch asm/nonmatchings/libultra/n_cspgetstate/func_800899D8_8A5D8.s
-endif
 ifeq ($(VERSION),us)
 	mkdir -p asm/nonmatchings/libultra/n_synremoveplayer
 	touch asm/nonmatchings/libultra/n_synremoveplayer/n_alSynRemovePlayer.s
