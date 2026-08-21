@@ -375,6 +375,7 @@ $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_event.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_load.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_mainbus.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_reverb.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_save.c.o: OPT_FLAGS := -g
 # $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_seqplayer.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_sl.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synaddplayer.c.o: OPT_FLAGS := -g

@@ -159,6 +159,7 @@ segments:
       - [0x8F9D0, c, libultra/n_syndelete]
       - [0x8F9F0, c, libultra/n_synallocfx]
       - [0x8FA80, c, libultra/n_reverb]
+      - [0x91090, c, libultra/n_save]
       - [0x91130, c, libultra/n_env]
       - [0x92120, c, libultra/n_cspsendmidi]
       - [0x921A0, c, math/math_atan]

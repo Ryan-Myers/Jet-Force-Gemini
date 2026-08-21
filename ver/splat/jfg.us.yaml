@@ -157,6 +157,7 @@ segments:
       - [0x8F690, c, libultra/n_syndelete]
       - [0x8F6B0, c, libultra/n_synallocfx]
       - [0x8F740, c, libultra/n_reverb]
+      - [0x90D50, c, libultra/n_save]
       - [0x90DF0, c, libultra/n_env]
       - [0x91DE0, c, libultra/n_cspsendmidi]
       - [0x91E60, c, libultra/n_synsetpriority]
