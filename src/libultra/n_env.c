@@ -25,8 +25,6 @@
 
 extern SpeakerMode D_80105010_B1750;
 
-#define N_MICRO
-
 #ifdef AUD_PROFILE
 extern u32 cnt_index, env_num, env_cnt, env_max, env_min, lastCnt[];
 extern u32 rate_num, rate_cnt, rate_max, rate_min;
