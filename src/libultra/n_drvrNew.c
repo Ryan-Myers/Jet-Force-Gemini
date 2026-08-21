@@ -1,5 +1,26 @@
+/*====================================================================
+ *
+ * Copyright 1993, Silicon Graphics, Inc.
+ * All Rights Reserved.
+ *
+ * This is UNPUBLISHED PROPRIETARY SOURCE CODE of Silicon Graphics,
+ * Inc.; the contents of this file may not be disclosed to third
+ * parties, copied or duplicated in any form, in whole or in part,
+ * without the prior written permission of Silicon Graphics, Inc.
+ *
+ * RESTRICTED RIGHTS LEGEND:
+ * Use, duplication or disclosure by the Government is subject to
+ * restrictions as set forth in subdivision (c)(1)(ii) of the Rights
+ * in Technical Data and Computer Software clause at DFARS
+ * 252.227-7013, and/or in similar or successor clauses in the FAR,
+ * DOD or NASA FAR Supplement. Unpublished - rights reserved under the
+ * Copyright Laws of the United States.
+ *====================================================================*/
+
+
 #include "n_synthInternals.h"
 #include <os.h>
+#include <stdio.h>
 
 /*
  * WARNING: THE FOLLOWING CONSTANT MUST BE KEPT IN SYNC
@@ -135,128 +156,125 @@ void n_alFxInitlpfilter_mono(struct fx *fx, f32 outputrate)
 
 void n_alFxNew(ALFx **fx_ar, ALSynConfig *c, s16 bus, ALHeap *hp)
 {
-	u16 i, j, k;
-	s32 *param = 0;
-	ALDelay	*d;
-	ALFx *r;
+    u16		i, j, k;
+    s32		*param = 0;
+    ALDelay	*d;
+    ALFx *r;
 
-	*fx_ar = r = (ALFx *)alHeapAlloc(hp, 1, sizeof(ALFx));
+    *fx_ar = r = (ALFx *)alHeapAlloc(hp, 1, sizeof(ALFx));
 
-	switch (c->fxType[bus]) {
-	case AL_FX_CUSTOM:
-		param = c->params[bus];
-		break;
-	default:
-		param = NULL_PARAMS_N;
-		break;
-	}
+    switch (c->fxType[bus]) {
+      case AL_FX_CUSTOM:	param = c->params[bus];		break;
+      default:			param = NULL_PARAMS_N;		break;
+    }
 
-	j = 0;
 
-	r->section_count = param[j++];
-	r->length = param[j++];
+    j = 0;
+    
+    r->section_count = param[j++];
+    r->length 	     = param[j++];
 
-	r->delay = alHeapAlloc(hp, r->section_count, sizeof(ALDelay));
-	r->base[0] = alHeapAlloc(hp, r->length, sizeof(s16));
+    r->delay = alHeapAlloc(hp, r->section_count, sizeof(ALDelay));
+    r->base[0] = alHeapAlloc(hp, r->length, sizeof(s16));
 	r->input[0] = r->base[0];
 	r->base[1] = alHeapAlloc(hp, r->length, sizeof(s16));
 	r->input[1] = r->base[1];
 
-	for (k = 0; k < r->length; k++) {
-		r->base[0][k] = r->base[1][k] = 0;
-	}
+    for ( k=0; k < r->length; k++)
+	r->base[0][k] = r->base[1][k] = 0;
 
-	for (i = 0; i < r->section_count; i++) {
-		d = &r->delay[i];
-		d->input  = param[j++];
-		d->output = param[j++];
-		d->fbcoef = param[j++];
-		d->ffcoef = param[j++];
-		d->gain   = param[j++];
+    for ( i=0; i<r->section_count; i++ ){
+	d = &r->delay[i];
+	d->input  = param[j++];
+	d->output = param[j++];
+	d->fbcoef = param[j++];
+	d->ffcoef = param[j++];
+	d->gain   = param[j++];
 
-		if (param[j]) {
+	if (param[j]) {
 #define RANGE 2.0f
-			/*	    d->rsinc     = ((f32) param[j++])/0xffffff; */
-			d->rsinc = ((((f32)param[j++])/1000) * RANGE)/c->outputRate;
+/*	    d->rsinc     = ((f32) param[j++])/0xffffff; */
+	    d->rsinc = ((((f32)param[j++])/1000) * RANGE)/c->outputRate;
 
-			/*
-			 * the following constant is derived from:
-			 *
-			 *		ratio = 2^(cents/1200)
-			 *
-			 * and therefore for hundredths of a cent
-			 *			           x
-			 *		ln(ratio) = ---------------
-			 *			    (120,000)/ln(2)
-			 * where
-			 *		120,000/ln(2) = 173123.40...
-			 */
+	    /*
+	     * the following constant is derived from:
+	     *
+	     *		ratio = 2^(cents/1200)
+	     *
+	     * and therefore for hundredths of a cent
+	     *			           x
+	     *		ln(ratio) = ---------------
+	     *			    (120,000)/ln(2)
+	     * where
+	     *		120,000/ln(2) = 173123.40...
+	     */
 #define CONVERT 173123.404906676f
 #define LENGTH	(d->output - d->input)
-			d->rsgain 	 = (((f32) param[j++])/CONVERT) * LENGTH;
-			d->rsval	 = 1.0f;
-			d->rsdelta	 = 0.0f;
-			d->rs 	 = alHeapAlloc(hp, 1, sizeof(ALResampler));
-			d->rs->state[0] = alHeapAlloc(hp, 1, sizeof(RESAMPLE_STATE));
-			d->rs->state[1] = alHeapAlloc(hp, 1, sizeof(RESAMPLE_STATE));
-			d->rs->delta = 0.0f;
-			d->rs->first = 1;
-		} else {
-			d->rs = 0;
-			j++;
-			j++;
-		}
-
-		if (param[j]) {
-			d->lp = alHeapAlloc(hp, 1, sizeof(ALLowPass));
-			d->lp->fstate[0] = alHeapAlloc(hp, 1, sizeof(POLEF_STATE));
-			d->lp->fstate[1] = alHeapAlloc(hp, 1, sizeof(POLEF_STATE));
-			d->lp->fc = param[j++];
-			n_alFxInitlpfilter(d->lp);
-		} else {
-			d->lp = 0;
-			j++;
-		}
+	    d->rsgain 	 = (((f32) param[j++])/CONVERT) * LENGTH;
+	    d->rsval	 = 1.0f;
+	    d->rsdelta	 = 0.0f;
+	    d->rs 	 = alHeapAlloc(hp, 1, sizeof(ALResampler));
+	    d->rs->state[0] = alHeapAlloc(hp, 1, sizeof(RESAMPLE_STATE));
+	    d->rs->state[1] = alHeapAlloc(hp, 1, sizeof(RESAMPLE_STATE));
+	    d->rs->delta = 0.0f;
+	    d->rs->first = 1;
+	} else {
+	    d->rs = 0;
+	    j++;
+	    j++;
 	}
+
+	if (param[j]) {
+	    d->lp = alHeapAlloc(hp, 1, sizeof(ALLowPass));
+	    d->lp->fstate[0] = alHeapAlloc(hp, 1, sizeof(POLEF_STATE));
+	    d->lp->fstate[1] = alHeapAlloc(hp, 1, sizeof(POLEF_STATE));
+	    d->lp->fc = param[j++];
+	    n_alFxInitlpfilter(d->lp);
+	} else {
+	    d->lp = 0;
+	    j++;
+	}
+    }
 }
 
 void alN_PVoiceNew(N_PVoice *mv, ALDMANew dmaNew, ALHeap *hp)
 {
-	mv->dc_state = alHeapAlloc(hp, 1, sizeof(ADPCM_STATE));
-	mv->dc_lstate = alHeapAlloc(hp, 1, sizeof(ADPCM_STATE));
-	mv->dc_dma = dmaNew(&mv->dc_dmaState);
-	mv->dc_lastsam = 0;
-	mv->dc_first = 1;
-	mv->dc_memin = 0;
+  mv->dc_state = alHeapAlloc(hp, 1, sizeof(ADPCM_STATE));
+  mv->dc_lstate = alHeapAlloc(hp, 1, sizeof(ADPCM_STATE));
+  mv->dc_dma = dmaNew(&mv->dc_dmaState);
+  mv->dc_lastsam = 0;
+  mv->dc_first = 1;
+  mv->dc_memin = 0;
 
-	mv->rs_state = alHeapAlloc(hp, 1, sizeof(RESAMPLE_STATE));
-	mv->rs_delta  = 0.0f;
-	mv->rs_first  = 1;
-	mv->rs_ratio = 1.0f;
-	mv->rs_upitch = 0;
+  mv->rs_state = alHeapAlloc(hp, 1, sizeof(RESAMPLE_STATE));
+  mv->rs_delta  = 0.0f;
+  mv->rs_first  = 1;
+  mv->rs_ratio = 1.0f;
+  mv->rs_upitch = 0;
 
-	mv->em_state = alHeapAlloc(hp, 1, sizeof(ENVMIX_STATE));
-	mv->em_first = 1;
-	mv->em_motion = AL_STOPPED;
-	mv->em_volume = 1;
-	mv->em_ltgt = 1;
-	mv->em_rtgt = 1;
-	mv->em_cvolL = 1;
-	mv->em_cvolR = 1;
-	mv->em_dryamt = 0;
-	mv->em_wetamt = 0;
-	mv->em_lratm = 1;
-	mv->em_lratl = 0;
-	mv->em_lratm = 1;
-	mv->em_lratl = 0;
-	mv->em_delta = 0;
-	mv->em_segEnd = 0;
-	mv->em_pan = 0;
-	mv->em_ctrlList = 0;
-	mv->em_ctrlTail = 0;
-	mv->unk8c = 0;
-	mv->fx.unk02 = 0;
-	mv->fx.unk00 = 0;
-	mv->unkbc = alHeapAlloc(hp, 1, 8);
-	mv->unkb8 = 0;
+  mv->em_state = alHeapAlloc(hp, 1, sizeof(ENVMIX_STATE));
+  mv->em_first = 1;
+  mv->em_motion = AL_STOPPED;
+  mv->em_volume = 1;
+  mv->em_ltgt = 1;
+  mv->em_rtgt = 1;
+  mv->em_cvolL = 1;
+  mv->em_cvolR = 1;
+  mv->em_dryamt = 0;
+  mv->em_wetamt = 0;
+  mv->em_lratm = 1;
+  mv->em_lratl = 0;
+  mv->em_lratm = 1;
+  mv->em_lratl = 0;
+  mv->em_delta = 0;
+  mv->em_segEnd = 0;
+  mv->em_pan = 0;
+  mv->em_ctrlList = 0;
+  mv->em_ctrlTail = 0;
+  mv->unk8c = 0;
+  mv->fx.unk02 = 0;
+  mv->fx.unk00 = 0;
+  mv->unkbc = alHeapAlloc(hp, 1, 8);
+  mv->unkb8 = 0;
 }
+
