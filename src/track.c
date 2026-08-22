@@ -176,12 +176,12 @@ void trackDraw(Gfx **dList, Mtx **mtx, Vertex **vtx, Triangle **tris, s32 update
     gTrackVtxPtr = *vtx;
     gTrackTriPtr = *tris;
 
-    #ifdef VERSION_us
+#ifdef VERSION_us
     diRcpTrace(gTrackDL, "track/track.c", 504);
-    #endif
-    #ifdef VERSION_kiosk
+#endif
+#ifdef VERSION_kiosk
     diRcpTrace(gTrackDL, "track/track.c", 500);
-    #endif
+#endif
 
     camSetNo(0);
     gSceneRenderSkyDome = 1;
@@ -259,12 +259,12 @@ void trackDraw(Gfx **dList, Mtx **mtx, Vertex **vtx, Triangle **tris, s32 update
             func_80013454_14054();
         }
 
-        #ifdef VERSION_us
+#ifdef VERSION_us
         diRcpTrace(gTrackDL, "track/track.c", 637);
-        #endif
-        #ifdef VERSION_kiosk
+#endif
+#ifdef VERSION_kiosk
         diRcpTrace(gTrackDL, "track/track.c", 633);
-        #endif
+#endif
 
         gDPPipeSync(gTrackDL++);
         func_80013820_14420(temp_s2, updateRate);
@@ -580,12 +580,12 @@ void func_80013454_14054(void) {
     texDPTextureX(&gTrackDL, NULL, 8, 0);
     gSPVertexJFG(gTrackDL++, OS_K0_TO_PHYSICAL(verts), 4, 0);
 
-    #ifdef VERSION_us
+#ifdef VERSION_us
     gSPPolygon(gTrackDL++, D_A0DA8, 2, 0);
-    #endif
-    #ifdef VERSION_kiosk
+#endif
+#ifdef VERSION_kiosk
     gSPPolygon(gTrackDL++, D_A1638, 2, 0);
-    #endif
+#endif
 
     camSetView(&gTrackDL, &gTrackMtxPtr);
     topR = level->BGColourTopR;

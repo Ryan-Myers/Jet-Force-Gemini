@@ -337,7 +337,7 @@ s32 packLoadGameEprom(s32 saveFileNum, Game *game) {
     pageNum = sectorNum + 0x7F;
     save = (u32 *) mmAlloc(sectorsToAllocate * SECTOR_SIZE, COLOUR_TAG_WHITE);
     bytesToWrite = sectorsToAllocate * SECTOR_SIZE;
-    var_s1 = (u8*)save;
+    var_s1 = (u8 *) save;
 
     for (i = 0; (bytesToWrite - i) != 0; i += (SECTOR_SIZE / 2)) {
         flashROMRead(sectorNum++, (u32 *) var_s1);
@@ -356,7 +356,7 @@ s32 packLoadGameEprom(s32 saveFileNum, Game *game) {
 
     checksum = packCalculateGameChecksum((u8 *) save, sizeof(Game));
     flashROMRead(pageNum, save);
-    if (checksum != (s32)*save) {
+    if (checksum != (s32) *save) {
         game->pad[3] = -1;
     } else {
         game->pad[3] = saveFileNum;

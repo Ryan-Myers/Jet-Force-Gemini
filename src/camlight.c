@@ -24,7 +24,6 @@ typedef struct UnkStruct_80024430_25030_s {
     f32 unkC;
 } UnkStruct_80024430_25030;
 
-
 /************ .data ************/
 
 Gfx D_800A1020_A1C20[] = {
@@ -96,7 +95,7 @@ void camlightFlush(void) {
     }
 }
 
-CamLight *camlightAdd(CamLight_inner* arg0, UnkStruct_Arg1 *arg1) {
+CamLight *camlightAdd(CamLight_inner *arg0, UnkStruct_Arg1 *arg1) {
     CamLight *camLight;
 
     if (sCurrentCamLightsCount >= MAX_CAMLIGHTS) {
@@ -410,8 +409,7 @@ void func_80024430_25030(UnkStruct_80024430_25030 *arg0, f32 arg1, f32 arg2, f32
         sp7C.trans.position.z = (arg0->unk0 * arg6) + arg3;
         sp7C.trans.scale = arg0->unk4 * arg7;
         gDPSetPrimColor(sGfxPtr++, 0, 0, arg0->unk9, arg0->unkA, arg0->unkB, (s32) (arg0->unkC * arg8));
-        camDoSprite(&sGfxPtr, &D_800F5B54_B1754, &D_800F5B58_B1758, &sp7C,
-                    (Sprite *) D_800A1110_A1D10, 4, 0);
+        camDoSprite(&sGfxPtr, &D_800F5B54_B1754, &D_800F5B58_B1758, &sp7C, (Sprite *) D_800A1110_A1D10, 4, 0);
         arg0++;
     }
 }
