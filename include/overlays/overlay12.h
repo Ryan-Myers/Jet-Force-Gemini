@@ -4,5 +4,6 @@
 #include <PR/ultratypes.h>
 
 void frontFreeMenuFrame(void);
+s32 frontMenuFrameTrackDrawingOn(void);
 
 #endif

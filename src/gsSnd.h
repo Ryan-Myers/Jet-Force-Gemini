@@ -76,6 +76,7 @@ typedef union {
 
 ALLink *func_80085B20_86720(ALBank *arg0, ALSound *arg1);
 void gsSndpSetGlobalVolume(u32 volume);
+void gsSndpStop(ALSoundState *state);
 void gsSndpLimitVoices(s32 arg0);
 
 #endif
