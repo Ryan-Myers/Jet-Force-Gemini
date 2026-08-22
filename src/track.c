@@ -3,8 +3,8 @@
 #include "common.h"
 #include "fx.h"
 #include "gameVi.h"
-#include "math/math.h"
 #include "main.h"
+#include "math/math.h"
 #include "objects.h"
 #include "overlays/animseq.h"
 #include "overlays/beam.h"
@@ -113,7 +113,12 @@ extern s32 watereffectframe;                   // 0x800A0D6C
 extern u8 D_800A0D90_A1990[];
 
 // misc
+#ifdef VERSION_us
 extern u8 D_A0DA8[];
+#endif
+#ifdef VERSION_kiosk
+extern u8 D_A1638[];
+#endif
 
 // main .data
 extern u8 gameInWindow; // 0x800A321C
@@ -170,7 +175,14 @@ void trackDraw(Gfx **dList, Mtx **mtx, Vertex **vtx, Triangle **tris, s32 update
     gTrackMtxPtr = *mtx;
     gTrackVtxPtr = *vtx;
     gTrackTriPtr = *tris;
+
+    #ifdef VERSION_us
     diRcpTrace(gTrackDL, "track/track.c", 504);
+    #endif
+    #ifdef VERSION_kiosk
+    diRcpTrace(gTrackDL, "track/track.c", 500);
+    #endif
+
     camSetNo(0);
     gSceneRenderSkyDome = 1;
     D_800F2F8C_B176C = 0;
@@ -246,7 +258,14 @@ void trackDraw(Gfx **dList, Mtx **mtx, Vertex **vtx, Triangle **tris, s32 update
         } else {
             func_80013454_14054();
         }
+
+        #ifdef VERSION_us
         diRcpTrace(gTrackDL, "track/track.c", 637);
+        #endif
+        #ifdef VERSION_kiosk
+        diRcpTrace(gTrackDL, "track/track.c", 633);
+        #endif
+
         gDPPipeSync(gTrackDL++);
         func_80013820_14420(temp_s2, updateRate);
         setWeatherLimits(-1, -0x200);
@@ -560,7 +579,14 @@ void func_80013454_14054(void) {
     texDPInit(&gTrackDL);
     texDPTextureX(&gTrackDL, NULL, 8, 0);
     gSPVertexJFG(gTrackDL++, OS_K0_TO_PHYSICAL(verts), 4, 0);
+
+    #ifdef VERSION_us
     gSPPolygon(gTrackDL++, D_A0DA8, 2, 0);
+    #endif
+    #ifdef VERSION_kiosk
+    gSPPolygon(gTrackDL++, D_A1638, 2, 0);
+    #endif
+
     camSetView(&gTrackDL, &gTrackMtxPtr);
     topR = level->BGColourTopR;
     topG = level->BGColourTopG;
