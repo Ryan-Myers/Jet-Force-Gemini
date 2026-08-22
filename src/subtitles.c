@@ -1,5 +1,10 @@
 #include "common.h"
+#include "enums.h"
 #include "font.h"
+#include "memory.h"
+#include "menu.h"
+#include "objects.h"
+#include "pi.h"
 
 typedef struct GameTextTableStruct {
     char *entries[128];

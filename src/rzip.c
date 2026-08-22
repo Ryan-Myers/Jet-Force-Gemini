@@ -1,9 +1,7 @@
+#include "rzip.h"
 #include "common.h"
-
-MemoryPoolSlot *mmAlloc(s32 size, u32 colourTag);
-s32 piRomLoadSection(u32 assetIndex, u32 address, s32 assetOffset, s32 size);
-s32 inflate_block(void);
-void _blkclr(void *, size_t);
+#include "memory.h"
+#include "pi.h"
 
 huft *rzip_huft_alloc = NULL;
 huft *rzip_asset_address = NULL;
@@ -19,8 +17,8 @@ s32 rzip_hufts;
 #define N_MAX 288 /* maximum number of codes in any set */
 
 void rzipInit(void) {
-    rzip_huft_alloc = mmAlloc(0x2800, COLOUR_TAG_BLACK);
-    rzip_asset_address = mmAlloc(sizeof(huft) * 2, COLOUR_TAG_BLACK);
+    rzip_huft_alloc = (huft *) mmAlloc(0x2800, COLOUR_TAG_BLACK);
+    rzip_asset_address = (huft *) mmAlloc(sizeof(huft) * 2, COLOUR_TAG_BLACK);
 }
 
 /**

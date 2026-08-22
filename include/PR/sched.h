@@ -144,5 +144,46 @@ void            osScAddClient(OSSched *s, OSScClient *c, OSMesgQueue *msgQ);
 void            osScRemoveClient(OSSched *s, OSScClient *c);
 OSMesgQueue     *osScGetCmdQ(OSSched *s);
 
+
+void func_8004FB30_50730(OSSched *sc);
+char *osScGetTaskType(s32 taskID);
+void func_8004FC64_50864(OSScTask *task);
+Gfx *func_8004FF64_50B64(OSSched *sc, 
+    char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
+    char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2);
+
+extern char D_800AD510[];// = "(Audio task)";
+extern char D_800AD520[];// = "(Game task)";
+extern char D_800AD52C[];// = "(DI task)";
+extern char D_800AD538[];// = "(DI benchmark test)";
+extern char D_800AD550[];// = "(Clone task)";
+extern char D_800AD560[];// = "(Refract task)";
+extern char D_800AD570[];// = "(Blur task)";
+extern char D_800AD580[];// = "(Unknown task type %d)";
+extern char D_800AD598[];// = "RCP TASK INFO-------------"; //AND MUCH MORE STRING CONTENT
+extern char D_800AD7D4[];// = "SP CRASHED, gfx=%x";
+extern char D_800AD7E8[];// = "DP CRASHED, gfx=%x";
+extern char D_800AD7FC[];// = "** GFX overflow **";
+extern char D_800AD810[];// = "** MTX overflow **";
+extern char D_800AD824[];// = "** VTX overflow **";
+extern char D_800AD838[];// = "** POL overflow **";
+extern char D_800AD84C[];// = "Version %s";
+extern char D_800AD7D0[];// = "7.2";
+extern s32 D_800A38B0_A44B0[]; // = { OSMESG_SWAP_BUFFER, OSMESG_SWAP_BUFFER };
+extern s32 D_800A38B8_A44B8[]; //gBootBlackoutMesg[] = { OSMESG_SWAP_BUFFER, MESG_SKIP_BUFFER_SWAP };
+extern u8 gGfxOverflowed;
+extern u8 gMtxOverflowed;
+extern u8 gVtxOverflowed;
+extern u8 gPolOverflowed;
+extern s32 gCurRSPTaskCounter;
+extern s32 gCurRDPTaskCounter;
+extern s8 gNextFrameCount;
+extern u64 gRetraceCounter64;
+extern s32 gCurRSPTaskIsSet;
+extern s32 gCurRDPTaskIsSet;
+extern s32 *currentScreen;
+extern s32 *otherScreen;
+extern s32 *otherZbuf;
+
 #endif
 

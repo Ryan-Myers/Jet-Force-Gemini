@@ -2,7 +2,10 @@
 #include "common.h"
 #include "gameVi.h"
 #include "libc/string.h"
+#include "rcpFast3d.h"
 #include "stdarg.h"
+#include "textures.h"
+#include "types.h"
 
 /************ .data ************/
 

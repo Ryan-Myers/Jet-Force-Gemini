@@ -1,5 +1,9 @@
+#include "lights.h"
+#include "camlight.h"
 #include "common.h"
-#include "math.h"
+#include "math/math.h"
+#include "memory.h"
+#include "textures.h"
 
 extern void *D_800A1010_A1C10;
 extern ObjectLightUnk70 *D_800F5B20_F6720;
@@ -121,8 +125,6 @@ UNUSED unk800DC950 **lightGetLights(s32 *arg0) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/lights/func_80021B8C_2278C.s")
 
-#ifdef NON_EQUIVALENT
-// Matching, but needs rodata migration for the jump table.
 f32 lightDistanceCalc(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     f32 temp;
 
@@ -148,9 +150,6 @@ f32 lightDistanceCalc(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     }
     return arg0 * temp;
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/lights/lightDistanceCalc.s")
-#endif
 
 f32 lightDirectionCalc(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6) {
     f32 temp_f0;

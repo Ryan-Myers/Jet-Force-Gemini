@@ -1,37 +1,29 @@
+#include "saves.h"
 #include "common.h"
+#include "enums.h"
+#include "joy.h"
+#include "main.h"
+#include "memory.h"
+#include "menu.h"
+#include "PR/os_flash.h"
+#include "PR/os_pi.h"
 
-// These are the unique game codes assigned to DKR
-#define NDYJ 0x4E44594A // 'NDYJ' ASCII
-#define NDYP 0x4E445950 // 'NDYP' ASCII
-#define NDYE 0x4E445945 // 'NDYE' ASCII
-#define JPN_GAME_CODE NDYJ
-#define PAL_GAME_CODE NDYP
-#define NTSC_GAME_CODE NDYE
-#define CHARFILETYPE 0x43484152
-// This is RARE's unique code
-#define COMPANY_CODE 0x3459
-
-// The size of 1 sector is 128 pages (16K bytes), and each page of 0~0x7f, 0x80~0xff, 0x100~0x17f... is considered to be
-// 1 sector. So basically, flash is written in sectors, and changing a single page needs to read a sector, modify the
-// page, and write back the whole sector.
-#define SECTOR_SIZE 128
+#ifdef VERSION_kiosk
+#include "audiomgr.h"
+#endif
 
 #ifdef VERSION_us
-#define nosMotorInit osMotorInit
-#define nosMotorStart osMotorStart
-#define nosMotorStop osMotorStop
-
-s32 mainGetPauseMode();
-extern u8 D_800A3470_A4070;
-
 s32 func_8004B070_4BC70(void) {
     s32 var_v0;
 
     var_v0 = D_800A3470_A4070 != 0;
     if (var_v0 != 0) {
-        return mainGetPauseMode() == 0;
+        return mainGetPauseMode() == FALSE;
     }
     // Bug! Doesn't guarantee a return
+#ifdef AVOID_UB
+    return 0;
+#endif
 }
 
 void rumbleRumbles(s32 arg0) {
@@ -53,21 +45,20 @@ UNUSED void rumbleStart(s32 controllerIndex, s32 arg1, f32 arg2) {
     u8 controllerNum;
 
 #ifdef VERSION_us
-    if (func_8004B070_4BC70() != 0) {
+    if (func_8004B070_4BC70() != 0)
 #endif
+    {
         if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
             controllerNum = joyGetController(controllerIndex);
             rumblePak = &rumbleStructArray[controllerNum];
             if (rumblePak->state.upper != 2) {
                 rumblePak->state.state = (rumblePak->state.state & ~0xF0) | 0x10;
-                rumblePak->unk2 = ((arg1 * arg1) * 0.1000000015f);
+                rumblePak->unk2 = ((arg1 * arg1) * 0.1f);
                 rumblePak->unk4 = rumblePak->unk2;
                 rumblePak->rumbleTime = (arg2 * 60.0f);
             }
         }
-#ifdef VERSION_us
     }
-#endif
 }
 
 #ifdef VERSION_kiosk
@@ -96,13 +87,14 @@ void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
     RumbleStruct *rumblePak;
 
 #ifdef VERSION_us
-    if (func_8004B070_4BC70() != 0) {
+    if (func_8004B070_4BC70() != 0)
 #endif
+    {
         if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
             controllerNum = joyGetController(controllerIndex);
             rumblePak = &D_800FDF5A_B879A[controllerNum];
             if (arg1 != 0) {
-                rumblePak->state.half = ((arg1 * arg1) * 0.1000000015f);
+                rumblePak->state.half = ((arg1 * arg1) * 0.1f);
             }
             rumblePak = &rumbleStructArray[controllerNum];
             if (rumblePak->state.upper != 2 && arg2 != 0.0f) {
@@ -110,9 +102,7 @@ void rumbleAlter(s32 controllerIndex, s32 arg1, f32 arg2) {
                 rumblePak->rumbleTime = (arg2 * 60.0f);
             }
         }
-#ifdef VERSION_us
     }
-#endif
 }
 
 void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
@@ -121,8 +111,9 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
     s32 controllerNum;
 
 #ifdef VERSION_us
-    if (func_8004B070_4BC70() != 0) {
+    if (func_8004B070_4BC70() != 0)
 #endif
+    {
         if (controllerIndex >= 0 && controllerIndex < MAXCONTROLLERS) {
             controllerNum = joyGetController(controllerIndex);
             rumblePak = &rumbleStructArray[controllerNum];
@@ -132,7 +123,7 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
             }
 #endif
             if (arg1 != 0) {
-                arg1 = ((arg1 * arg1) * 0.1000000015f);
+                arg1 = ((arg1 * arg1) * 0.1f);
                 if (rumblePak->unk2 < arg1) {
                     rumblePak->unk2 = arg1;
                 }
@@ -145,9 +136,7 @@ void rumbleMax(s32 controllerIndex, s32 arg1, f32 arg2) {
                 }
             }
         }
-#ifdef VERSION_us
     }
-#endif
 }
 
 #ifdef VERSION_kiosk
@@ -299,25 +288,160 @@ UNUSED void rumbleGetRumble(s32 arg0, s32 *arg1, f32 *arg2) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004BA98_4C698.s")
+/**
+    Calculates a checksum of the Game struct, and returns it.
+*/
+s32 packCalculateGameChecksum(u8 *buf, s32 count) {
+    s32 checksum = 7;
+    while (count--) {
+        checksum += *buf++;
+    }
+    return checksum;
+}
 
+#ifdef VERSION_us
+s32 packLoadCharacter(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    return 1;
+}
+#else
+// Kiosk has a the code for this function, where the US version just stubs it out.
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadCharacter.s")
+#endif
 
+#ifdef VERSION_us
+s32 packSaveCharacter(s32 arg0, s32 arg1, s32 arg2) {
+    return 1;
+}
+#else
+// Kiosk has a the code for this function, where the US version just stubs it out.
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packSaveCharacter.s")
+#endif
 
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadGameEprom.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packSaveGameEprom.s")
+s32 packSaveGameEprom(s32 saveFileNum, Game *game) {
+    FlashSector *sector;
+    u32 pageNum;
+    s32 sectorsToWrite;
+    u32 checksum;
+    u32 sectorNum;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packClearGameEprom.s")
+    sectorNum = D_800A3474_A4074[saveFileNum];
+    pageNum = sectorNum + 0x7F;
+    game->pad[3] = saveFileNum;
+    sectorsToWrite = 11;
+    sector = (FlashSector *) game;
+    checksum = packCalculateGameChecksum((u8 *) game, sizeof(Game));
+    if (mainResetPressed() == FALSE) {
+        osFlashSectorErase(sectorNum);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packEraseEprom.s")
+    // This the is only possible way of making IDO not skip this condition
+    write:
+        if (sectorsToWrite != 0) {
+            flashROMWrite(sectorNum++, (u32 *) sector);
+            sectorsToWrite--;
+            sector++;
+            goto write;
+        }
+        flashROMWrite(pageNum, &checksum);
+    }
+#ifdef VERSION_kiosk
+    amAudioMgrSetScheduleMode(0);
+#endif
+    return 0;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/func_8004BE44_4CA44.s")
+void packClearGameEprom(s32 saveFileNum, UNUSED Game *game) {
+    u8 *dataToWrite;
+    u32 pageNum;
+    s32 i;
+    s32 j;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadGlobalFlagsEprom.s")
+    pageNum = D_800A3474_A4074[saveFileNum];
+    dataToWrite = (u8 *) mmAlloc(SECTOR_SIZE, COLOUR_TAG_WHITE);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packSaveGlobalFlagsEprom.s")
+    // clang-format off
+    for (i = 0; i < SECTOR_SIZE; i++) { dataToWrite[i] = 0xFF; }
+    // clang-format on
+
+    if (mainResetPressed() == FALSE) {
+        osFlashSectorErase(pageNum);
+        for (j = 0; j < SECTOR_SIZE; j++) {
+            flashROMWrite(pageNum++, (u32 *) dataToWrite);
+        }
+    }
+
+    mmFree(dataToWrite);
+}
+
+void packEraseEprom(void) {
+    u8 *dataToWrite;
+    u32 pageNum;
+    s32 i;
+    s32 j;
+
+    dataToWrite = (u8 *) mmAlloc(SECTOR_SIZE, COLOUR_TAG_WHITE);
+
+    // clang-format off
+    for (i = 0; i < SECTOR_SIZE; i++) { dataToWrite[i] = 0xFF; }
+    // clang-format on
+
+    if (mainResetPressed() == FALSE) {
+        pageNum = 0;
+        for (i = 0; i < NUMBER_OF_SECTORS; i++) {
+            osFlashSectorErase(pageNum);
+            for (j = 0; j < SECTOR_SIZE; j++) {
+                flashROMWrite(pageNum++, (u32 *) dataToWrite);
+            }
+        }
+    }
+
+    if (i) {} // FAKE
+    mmFree(dataToWrite);
+}
+
+/**
+    Calculates a checksum of the first 0x7E bytes of the given buffer, and returns it.
+    The checksum is stored in the last two bytes of the buffer.
+*/
+s32 packCalculateGlobalFlagsChecksum(u8 *buf) {
+    s32 bytesToChecksum = FlashSectorSize;
+    s32 checksum = 5;
+
+    while (bytesToChecksum--) {
+        checksum += *buf++;
+    }
+    return checksum;
+}
+
+s32 packLoadGlobalFlagsEprom(FlashSector *save) {
+    s32 bytesToWrite;
+    u8 *dst;
+    u8 *src;
+    s32 end;
+
+    flashROMRead(SECTOR(7), (u32 *) save);
+    if (packCalculateGlobalFlagsChecksum((u8 *) save) != save->checksum) {
+        src = D_800A34AC_A40AC; // Load default save data from ROM
+        dst = (u8 *) save;
+        bytesToWrite = FlashSectorSize;
+        while (bytesToWrite--) {
+            *dst++ = *src++;
+        }
+
+        save->checksum = packCalculateGlobalFlagsChecksum((u8 *) save);
+    }
+    return TRUE;
+}
+
+s32 packSaveGlobalFlagsEprom(FlashSector *save) {
+    save->checksum = packCalculateGlobalFlagsChecksum((u8 *) save);
+    if (mainResetPressed() == FALSE) {
+        osFlashSectorErase(SECTOR(7));
+        flashROMWrite(SECTOR(7), (u32 *) save);
+    }
+    return TRUE;
+}
 
 void flashROMInit(void) {
     osCreateMesgQueue(&cartEventQueue, (OSMesg *) &cartEventBuf, 1);
@@ -501,7 +625,7 @@ SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char *
     }
 
     files_used = maxNumOfFilesOnCpak * 24;
-    sPackDirectory = mmAlloc(files_used, COLOUR_TAG_BLACK);
+    sPackDirectory = (s8 *) mmAlloc(files_used, COLOUR_TAG_BLACK);
     bzero(sPackDirectory, files_used);
     temp_D_800DE440 = sPackDirectory;
 
@@ -541,7 +665,7 @@ SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char *
         fileTypes[i] = 1; // Unknown file type? Possibly from another game?
 
         if ((state.game_code == gameCode) && (state.company_code == COMPANY_CODE)) {
-            fileTypes[i] = func_8004D250_4DE50(controllerIndex, i);
+            fileTypes[i] = packGetFileType(controllerIndex, i);
         }
     }
 
@@ -634,7 +758,7 @@ SIDeviceStatus packCopyFile(s32 controllerIndex, s32 fileNumber, s32 secondContr
         return CONTROLLER_PAK_BAD_DATA;
     }
 
-    alloc = mmAlloc(state.file_size, COLOUR_TAG_BLACK);
+    alloc = (u8 *) mmAlloc(state.file_size, COLOUR_TAG_BLACK);
 
     status = packReadFile(controllerIndex, fileNumber, alloc, state.file_size);
     packClose(controllerIndex);
@@ -864,13 +988,13 @@ char *string_to_font_codes(char *inString, char *outString, s32 stringLength) {
 }
 
 // Essentially the same as get_file_type in DKR
-s32 func_8004D250_4DE50(s32 controllerIndex, s32 fileNum) {
+s32 packGetFileType(s32 controllerIndex, s32 fileNum) {
     s32 *data;
     UNUSED s32 pad;
     s32 ret;
 
     ret = 1;
-    data = mmAlloc(0x100, COLOUR_TAG_BLACK);
+    data = (s32 *) mmAlloc(0x100, COLOUR_TAG_BLACK);
     if (packReadFile(controllerIndex, fileNum, (u8 *) data, 0x100) == CONTROLLER_PAK_GOOD) {
         switch (*data) {
             case CHARFILETYPE:

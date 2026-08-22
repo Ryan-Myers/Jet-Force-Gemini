@@ -6,4 +6,4 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o136/overlay_136/realReflectPrint.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o136/overlay_136/func_overlay_136_F0001590_1B7FD60.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o136/overlay_136/func_overlay_136_00001590_1B7FD60.s")

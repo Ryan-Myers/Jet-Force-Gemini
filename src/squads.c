@@ -1,4 +1,6 @@
 #include "common.h"
+#include "pi.h"
+#include "runLink.h"
 
 const char D_800AD890[] = "CRITICAL ERROR: objSetupObject() returned NULL\n";
 const char D_800AD8C0[] = "GFDS:%d ???\n";

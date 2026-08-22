@@ -3,7 +3,7 @@
 
 #include <PR/ultratypes.h>
 
-void frontCleanupCharSelect_Trap(void);
-void frontCleanupMultiSelect_Trap(void);
+void frontCleanupCharSelect(void);
+void frontCleanupMultiSelect(void);
 
 #endif

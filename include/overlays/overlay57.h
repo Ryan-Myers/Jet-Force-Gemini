@@ -3,6 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void frontCleanupRarepage_Trap(void);
+void frontCleanupRarepage(void);
 
 #endif

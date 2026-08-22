@@ -3,7 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void bloodSpurtUpdateAll_Trap(s32 arg0);
-void dropletUpdateAll_Trap(s32 arg0);
+void dropletUpdateAll(s32 arg0);
 
 #endif

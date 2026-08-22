@@ -1,3 +1,4 @@
+#include "rcpFast3d.h"
 #include "common.h"
 #include "overlays/overlay4.h"
 
@@ -21,7 +22,7 @@ s32 rcpWaitDP(void) {
         refractTaskActive = FALSE;
     }
     if (cloneTaskActive) {
-        cloneTasksQueueAndWait_Trap();
+        cloneTasksQueueAndWait();
         cloneTaskActive = FALSE;
     }
     D_800A35E4_A41E4 = FALSE;

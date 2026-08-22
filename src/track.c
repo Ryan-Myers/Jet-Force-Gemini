@@ -4,10 +4,16 @@
 #include "fx.h"
 #include "gameVi.h"
 #include "math/math.h"
+#include "main.h"
 #include "objects.h"
+#include "overlays/animseq.h"
+#include "overlays/beam.h"
+#include "overlays/blood.h"
 #include "overlays/overlay1.h"
-#include "overlays/overlay10.h"
+#include "overlays/overlay12.h"
 #include "overlays/overlay39.h"
+#include "overlays/spark.h"
+#include "runLink.h"
 #include "textures.h"
 #include "weather.h"
 
@@ -118,7 +124,6 @@ extern s32 numanimlockons; // 0x800A74E0
 // TODO: Move to .h files
 void diRcpTrace(Gfx *, const char *, s32);
 void levelUpdateColourCycling(s32);
-s32 mainGetPauseMode(void);
 void objClearFlashes(s32);
 void shadowChangeBuffer(void);
 void shadowGenerate(s32, s32 updateRate);
@@ -140,13 +145,13 @@ void func_800136B8_142B8(s32 updateRate);
 
 void trackUpdateFX(s32 arg0) {
     if (runlinkIsModuleLoaded(1) != 0) {
-        dropletUpdateAll_Trap(arg0);
+        dropletUpdateAll(arg0);
     }
     if (runlinkIsModuleLoaded(8) != 0) {
-        bloodSpurtUpdateAll_Trap(arg0);
+        bloodSpurtUpdateAll(arg0);
     }
     if (runlinkIsModuleLoaded(10) != 0) {
-        sparkUpdate_Trap(arg0);
+        sparkUpdate(arg0);
     }
 }
 
@@ -157,7 +162,7 @@ void trackDraw(Gfx **dList, Mtx **mtx, Vertex **vtx, Triangle **tris, s32 update
     s32 var_v0;
 
     temp_s2 = mainGetNumberOfCameras();
-    if (TrapDanglingJump() == 0) {
+    if (frontMenuFrameTrackDrawingOn() == 0) {
         return;
     }
 
@@ -217,7 +222,7 @@ void trackDraw(Gfx **dList, Mtx **mtx, Vertex **vtx, Triangle **tris, s32 update
         func_800129AC_135AC(targetUpdateRate);
     }
     if (beamScrollFlag != 0) {
-        TrapDanglingJump(targetUpdateRate);
+        beamScroll(targetUpdateRate);
     }
     fxUpdateLevelEffects(targetUpdateRate);
     if (gameInWindow != 0 && temp_s2 == 1) {
@@ -257,12 +262,14 @@ void trackDraw(Gfx **dList, Mtx **mtx, Vertex **vtx, Triangle **tris, s32 update
         }
     }
     if (numanimlockons > 0) {
-        TrapDanglingJump(&gTrackDL);
+        animseqLockOnDraw(&gTrackDL);
     }
-    TrapDanglingJump(&gTrackDL);
+
+    animseqPrintCaptions(&gTrackDL);
     if (fadeA != 0) {
-        TrapDanglingJump(&gTrackDL);
+        animseqDrawNoisyFade(&gTrackDL);
     }
+
     camDisableUserView(0, 1);
     camResetView(&gTrackDL);
     gDPPipeSync(gTrackDL++);
@@ -537,8 +544,8 @@ void func_80013454_14054(void) {
     s32 height;
     s32 sp54;
     s32 sp50;
-    s32 sp4C;
-    s32 sp48;
+    u32 sp4C;
+    u32 sp48;
     u8 topR;
     u8 topG;
     u8 topB;
@@ -775,11 +782,11 @@ void trackGetFog(s32 playerID, s16 *near, s16 *far, s16 *unk18, u8 *r, u8 *g, u8
     FogData *fogData;
 
     if (runlinkIsModuleLoaded(39) != 0) {
-        mantisLightingGetFog_Trap(near, far, r, g, b);
+        mantisLightingGetFog(near, far, r, g, b);
         *unk18 = 0;
         *unk33 = 0;
     } else if (runlinkIsModuleLoaded(23) != 0) {
-        dayGetFog_Trap(near, far, r, g, b);
+        dayGetFog(near, far, r, g, b);
         *unk18 = 0;
         *unk33 = 0;
     } else {
@@ -793,7 +800,7 @@ void trackGetFog(s32 playerID, s16 *near, s16 *far, s16 *unk18, u8 *r, u8 *g, u8
         *unk33 = fogData->intendedFog.unk33 & 0x7F;
     }
     if (runlinkIsModuleLoaded(29) != 0) {
-        girlMagicFog_Trap(r, g, b, near, far, unk33);
+        girlMagicFog(r, g, b, near, far, unk33);
     }
 }
 

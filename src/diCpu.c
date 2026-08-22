@@ -1,7 +1,10 @@
+#include "diCpu.h"
 #include "common.h"
+#include "diprint.h"
 #include "gameVi.h"
 #include "PR/rdb.h"
 #include "PRinternal/rmonint.h"
+#include "runLink.h"
 #include "stdarg.h"
 
 extern OSThread *__osGetActiveQueue(void);
@@ -358,7 +361,7 @@ void func_8006837C_68F7C(void) {
     }
 }
 
-extern u32 __osRdbSend_Trap(u8 *buf, u32 size, u32 type);
+extern u32 __osRdbSend(u8 *buf, u32 size, u32 type);
 void __rmonSendFault(OSThread *thread) {
     volatile float f UNUSED;
     u8 *tPtr;
@@ -371,6 +374,6 @@ void __rmonSendFault(OSThread *thread) {
     // sizeof(OSThread) in original, 0x230 in this.
     // TrapDanglingJump is __osRdbSend in the orginal
     while (sent < 0x230) {
-        sent += __osRdbSend_Trap(tPtr + sent, 0x230 - sent, RDB_TYPE_GtoH_FAULT);
+        sent += __osRdbSend(tPtr + sent, 0x230 - sent, RDB_TYPE_GtoH_FAULT);
     }
 }

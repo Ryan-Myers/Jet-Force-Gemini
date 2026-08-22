@@ -4,7 +4,7 @@ Script to find which asm files use symbols defined in a .bss.s or .rodata.s file
 
 Usage: python find_symbol_usage.py <input_file> [--search-dir <dir>]
 
-Example: python find_symbol_usage.py asm_us/data/main_bss_start.bss.s
+Example: python find_symbol_usage.py asm/data/main.bss.s
 """
 
 import argparse
@@ -36,6 +36,7 @@ def extract_symbols(input_file: str) -> list[tuple[str, str, str]]:
         # If we have a current symbol, look for its address in comment
         # Format: /* 800B0B50 */ or /* AE4A0 800AD8A0 */
         if current_symbol:
+            no_rom = False
             # Try format with ROM and VRAM: /* AE4A0 800AD8A0 */
             addr_match = re.search(r'/\*\s*([0-9A-Fa-f]+)\s+([0-9A-Fa-f]+)\s*\*/', line)
             if not addr_match:
@@ -44,10 +45,15 @@ def extract_symbols(input_file: str) -> list[tuple[str, str, str]]:
             if not addr_match:
                 # Try format with just VRAM: /* 800B0B50 */
                 addr_match = re.search(r'/\*\s*([0-9A-Fa-f]{8})\s*\*/', line)
+                no_rom = True
             
             if addr_match:
-                rom = addr_match.group(1)
-                address = addr_match.group(2)
+                if no_rom:
+                    rom = "N/A"
+                    address = addr_match.group(1)
+                else:
+                    rom = addr_match.group(1)
+                    address = addr_match.group(2)
                 symbols.append((address, current_symbol, rom))
                 current_symbol = None
             else:
@@ -85,9 +91,9 @@ def main():
     parser = argparse.ArgumentParser(
         description='Find which asm files use symbols defined in a .bss.s or .rodata.s file'
     )
-    parser.add_argument('input_file', help='Input asm file (e.g., asm_us/data/main_bss_start.bss.s)')
-    parser.add_argument('--search-dir', default='asm_us', 
-                        help='Directory to search for symbol usages (default: asm_us)')
+    parser.add_argument('input_file', help='Input asm file (e.g., asm/data/main.bss.s)')
+    parser.add_argument('--search-dir', default='asm', 
+                        help='Directory to search for symbol usages (default: asm)')
     parser.add_argument('--markdown', action='store_true',
                         help='Output in markdown table format')
     

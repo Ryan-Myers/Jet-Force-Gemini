@@ -3,6 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-void frontCleanupMultiModeSelect_Trap(void);
+void frontCleanupMultiModeSelect(void);
 
 #endif

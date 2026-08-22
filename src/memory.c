@@ -1,6 +1,8 @@
 #include "memory.h"
 #include "common.h"
-#include "overlays/overlay10.h"
+#include "math/math.h"
+#include "overlays/spark.h"
+#include "runLink.h"
 
 #ifndef _ALIGN16
 #define _ALIGN16(a) (((u32) (a) & ~0xF) + 0x10)
@@ -368,7 +370,7 @@ void mmFreeTick(void) {
     if (FreeRAM < 0x14000) {
         runlinkLowMemoryPanic();
         if (FreeRAM < 0xC000 && runlinkIsModuleLoaded(3) != 0) {
-            sparkUpdate_Trap(); // Odd function to call here. This isn't even in Overlay 3.
+            sparkUpdate(); // Odd function to call here. This isn't even in Overlay 3.
         }
     }
 #endif

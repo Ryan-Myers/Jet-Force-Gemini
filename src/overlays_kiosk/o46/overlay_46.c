@@ -6,13 +6,13 @@
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o46/overlay_46/animseqSampleCurve.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o46/overlay_46/func_overlay_46_F00007DC_1B0FD4C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o46/overlay_46/func_overlay_46_000007DC_1B0FD4C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o46/overlay_46/animseqUpdatePath.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o46/overlay_46/func_overlay_46_F00013D0_1B10940.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o46/overlay_46/func_overlay_46_000013D0_1B10940.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o46/overlay_46/func_overlay_46_F0001560_1B10AD0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o46/overlay_46/func_overlay_46_00001560_1B10AD0.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o46/overlay_46/animseqAddChangeLight.s")
 

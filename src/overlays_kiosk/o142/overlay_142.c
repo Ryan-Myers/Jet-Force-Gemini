@@ -1,8 +1,8 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o142/overlay_142/func_overlay_142_F0000000_1B82DB0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o142/overlay_142/func_overlay_142_00000000_1B82DB0.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o142/overlay_142/func_overlay_142_F000007C_1B82E2C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o142/overlay_142/func_overlay_142_0000007C_1B82E2C.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/overlays_kiosk/o142/overlay_142/FatBobDrawShockWave.s")
 

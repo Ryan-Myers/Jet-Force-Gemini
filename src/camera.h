@@ -6,6 +6,7 @@
 #include <PR/sp.h>
 #include "gameVi.h"
 #include "structs.h"
+#include "types.h"
 
 #define CAMERA_ASPECT ASPECT_RATIO_NTSC
 #define CAMERA_FAR 15000.0f
@@ -33,14 +34,22 @@ typedef struct Camera {
     /* 0x4A */ s16 unk4A; /* added to trans.rotation.x */
 } Camera;
 
+extern ScreenViewport D_800A3728[4]; //gScreenViewports
+
+void camPopModelMtx(Gfx **dlist);
+void camRestoreModelMtx(Gfx **dlist);
+void camPushModelMtx(Gfx **dList, Mtx **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
 Camera *camGetPtr(void);
 Matrix *camGetRotationMtx(void);
 Mtx *camGetProjOrgMtx(void);
-void camDoSprite(Gfx**, Mtx**, Vertex**, void*, Sprite*, s32, s32);
+void camDoSprite(Gfx**, Mtx**, Vertex**, ObjectSegment*, Sprite*, s32, u8);
+void camSetFOV(f32, s32);
+void camSetNo(s32);
+void camSetScissor(Gfx **dlist);
+s32 camGetMode(void);
 void camDisableUserView(s32, s32);
 void camEnableUserView(s32, s32);
 void camResetView(Gfx**);
-void camSetNo(s32);
 void camSetView(Gfx**, Mtx**);
 void camUserViewTick(void);
 void camlightDraw(Gfx**, Mtx**, Vertex**);
@@ -49,7 +58,7 @@ void camlightVisibilityCheck(void);
 s32 camGetNo(void);
 u8 camGetWaterLine(s32 arg0);
 s32 camProjectPoint(f32, f32, f32, void*, f32*, s32);
-void camGetWindowLimits(s32, s32, s32*, s32*, s32*, s32*);
+void camGetWindowLimits(s32, s32, s32*, s32*, u32*, u32*);
 void camStandardOrtho(Gfx**, Mtx**);
 
 #endif
