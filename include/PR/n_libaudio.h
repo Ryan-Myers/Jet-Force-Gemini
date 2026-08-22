@@ -88,9 +88,9 @@ void    n_alSynStartVoiceParams(N_ALVoice *v, ALWaveTable *w,f32 pitch, s16 vol,
 				ALPan pan, u8 fxmix, u8 arg6, f32 arg7, u8 arg8, ALMicroTime t);
 void    n_alSynStopVoice( N_ALVoice *v);
 
-void    n_alSynFilter11(N_ALVoice *v, u8 channel);
-void    n_alSynFilter12(N_ALVoice *v, u8 arg1);
-void    n_alSynFilter13(N_ALVoice *v, f32 arg1);
+void    n_alSynSetDistort(N_ALVoice *v, u8 channel);
+void    n_alSynSetLpf_gain(N_ALVoice *v, u8 arg1);
+void    n_alSynSetLpf_freq(N_ALVoice *v, f32 arg1);
 
 void    n_alSynNew(ALSynConfig *c);
 void    n_alSynDelete(void);
@@ -280,6 +280,9 @@ typedef struct {
 } N_ALCSPlayer;
 
 
+void            n_alEvtqPostExternEvent(N_ALCSPlayer *seqp, ALEventQueue *evtq, N_ALEvent *evt, ALMicroTime delta);
+
+
 /*
  * Sequence data representation routines
  */
@@ -287,7 +290,7 @@ void    n_alSeqNextEvent(ALSeq *seq, N_ALEvent *event);
 void    n_alSeqNewMarker(ALSeq *seq, ALSeqMarker *m, u32 ticks);
 
 void    n_alCSeqNew(ALCSeq *seq, u8 *ptr);
-void    n_alCSeqNextEvent(ALCSeq *seq, N_ALEvent *evt, s32 arg2);
+void    n_alCSeqNextEvent(ALCSeq *seq, N_ALEvent *evt, s32 allowLooping);
 void    n_alCSeqNewMarker(ALCSeq *seq, ALCSeqMarker *m, u32 ticks);
 
 
@@ -388,10 +391,19 @@ void     n_alSndpSetSound(ALSndId id);
 extern long long int    n_aspMainTextStart[], n_aspMainTextEnd[];
 extern long long int    n_aspMainDataStart[], n_aspMainDataEnd[];
 
-f32 func0003b9d4(s32 arg0);
-void func0003ba64(struct fx *fx, f32 outputrate);
-s16 _getRate(f32 vol, f32 tgt, s32 count, u16 *ratel);
-s16 _getVol(s16 ivol, s32 samples, s16 ratem, u16 ratel);
+#define N_AL_VOL_FULL 0x7fff
+
+typedef struct SpeakerMode_s {
+    u8 surround;
+    u8 mono;
+    u8 headphone;
+    u8 unk03;
+} SpeakerMode;
+
+extern SpeakerMode D_80105010_B1750;
+extern u8 D_80105014_B1754[2];
+extern u8 D_80105016_B1756[2];
+extern u8 D_80105018_B1758[4];
 
 #ifdef _LANGUAGE_C_PLUS_PLUS
 }

@@ -17,16 +17,10 @@
  * Copyright Laws of the United States.
  *====================================================================*/
 
-#include <libaudio.h>
-#include "n_libaudio.h"
+#ifndef __N_CSEQP__
+#define __N_CSEQP__
 
-void n_alCSPSetVol(N_ALCSPlayer *seqp, s16 vol)
-{
-    N_ALEvent       evt;
+void	__n_CSPPostNextSeqEvent(N_ALCSPlayer *seqp);
 
-    evt.type            = AL_SEQP_VOL_EVT;
-    evt.msg.spvol.vol   = vol;
-    
-    n_alEvtqPostEvent(&seqp->evtq, &evt, 0);
-}
 
+#endif /* __N_CSEQP__ */

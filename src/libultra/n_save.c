@@ -17,16 +17,28 @@
  * Copyright Laws of the United States.
  *====================================================================*/
 
-#include <libaudio.h>
-#include "n_libaudio.h"
+#include "n_synthInternals.h"
 
-void n_alCSPSetVol(N_ALCSPlayer *seqp, s16 vol)
+#include <os.h>
+#include <assert.h>
+
+Acmd *n_alSavePull( s32 sampleOffset, Acmd *p) 
 {
-    N_ALEvent       evt;
+    Acmd        *ptr = p;
 
-    evt.type            = AL_SEQP_VOL_EVT;
-    evt.msg.spvol.vol   = vol;
+    ptr = n_alMainBusPull(sampleOffset, ptr);
     
-    n_alEvtqPostEvent(&seqp->evtq, &evt, 0);
+#ifndef N_MICRO
+    aSetBuffer (ptr++, 0, 0, 0, FIXED_SAMPLE<<1);
+    aInterleave(ptr++, AL_MAIN_L_OUT, AL_MAIN_R_OUT);
+    aSetBuffer (ptr++, 0, 0, 0, FIXED_SAMPLE<<2);
+    aSaveBuffer(ptr++, n_syn->sv_dramout);
+#else
+    n_aInterleave(ptr++);
+    n_aSaveBuffer(ptr++, FIXED_SAMPLE<<2, 0, n_syn->sv_dramout);
+#endif
+    return ptr;
 }
+
+
 

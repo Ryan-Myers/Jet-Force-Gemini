@@ -1,13 +1,39 @@
 #include "common.h"
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_alcspchan/n_alCSPAllChanOn.s")
+#include <n_libaudio.h>
+#include <ultra64.h>
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_alcspchan/n_alCSPChanOff.s")
+// This file lifted from Perfect Dark's repo, and modified slightly.
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_alcspchan/n_alCSPChanOn.s")
+void n_alCSPAllChanOn(N_ALCSPlayer *seqp) {
+    s32 i;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_alcspchan/n_alCSPChanFade.s")
+    seqp->chanMask = 0xffff;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_alcspchan/n_alCSPChanSurround.s")
+    for (i = 0; i < seqp->maxChannels; i++) {
+        seqp->chanState[i].fadevoltarget = 255;
+        seqp->chanState[i].fadevolcurrent = 255;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_alcspchan/n_alCSPChanFadeForce.s")
+void n_alCSPChanOff(N_ALCSPlayer *seqp, s32 chan) {
+    n_alCSPSendMidi(seqp, 0, AL_MIDI_ControlChange | chan, AL_MIDI_FADEEND_CTRL, 0);
+}
+
+void n_alCSPChanOn(N_ALCSPlayer *seqp, s32 chan) {
+    seqp->chanMask |= 1 << chan;
+
+    n_alCSPSendMidi(seqp, 0, AL_MIDI_ControlChange | chan, AL_MIDI_FADEEND_CTRL, 255);
+}
+
+void n_alCSPChanFade(N_ALCSPlayer *seqp, s32 chan, u8 targetvol) {
+    n_alCSPSendMidi(seqp, 0, AL_MIDI_ControlChange | chan, AL_MIDI_FADESTART_CTRL, targetvol);
+}
+
+void n_alCSPChanSurround(N_ALCSPlayer *seqp, s32 chan, u8 arg2) {
+    n_alCSPSendMidi(seqp, 0, AL_MIDI_ControlChange | chan, AL_MIDI_FXMIX80_CTRL, arg2);
+}
+
+void n_alCSPChanFadeForce(N_ALCSPlayer *seqp, s32 chan, u8 vol) {
+    n_alCSPSendMidi(seqp, 0, AL_MIDI_ControlChange | chan, AL_MIDI_UNK_FC, vol);
+}

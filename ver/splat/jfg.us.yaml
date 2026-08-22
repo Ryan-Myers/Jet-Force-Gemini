@@ -125,7 +125,7 @@ segments:
       - [0x8A4D0, c, libultra/n_cspsettempo]
       - [0x8A560, c, libultra/n_cspsetpan]
       - [0x8A5D0, c, libultra/n_cspgetstate]
-      - [0x8A5F0, c, libultra/n_cseq]
+      - [0x8A5F0, c, libultra/n_csq]
       - [0x8AFC0, c, libultra/n_cspsetseq]
       - [0x8B010, c, libultra/n_cspplay]
       - [0x8B050, c, libultra/n_cspstop]
@@ -154,10 +154,11 @@ segments:
       - [0x8F310, c, libultra/n_syngetfxref]
       - [0x8F400, c, libultra/n_synsetfxparam]
       - [0x8F500, c, libultra/n_alsynsetdistort]
-      - [0x8F5B0, c, libultra/n_cseqnextdelta]
+      - [0x8F5B0, c, libultra/n_cseq]
       - [0x8F690, c, libultra/n_syndelete]
       - [0x8F6B0, c, libultra/n_synallocfx]
       - [0x8F740, c, libultra/n_reverb]
+      - [0x90D50, c, libultra/n_save]
       - [0x90DF0, c, libultra/n_env]
       - [0x91DE0, c, libultra/n_cspsendmidi]
       - [0x91E60, c, libultra/n_synsetpriority]
@@ -165,7 +166,7 @@ segments:
       - [0x92080, c, libultra/n_auxbus]
       - [0x92570, c, libultra/n_mainbus]
       - [0x928E0, c, libultra/n_load]
-      - [0x93430, c, libultra/n_alLPFilter] # This may be a custom Rare file.
+      - [0x93430, c, libultra/n_resample2] # This may be a custom Rare file.
       - [0x93850, c, math/math_acosf]
       - [0x93930, c, libultra/n_resample]
       - [0x93BD0, c, math/math_arc]
@@ -332,11 +333,11 @@ segments:
       - [0xA80B0, data, anim]
       - [0xA8190, .data, hasm/ido/math_data_tables]
       - [0xAA1A0, data, gsSnd]
-      - [0xAA1C0, data, libultra/n_csplayer]
+      - [0xAA1C0, .data, libultra/n_csplayer]
       - [0xAA3C0, data, libultra/n_sl]
       - [0xAA3D0, data, libultra/n_synthesizer]
-      - [0xAA3E0, data, libultra/n_drvrNew]
-      - [0xAA420, data, libultra/n_env]
+      - [0xAA3E0, .data, libultra/n_drvrNew]
+      - [0xAA420, .data, libultra/n_env]
       - [0xAA520, .data, math/math_arc]
       - [0xAA630, .data, ../libultra/src/io/contramread]
       - [0xAA640, .data, ../libultra/src/io/contpfs]
@@ -404,7 +405,7 @@ segments:
       - [0xB04F0, .rodata, libultra/n_env]
       - [0xB0540, .rodata, math/math_atan]
       - [0xB0560, .rodata, libultra/n_auxbus]
-      - [0xB0570, .rodata, libultra/n_alLPFilter]
+      - [0xB0570, .rodata, libultra/n_resample2]
       - [0xB0580, .rodata, math/math_acosf]
       - [0xB0590, .rodata, libultra/n_resample]
       - [0xB05A0, .rodata, ../libultra/src/gu/sinf]
@@ -464,9 +465,9 @@ segments:
       - { type: .bss, vram: 0x80104E50, name: fmvInit }
       - { type: .bss, vram: 0x80104EA0, name: ../libultra/src/flash/flashinit }
       - { type: bss, vram: 0x80104F60, name: gsSnd }
-      - { type: bss, vram: 0x80104FD0, name: libultra/n_csplayer }
-      - { type: bss, vram: 0x80105010, name: libultra/alsurround }
-      - { type: bss, vram: 0x80105020, name: libultra/n_event }
+      - { type: .bss, vram: 0x80104FD0, name: libultra/n_csplayer }
+      - { type: .bss, vram: 0x80105010, name: libultra/alsurround }
+      - { type: .bss, vram: 0x80105020, name: libultra/n_event }
       - { type: .bss, vram: 0x80105030, name: ../libultra/src/io/pfsisplug }
       - { type: .bss, vram: 0x80105070, name: ../libultra/src/io/motor }
       - { type: .bss, vram: 0x80105170, name: ../libultra/src/io/contpfs }

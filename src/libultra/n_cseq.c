@@ -1,19 +1,34 @@
-#include "common.h"
+#include "libaudio.h"
+#include <os_internal.h>
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cseq/n_alCSeqNew.s")
+/**
+ * Note: If there are no valid tracks (ie. all tracks have
+ * reached the end of their data stream), then return FALSE
+ * to indicate that there is no next event.
+ */
+char __alCSeqNextDelta(ALCSeq *seq, s32 *pDeltaTicks) {
+    u32 i;
+    u32 firstTime = 0xffffffff;
+    u32 lastTicks = seq->lastDeltaTicks;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cseq/n_alCSeqNextEvent.s")
+    if (!seq->validTracks) {
+        return FALSE;
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cseq/func_80089CEC_8A8EC.s")
+    for (i = 0; i < 16; i++) {
+        if ((seq->validTracks >> i) & 1) {
+            if (seq->deltaFlag) {
+                seq->evtDeltaTicks[i] -= lastTicks;
+            }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cseq/n_alCSeqGetTicks.s")
+            if (seq->evtDeltaTicks[i] < firstTime) {
+                firstTime = seq->evtDeltaTicks[i];
+            }
+        }
+    }
 
-void func_8008A128_8AD28(void) {
+    seq->deltaFlag = 0;
+    *pDeltaTicks = firstTime;
+
+    return TRUE;
 }
-
-void func_8008A130_8AD30(void) {
-}
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cseq/func_8008A138_8AD38.s")
-
-#pragma GLOBAL_ASM("asm/nonmatchings/libultra/n_cseq/func_8008A32C_8AF2C.s")
