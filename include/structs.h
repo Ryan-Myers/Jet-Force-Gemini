@@ -235,8 +235,8 @@ typedef struct Object {
   /* 0x004A */ s16 unk4A;
   /* 0x004C */ u8 pad4C[0x68 - 0x4C];
   /* 0x0068 */ Object_Racer *racer; //Object_64 in DKR.
-  /* 0x0068 */ u8 pad70[8];
-  /* 0x0070 */ u32 *unk70;
+  /* 0x006C */ u8 pad6C[8];
+  /* 0x0074 */ s32 *unk74;
 } Object;
 
 typedef struct VertexPosition {
