@@ -1,39 +1,46 @@
 #ifndef _CAMLIGHT_H_
 #define _CAMLIGHT_H_
 
-#define MAX_CAMLIGHT 50 
+#include <PR/ultratypes.h>
+#include <PR/gbi.h>
+#include <PR/sp.h>
+#include "gameVi.h"
+#include "textures.h"
+#include "structs.h"
+#include "types.h"
 
-typedef struct CamLightStruct_inner2_s {
-    char pad[0x2D];
-    u8 unk2D;
-} CamLightStruct_inner2;
+#define MAX_CAMLIGHTS 50 
 
-typedef struct CamLightStruct_inner1_s {
-    CamLightStruct_inner2 *unk0;
-    char pad[0x64];
-    Vec3f *unk68;
-} CamLightStruct_inner1;
+typedef struct CamLight_inner2 {
+    /* 0x00 */ char pad[0x2D];
+    /* 0x2D */ u8 unk2D;
+} CamLight_inner2;
 
-typedef struct CamLightStruct_inner_s {
-    /* 0x04 */ char pad0[0xC]; /* maybe part of unk0[3]? */
+typedef struct CamLight_inner1 {
+    /* 0x00 */ CamLight_inner2 *unk0;
+    /* 0x04 */ char pad4[0x64];
+    /* 0x68 */ Vec3f *unk68;
+} CamLight_inner1;
+
+typedef struct CamLight_inner {
+    /* 0x00 */ Vec3s unk0;
+    /* 0x08 */ char pad8[0x4]; /* maybe part of unk0[3]? */
     /* 0x0C */ f32 unkC;
     /* 0x10 */ f32 unk10;
     /* 0x14 */ f32 unk14;
     /* 0x18 */ char pad18[0x22]; /* maybe part of unk14[9]? */
     /* 0x3A */ s8 unk3A;
-    /* 0x3B */ char pad3B[0x31]; /* maybe part of unk3A[MAX_CAMLIGHT]? */
-    /* 0x6C */ CamLightStruct_inner1 **unk6C;
-} CamLightStruct_inner; /* size = 0x70 */
+    /* 0x3B */ char pad3B[0x31]; /* maybe part of unk3A[MAX_CAMLIGHTS]? */
+    /* 0x6C */ CamLight_inner1 **unk6C;
+} CamLight_inner; /* size = 0x70 */
 
-typedef struct CamLightStruct_s {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ s16 unk4;
+typedef struct CamLight {
+    /* 0x00 */ Vec3s unk0;
     /* 0x06 */ u8 unk6;
     /* 0x07 */ s8 unk7;
     /* 0x08 */ f32 unk8;
     /* 0x0C */ Vec3f unkC;
-    /* 0x18 */ CamLightStruct_inner *unk18;
+    /* 0x18 */ CamLight_inner *unk18;
     /* 0x1C */ f32 unk1C;
     /* 0x20 */ f32 unk20;
     /* 0x24 */ f32 unk24;
@@ -51,9 +58,9 @@ typedef struct CamLightStruct_s {
     /* 0x44 */ f32 unk44;
     /* 0x48 */ f32 unk48;
     /* 0x4C */ f32 unk4C;
-} CamLightStruct; /* size = 0x50 */
+} CamLight; /* size = 0x50 */
 
-typedef struct UnkStruct_Arg1_s {
+typedef struct UnkStruct_Arg1 {
     /* 0x00 */ u8 unk0;
     /* 0x01 */ u8 unk1;
     /* 0x02 */ s16 unk2;
@@ -74,14 +81,10 @@ typedef struct UnkStruct_Arg1_s {
 } UnkStruct_Arg1; /* size = 0x20 */
 
 
-void camlightUpdate(CamLightStruct *arg0);
-void camlightUpdate(CamLightStruct *arg0);
-void camlightDelete(CamLightStruct *);
-CamLightStruct *camlightAdd(s32 arg0, UnkStruct_Arg1 *arg1);
+void camlightUpdate(CamLight *arg0);
+void camlightUpdate(CamLight *arg0);
+void camlightDelete(CamLight *);
+CamLight *camlightAdd(CamLight_inner* arg0, UnkStruct_Arg1 *arg1);
+void camlightFlush(void);
 
-// static functions
-void func_80023FA4_24BA4(CamLightStruct *arg0, CamLightStruct *arg1);
-void func_80024430_25030(UnkStruct_80024430_25030 *arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6,
-                         f32 arg7, f32 arg8);
-                         
 #endif
