@@ -4,22 +4,11 @@
 #include <PR/ultratypes.h>
 #include <PR/gbi.h>
 #include <PR/sp.h>
+#include "gameVi.h"
 #include "structs.h"
 #include "types.h"
 
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 240
-#define SCREEN_HEIGHT_PAL (SCREEN_HEIGHT + 44)
-#define SCREEN_WIDTH_HALF (SCREEN_WIDTH / 2)
-#define SCREEN_HEIGHT_HALF (SCREEN_HEIGHT / 2)
-#define SCREEN_HEIGHT_HALF_PAL (SCREEN_HEIGHT_HALF + 12)
-
-#define SCREEN_WIDTH_FLOAT ((float)(SCREEN_WIDTH))
-#define SCREEN_HEIGHT_FLOAT ((float)(SCREEN_HEIGHT))
-#define SCREEN_WIDTH_FLOAT_HALF ((float)SCREEN_WIDTH / 2)
-#define SCREEN_HEIGHT_FLOAT_HALF ((float)SCREEN_HEIGHT / 2)
-
-#define CAMERA_ASPECT (SCREEN_WIDTH_FLOAT / SCREEN_HEIGHT_FLOAT)
+#define CAMERA_ASPECT ASPECT_RATIO_NTSC
 #define CAMERA_FAR 15000.0f
 #define CAMERA_NEAR 10.0f
 #define CAMERA_DEFAULT_FOV 60.0f
@@ -50,13 +39,27 @@ extern ScreenViewport D_800A3728[4]; //gScreenViewports
 void camPopModelMtx(Gfx **dlist);
 void camRestoreModelMtx(Gfx **dlist);
 void camPushModelMtx(Gfx **dList, Mtx **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
+Matrix *camGetInvProjMtx(void);
+s32 camProjectPoint(f32 x, f32 y, f32 z, f32 *outX, f32 *outY, u8 transform);
 Camera *camGetPtr(void);
 Matrix *camGetRotationMtx(void);
 Mtx *camGetProjOrgMtx(void);
-void camDoSprite(Gfx**, Mtx**, Vertex**, ObjectSegment*, Sprite*, s32, u8);
+void camDoSprite(Gfx**, Mtx**, Vertex**, ObjectSegment1*, Sprite*, s32, u8);
 void camSetFOV(f32, s32);
 void camSetNo(s32);
 void camSetScissor(Gfx **dlist);
 s32 camGetMode(void);
+void camDisableUserView(s32, s32);
+void camEnableUserView(s32, s32);
+void camResetView(Gfx**);
+void camSetView(Gfx**, Mtx**);
+void camUserViewTick(void);
+void camlightDraw(Gfx**, Mtx**, Vertex**);
+void camlightUpdateAll(void);
+void camlightVisibilityCheck(void);
+s32 camGetNo(void);
+u8 camGetWaterLine(s32 arg0);
+void camGetWindowLimits(s32, s32, s32*, s32*, u32*, u32*);
+void camStandardOrtho(Gfx**, Mtx**);
 
 #endif

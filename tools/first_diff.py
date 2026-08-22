@@ -34,18 +34,18 @@ def firstDiffMain():
     parser = argparse.ArgumentParser(description="Find the first difference(s) between the built ROM and the base ROM.")
 
     parser.add_argument("-c", "--count", type=int, default=5, help="find up to this many instruction difference(s)")
-    parser.add_argument("-v", "--version", help="Which version should be processed", default="us")
+    parser.add_argument("-v", "--VERSION", help="Which version should be processed", default="us")
     parser.add_argument("-a", "--add-colons", action='store_true', help="Add colon between bytes" )
 
     args = parser.parse_args()
 
-    if args.version == "us" or args.version == "kiosk":
+    if args.VERSION == "us" or args.VERSION == "kiosk":
         buildFolder = Path("build")
     else:
-        buildFolder = Path(f"build_{args.version}")
+        buildFolder = Path(f"build_{args.VERSION}")
 
-    BUILTROM = buildFolder / f"jfg.{args.version}.z64"
-    BUILTMAP = buildFolder / f"jfg.{args.version}.map"
+    BUILTROM = buildFolder / f"jfg.{args.VERSION}.z64"
+    BUILTMAP = buildFolder / f"jfg.{args.VERSION}.map"
 
     EXPECTEDROM = "expected" / BUILTROM
     EXPECTEDMAP = "expected" / BUILTMAP

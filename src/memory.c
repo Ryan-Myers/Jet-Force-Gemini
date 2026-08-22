@@ -1,7 +1,7 @@
 #include "memory.h"
 #include "common.h"
 #include "math/math.h"
-#include "overlays/overlay10.h"
+#include "overlays/spark.h"
 #include "runLink.h"
 
 #ifndef _ALIGN16

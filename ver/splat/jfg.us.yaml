@@ -30,6 +30,7 @@ options:
   hasm_in_src_path: True
   libultra_symbols: True
   disassemble_all: True
+
 segments:
   - name: header
     type: header
@@ -295,7 +296,7 @@ segments:
       - [0xA18D0, data, track]
       - [0xA1A80, data, shadows]
       - [0xA1C00, data, lights]
-      - [0xA1C20, data, camlight]
+      - [0xA1C20, .data, camlight]
       - [0xA1D20, data, spranim]
       - [0xA1DB0, data, explosion]
       - [0xA1DC0, data, charControl]
@@ -426,7 +427,7 @@ segments:
       - { type: bss, vram: 0x800F2F70, name: track }
       - { type: bss, vram: 0x800F33D0, name: shadows }
       - { type: bss, vram: 0x800F5B20, name: lights }
-      - { type: bss, vram: 0x800F5B50, name: camlight }
+      - { type: .bss, vram: 0x800F5B50, name: camlight }
       - { type: bss, vram: 0x800F6B00, name: explosion }
       - { type: bss, vram: 0x800F6DA0, name: charControl }
       - { type: bss, vram: 0x800F6F10, name: models }

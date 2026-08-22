@@ -7,7 +7,7 @@
 
 //Size: 0x538
 typedef struct Game {
-    u8 pad[0x538];
+    s8 pad[0x538];
 } Game;
 
 /* Size: 0x230 bytes */
@@ -219,22 +219,31 @@ typedef struct ObjectTransform {
     };
 } ObjectTransform;
 
+
 typedef struct ObjectSegment {
   /* 0x0000 */ ObjectTransform trans;
   /* 0x0018 */ u8 pad18[0x10];
   /* 0x0028 */ f32 unk28; /* animation value; sprDPset reads it as float bits */
-  /* 0x002C */ u8 pad2C[0x14];
-  /* 0x0048 */ ObjectHeader *header;
+  /* 0x002C */ u8 pad2C[0x3C - 0x2C];
+  /* 0x003C */ s32 unk3C;
+  /* 0x0040 */ ObjectHeader *header;
 } ObjectSegment;
+
+typedef struct ObjectSegment1 {
+    /* 0x0000 */ ObjectTransform trans;
+    /* 0x0018 */ u8 pad18[0x10];
+    /* 0x0028 */ f32 unk28; /* animation value; sprDPset reads it as float bits */
+} ObjectSegment1;      /* size = 0x2C */
 
 typedef struct Object {
   /* 0x0000 */ ObjectSegment segment;
   /* 0x0046 */ u8 pad46[0x4];
   /* 0x0048 */ s16 behaviorId;
-  /* 0x0049 */ u8 pad49[0x1B];
+  /* 0x004A */ s16 unk4A;
+  /* 0x004C */ u8 pad4C[0x68 - 0x4C];
   /* 0x0068 */ Object_Racer *racer; //Object_64 in DKR.
-  /* 0x0070 */ u8 pad70[8];
-  /* 0x0074 */ u32 *unk74;
+  /* 0x006C */ u8 pad6C[8];
+  /* 0x0074 */ s32 *unk74;
 } Object;
 
 typedef struct VertexPosition {
