@@ -317,7 +317,53 @@ s32 packSaveCharacter(s32 arg0, s32 arg1, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/saves/packSaveCharacter.s")
 #endif
 
-#pragma GLOBAL_ASM("asm/nonmatchings/saves/packLoadGameEprom.s")
+s32 packLoadGameEprom(s32 saveFileNum, Game *game) {
+    u32 *save;
+    u32 pageNum;
+    u8 *var_s1;
+    s32 checksum;
+    s32 bytesToWrite;
+    s32 sectorNum;
+    s32 sectorsToAllocate;
+    s32 i;
+    u8 *dst;
+    u8 *src;
+
+    sectorsToAllocate = (sizeof(Game) / SECTOR_SIZE);
+    sectorNum = D_800A3474_A4074[saveFileNum];
+    if (1) {}
+    sectorsToAllocate++; // Add one as a kind of CEILING calculation.
+
+    pageNum = sectorNum + 0x7F;
+    save = (u32 *) mmAlloc(sectorsToAllocate * SECTOR_SIZE, COLOUR_TAG_WHITE);
+    bytesToWrite = sectorsToAllocate * SECTOR_SIZE;
+    var_s1 = (u8*)save;
+
+    for (i = 0; (bytesToWrite - i) != 0; i += (SECTOR_SIZE / 2)) {
+        flashROMRead(sectorNum++, (u32 *) var_s1);
+        var_s1 += SECTOR_SIZE;
+        i += (SECTOR_SIZE / 2); // How in the hell is it matching by splitting the i++?
+    }
+
+    src = (u8 *) save;
+    dst = (u8 *) game;
+    bytesToWrite = sizeof(Game);
+    i = 0;
+    while (bytesToWrite > 0) {
+        *dst++ = src[i++];
+        bytesToWrite--;
+    }
+
+    checksum = packCalculateGameChecksum((u8 *) save, sizeof(Game));
+    flashROMRead(pageNum, save);
+    if (checksum != (s32)*save) {
+        game->pad[3] = -1;
+    } else {
+        game->pad[3] = saveFileNum;
+    }
+    mmFree(save);
+    return 0;
+}
 
 s32 packSaveGameEprom(s32 saveFileNum, Game *game) {
     FlashSector *sector;
@@ -335,8 +381,8 @@ s32 packSaveGameEprom(s32 saveFileNum, Game *game) {
     if (mainResetPressed() == FALSE) {
         osFlashSectorErase(sectorNum);
 
-    // This the is only possible way of making IDO not skip this condition
     write:
+        // This is the only possible way of making IDO not skip this condition
         if (sectorsToWrite != 0) {
             flashROMWrite(sectorNum++, (u32 *) sector);
             sectorsToWrite--;

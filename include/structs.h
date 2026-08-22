@@ -7,7 +7,7 @@
 
 //Size: 0x538
 typedef struct Game {
-    u8 pad[0x538];
+    s8 pad[0x538];
 } Game;
 
 /* Size: 0x230 bytes */
