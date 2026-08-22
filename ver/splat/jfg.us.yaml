@@ -30,7 +30,6 @@ options:
   hasm_in_src_path: True
   libultra_symbols: True
   disassemble_all: True
-  mips_abi_float_regs: o32
 
 segments:
   - name: header

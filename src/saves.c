@@ -362,6 +362,9 @@ s32 packLoadGameEprom(s32 saveFileNum, Game *game) {
         game->pad[3] = saveFileNum;
     }
     mmFree(save);
+#ifdef VERSION_kiosk
+    mainGameChanged();
+#endif
     return 0;
 }
 

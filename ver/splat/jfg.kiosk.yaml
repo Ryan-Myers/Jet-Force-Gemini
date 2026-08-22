@@ -292,8 +292,8 @@ segments:
       - [0xA2160, data, track]
       - [0xA2310, data, shadows]
       - [0xA2490, data, lights]
-      - [0xA24B0, data, camlight]
-      - [0xA2610, data, spranim]
+      - [0xA24B0, .data, camlight]
+      - [0xA25B0, data, spranim]
       - [0xA2640, data, explosion]
       - [0xA2650, data, charControl]
       - [0xA4310, data, models]
@@ -420,7 +420,7 @@ segments:
       - { type: bss, vram: 0x800F3A30, name: track }
       - { type: bss, vram: 0x800F3E90, name: shadows }
       - { type: bss, vram: 0x800F65E0, name: lights }
-      - { type: bss, vram: 0x800F6610, name: camlight }
+      - { type: .bss, vram: 0x800F6610, name: camlight }
       - { type: bss, vram: 0x800F75C0, name: explosion }
       - { type: bss, vram: 0x800F7860, name: charControl }
       - { type: bss, vram: 0x800F79D0, name: models }

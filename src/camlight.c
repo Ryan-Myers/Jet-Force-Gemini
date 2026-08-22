@@ -146,7 +146,11 @@ CamLight *camlightAdd(CamLight_inner *arg0, UnkStruct_Arg1 *arg1) {
     camLight->unk48 = arg1->unk1C;
     camLight->unk4C = 1.0f / camLight->unk48;
     if (sCurrentCamLightsCount == 1) {
+#ifdef VERSION_kiosk
+        D_800A1110_A1D10 = texLoadSprite(72, 0);
+#else
         D_800A1110_A1D10 = texLoadSprite(73, 0);
+#endif
     }
     return camLight;
 }

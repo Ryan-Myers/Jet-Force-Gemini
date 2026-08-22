@@ -75,5 +75,6 @@ void mainInitMultiPlayer(void);
 s8 mainGetPauseMode(void);
 s32 mainAddZBCheck(s32 arg0, s32 arg1, s32 arg2);
 s8 mainGetZBCheck(s32 arg0);
+s32 mainGameChanged(void);
 
 #endif
