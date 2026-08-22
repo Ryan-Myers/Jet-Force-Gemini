@@ -73,5 +73,7 @@ s32 mainResetPressed(void);
 void mainSetDefaultCharacter(MultiCharacter *character, s32 arg1);
 void mainInitMultiPlayer(void);
 s8 mainGetPauseMode(void);
+s32 mainAddZBCheck(s32 arg0, s32 arg1, s32 arg2);
+s8 mainGetZBCheck(s32 arg0);
 
 #endif

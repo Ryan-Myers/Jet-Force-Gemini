@@ -545,7 +545,7 @@ void camResetView(Gfx **arg0) {
 void camOffsetZero(Gfx **dlist, Mtx **mtx) {
 }
 
-void camDoSprite(Gfx **dlist, Mtx **mtx, Vertex **vtx, ObjectSegment *segment, Sprite *sprite, s32 flags, u8 arg6) {
+void camDoSprite(Gfx **dlist, Mtx **mtx, Vertex **vtx, ObjectSegment1 *segment, Sprite *sprite, s32 flags, u8 arg6) {
     s32 rot;
     f32 scale;
     f32 aspect;

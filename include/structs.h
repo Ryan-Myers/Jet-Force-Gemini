@@ -7,7 +7,7 @@
 
 //Size: 0x538
 typedef struct Game {
-    u8 pad[0x538];
+    s8 pad[0x538];
 } Game;
 
 /* Size: 0x230 bytes */
@@ -219,6 +219,7 @@ typedef struct ObjectTransform {
     };
 } ObjectTransform;
 
+
 typedef struct ObjectSegment {
   /* 0x0000 */ ObjectTransform trans;
   /* 0x0018 */ u8 pad18[0x10];
@@ -227,6 +228,12 @@ typedef struct ObjectSegment {
   /* 0x003C */ s32 unk3C;
   /* 0x0040 */ ObjectHeader *header;
 } ObjectSegment;
+
+typedef struct ObjectSegment1 {
+    /* 0x0000 */ ObjectTransform trans;
+    /* 0x0018 */ u8 pad18[0x10];
+    /* 0x0028 */ f32 unk28; /* animation value; sprDPset reads it as float bits */
+} ObjectSegment1;      /* size = 0x2C */
 
 typedef struct Object {
   /* 0x0000 */ ObjectSegment segment;
