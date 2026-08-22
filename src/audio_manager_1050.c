@@ -352,7 +352,7 @@ void amAmbientSetVolume(u8 volume) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/audio_manager_1050/amDittyPlaying.s")
 
-void amSndStop(ALSoundState* handle) {
+void amSndStop(ALSoundState *handle) {
     gsSndpStop(handle);
 }
 

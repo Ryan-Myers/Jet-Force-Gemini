@@ -2112,6 +2112,7 @@ gTrackDL = 0x800F3A30;
 gTrackMtxPtr = 0x800F3A34;
 gTrackVtxPtr = 0x800F3A38;
 gTrackTriPtr = 0x800F3A3C;
+gSceneRenderSkyDome = 0x800F3A58;
 nohitsflag = 0x800F3A5C;
 globflags = 0x800F3A60;
 skyframe = 0x800F3A64;

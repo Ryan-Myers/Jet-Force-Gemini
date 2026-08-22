@@ -1,14 +1,14 @@
+#include "track.h"
 #include "camera.h"
 #include "common.h"
 #include "fx.h"
 #include "gameVi.h"
 #include "math/math.h"
+#include "objects.h"
 #include "overlays/overlay1.h"
 #include "overlays/overlay10.h"
 #include "overlays/overlay39.h"
-#include "objects.h"
 #include "textures.h"
-#include "track.h"
 #include "weather.h"
 
 // LevelHeader in DKR
@@ -31,6 +31,12 @@ typedef struct {
     PulsatingLightData *unkBC;
     u8 padC0[0xCD - 0xC0];
     s8 unkCD;
+    /* 0xCE */ u8 BGColourBottomR;
+    /* 0xCF */ u8 BGColourBottomG;
+    /* 0xD0 */ u8 BGColourBottomB;
+    /* 0xD1 */ u8 BGColourTopR;
+    /* 0xD2 */ u8 BGColourTopG;
+    /* 0xD3 */ u8 BGColourTopB;
 } TrackLevel;
 
 typedef struct {
@@ -80,7 +86,7 @@ extern Vertex *gTrackVtxPtr;
 extern Triangle *gTrackTriPtr;
 // missing D_800F2F80_B1760
 extern s32 D_800F2F84_B1764;
-extern Object* D_800F2F88_B1768;
+extern Object *D_800F2F88_B1768;
 extern s32 D_800F2F8C_B176C;
 // missing D_800F2F90_B1770
 // missing D_800F2F94_B1774
@@ -100,6 +106,9 @@ extern WaterEffectTexture *watereffecttexture; // 0x800A0D68
 extern s32 watereffectframe;                   // 0x800A0D6C
 extern u8 D_800A0D90_A1990[];
 
+// misc
+extern u8 D_A0DA8[];
+
 // main .data
 extern u8 gameInWindow; // 0x800A321C
 
@@ -113,7 +122,7 @@ s32 mainGetPauseMode(void);
 void objClearFlashes(s32);
 void shadowChangeBuffer(void);
 void shadowGenerate(s32, s32 updateRate);
-Object* objSetupObject(LevelObjectEntryCommon*, s32);
+Object *objSetupObject(LevelObjectEntryCommon *, s32);
 void camOffsetZero(Gfx **dlist, Mtx **mtx);
 
 // forward declarations
@@ -197,7 +206,7 @@ void trackDraw(Gfx **dList, Mtx **mtx, Vertex **vtx, Triangle **tris, s32 update
     }
     texDPInit(&gTrackDL);
 
-    gDkrDisableBillboard(dList++);
+    gDkrDisableBillboard(gTrackDL++);
     gSPClearGeometryMode(gTrackDL++, G_CULL_FRONT);
     gDPSetBlendColor(gTrackDL++, 0x00, 0x00, 0x00, 0x64);
     gDPSetPrimColor(gTrackDL++, 0, 0, 0xFF, 0xFF, 0xFF, 0xFF);
@@ -257,7 +266,7 @@ void trackDraw(Gfx **dList, Mtx **mtx, Vertex **vtx, Triangle **tris, s32 update
     camDisableUserView(0, 1);
     camResetView(&gTrackDL);
     gDPPipeSync(gTrackDL++);
-    gDkrDisableBillboard(dList++);
+    gDkrDisableBillboard(gTrackDL++);
     shadowChangeBuffer();
     *dList = gTrackDL;
     *mtx = gTrackMtxPtr;
@@ -271,7 +280,7 @@ void func_800127A4_133A4(s32 arg0) {
     s32 sp5C;
     f32 sp58;
     f32 sp54;
-    Camera* camera;
+    Camera *camera;
     s32 sp4C;
     f32 sp48;
     f32 sp44;
@@ -322,10 +331,10 @@ void func_800127A4_133A4(s32 arg0) {
 // track_tex_anim in DKR
 void func_800129AC_135AC(s32 updateRate) {
     s32 segmentNumber;
-    TextureHeader* temp_a0;
+    TextureHeader *temp_a0;
     s32 batchNumber;
-    Track_Unk4_UnkC* batch;
-    Track_Unk4* segments;
+    Track_Unk4_UnkC *batch;
+    Track_Unk4 *segments;
     s32 sp58;
 
     segments = track->segments;
@@ -356,7 +365,7 @@ void initSky(s32 arg0) {
         spawnObject.x = 0;
         spawnObject.y = 0;
         spawnObject.z = 0;
-        spawnObject.size = sizeof(LevelObjectEntryCommon) + 2;
+        spawnObject.size = sizeof(LevelObjectEntryCommon);
         spawnObject.objectID = arg0;
         D_800F2F88_B1768 = objSetupObject(&spawnObject, OBJECT_SPAWN_UNK02);
         D_800F2FAC_B178C = arg0;
@@ -386,7 +395,7 @@ void func_80012BAC_137AC(void) {
     f32 xSin;
     f32 pad_sp108;
     Camera *camera;
-    f32 pad_sp100;
+    UNUSED f32 pad_sp100;
     f32 xPositions[9];
     f32 zPositions[9];
     Vec3f pos;
@@ -417,7 +426,7 @@ void func_80012BAC_137AC(void) {
     vCoordMask = (texHeader->height << 5) - 1;
     xSin = Sinf(-camera->trans.rotation.s[0]);
     xCos = Cosf(-camera->trans.rotation.s[0]);
-    
+
     scaledXSin = xSin * 1280.0f;
     scaledXCos = xCos * 1280.0f;
     pad_sp100 = 2.0f * scaledXSin;
@@ -447,10 +456,8 @@ void func_80012BAC_137AC(void) {
     var_a1 = texHeader->width * 16 * level->unkB0;
     var_a2 = texHeader->height * 16 * level->unkB1;
 
-    var_v0 = ((s32) (camera->trans.x_position * ((scaledXCos * 0.25f) / var_a1)) + (level->unkB8 >> 4)) &
-             uCoordMask;
-    var_v1 = ((s32) (camera->trans.z_position * ((scaledXCos * 0.25f) / var_a2)) + (level->unkBA >> 4)) &
-             vCoordMask;
+    var_v0 = ((s32) (camera->trans.x_position * ((scaledXCos * 0.25f) / var_a1)) + (level->unkB8 >> 4)) & uCoordMask;
+    var_v1 = ((s32) (camera->trans.z_position * ((scaledXCos * 0.25f) / var_a2)) + (level->unkBA >> 4)) & vCoordMask;
 
     var_f14 = var_a1 * xCos;
     pos.z = var_a1 * xCos;
@@ -524,7 +531,79 @@ void func_80012BAC_137AC(void) {
     gTrackTriPtr = tris;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/track/func_80013454_14054.s")
+// trackbg_render_gradient in DKR
+void func_80013454_14054(void) {
+    s32 width;
+    s32 height;
+    s32 sp54;
+    s32 sp50;
+    s32 sp4C;
+    s32 sp48;
+    u8 topR;
+    u8 topG;
+    u8 topB;
+    u8 bottomR;
+    u8 bottomG;
+    u8 bottomB;
+    Vertex *verts;
+
+    verts = gTrackVtxPtr;
+    D_800F2FAC_B178C = -1;
+    camStandardOrtho(&gTrackDL, &gTrackMtxPtr);
+    texDPInit(&gTrackDL);
+    texDPTextureX(&gTrackDL, NULL, 8, 0);
+    gSPVertexJFG(gTrackDL++, OS_K0_TO_PHYSICAL(verts), 4, 0);
+    gSPPolygon(gTrackDL++, D_A0DA8, 2, 0);
+    camSetView(&gTrackDL, &gTrackMtxPtr);
+    topR = level->BGColourTopR;
+    topG = level->BGColourTopG;
+    topB = level->BGColourTopB;
+    bottomR = level->BGColourBottomR;
+    bottomG = level->BGColourBottomG;
+    bottomB = level->BGColourBottomB;
+    viGetCurrentSize(&width, &height);
+    camGetWindowLimits(camGetMode(), camGetNo(), &sp54, &sp50, &sp4C, &sp48);
+    width = (u32) width >> 1;
+    height = (u32) height >> 1;
+    verts->x = sp54 - ((u32) width);
+    verts->y = ((u32) height) - sp48;
+    verts->z = 0x10;
+    verts->r = topR;
+    verts->g = topG;
+    verts->b = topB;
+    verts->a = 0xFF;
+    verts++;
+
+    verts->x = sp4C - ((u32) width);
+    verts->y = ((u32) height) - sp48;
+    verts->z = 0x10;
+    verts->r = topR;
+    verts->g = topG;
+    verts->b = topB;
+    verts->a = 0xFF;
+    verts++;
+
+    verts->x = sp54 - ((u32) width);
+    verts->y = ((u32) height) - sp50;
+    verts->z = 0x10;
+    verts->r = bottomR;
+    verts->g = bottomG;
+    verts->b = bottomB;
+    verts->a = 0xFF;
+
+    verts++;
+
+    verts->x = sp4C - ((u32) width);
+    verts->y = ((u32) height) - sp50;
+    verts->z = 0x10;
+    verts->r = bottomR;
+    verts->g = bottomG;
+    verts->b = bottomB;
+    verts->a = 0xFF;
+    verts++;
+
+    gTrackVtxPtr = verts;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/track/func_800136B8_142B8.s")
 
