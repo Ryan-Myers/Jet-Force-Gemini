@@ -39,6 +39,8 @@ extern ScreenViewport D_800A3728[4]; //gScreenViewports
 void camPopModelMtx(Gfx **dlist);
 void camRestoreModelMtx(Gfx **dlist);
 void camPushModelMtx(Gfx **dList, Mtx **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
+Matrix *camGetInvProjMtx(void);
+s32 camProjectPoint(f32 x, f32 y, f32 z, f32 *outX, f32 *outY, u8 transform);
 Camera *camGetPtr(void);
 Matrix *camGetRotationMtx(void);
 Mtx *camGetProjOrgMtx(void);
