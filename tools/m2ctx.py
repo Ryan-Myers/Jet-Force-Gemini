@@ -24,6 +24,7 @@ CPP_FLAGS = [
     "-Ilibultra/src/io",
     "-Ilibultra/src/sc",
     "-Ilibultra/src/os",
+    "-Ilibultra/src/naudio",
     "-D_LANGUAGE_C",
     "-DF3DDKR_GBI",
     "-D_MIPS_SZLONG=32",

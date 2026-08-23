@@ -76,12 +76,11 @@ BIN_OVERLAYS_DIRS = $(patsubst %/,%,$(dir $(wildcard assets_$(VERSION)/overlays_
 endif
 
 MATH_DIR  = $(SRC_DIR)/math
-OLD_LIBULTRA_DIR = $(SRC_DIR)/libultra
 LIBULTRA_DIR = libultra
 ASM_DIRS  = $(ASM_DIR) $(ASM_DIR)/data $(ASM_DIR)/nonmatchings $(ASM_DIR)/data/libultra $(ASM_DIR)/hasm $(ASM_DIR)/libultra $(ASM_DIR)/libultra/src/flash
-HASM_DIRS = $(SRC_DIR)/hasm $(SRC_DIR)/hasm/ido $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc $(OLD_LIBULTRA_DIR)
-LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src
-LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io
+HASM_DIRS = $(SRC_DIR)/hasm $(SRC_DIR)/hasm/ido $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/naudio
+LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src $(LIBULTRA_DIR)/src/naudio 
+LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io 
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/sc $(LIBULTRA_DIR)/src/flash
 
 
@@ -107,7 +106,7 @@ endif
 GLOBAL_ASM_C_FILES := $(shell $(GREP) GLOBAL_ASM $(SRC_DIR) $(LIBULTRA_DIR) </dev/null 2>/dev/null)
 GLOBAL_ASM_O_FILES := $(foreach file,$(GLOBAL_ASM_C_FILES),$(BUILD_DIR)/$(file).o)
 
-SRC_DIRS = $(SRC_DIR) $(SRC_OVERLAYS_DIRS) $(MATH_DIR) $(LIBULTRA_SRC_DIRS) $(OLD_LIBULTRA_DIR)
+SRC_DIRS = $(SRC_DIR) $(SRC_OVERLAYS_DIRS) $(MATH_DIR) $(LIBULTRA_SRC_DIRS)
 SYMBOLS_DIR = ver/symbols
 
 TOOLS_DIR = tools
@@ -174,7 +173,7 @@ OPT_FLAGS      = -O2
 
 MIPSISET       = -mips1
 
-DEFINES := _FINALROM NDEBUG TARGET_N64 F3DDKR_GBI
+DEFINES := _FINALROM NDEBUG TARGET_N64 F3DDKR_GBI N_MICRO
 DEFINES += VERSION_$(VERSION)
 
 VERIFY = verify
@@ -196,7 +195,7 @@ ASM_DEFINES = $(foreach d,$(DEFINES),$(if $(findstring =,$(d)),--defsym $(d),)) 
 
 INCLUDE_CFLAGS  = -I . -I include -I include/libc  -I include/PR -I include/sys -I $(BIN_DIRS) -I $(SRC_DIR) -I $(LIBULTRA_DIR)
 INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/gu -I $(LIBULTRA_DIR)/src/libc -I $(LIBULTRA_DIR)/src/io  -I $(LIBULTRA_DIR)/src/sc 
-INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/os -I $(SRC_DIR)/hasm/ido
+INCLUDE_CFLAGS += -I $(LIBULTRA_DIR)/src/os -I $(SRC_DIR)/hasm/ido -I $(LIBULTRA_DIR)/src/naudio
 
 ASFLAGS        = -march=vr4300 -32 -G0 $(ASM_DEFINES) $(INCLUDE_CFLAGS)
 OBJCOPYFLAGS   = -O binary
@@ -244,7 +243,6 @@ PATCH_SYMBOLS = $(PYTHON) $(TOOLS_DIR)/patch_symbols.py ver/symbols/overlay_func
 $(foreach dir,$(SRC_OVERLAYS_DIRS),$(BUILD_DIR)/$(dir)/%.c.o): PATCH_SYMBOLS := :
 # Don't patch symbols for libultra files
 $(foreach dir,$(LIBULTRA_SRC_DIRS),$(BUILD_DIR)/$(dir)/%.c.o): PATCH_SYMBOLS := :
-$(foreach dir,$(OLD_LIBULTRA_DIR),$(BUILD_DIR)/$(dir)/%.c.o): PATCH_SYMBOLS := :
 
 ### Optimisation Overrides
 ####################### LIBULTRA #########################
@@ -341,11 +339,61 @@ $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/unmaptlball.s.o: MIPSISET := -mips2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/exceptasm.s.o: OPT_FLAGS := -O2
 $(BUILD_DIR)/$(LIBULTRA_DIR)/src/os/exceptasm.s.o: MIPSISET := -mips3 -32
 
-$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/%.c.o: OPT_FLAGS := -O2
-$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/%.c.o: MIPSISET := -mips2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/%.c.o: OPT_FLAGS := -O2
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/%.c.o: MIPSISET := -mips2
 
-$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: OPT_FLAGS := -g
-$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_cspsetvol.c.o: MIPSISET := -mips2
+# Libultra -g files
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/alsurround.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/cents2ratio.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_alsynsetdistort.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_alsynsetlpffreq.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_alsynsetlpfgain.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_auxbus.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_csq.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cseq.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cspsetvol.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_alcspchan.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_resample.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_resample2.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cspgetstate.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cspgettempo.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_csplayer.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cspmessage.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cspplay.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cspsendmidi.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cspsetchlvol.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cspsetpan.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cspsetseq.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cspsettempo.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cspsetvol.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_cspstop.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_drvrNew.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_env.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_event.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_load.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_mainbus.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_reverb.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_save.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_seqplayer.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_sl.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synaddplayer.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synallocfx.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synallocvoice.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_syndelete.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synfreevoice.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_syngetfxref.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synremoveplayer.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synsetfxmix.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synsetfxparam.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synsetpan.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synsetpitch.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synsetpriority.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synsetvol.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synstartvoiceparam.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synstopvoice.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/n_synthesizer.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/sl.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(LIBULTRA_DIR)/src/naudio/slHeap.c.o: OPT_FLAGS := -g
 
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: MIPSISET := -mips2
@@ -402,16 +450,6 @@ no_verify: $(TARGET).z64
 
 extract:
 	$(SPLAT) ver/splat/$(BASENAME).$(VERSION).yaml
-# Add these files to certain versions to have an empty file for the pragmas
-ifeq ($(VERSION),kiosk)
-	mkdir -p asm/nonmatchings/libultra/n_cspgetstate
-	touch asm/nonmatchings/libultra/n_cspgetstate/n_alCSPGetState.s
-	touch asm/nonmatchings/libultra/n_cspgetstate/func_800899D8_8A5D8.s
-endif
-ifeq ($(VERSION),us)
-	mkdir -p asm/nonmatchings/libultra/n_synremoveplayer
-	touch asm/nonmatchings/libultra/n_synremoveplayer/n_alSynRemovePlayer.s
-endif
 # Update the calls to TrapDanglingJump to use the real symbol name.
 	$(PYTHON) $(TOOLS_DIR)/patch_asm.py --version $(VERSION) --rom baseroms/baserom.${VERSION}.z64 --asm-dir asm/nonmatchings
 

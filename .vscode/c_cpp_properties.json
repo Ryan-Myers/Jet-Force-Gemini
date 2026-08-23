@@ -9,12 +9,12 @@
                 "${workspaceFolder}/include/PR",
                 "${workspaceFolder}/include/sys",
                 "${workspaceFolder}/src",
-                "${workspaceFolder}/libultra",
                 "${workspaceFolder}/libultra/src/gu",
                 "${workspaceFolder}/libultra/src/libc",
                 "${workspaceFolder}/libultra/src/io",
                 "${workspaceFolder}/libultra/src/sc",
                 "${workspaceFolder}/libultra/src/os",
+                "${workspaceFolder}/libultra/src/naudio",
                 "${workspaceFolder}/src/hasm/ido",
                 "${workspaceFolder}/build"
             ],

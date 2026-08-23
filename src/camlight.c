@@ -214,9 +214,7 @@ void camlightUpdate(CamLight *camLight) {
             camLight->unkC.x = camLight->unk1C;
             camLight->unkC.y = camLight->unk20;
             camLight->unkC.z = camLight->unk24;
-            goto cond;
-        }
-        if (camLight->unk34 >= 0) {
+        } else if (camLight->unk34 >= 0) {
             temp_v1 = temp_s1->unk6C[temp_s1->unk3A];
             if (temp_v1 != NULL) {
                 if (temp_v1->unk0 != NULL) {
@@ -240,7 +238,6 @@ void camlightUpdate(CamLight *camLight) {
             }
         }
     }
-cond:
     if ((camLight->unk36 & 2) || (temp_s1 != NULL)) {
         temp_a2 = &camLight->unk28;
         camLight->unk28.f[2] = -1.0f;
@@ -260,7 +257,7 @@ void func_80023FA4_24BA4(CamLight *cl1, CamLight *cl2) {
 
     if (trackNearestIntersection(0, &cl1->unkC, &cl2->unkC, sp2C, 0x2404, 0) == 0) {
         cl2->unk7 += 5;
-        if (cl2->unk7 >= 0x11) {
+        if (cl2->unk7 > 0x10) {
             cl2->unk7 = 0x10;
         }
     } else {

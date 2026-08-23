@@ -40,7 +40,6 @@ tools:
       report_data: True
       prefixes_to_trim:
         # - build/libultra/
-        # - build/src/libultra/
         # - build/src/overlays/
         # - build/src/
         - build/
@@ -49,7 +48,6 @@ tools:
           name: libultra
           paths:
             - libultra
-            - src/libultra
 
         - id: overlays
           name: Overlays

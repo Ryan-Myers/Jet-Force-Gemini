@@ -19,10 +19,10 @@
 -I../include/sys
 -I../assets
 -I../src
--I../libultra
 -I../libultra/src/gu
 -I../libultra/src/libc
 -I../libultra/src/io
 -I../libultra/src/sc
 -I../libultra/src/os
+-I../libultra/src/naudio
 -I../src/hasm/ido
