@@ -3,8 +3,8 @@
 #include "common.h"
 #include "PR/n_libaudio.h"
 #include "PR/os_reg.h"
-#include "naudio/n_seqp.h"
-#include "naudio/n_sndp.h"
+#include "n_seqp.h"
+#include "n_sndp.h"
 
 #define AUDIO_CHANNELS 16
 #define MUSIC_CHAN_MASK_NONE 0xFFFFFFFF
