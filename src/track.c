@@ -307,7 +307,7 @@ void func_800127A4_133A4(s32 arg0) {
     f32 sp58;
     f32 sp54;
     Camera *camera;
-    s32 sp4C;
+    f32 sp4C;
     f32 sp48;
     f32 sp44;
     f32 temp_f0;
