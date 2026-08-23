@@ -48,6 +48,8 @@ void n_alSynRemovePlayer( ALPlayer *client)
     }
 #endif    
 
+#ifdef VERSION_us
   osSetIntMask(n_mask);
+#endif
 }
 

@@ -223,8 +223,10 @@ Acmd *n_alAudioFrame(Acmd *cmdList, s32 *cmdLen, s16 *outBuf, s32 outLen)
  * Synthesis driver private interfaces
  ***********************************************************************/
 
+#ifdef VERSION_us
 s32 n_currParam = 0;
 s32 n_paramMax = 0;
+#endif
 
 ALParam *__n_allocParam() 
 {
@@ -234,10 +236,12 @@ ALParam *__n_allocParam()
     update = n_syn->paramList;
     n_syn->paramList = n_syn->paramList->next;
     update->next = 0;
+#ifdef VERSION_us
     n_currParam++;
     if (n_currParam > n_paramMax) {
       n_paramMax = n_currParam;
     }
+#endif
   }
   return update;
 }
@@ -246,7 +250,9 @@ void _n_freeParam(ALParam *param)
 {
   param->next = n_syn->paramList;
   n_syn->paramList = param;
+#ifdef VERSION_us
   n_currParam--;
+#endif
 }
 
 void _n_collectPVoices(void)
