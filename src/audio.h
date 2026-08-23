@@ -1,9 +1,6 @@
 #ifndef _AUDIO_H_
 #define _AUDIO_H_
 #include "common.h"
-#include "PR/n_libaudio.h"
-#include "PR/os_reg.h"
-#include "n_seqp.h"
 #include "n_sndp.h"
 
 #define AUDIO_CHANNELS 16

@@ -450,11 +450,6 @@ no_verify: $(TARGET).z64
 
 extract:
 	$(SPLAT) ver/splat/$(BASENAME).$(VERSION).yaml
-# Add these files to certain versions to have an empty file for the pragmas
-ifeq ($(VERSION),us)
-	mkdir -p asm/nonmatchings/libultra/n_synremoveplayer
-	touch asm/nonmatchings/libultra/n_synremoveplayer/n_alSynRemovePlayer.s
-endif
 # Update the calls to TrapDanglingJump to use the real symbol name.
 	$(PYTHON) $(TOOLS_DIR)/patch_asm.py --version $(VERSION) --rom baseroms/baserom.${VERSION}.z64 --asm-dir asm/nonmatchings
 

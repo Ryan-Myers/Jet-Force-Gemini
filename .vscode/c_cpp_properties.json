@@ -9,7 +9,6 @@
                 "${workspaceFolder}/include/PR",
                 "${workspaceFolder}/include/sys",
                 "${workspaceFolder}/src",
-                "${workspaceFolder}/src/libultra",
                 "${workspaceFolder}/libultra/src/gu",
                 "${workspaceFolder}/libultra/src/libc",
                 "${workspaceFolder}/libultra/src/io",
