@@ -331,7 +331,7 @@ segments:
       - [0xAAB60, data, osBootRamTest]
       - [0xAAB70, data, gsSnd]
       - [0xAAB90, .data, libultra/n_csplayer]
-      - [0xAAD90, data, libultra/n_sl]
+      - [0xAAD90, .data, libultra/n_sl]
       - [0xAADA0, .data, libultra/n_drvrNew]
       - [0xAADE0, .data, libultra/n_env]
       - [0xAAEE0, .data, math/math_arc]
