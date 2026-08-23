@@ -335,7 +335,7 @@ segments:
       - [0xAA1A0, data, gsSnd]
       - [0xAA1C0, .data, libultra/n_csplayer]
       - [0xAA3C0, .data, libultra/n_sl]
-      - [0xAA3D0, data, libultra/n_synthesizer]
+      - [0xAA3D0, .data, libultra/n_synthesizer]
       - [0xAA3E0, .data, libultra/n_drvrNew]
       - [0xAA420, .data, libultra/n_env]
       - [0xAA520, .data, math/math_arc]

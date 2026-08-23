@@ -393,7 +393,7 @@ $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synsetpriority.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synsetvol.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synstartvoiceparam.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synstopvoice.c.o: OPT_FLAGS := -g
-# $(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synthesizer.c.o: OPT_FLAGS := -g
+$(BUILD_DIR)/$(OLD_LIBULTRA_DIR)/n_synthesizer.c.o: OPT_FLAGS := -g
 
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: OPT_FLAGS := -g
 $(BUILD_DIR)/$(SRC_DIR)/gsSnd.c.o: MIPSISET := -mips2
