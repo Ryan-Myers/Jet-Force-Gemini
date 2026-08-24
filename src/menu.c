@@ -16,25 +16,15 @@
 #include "overlays/overlay62.h"
 #include "overlays/overlay63.h"
 #include "overlays/overlay9.h"
+#include "PR/n_libaudio.h"
 #include "runLink.h"
-
-extern u16 SFXVolume;
-extern u16 musicVolume;
-extern s8 widescreenVOffset;
-extern u8 D_800A51A0_A5DA0;
-extern u8 D_800A51A4_A5DA4;
-extern u8 D_800A51A8_A5DA8;
-extern u8 D_800FF386_B1D86;
-extern u8 frontEndMode;
-extern u8 multiGameType;
-extern u8 selectedControlModes[];
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setLanguage.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/initFront.s")
 
 void frontFreeMode(void) {
-    if (runlinkIsModuleLoaded(0xC) != 0) {
+    if (runlinkIsModuleLoaded(12) != 0) {
         frontFreeMenuFrame();
     }
     if (D_800A51A0_A5DA0 != 0) {
@@ -71,24 +61,19 @@ void frontFreeMode(void) {
                 frontKeyboardCleanup();
                 break;
             case 16:
-#ifdef VERSION_us
-                if (((multiPlayerGame != 0) && (multiGameType == 4)) || (racingInGame != 0)) {
-                    sprintFreeInstruments();
-                } else if (numberOfPlayers == 1) {
-                    frontCleanupInstruments();
-                } else {
-                    frontCleanupMultiInstruments();
-                }
-#endif
+                if (
 #ifdef VERSION_kiosk
-                if ((multiGameType == 4) || (racingInGame != 0)) {
+                    multiGameType == 4 || racingInGame
+#else
+                    (multiPlayerGame && multiGameType == 4) || racingInGame
+#endif
+                ) {
                     sprintFreeInstruments();
                 } else if (numberOfPlayers == 1) {
                     frontCleanupInstruments();
                 } else {
                     frontCleanupMultiInstruments();
                 }
-#endif
                 break;
             case 17:
                 frontCleanupMap();
@@ -160,7 +145,11 @@ s32 frontGetWorldLevel(void) {
 s32 frontGetLanguage(void) {
     return D_800FF386_B1D86;
 }
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetLanguage.s")
+
+void frontSetLanguage(s32 language) {
+    D_800FF386_B1D86 = language;
+    setLanguage(language);
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetScreenMode.s")
 
@@ -180,17 +169,25 @@ s8 frontGetWideAdjust(void) {
     return widescreenVOffset;
 }
 
-void frontSetWideAdjust(s32 arg0) {
-    viSetWideAdjust(arg0);
+void frontSetWideAdjust(s32 offset) {
+    viSetWideAdjust(offset);
     widescreenVOffset = viGetWideAdjust();
 }
 
-extern u8 speakerSetting;
 u8 frontGetStereoMode(void) {
     return speakerSetting;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetStereoMode.s")
+void frontSetStereoMode(s32 mode) {
+    if (mode < 0) {
+        mode = 0;
+    }
+    if (mode >= 4) {
+        mode = 3;
+    }
+    speakerSetting = mode;
+    alSurround_OutputType(D_800A5938_A6538[mode]);
+}
 
 u16 frontGetSfxVolume(void) {
     return SFXVolume;
@@ -226,16 +223,16 @@ void frontSetBgmVolume(s32 volume) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSet2PlayerSplit.s")
 
-u8 frontGetTargetControl(s32 arg0) {
-    return selectedControlModes[arg0 & 3];
+u8 frontGetTargetControl(s32 mode) {
+    return selectedControlModes[mode & 3];
 }
 
-void frontSetTargetControl(s32 arg0, s32 arg1) {
-    selectedControlModes[arg0 & 3] = arg1 & 1;
+void frontSetTargetControl(s32 mode, s32 value) {
+    selectedControlModes[mode & 3] = value & 1;
 }
+
 #ifdef VERSION_us
-extern s8 charselquitmode;
-void frontCharSelectSetQuitMode(s32 arg0) {
-    charselquitmode = arg0;
+void frontCharSelectSetQuitMode(s32 mode) {
+    charselquitmode = mode;
 }
 #endif

@@ -1,7 +1,7 @@
 #include "memory.h"
 #include "common.h"
 #include "math/math.h"
-#include "overlays/spark.h"
+#include "overlays/squadsOverlay.h"
 #include "runLink.h"
 
 #ifndef _ALIGN16
@@ -356,6 +356,9 @@ void mmFree(void *data) {
 #endif
 }
 
+// This is going to be manually declared here with the wrong prototype because I think they made a mistake.
+extern void sparkUpdate(void);
+
 /**
  * Frees all the addresses in the free queue.
  * Official Name: mmFreeTick
@@ -366,14 +369,20 @@ void mmFreeTick(void) {
     u32 intFlags = disableInterrupts();
 #endif
 
-#ifdef JFGDIFFS
     if (FreeRAM < 0x14000) {
         runlinkLowMemoryPanic();
         if (FreeRAM < 0xC000 && runlinkIsModuleLoaded(3) != 0) {
-            sparkUpdate(); // Odd function to call here. This isn't even in Overlay 3.
+#ifdef AVOID_UB
+            squadsLowMemoryPanic();
+#else
+            // My gut is telling me this is a bug to call sparkUpdate and it's really supposed to be calling
+            // squadsLowMemoryPanic, because that is in Overlay 3, and the naming matches the style of
+            // runlinkLowMemoryPanic being called above. It might be a bug in their code that replaced the calls for
+            // overlay functions with the actual function names, and they just didn't notice this one.
+            sparkUpdate();
+#endif
         }
     }
-#endif
 
     for (i = 0; i < gFreeQueueCount;) {
         gFreeQueueDelay[i]--;

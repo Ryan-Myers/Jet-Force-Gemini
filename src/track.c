@@ -17,6 +17,15 @@
 #include "textures.h"
 #include "weather.h"
 
+// Set up line numbers here for the diRcpTrace function that uses the line number of the file.
+#ifdef VERSION_kiosk
+#define TRACE_LINE_1 500
+#define TRACE_LINE_2 633
+#else
+#define TRACE_LINE_1 504
+#define TRACE_LINE_2 637
+#endif
+
 // LevelHeader in DKR
 typedef struct {
     // 0x10 offset added here somewhere?
@@ -112,14 +121,6 @@ extern WaterEffectTexture *watereffecttexture; // 0x800A0D68
 extern s32 watereffectframe;                   // 0x800A0D6C
 extern u8 D_800A0D90_A1990[];
 
-// misc
-#ifdef VERSION_us
-extern u8 D_A0DA8[];
-#endif
-#ifdef VERSION_kiosk
-extern u8 D_A1638[];
-#endif
-
 // main .data
 extern u8 gameInWindow; // 0x800A321C
 
@@ -176,12 +177,7 @@ void trackDraw(Gfx **dList, Mtx **mtx, Vertex **vtx, Triangle **tris, s32 update
     gTrackVtxPtr = *vtx;
     gTrackTriPtr = *tris;
 
-#ifdef VERSION_us
-    diRcpTrace(gTrackDL, "track/track.c", 504);
-#endif
-#ifdef VERSION_kiosk
-    diRcpTrace(gTrackDL, "track/track.c", 500);
-#endif
+    diRcpTrace(gTrackDL, "track/track.c", TRACE_LINE_1);
 
     camSetNo(0);
     gSceneRenderSkyDome = 1;
@@ -259,12 +255,7 @@ void trackDraw(Gfx **dList, Mtx **mtx, Vertex **vtx, Triangle **tris, s32 update
             func_80013454_14054();
         }
 
-#ifdef VERSION_us
-        diRcpTrace(gTrackDL, "track/track.c", 637);
-#endif
-#ifdef VERSION_kiosk
-        diRcpTrace(gTrackDL, "track/track.c", 633);
-#endif
+        diRcpTrace(gTrackDL, "track/track.c", TRACE_LINE_2);
 
         gDPPipeSync(gTrackDL++);
         func_80013820_14420(temp_s2, updateRate);
@@ -579,14 +570,7 @@ void func_80013454_14054(void) {
     texDPInit(&gTrackDL);
     texDPTextureX(&gTrackDL, NULL, 8, 0);
     gSPVertexJFG(gTrackDL++, OS_K0_TO_PHYSICAL(verts), 4, 0);
-
-#ifdef VERSION_us
-    gSPPolygon(gTrackDL++, D_A0DA8, 2, 0);
-#endif
-#ifdef VERSION_kiosk
-    gSPPolygon(gTrackDL++, D_A1638, 2, 0);
-#endif
-
+    gSPPolygon(gTrackDL++, OS_K0_TO_PHYSICAL(&D_800A0D90_A1990[24]), 2, 0);
     camSetView(&gTrackDL, &gTrackMtxPtr);
     topR = level->BGColourTopR;
     topG = level->BGColourTopG;
