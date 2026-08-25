@@ -1,3 +1,7 @@
 /* Specific addresses for kiosk addresses that differ from US */
 /* These are fake symbols we just need until things are properly matched */
 D_A4F78 = 0xA5948;
+D_800A312C_A3D2C = 0x800A397C;
+D_800A3130_A3D30 = 0x800A3980;
+D_800A3134_A3D34 = 0x800A3984;
+D_800A3164_A3D64 = 0x800A39B4;
