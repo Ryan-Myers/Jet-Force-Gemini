@@ -141,9 +141,9 @@ void func_8003FAEC_406EC(s32 x, s32 y, s32 z, s32 zRot, s32 xRot, s32 yRot);
 void camInit(s32 arg0) {
     s32 i;
 #ifdef VERSION_kiosk
-    volatile u32 *piStatus;
+    vu32 *piStatus;
     u32 status;
-    volatile u32 *cartWord;
+    vu32 *cartWord;
 #endif
 
     D_800FA634_B18B4 = 0;
@@ -160,13 +160,13 @@ void camInit(s32 arg0) {
 
 #ifdef VERSION_kiosk
     {
-        piStatus = (volatile u32 *) PHYS_TO_K1(PI_STATUS_REG);
+        piStatus = (vu32 *) PHYS_TO_K1(PI_STATUS_REG);
         if (arg0) {
             D_800A2ED0_A3AD0 = 0;
         }
         D_800A3720 = 0;
         status = *piStatus;
-        cartWord = (volatile u32 *) 0xB0000000;
+        cartWord = (vu32 *) 0xB0000000;
         while (status & 3) {
             status = *piStatus;
         }

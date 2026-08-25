@@ -1,69 +1,59 @@
 #include "osBootRamTest.h"
 #include "common.h"
 
-#define READ_ADDRESS_DIRECT(addr) (*(vu32 *) (addr))
-#define WRITE_ADDRESS_DIRECT(addr, x) (*(vu32 *) (addr) = (x))
+#define RAMTEST1_ADDRESS 0x2FB1F4 // 0xA02FB1F4
+#define RAMTEST1_EXPECTED 0xD090010 // 0xAD090010
+#define RAMTEST2_ADDRESS 0x2FE1C0 // 0xA02FE1C0
+#define RAMTEST2_EXPECTED 0xD170014 // 0xAD170014
 
 #ifdef VERSION_kiosk
-#ifdef NON_MATCHING
-extern s32 D_800A9F60;
-extern s32 D_800A9F64;
-extern s32 D_A02FB1F4;
+// First value is "TRUE" if the test has not been run yet, and "FALSE" if it has. Second value is the result of the test.
+static s32 sRamTest1[2] = { TRUE, FALSE };
+static s32 sRamTest2[2] = { TRUE, FALSE };
 
 s32 osBootRamTest1_6105(void) {
-    if (READ_ADDRESS_DIRECT(0x800A9F60) != 0) {
-        // if (D_800A9F60 != 0) {
-        D_800A9F60 = 0;
-        if (IO_READ(0x2FB1F4) == 0xAD090010) {
-            D_800A9F64 = 1;
+    s32 *ramTest = sRamTest1;
+    if (ramTest[0] != FALSE) {
+        ramTest[0] = FALSE;
+        if (IO_READ(RAMTEST1_ADDRESS) == PHYS_TO_K1(RAMTEST1_EXPECTED)) {
+            ramTest[1] = TRUE;
         }
     }
-    return D_800A9F64;
+    return ramTest[1];
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/osBootRamTest/osBootRamTest1_6105.s")
-#endif
 #else
 s32 osBootRamTest1_6105(void) {
     s32 ret;
 
     ret = FALSE;
-    if (READ_ADDRESS_DIRECT(0xA02FB1F4) == 0xAD090010) {
+    if (IO_READ(RAMTEST1_ADDRESS) == PHYS_TO_K1(RAMTEST1_EXPECTED)) {
         ret = TRUE;
     }
-    WRITE_ADDRESS_DIRECT(0xA02FB1F4, FALSE);
+    IO_WRITE(RAMTEST1_ADDRESS, FALSE);
     return ret;
 }
 #endif
 
 #ifdef VERSION_kiosk
-#ifdef NON_MATCHING
-extern s32 D_800A9F68;
-extern s32 D_800A9F6C;
-extern s32 D_A02FE1C0;
-
 s32 osBootRamTest2_6105(void) {
-    if (READ_ADDRESS_DIRECT(0x800A9F68) != 0) {
-        // if (D_800A9F68 != 0) {
-        D_800A9F68 = 0;
-        if (IO_READ(0x2FE1C0) == 0xAD170014) {
-            D_800A9F6C = 1;
+    s32 *ramTest = sRamTest2;
+    if (ramTest[0] != FALSE) {
+        ramTest[0] = FALSE;
+        if (IO_READ(RAMTEST2_ADDRESS) == PHYS_TO_K1(RAMTEST2_EXPECTED)) {
+            ramTest[1] = TRUE;
         }
     }
-    return D_800A9F6C;
+    return ramTest[1];
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/osBootRamTest/osBootRamTest2_6105.s")
-#endif
 #else
 s32 osBootRamTest2_6105(void) {
     s32 ret;
 
     ret = FALSE;
-    if (READ_ADDRESS_DIRECT(0xA02FE1C0) == 0xAD170014) {
+    if (IO_READ(RAMTEST2_ADDRESS) == PHYS_TO_K1(RAMTEST2_EXPECTED)) {
         ret = TRUE;
     }
-    WRITE_ADDRESS_DIRECT(0xA02FE1C0, FALSE);
+    IO_WRITE(RAMTEST2_ADDRESS, FALSE);
     return ret;
 }
 #endif

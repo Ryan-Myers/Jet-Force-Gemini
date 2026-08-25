@@ -329,7 +329,7 @@ segments:
       - [0xA8A40, .data, ../libultra/src/os/exceptasm]
       - [0xA8A70, data, anim]
       - [0xA8B50, .data, hasm/ido/math_data_tables]
-      - [0xAAB60, data, osBootRamTest]
+      - [0xAAB60, .data, osBootRamTest]
       - [0xAAB70, data, gsSnd]
       - [0xAAB90, .data, ../libultra/src/naudio/n_csplayer]
       - [0xAAD90, .data, ../libultra/src/naudio/n_sl]
