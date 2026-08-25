@@ -306,7 +306,7 @@ segments:
       - [0xA4A40, .data, hasm/ido/math_util]
       - [0xA4A50, .data, memory]
       - [0xA4A60, data, saves]
-      - [0xA4B90, data, prnBorder]
+      - [0xA4B90, .data, prnBorder]
       - [0xA4C00, data, rcpFast3d]
       - [0xA4F00, data, sched]
       - [0xA4F30, .data, squads]
