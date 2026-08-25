@@ -133,7 +133,7 @@ segments:
       - [0x8C750, c, ../libultra/src/naudio/n_cspstop]
       - [0x8C790, c, ../libultra/src/naudio/n_cspmessage] # This may be a custom Rare file.
       - [0x8C840, c, ../libultra/src/naudio/n_sl]
-      - [0x8C900, c, ../libultra/src/naudio/slHeap] # Bit weird, but it looks like this is a split of 
+      - [0x8C900, c, ../libultra/src/naudio/slHeap] # Bit weird, but it looks like this is a split of
       - [0x8C9B0, c, ../libultra/src/naudio/sl] # these two files which are combined in later versions?
       - [0x8CA30, c, ../libultra/src/naudio/n_synthesizer]
       - [0x8D4B0, c, ../libultra/src/naudio/cents2ratio]
@@ -299,7 +299,7 @@ segments:
       - [0xA2640, data, explosion]
       - [0xA2650, data, charControl]
       - [0xA4310, data, models]
-      - [0xA4320, data, camera]
+      - [0xA4320, .data, camera]
       - [0xA45E0, .data, joy]
       - [0xA45F0, .data, level]
       - [0xA4620, data, main]
@@ -428,7 +428,7 @@ segments:
       - { type: bss, vram: 0x800F79D0, name: models }
       - { type: .bss, vram: 0x800F7B20, name: boot }
       - { type: .bss, vram: 0x800F9F90, name: hasm/entrypoint }
-      - { type: bss, vram: 0x800FAF90, name: camera }
+      - { type: .bss, vram: 0x800FAF90, name: camera }
       - { type: .bss, vram: 0x800FBB40, name: staticcamera }
       - { type: .bss, vram: 0x800FBB50, name: joy }
       - { type: .bss, vram: 0x800FBBD0, name: level }

@@ -22,44 +22,111 @@ typedef struct {
     /* 0x8 */ s32 magnitude;
 } CameraShake;
 
-extern s8 D_800FA650_B18D0;
-extern s16 D_800FA4D4_B1754;
-extern s32 D_800A2ED0_A3AD0;
-extern ScreenViewport D_800A2ED4_A3AD4[];
-extern s32 D_800A2FA4_A3BA4;
-extern Vp D_800A2FB8_A3BB8[];
-extern ObjectTransform D_800A30F8_A3CF8;
-extern f32 D_800A313C_A3D3C;
-extern u8 D_800A316C_A3D6C;
-extern u8 D_800A3174_A3D74[4];
-extern u8 D_800A3178_A3D78[];
-extern f32 D_800A317C_A3D7C[4];
-extern Camera cameraActorArray[];
-extern CameraShake D_800FA600_B1880[];
-extern s32 D_800FA630_B18B0;
-extern s32 D_800FA634_B18B4;
-extern ConvListEntry D_800FA658_B18D8[];
-extern s32 D_800FAA58_B5298;
-extern s32 D_800FAA5C_B1CDC;
-extern f32 D_800FAA60_B1CE0;
-extern f32 D_800FAA64_B1CE4;
-extern u16 D_800FAA68_B1CE8;
-extern Matrix D_800FAA70_B1CF0;
-extern Matrix D_800FAAF0_B1D70;
-extern Matrix D_800FAAB0_B1D30;
-extern Mtx *D_800FAB30_B1DB0;
-extern Mtx D_800FAB38_B1DB8[];
-extern Mtx D_800FAF38_B21B8;
-extern Matrix D_800FAF78_B21F8;
-extern Matrix D_800FAFB8_B2238;
-extern Matrix D_800FAFF8_B2278;
-extern Matrix D_800FB038_B22B8;
-extern f32 D_800FB078_B22F8;
-extern f32 D_800FA4FC_B177C;
-extern f32 D_800A3168_A3D68;
-extern f32 aspectRatioFloat;
-extern ObjectTransform D_800FA638_B18B8;
+// .data
 
+#ifdef VERSION_kiosk
+u8 D_800A3720 = 0;
+#endif
+
+s32 D_800A2ED0_A3AD0 = 0;
+
+#define DEFAULT_SCREEN_VIEWPORT \
+    { 0,                        \
+      0,                        \
+      SCREEN_WIDTH,             \
+      SCREEN_HEIGHT,            \
+      SCREEN_WIDTH / 2,         \
+      SCREEN_HEIGHT / 2,        \
+      SCREEN_WIDTH,             \
+      SCREEN_HEIGHT,            \
+      0,                        \
+      0,                        \
+      SCREEN_WIDTH - 1,         \
+      SCREEN_HEIGHT - 1,        \
+      0 }
+ScreenViewport D_800A2ED4_A3AD4[4] = { DEFAULT_SCREEN_VIEWPORT, DEFAULT_SCREEN_VIEWPORT, DEFAULT_SCREEN_VIEWPORT,
+                                       DEFAULT_SCREEN_VIEWPORT };
+#undef DEFAULT_SCREEN_VIEWPORT
+
+s32 D_800A2FA4_A3BA4 = 0;
+UNUSED s32 D_800A2FA8_A3BA8 = 0;
+UNUSED s32 D_800A2FAC_A3BAC = 0x0000FFFF;
+UNUSED u32 D_800A2FB0_A3BB0 = 0xFFFF0000;
+
+#ifndef VERSION_kiosk
+UNUSED s32 D_800A2FB4_A3BB4 = 0;
+#endif
+
+#define CAM_EMPTY_VP                               \
+    {                                              \
+        { { 0, 0, 0x1FF, 0 }, { 0, 0, 0x1FF, 0 } } \
+    }
+Vp D_800A2FB8_A3BB8[20] = {
+    CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP,
+    CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP,
+    CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP, CAM_EMPTY_VP,
+};
+#undef CAM_EMPTY_VP
+
+ObjectTransform D_800A30F8_A3CF8 = {
+    { { 0, 0, 0 } }, /* rotation: y, x, z */
+    0,               /* flags */
+    1.0f,            /* scale */
+    0.0f,            /* x_position */
+    0.0f,            /* y_position */
+    -281.0f,         /* z_position */
+};
+
+UNUSED ObjectTransform D_800A3110_A3D10 = {
+    { { 0, 0, 0 } }, 0, 1.0f, 0.0f, 0.0f, 0.0f,
+};
+
+Matrix D_800A3128_A3D28 = {
+    { 1, 0, 0, 0 },
+    { 0, 1, 0, 0 },
+    { 0, 0, 0, 0 },
+    { 0, 0, 0, SCREEN_WIDTH / 2 },
+};
+
+f32 D_800A3168_A3D68 = 1.0f;
+u8 D_800A316C_A3D6C = 0;
+u8 D_800A3170_A3D70[4] = { 0, 0, 0, 0 };
+u8 D_800A3174_A3D74[4] = { 0, 0, 0, 0 };
+u8 D_800A3178_A3D78[4] = { 0, 0, 0, 0 };
+f32 D_800A317C_A3D7C[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+UNUSED s32 D_800A318C_A3D8C = 0;
+
+// .bss
+Camera cameraActorArray[4];
+CameraShake D_800FA600_B1880[4];
+s32 D_800FA630_B18B0; /* mode */
+s32 D_800FA634_B18B4; /* active camera */
+ObjectTransform D_800FA638_B18B8;
+s8 D_800FA650_B18D0;
+UNUSED s32 pad_b18d4;
+ConvListEntry D_800FA658_B18D8[128];
+s32 D_800FAA58_B5298; /* shake enable */
+s32 D_800FAA5C_B1CDC;
+f32 D_800FAA60_B1CE0;
+f32 D_800FAA64_B1CE4;
+u16 D_800FAA68_B1CE8;
+UNUSED s32 pad_aa6c;
+Matrix D_800FAA70_B1CF0; /* perspective */
+Matrix D_800FAAB0_B1D30; /* current model */
+Matrix D_800FAAF0_B1D70; /* view * persp */
+Mtx *D_800FAB30_B1DB0;
+Mtx D_800FAB38_B1DB8[16];
+Mtx D_800FAF38_B21B8;
+Matrix D_800FAF78_B21F8; /* view (XYZ_YPR) */
+Matrix D_800FAFB8_B2238; /* inverse */
+Matrix D_800FAFF8_B2278;
+Matrix D_800FB038_B22B8;
+f32 D_800FB078_B22F8;
+UNUSED s32 pad_b22fc;
+
+extern f32 aspectRatioFloat;
+
+extern void conv_mult_matrix(Matrix mf, ConvListEntry *list);
 extern s32 frontGet2PlayerSplit(void);
 extern u8 levelGetType(void);
 void sprDPset(Gfx **dlist, Sprite *sprite, s32 flags, s32 arg3, u8 arg4);
@@ -68,57 +135,57 @@ void camCopyOrthoMatrix(Matrix dest);
 void camSetFOV(f32, s32);
 void camSetProjMtx(Gfx **dlist, Mtx **mtx);
 void camSetViewport(Gfx **dlist, s32 halfWidth, s32 halfHeight, s32 centerX, s32 centerY);
+void camStopShakes(void);
+void func_8003FAEC_406EC(s32 x, s32 y, s32 z, s32 zRot, s32 xRot, s32 yRot);
 
-#if 0
-extern s32 D_B0000578;
-extern s32 D_800FB0F4; //gActiveCameraID;
-extern Matrix D_800FB530; // gPerspectiveMatrixF;
-extern MatrixS D_800FB5F8; // gProjectionMatrixS;
-extern u16 D_800FB528; // perspNorm;
-extern f32 D_800FBB38; // gCurCamFOV;
-extern s8 D_800A3720; // AntiPiracyViewport = FALSE;
-extern s32 D_800FB0F0; // gActiveCameraID;
-
-void camInit(void) {
+void camInit(s32 arg0) {
     s32 i;
-    s32 j;
-    u32 stat;
-
-    // clang-format off
-    // This section is highly suspicous to be undefined behaviour as we have it defined right now.
-    for (i = 0; i < 5; i++) { gModelMatrixF[i] = (Matrix *) &D_80120DA0[(i << 1)]; }
-    // clang-format on
-
-    for (j = 0; j < 8; j++) {
-        D_800FB0F4 = j;
-        func_8003FAEC_406EC(200, 200, 200, 0, 0, 180);
-    }
-
-    gCutsceneCameraActive = FALSE;
-    D_800FB0F4 = 0;
-    gModelMatrixStackPos = 0;
-    gCameraMatrixPos = 0;
-    gNumberOfViewports = 0;
-    gSpriteAnimOff = FALSE;
-    D_80120D18 = 0;
-    gAdjustViewportHeight = 0;
-    D_800A3720 = FALSE;
-
-    WAIT_ON_IOBUSY(stat);
-
-    // 0xB0000578 is a direct read from the ROM as opposed to RAM
-    if (((D_B0000578 & 0xFFFF) & 0xFFFF) != 0x8965) {
-        D_800A3720 = TRUE;
-    }
-
-    guPerspectiveF(D_800FB530, &D_800FB528, CAMERA_DEFAULT_FOV, CAMERA_ASPECT, CAMERA_NEAR, CAMERA_FAR,
-                   CAMERA_SCALE);
-    f32_matrix_to_s16_matrix(&D_800FB530, &D_800FB5F8);
-    D_800FBB38 = CAMERA_DEFAULT_FOV;
-}
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camInit.s")
+#ifdef VERSION_kiosk
+    volatile u32 *piStatus;
+    u32 status;
+    volatile u32 *cartWord;
 #endif
+
+    D_800FA634_B18B4 = 0;
+    D_800FA630_B18B0 = 0;
+    D_800FA650_B18D0 = 0;
+
+    for (i = 0; i < 4; i++) {
+        D_800FA634_B18B4 = i;
+        func_8003FAEC_406EC(200, 200, 200, 0, 0, 180);
+        cameraActorArray[D_800FA634_B18B4].fov = CAMERA_DEFAULT_FOV;
+    }
+
+    camStopShakes();
+
+#ifdef VERSION_kiosk
+    {
+        piStatus = (volatile u32 *) PHYS_TO_K1(PI_STATUS_REG);
+        if (arg0) {
+            D_800A2ED0_A3AD0 = 0;
+        }
+        D_800A3720 = 0;
+        status = *piStatus;
+        cartWord = (volatile u32 *) 0xB0000000;
+        while (status & 3) {
+            status = *piStatus;
+        }
+        if ((cartWord[0x15E] & 0xFFFF) != 0x8965) {
+            D_800A3720 = 1;
+        }
+    }
+#else
+    if (arg0) {
+        D_800A2ED0_A3AD0 = 0;
+    }
+#endif
+
+    D_800FB078_B22F8 = CAMERA_DEFAULT_FOV;
+    guPerspectiveF(D_800FAA70_B1CF0, &D_800FAA68_B1CE8, D_800FB078_B22F8, CAMERA_ASPECT, CAMERA_NEAR, CAMERA_FAR,
+                   CAMERA_SCALE);
+    D_800A316C_A3D6C = (D_800A316C_A3D6C + 1) & 0xF;
+    mathMtxF2L(D_800FAA70_B1CF0, &D_800FAB38_B1DB8[D_800A316C_A3D6C]);
+}
 
 void camUseShake(void) {
     D_800FAA58_B5298 = 1;
@@ -138,8 +205,7 @@ void camOverrideProjScales(f32 scaleX, f32 scaleY) {
     D_800FAA5C_B1CDC = 1;
 }
 
-#if 0
-void camSetFOV(f32 arg0, s32 arg1) {
+void camSetFOV(f32 fov, s32 force) {
     f32 temp;
     s32 camNo;
     s32 videoMode;
@@ -147,43 +213,38 @@ void camSetFOV(f32 arg0, s32 arg1) {
     u8 idx;
 
     camNo = D_800FA634_B18B4;
-    *(&D_800FA4FC_B177C + camNo * 0x13) = arg0;
+    cameraActorArray[camNo].fov = fov;
     if (D_800A3174_A3D74[camNo] != 0) {
         temp = D_800A317C_A3D7C[camNo] - 1.0f;
-        arg0 *= 1.0f / (0.25f * temp + 1.0f);
+        fov *= 1.0f / ((0.25f * temp) + 1.0f);
     }
-    if (arg0 > 0.0f) {
-        if (arg0 < 90.0f) {
-            if ((arg1 != 0) || (camNo = (s32)&D_800FB078_B22F8, arg0 != D_800FB078_B22F8)) {
-                D_800FB078_B22F8 = arg0;
-                guPerspectiveF(D_800FAA70_B1CF0, &D_800FAA68_B1CE8, D_800FB078_B22F8, 1.3333334f, 10.0f, 15000.0f, 1.0f);
-                D_800A3168_A3D68 = D_800FAA70_B1CF0[0][0] / 1.817394f;
-                videoMode = viGetVideoMode();
-                if (D_800FAA5C_B1CDC != 0) {
-                    D_800FAA70_B1CF0[0][0] = D_800FAA70_B1CF0[0][0] * D_800FAA60_B1CE0;
-                    D_800FAA5C_B1CDC = 0;
-                    D_800FAA70_B1CF0[1][1] = D_800FAA70_B1CF0[1][1] * D_800FAA64_B1CE4;
-                } else if (videoMode & 1) {
-                    type = levelGetType();
-                    if ((type == 1) || (type == 2)) {
-                        D_800FAA70_B1CF0[1][1] *= 1.33f;
-                    } else {
-                        D_800FAA70_B1CF0[0][0] *= 0.75f;
-                    }
-                } else if ((D_800FA630_B18B0 == 1) && (frontGet2PlayerSplit() != 0)) {
+    if (fov > CAMERA_MIN_FOV && CAMERA_MAX_FOV > fov) {
+        if ((force != 0) || (fov != D_800FB078_B22F8)) {
+            D_800FB078_B22F8 = fov;
+            guPerspectiveF(D_800FAA70_B1CF0, &D_800FAA68_B1CE8, D_800FB078_B22F8, CAMERA_ASPECT, CAMERA_NEAR,
+                           CAMERA_FAR, 1 /*.0f*/);
+            D_800A3168_A3D68 = D_800FAA70_B1CF0[0][0] / 1.817394f;
+            videoMode = viGetVideoMode();
+            if (D_800FAA5C_B1CDC != 0) {
+                D_800FAA70_B1CF0[0][0] = D_800FAA70_B1CF0[0][0] * D_800FAA60_B1CE0;
+                D_800FAA70_B1CF0[1][1] *= D_800FAA64_B1CE4;
+                D_800FAA5C_B1CDC = 0;
+            } else if (videoMode & 1) {
+                type = levelGetType();
+                if ((type == 1) || (type == 2)) {
+                    D_800FAA70_B1CF0[1][1] *= 1.33f;
+                } else {
                     D_800FAA70_B1CF0[0][0] *= 0.75f;
-                    D_800FAA70_B1CF0[1][1] *= 0.75f;
                 }
-                idx = (D_800A316C_A3D6C + 1) & 0xF;
-                D_800A316C_A3D6C = idx;
-                mathMtxF2L(D_800FAA70_B1CF0, &D_800FAB38_B1DB8[idx & 0xFF]);
+            } else if ((D_800FA630_B18B0 == 1) && (frontGet2PlayerSplit() != 0)) {
+                D_800FAA70_B1CF0[0][0] *= 0.75f;
+                D_800FAA70_B1CF0[1][1] *= 0.75f;
             }
+            D_800A316C_A3D6C = (D_800A316C_A3D6C + 1) & 0xF;
+            mathMtxF2L(D_800FAA70_B1CF0, &D_800FAB38_B1DB8[D_800A316C_A3D6C]);
         }
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camSetFOV.s")
-#endif
 
 f32 camDistance(f32 x, f32 y, f32 z) {
     Camera *cam;
@@ -198,7 +259,39 @@ f32 camDistance(f32 x, f32 y, f32 z) {
     return sqrtf((dx * dx) + (dy * dy) + (dz * dz));
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/func_8003FAEC_406EC.s")
+void func_8003FAEC_406EC(s32 x, s32 y, s32 z, s32 zRot, s32 xRot, s32 yRot) {
+    Camera *cam = &cameraActorArray[D_800FA634_B18B4];
+    f32 fx;
+    f32 fy;
+    f32 fz;
+    f32 f24;
+    f32 f28;
+
+    cam->trans.rotation.z_rotation = zRot * 0xB6;
+    cam->trans.rotation.x_rotation = xRot * 0xB6;
+    fx = x;
+    fy = y;
+    fz = z;
+    f24 = 128.0f;
+    f28 = 32.0f;
+    cam->trans.rotation.y_rotation = yRot * 0xB6;
+    cam->unk4A = 0;
+    cam->trans.x_position = fx;
+    cam->trans.y_position = fy;
+    cam->trans.z_position = fz;
+    cam->cam_unk_18 = fx;
+    cam->boomLength = fy;
+    cam->unk20 = fz;
+    cam->unk3C = 0;
+    cam->shake.x = 0.0f;
+    cam->shake.y = 0.0f;
+    cam->shake.z = 0.0f;
+    cam->unk24 = f24;
+    cam->unk28 = f28;
+    cam->unk3D = D_800A3170_A3D70[D_800FA634_B18B4];
+    cam->unk3E = -1;
+    cam->unk40 = 0.0f;
+}
 
 s32 camGetMode(void) {
     return D_800FA630_B18B0;
@@ -236,7 +329,59 @@ void camSetWaterLine(s32 camNo, s32 waterLine) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camUserViewTick.s")
+void camUserViewTick(void) {
+    s32 width;
+    s32 height;
+    s32 port;
+    s32 yPos;
+    s32 xPos;
+    int i;
+
+    D_800A2FA4_A3BA4 = 1 - D_800A2FA4_A3BA4;
+    for (i = 0; i < 4; i++) {
+        if (D_800A2ED4_A3AD4[i].flags & 4) {
+            D_800A2ED4_A3AD4[i].flags &= ~1;
+        } else if (D_800A2ED4_A3AD4[i].flags & 2) {
+            D_800A2ED4_A3AD4[i].flags |= 1;
+        }
+        D_800A2ED4_A3AD4[i].flags &= ~(2 | 4);
+
+        if (D_800A2ED4_A3AD4[i].flags & 1) {
+            if (!(D_800A2ED4_A3AD4[i].flags & 8)) {
+                xPos = (((D_800A2ED4_A3AD4[i].x2 - D_800A2ED4_A3AD4[i].x1) + 1) << 1) + (D_800A2ED4_A3AD4[i].x1 * 4);
+            } else {
+                xPos = D_800A2ED4_A3AD4[i].posX;
+                xPos *= 4;
+            }
+            if (!(D_800A2ED4_A3AD4[i].flags & 0x10)) {
+                yPos = (((D_800A2ED4_A3AD4[i].y2 - D_800A2ED4_A3AD4[i].y1) + 1) << 1) + (D_800A2ED4_A3AD4[i].y1 * 4);
+            } else {
+                yPos = D_800A2ED4_A3AD4[i].posY;
+                yPos *= 4;
+            }
+            if (!(D_800A2ED4_A3AD4[i].flags & 0x20)) {
+                width = D_800A2ED4_A3AD4[i].x2 - D_800A2ED4_A3AD4[i].x1;
+                width += 1;
+                width *= 2;
+            } else {
+                width = D_800A2ED4_A3AD4[i].width;
+                width *= 2;
+            }
+            if (!(D_800A2ED4_A3AD4[i].flags & 0x40)) {
+                height = (D_800A2ED4_A3AD4[i].y2 - D_800A2ED4_A3AD4[i].y1) + 1;
+                height *= 2;
+            } else {
+                height = D_800A2ED4_A3AD4[i].height;
+                height *= 2;
+            }
+            port = (i + D_800A2FA4_A3BA4 * 5) + 10;
+            D_800A2FB8_A3BB8[port].vp.vtrans[0] = xPos;
+            D_800A2FB8_A3BB8[port].vp.vtrans[1] = yPos;
+            D_800A2FB8_A3BB8[port].vp.vscale[0] = width;
+            D_800A2FB8_A3BB8[port].vp.vscale[1] = height;
+        }
+    }
+}
 
 void camEnableUserView(s32 camNo, s32 immediate) {
     ScreenViewport *vp;
@@ -268,7 +413,53 @@ s32 camIsUserView(s32 camNo) {
     return D_800A2ED4_A3AD4[camNo].flags & 1;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camSetUserView.s")
+void camSetUserView(s32 camNo, s32 x1, s32 y1, s32 x2, s32 y2) {
+    s32 temp;
+    u32 width;
+    u32 height;
+    viGetCurrentSize((s32 *) (&width), (s32 *) (&height));
+    if (x2 < x1) {
+        temp = x1;
+        x1 = x2;
+        x2 = temp;
+    }
+    if (y2 < y1) {
+        temp = y1;
+        y1 = y2;
+        y2 = temp;
+    }
+    if ((((x1 >= width) || (x2 < 0)) || (y1 >= height)) || (y2 < 0)) {
+        D_800A2ED4_A3AD4[camNo].scissorX1 = 0;
+        D_800A2ED4_A3AD4[camNo].scissorY1 = 0;
+        D_800A2ED4_A3AD4[camNo].scissorX2 = 0;
+        D_800A2ED4_A3AD4[camNo].scissorY2 = 0;
+    } else {
+        if (x1 < 0) {
+            D_800A2ED4_A3AD4[camNo].scissorX1 = 0;
+        } else {
+            D_800A2ED4_A3AD4[camNo].scissorX1 = x1;
+        }
+        if (y1 < 0) {
+            D_800A2ED4_A3AD4[camNo].scissorY1 = 0;
+        } else {
+            D_800A2ED4_A3AD4[camNo].scissorY1 = y1;
+        }
+        if (x2 >= width) {
+            D_800A2ED4_A3AD4[camNo].scissorX2 = width - 1;
+        } else {
+            D_800A2ED4_A3AD4[camNo].scissorX2 = x2;
+        }
+        if (y2 >= height) {
+            D_800A2ED4_A3AD4[camNo].scissorY2 = height - 1;
+        } else {
+            D_800A2ED4_A3AD4[camNo].scissorY2 = y2;
+        }
+    }
+    D_800A2ED4_A3AD4[camNo].x2 = x2;
+    D_800A2ED4_A3AD4[camNo].y1 = y1;
+    D_800A2ED4_A3AD4[camNo].x1 = x1;
+    D_800A2ED4_A3AD4[camNo].y2 = y2;
+}
 
 void camSetUserViewSpecial(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     ScreenViewport *vp;
@@ -420,7 +611,17 @@ void camSetView(Gfx **dlist, Mtx **mtx) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camSetScissor.s")
+void camSetScissor(Gfx **dlist) {
+    struct {
+        u32 lry;
+        u32 lrx;
+        u32 uly;
+        u32 ulx;
+    } win;
+
+    camGetWindowLimits(D_800FA630_B18B0, D_800FA634_B18B4, &win.ulx, &win.uly, &win.lrx, &win.lry);
+    gDPSetScissor((*dlist)++, G_SC_NON_INTERLACE, win.ulx, win.uly, win.lrx, win.lry);
+}
 
 void camGetPlayerProjMtx(s32 arg0, Matrix arg1) {
     mathMtxCatF(D_800FAF78_B21F8, D_800FAA70_B1CF0, arg1);
@@ -473,7 +674,7 @@ void camSetProjMtx(Gfx **dlist, Mtx **mtx) {
 }
 
 void camOrthoYAspect(f32 arg0) {
-    D_800A313C_A3D3C = arg0;
+    D_800A3128_A3D28[1][1] = arg0;
 }
 
 void camStandardOrtho(Gfx **arg0, Mtx **arg1) {
@@ -562,7 +763,7 @@ void camDoSprite(Gfx **dlist, Mtx **mtx, Vertex **vtx, ObjectSegment1 *segment, 
     gSPVertexJFG((*dlist)++, OS_PHYSICAL_TO_K0(*vtx), 1, 0);
     (*vtx)++;
 
-    rot = *(s16 *) ((u8 *) &D_800FA4D4_B1754 + D_800FA634_B18B4 * 0x4C) + segment->trans.rotation.z_rotation;
+    rot = cameraActorArray[D_800FA634_B18B4].trans.rotation.z_rotation + segment->trans.rotation.z_rotation;
     scale = segment->trans.scale * D_800A3168_A3D68;
     aspect = aspectRatioFloat;
     if (viGetVideoMode() & 1) {
@@ -610,7 +811,7 @@ void camDoSpriteDirect(Gfx **dlist, Mtx **mtx, Vertex **vtx, Sprite *sprite, s16
     gSPVertexJFG((*dlist)++, OS_PHYSICAL_TO_K0(*vtx), 1, 0);
     (*vtx)++;
 
-    rot = *(s16 *) ((u8 *) &D_800FA4D4_B1754 + D_800FA634_B18B4 * 0x4C) + angle;
+    rot = cameraActorArray[D_800FA634_B18B4].trans.rotation.z_rotation + angle;
     scale *= D_800A3168_A3D68;
     aspect = aspectRatioFloat;
     if (viGetVideoMode() & 1) {
@@ -668,7 +869,7 @@ void camDo2DSprite(Gfx **dlist, Mtx **mtx, Vertex **vtx, ObjectSegment *segment,
     D_800FA638_B18B8.rotation.y_rotation = -segment->trans.rotation.y_rotation;
     D_800FA638_B18B8.rotation.x_rotation = -segment->trans.rotation.x_rotation;
     D_800FA638_B18B8.rotation.z_rotation =
-        *(s16 *) ((u8 *) &D_800FA4D4_B1754 + D_800FA634_B18B4 * 0x4C) + segment->trans.rotation.z_rotation;
+        cameraActorArray[D_800FA634_B18B4].trans.rotation.z_rotation + segment->trans.rotation.z_rotation;
     D_800FA638_B18B8.x_position = 0.0f;
     D_800FA638_B18B8.y_position = 0.0f;
     D_800FA638_B18B8.z_position = 0.0f;
@@ -806,9 +1007,64 @@ Matrix *camGetRotationMtx(void) {
     return &D_800FAF78_B21F8;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camProjectPoint.s")
+s32 camProjectPoint(f32 x, f32 y, f32 z, f32 *outX, f32 *outY, u8 transform) {
+    s32 ret;
+    f32 scaleX;
+    f32 scaleY;
+    f32 projX;
+    f32 projY;
+    f32 clipZ;
+    Vp *vp;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camReversePoint.s")
+    ret = 0;
+    if (transform) {
+        mathMtxXFMF(D_800FAF78_B21F8, x, y, z, &x, &y, &z);
+    }
+
+    projX = D_800FAA70_B1CF0[0][0] * x;
+    projY = D_800FAA70_B1CF0[1][1] * y;
+    clipZ = -(D_800FAA70_B1CF0[2][3] * z);
+#ifdef VERSION_kiosk
+    if (clipZ < 0.0f) {
+#else
+    if (clipZ < -2.0f) {
+#endif
+        ret = D_800FA634_B18B4;
+        vp = &D_800A2FB8_A3BB8[ret];
+        if (D_800A2ED4_A3AD4[ret].flags & 1) {
+            vp += D_800A2FA4_A3BA4 * 5 + 10;
+            ret = 1;
+        }
+        scaleX = vp->vp.vscale[0] >> 2;
+        scaleY = vp->vp.vscale[1] >> 2;
+        *outX = (f32) (vp->vp.vtrans[0] >> 2) - (projX * scaleX) / clipZ;
+        *outY = (f32) (vp->vp.vtrans[1] >> 2) + (projY * scaleY) / clipZ;
+        ret = 1;
+    }
+    return ret;
+}
+
+void camReversePoint(f32 x, f32 y, f32 *outX, f32 *outY, f32 *z, u8 transform) {
+    f32 transX;
+    f32 scaleY;
+    f32 scaleX;
+    f32 transY;
+    f32 clipZ;
+    Vp *vp;
+
+    clipZ = ((*z) * D_800FAA70_B1CF0[2][2]) * D_800FAA70_B1CF0[2][3];
+    transX = D_800A2FB8_A3BB8[D_800FA634_B18B4].vp.vtrans[0] >> 2;
+    scaleX = D_800A2FB8_A3BB8[D_800FA634_B18B4].vp.vscale[0] >> 2;
+    scaleY = D_800A2FB8_A3BB8[D_800FA634_B18B4].vp.vscale[1] >> 2;
+    transX = D_800A2FB8_A3BB8[D_800FA634_B18B4].vp.vtrans[0] >> 2;
+    transY = D_800A2FB8_A3BB8[D_800FA634_B18B4].vp.vtrans[1] >> 2;
+    *outX = ((transX - x) * clipZ) / (D_800FAA70_B1CF0[0][0] * scaleX);
+    *outY = ((y - transY) * clipZ) / (D_800FAA70_B1CF0[1][1] * scaleY);
+
+    if (transform) {
+        mathMtxXFMF(D_800FAFB8_B2238, *outX, *outY, *z, outX, outY, z);
+    }
+}
 
 f32 camGetProjZ(f32 x, f32 y, f32 z) {
     f32 temp;
@@ -824,10 +1080,6 @@ f32 camGetProjZ(f32 x, f32 y, f32 z) {
     return out;
 }
 
-/* Needs camera .data migrated before this will match. */
-#if 0
-extern f32 D_800A3128_A3D28[16];
-
 void camCopyOrthoMatrix(Matrix dest) {
     s32 i;
     s32 width;
@@ -835,13 +1087,10 @@ void camCopyOrthoMatrix(Matrix dest) {
 
     viGetCurrentSize(&width, &height);
     for (i = 0; i < 15; i++) {
-        ((f32*)dest)[i] = D_800A3128_A3D28[i];
+        ((f32 *) dest)[i] = ((f32 *) D_800A3128_A3D28)[i];
     }
-    dest[3][3] = (u32)width >> 1;
+    dest[3][3] = (u32) width >> 1;
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camCopyOrthoMatrix.s")
-#endif
 
 void camStartShake(s32 camNo, f32 attack, f32 sustain, f32 decay, s32 magnitude) {
     CameraShake *shake;
@@ -876,7 +1125,26 @@ void camStopShakes(void) {
     // clang-format on
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camScreenShake.s")
+void camScreenShake(f32 x, f32 y, f32 z, f32 dist, f32 magnitude) {
+    f32 dx;
+    f32 distance;
+    f32 dz;
+    f32 dy;
+    s32 i;
+
+    for (i = 0; i <= D_800FA630_B18B0; i++) {
+        dx = x - cameraActorArray[i].trans.x_position;
+        dy = y - cameraActorArray[i].trans.y_position;
+        dz = z - cameraActorArray[i].trans.z_position;
+        distance = sqrtf(((dx * dx) + (dy * dy)) + (dz * dz));
+        if (distance < dist) {
+            distance = ((dist - distance) * magnitude) / dist;
+            if (cameraActorArray[i].shake.y < distance) {
+                cameraActorArray[i].shake.y = distance;
+            }
+        }
+    }
+}
 
 void camSetZoom(s32 camNo, f32 zoom) {
     if ((camNo >= 0) && (camNo < 4)) {
@@ -894,4 +1162,44 @@ void camConvertMatrixList(Matrix *mtx, s32 count) {
     entry->count = count;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/camera/camTick.s")
+void camTick(s32 updateRate) {
+    CameraShake *shake;
+    Camera *cam;
+    s32 i;
+    s32 timer;
+    s32 sustainEnd;
+    s32 mag;
+
+    D_800FA658_B18D8[D_800A2ED0_A3AD0].count = -1;
+    conv_mult_matrix(D_800FAAF0_B1D70, D_800FA658_B18D8);
+    D_800A2ED0_A3AD0 = 0;
+
+    cam = cameraActorArray;
+    shake = D_800FA600_B1880;
+    D_800FAA58_B5298 = 0;
+
+    for (i = 4; i--; cam++, shake++) {
+        D_800A3174_A3D74[i] = 0;
+        D_800A3178_A3D78[i] = 1;
+        cam->shake.f[0] = 0.0f;
+        cam->shake.f[1] = 0.0f;
+        cam->shake.f[2] = 0.0f;
+        if (shake->magnitude != 0) {
+            shake->timer += updateRate;
+            if (shake->timer >= shake->totalEnd) {
+                shake->magnitude = 0;
+            } else {
+                D_800FAA58_B5298 = 1;
+                timer = shake->timer;
+                sustainEnd = shake->sustainEnd;
+                mag = shake->magnitude;
+                if (sustainEnd < timer) {
+                    mag = ((shake->totalEnd - timer) * mag) / (shake->totalEnd - sustainEnd);
+                } else if (timer < shake->attackEnd) {
+                    mag = (timer * mag) / shake->attackEnd;
+                }
+                cam->shake.y = mathRnd(0, mag);
+            }
+        }
+    }
+}
