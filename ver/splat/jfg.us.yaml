@@ -310,7 +310,7 @@ segments:
       - [0xA3FF0, .data, memory]
       - [0xA4000, data, saves]
       - [0xA4130, .data, pi] # new data symbol not in kiosk. Kiosk has no pi data.
-      - [0xA4140, data, prnBorder]
+      - [0xA4140, .data, prnBorder]
       - [0xA41B0, data, rcpFast3d]
       - [0xA44B0, data, sched]
       - [0xA44E0, .data, squads]
