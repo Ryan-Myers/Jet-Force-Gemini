@@ -13,12 +13,10 @@ Gfx D_800A3540_A4140[] = {
     gsDPSetOtherMode(DKR_OMH_1CYC_POINT_NOPERSP, DKR_OML_COMMON | G_RM_XLU_SURF | G_RM_XLU_SURF2),
     gsDPPipeSync(),
     gsSPEndDisplayList(),
-    gsSPNoOp(),
-    { { 0x00020000, 0x00000000 } },
-    gsSPNoOp(),
-    gsSPNoOp(),
-    gsSPNoOp(),
 };
+UNUSED Gfx D_800A3588_A4188[] = { gsSPNoOp() };
+UNUSED s32 D_800A3590_A4190 = 0x20000;
+UNUSED Gfx D_800A3598_A4198[] = { gsSPNoOp(), gsSPNoOp() };
 
 extern s32 frontGet2PlayerSplit(void);
 extern s32 squadsLowMemoryPanic(void);
