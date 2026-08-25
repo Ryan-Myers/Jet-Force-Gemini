@@ -411,24 +411,9 @@ segments:
       - [0xB1210, .rodata, ../libultra/src/libc/xprintf]
       - [0xB1310, .rodata, ../libultra/src/libc/xldtob]
       # not really sure exact offsets for these...
-      - {
-          start: 0xB1370,
-          type: databin,
-          name: data_audio,
-          linker_section_order: .rodata,
-        }
-      - {
-          start: 0xB1630,
-          type: databin,
-          name: data_unk,
-          linker_section_order: .rodata,
-        }
-      - {
-          start: 0xB1AB0,
-          type: databin,
-          name: data_f3ddkr_dram,
-          linker_section_order: .rodata,
-        }
+      - { start: 0xB1370, type: databin, name: data_audio,       linker_section_order: .rodata }
+      - { start: 0xB1630, type: databin, name: data_unk,         linker_section_order: .rodata }
+      - { start: 0xB1AB0, type: databin, name: data_f3ddkr_dram, linker_section_order: .rodata }
       - { type: bss, vram: 0x800B16B0, name: audio_manager_1050 }
       - { type: bss, vram: 0x800EA400, name: audiomgr }
       - { type: bss, vram: 0x800F35F0, name: audio_manager_36D0 }
@@ -476,16 +461,8 @@ segments:
       - { type: .bss, vram: 0x80105B20, name: fmvInit }
       - { type: .bss, vram: 0x80105B70, name: ../libultra/src/flash/flashinit }
       - { type: bss, vram: 0x80105C30, name: gsSnd }
-      - {
-          type: .bss,
-          vram: 0x80105CA0,
-          name: ../libultra/src/naudio/n_csplayer,
-        }
-      - {
-          type: .bss,
-          vram: 0x80105CE0,
-          name: ../libultra/src/naudio/alsurround,
-        }
+      - { type: .bss, vram: 0x80105CA0, name: ../libultra/src/naudio/n_csplayer }
+      - { type: .bss, vram: 0x80105CE0, name: ../libultra/src/naudio/alsurround }
       - { type: .bss, vram: 0x80105CF0, name: ../libultra/src/naudio/n_event }
       - { type: .bss, vram: 0x80105D00, name: ../libultra/src/os/initialize }
       - { type: .bss, vram: 0x80105D10, name: ../libultra/src/os/seteventmesg }
@@ -496,11 +473,7 @@ segments:
       - { type: .bss, vram: 0x80105F00, name: ../libultra/src/io/vimgr }
       - { type: .bss, vram: 0x80106220, name: ../libultra/src/io/sptask }
       - { type: .bss, vram: 0x80106260, name: ../libultra/src/io/piacs }
-      - {
-          type: .bss,
-          vram: 0x80106280,
-          name: ../libultra/src/debug/kdebugserver,
-        }
+      - { type: .bss, vram: 0x80106280, name: ../libultra/src/debug/kdebugserver }
       - { type: .bss, vram: 0x80106430, name: ../libultra/src/os/timerintr }
 
   - name: assets_lut

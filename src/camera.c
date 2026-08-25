@@ -103,25 +103,14 @@ s32 D_800FA630_B18B0; /* mode */
 s32 D_800FA634_B18B4; /* active camera */
 ObjectTransform D_800FA638_B18B8;
 s8 D_800FA650_B18D0;
-UNUSED u8 pad_b18d1;
-UNUSED u8 pad_b18d2;
-UNUSED u8 pad_b18d3;
-UNUSED u8 pad_b18d4;
-UNUSED u8 pad_b18d5;
-UNUSED u8 pad_b18d6;
-UNUSED u8 pad_b18d7;
+UNUSED s32 pad_b18d4;
 ConvListEntry D_800FA658_B18D8[128];
 s32 D_800FAA58_B5298; /* shake enable */
 s32 D_800FAA5C_B1CDC;
 f32 D_800FAA60_B1CE0;
 f32 D_800FAA64_B1CE4;
 u16 D_800FAA68_B1CE8;
-UNUSED u8 pad_aa6a;
-UNUSED u8 pad_aa6b;
-UNUSED u8 pad_aa6c;
-UNUSED u8 pad_aa6d;
-UNUSED u8 pad_aa6e;
-UNUSED u8 pad_aa6f;
+UNUSED s32 pad_aa6c;
 Matrix D_800FAA70_B1CF0; /* perspective */
 Matrix D_800FAAB0_B1D30; /* current model */
 Matrix D_800FAAF0_B1D70; /* view * persp */
@@ -178,10 +167,8 @@ void camInit(s32 arg0) {
         D_800A3720 = 0;
         status = *piStatus;
         cartWord = (volatile u32 *) 0xB0000000;
-        if (status & 3) {
-            do {
-                status = *piStatus;
-            } while (status & 3);
+        while (status & 3) {
+            status = *piStatus;
         }
         if ((cartWord[0x15E] & 0xFFFF) != 0x8965) {
             D_800A3720 = 1;
