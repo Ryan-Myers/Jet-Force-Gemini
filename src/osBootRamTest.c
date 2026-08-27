@@ -7,7 +7,7 @@
 #define RAMTEST2_EXPECTED 0xD170014 // 0xAD170014
 
 #ifdef VERSION_kiosk
-// First value is "TRUE" if the test has not been run yet, and "FALSE" if it has. 
+// First value is "TRUE" if the test has not been run yet, and "FALSE" if it has.
 // Second value is the result of the test.
 static s32 sRamTest1[2] = { TRUE, FALSE };
 static s32 sRamTest2[2] = { TRUE, FALSE };
