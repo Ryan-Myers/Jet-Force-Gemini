@@ -24,7 +24,7 @@ u8 D_800FE9B8_B91F8[5];
 #else
 u8 D_800FE9B8_B91F8[0x35];
 #endif
-u8 D_800FE9ED_B922D; // Linked with above?
+u8 D_800FE9ED_B922D;
 u8 squadsBehaviour;
 s32 D_800FE9F0_B9230;
 s32 SquaddieGrowlTimer;
@@ -47,13 +47,13 @@ extern void GetRomlistInfo(RomDefHeader **list, s32 *size, s32 which);
 extern s32 levelGetObjectID(s32 arg0);
 extern void doorRegisterOpener(s32 arg0, s32 arg1);
 extern s32 objGetControlNo(s16 arg0);
-s32 ProcessNodeChange(s32 arg0);
+s32 ProcessNodeChange(u8 arg0);
 s32 levelObjectFlagSet(s32 arg0);
 void AIPointInit(s32 **arg0);
 void BindRegionsToObjects(Object *arg0, s32 arg1);
 void CopyStaticsToSquads(s32 arg0, Object *arg1);
-s32 GetClosestPatrolNode(f32 x, f32 y, f32 z, s32 arg3);
-s32 GetNextNodeNumber(s32 arg0, s32 arg1, s32 arg2, PatrolNode *node);
+s8 GetClosestPatrolNode(f32 x, f32 y, f32 z, s8 arg3);
+s32 GetNextNodeNumber(u8 arg0, u8 arg1, u8 arg2, PatrolNode *node);
 void SquaddieControl(Object *arg0, s32 arg1);
 void doorUnlock(s32 arg0, s32 arg1);
 void squadsAddToActiveSquaddies(DisactivatedSquaddie *arg0);
@@ -450,7 +450,179 @@ void func_80051CCC_528CC(void) {
     }
 }
 
+#ifndef UNMATCHED
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsInitialiseAfterObjects.s")
+#else
+void squadsInitialiseAfterObjects(void) {
+    s32 j;
+    s32 count;
+    DisactivatedSquaddie **dp;
+    s32 i;
+    PatrolNode *node;
+    Object *obj;
+    s32 **ptr;
+    s32 k;
+    s32 first;
+    s32 last;
+    Object **list;
+    s16 id;
+    Object_Racer *racer;
+    AnimPath *path;
+    AnimPath *ap;
+    DisactivatedSquaddie *ds;
+    if (runlinkIsModuleLoaded(3) == 0) {
+        mmFree(D_800FE9AC_B91EC);
+        return;
+    }
+    func_80051CCC_528CC();
+    list = objGetObjList(&first, &last);
+    D_800FE9A8_B91E8 = 0;
+    SquadsModuleFlags = 0x40;
+    ptr = &D_800FEA54_B9294;
+    i = 16;
+    while (i--) {
+        *ptr = NULL;
+        ptr--;
+    }
+
+    AIPointInit(ptr);
+    for (i = first; i < last; i++) {
+        Object *sq = list[i];
+        if (sq->unkA0 != 0) {
+            continue;
+        }
+        if (sq->behaviorId == 0x1B) {
+            racer = sq->racer;
+            SquaddieControl(sq, sq->segment.unk3C);
+            BindRegionsToObjects(sq, 0);
+            k = 4;
+            while (k--) {
+                id = racer->animPathId[k];
+                if ((id & (-1)) != (-1)) {
+                    path = animpath[id];
+                    ap = path->unk20;
+                    count = racer->animNodeIdx[k];
+                    while (count--) {
+                        ap = ap->unk28;
+                    }
+
+                    ap->unk1E = racer->unk11;
+                }
+            }
+        }
+    }
+
+    node = PatrolNodes;
+    i = MaxPatrolNodes;
+    while (i--) {
+        node->unk2F = 0;
+        node++;
+    }
+
+    D_800FE9F0_B9230 = 0;
+    for (i = first; i < last; i++) {
+        if (list[i]->behaviorId == 0x17) {
+            D_800FE9F0_B9230++;
+        }
+    }
+
+    if (D_800FE9F0_B9230 != 0) {
+        D_800A38E4_A44E4 = (Object **) mmAlloc(D_800FE9F0_B9230 * sizeof(Object**), COLOUR_TAG_YELLOW);
+        j = 0;
+        for (i = first; i < last; i++) {
+            obj = list[i];
+            if (obj->behaviorId == 0x17) {
+                D_800A38E4_A44E4[j++] = obj;
+                count = j - 1;
+
+                while (count-- > 0) {
+                    if (D_800A38E4_A44E4[count]) {}
+                }
+            }
+        }
+    } else {
+        D_800A38E4_A44E4 = NULL;
+    }
+    SquadsModuleFlags |= 8;
+    j = sizeof(D_800FE9B8_B91F8) + 1;
+    while (j--) {
+        D_800FE9B8_B91F8[j] = 0;
+    }
+
+    j = D_800FE9F0_B9230;
+    while (j--) {
+        D_800FEA10_B9250 = D_800A38E4_A44E4[j];
+        D_800FEA14_B9254 = D_800FEA10_B9250->racer;
+        CreateStaticInstance(D_800FEA14_B9254->unk2C);
+    }
+
+    SquadsModuleFlags &= ~8;
+    j = D_800FE9F0_B9230;
+    while (j--) {
+        D_800FEA10_B9250 = D_800A38E4_A44E4[j];
+        D_800FEA14_B9254 = D_800FEA10_B9250->racer;
+        CopyStaticsToSquads(0, D_800FEA10_B9250);
+        if (D_800FEA14_B9254->f1Alo == 6) {
+            k = GetClosestPatrolNode(D_800FEA10_B9250->segment.trans.x_position, D_800FEA10_B9250->segment.trans.y_position,
+                                     D_800FEA10_B9250->segment.trans.z_position, 0);
+            if (k != 0) {
+                node = &PatrolNodes[k & 0xff];
+                if ((node->f17hi != 0) && (node != NULL)) {
+                    D_800FEA14_B9254->unk3C = node->unk16;
+                    ProcessNodeChange(GetNextNodeNumber(D_800FEA14_B9254->unk30, D_800FEA14_B9254->unk3C & 0xFF, 0, node));
+                    D_800FEA14_B9254->unk33 = 0x1F;
+                }
+            } else {
+                D_800FEA14_B9254->f1Alo = 2;
+            }
+        }
+    }
+
+    if (D_800FE9A0_B91E0) {
+        DisactivatedSquaddies = (DisactivatedSquaddie **) mmAlloc(D_800FE9A0_B91E0 * 4, COLOUR_TAG_YELLOW);
+        dp = DisactivatedSquaddies;
+        i = D_800FE9A0_B91E0;
+        while (i--) {
+            *dp = NULL;
+            dp++;
+        }
+
+        i = D_800FE9A0_B91E0;
+        while (i--) {
+            ds = ((DisactivatedSquaddie **) D_800FE9AC_B91EC)[i];
+            D_800FEA10_B9250 = GetSquadronFromIdentifier(ds->unk11);
+            D_800FEA14_B9254 = D_800FEA10_B9250->racer;
+            if (D_800FEA14_B9254->f1Ahi == 1) {
+                AddToDisactivatedSquaddies(ds);
+            } else {
+                squadsAddToActiveSquaddies(ds);
+            }
+        }
+    }
+    mmFree(D_800FE9AC_B91EC);
+    list = objGetObjList(&first, &last);
+    for (i = first; i < last; i++) {
+        ds = (DisactivatedSquaddie *) list[i];
+        if (((Object *) ds)->behaviorId == 0x17) {
+            D_800FEA14_B9254 = ((Object *) ds)->racer;
+            if (D_800FEA14_B9254->unk75 != 0) {
+                k = 1;
+                for (count = 0; count < (s32) D_800FEA14_B9254->unk1; count++) {
+                    if (levelObjectFlagSet(D_800FEA14_B9254->unk88 + count) == 0) {
+                        k = 0;
+                        break;
+                    }
+                }
+
+                if (k != 0) {
+                    doorUnlock(D_800FEA14_B9254->unk75, 0);
+                    D_800FEA14_B9254->unk28 |= 8;
+                }
+            }
+        }
+    }
+}
+#endif
 
 void squadsInit(void) {
     BaddyDataArray = piRomLoad(0x3E);

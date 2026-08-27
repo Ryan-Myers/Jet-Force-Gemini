@@ -204,8 +204,13 @@ typedef struct Object_Racer {
   /* 0x02A */ s16 unk2A;
   /* 0x02C */ u16 unk2C;
   /* 0x02E */ s16 unk2E;
-  /* 0x030 */ u8 unk30;
-  /* 0x031 */ u8 unk31;
+  union {
+      s16 unk30_s16;
+      struct {
+        /* 0x030 */ u8 unk30;
+        /* 0x031 */ u8 unk31;
+      };
+  };
   /* 0x032 */ u8 unk32;
   /* 0x033 */ u8 unk33;
   /* 0x034 */ u8 pad34[0x8];
