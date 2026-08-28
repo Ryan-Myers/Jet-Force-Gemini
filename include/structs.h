@@ -199,7 +199,13 @@ typedef struct Object_Racer {
     };
   };
   /* 0x01C */ u8 pad1C[0x8];
-  /* 0x024 */ s32 unk24;
+  union {
+    /* 0x024 */ s32 unk24;
+    struct {
+      /* 0x024 */ s8 unk24b; /* big-endian high byte of unk24 */
+      /* 0x025 */ u8 pad25[0x3];
+    };
+  };
   /* 0x028 */ u16 unk28;
   /* 0x02A */ s16 unk2A;
   /* 0x02C */ u16 unk2C;
@@ -213,17 +219,36 @@ typedef struct Object_Racer {
   };
   /* 0x032 */ u8 unk32;
   /* 0x033 */ u8 unk33;
-  /* 0x034 */ u8 pad34[0x8];
+  union {
+    /* 0x034 */ u8 unk34;
+    struct {
+      /* 0x034 */ u8 f34hi : 6;
+      /* 0x034 */ u8 f34lo : 2;
+    };
+  };
+  /* 0x035 */ u8 pad35[0x7];
   /* 0x03C */ s16 unk3C;
-  /* 0x03E */ u8 pad3E[0x1A];
+  /* 0x03E */ s16 unk3E;
+  /* 0x040 */ s16 unk40;
+  /* 0x042 */ s16 unk42;
+  /* 0x044 */ s16 unk44;
+  /* 0x046 */ u8 pad46[0x12];
   /* 0x058 */ struct Object *unk58;
   /* 0x05C */ u8 pad5C[0x7];
   /* 0x063 */ u8 unk63;
   union {
     /* 0x064 */ f32 unk64;
     /* 0x064 */ u8 unk64b;
+    struct {
+      /* 0x064 */ u8 pad64[0x2];
+      /* 0x066 */ s16 unk66;
+    };
   };
-  /* 0x068 */ u8 pad68[0xD];
+  /* 0x068 */ s16 unk68;
+  /* 0x06A */ s16 unk6A;
+  /* 0x06C */ f32 unk6C;
+  /* 0x070 */ f32 unk70;
+  /* 0x074 */ u8 pad74[0x1];
   /* 0x075 */ u8 unk75;
   /* 0x076 */ u8 pad76[0x12];
   /* 0x088 */ s32 unk88;
@@ -261,16 +286,27 @@ typedef struct AnimPath {
 } AnimPath;
 
 typedef struct PatrolNode {
-  /* 0x00 */ u8 pad0[0x16];
-  /* 0x16 */ u8 unk16;
+  /* 0x00 */ f32 x;
+  /* 0x04 */ f32 y;
+  /* 0x08 */ f32 z;
+  /* 0x0C */ u8 padC[0x8];
   union {
-    /* 0x17 */ u8 unk17;
+    /* 0x14 */ s32 flags;
     struct {
-      /* 0x17 */ u8 f17hi : 2;
-      /* 0x17 */ u8 f17lo : 6;
+      /* 0x14 */ u8 pad14[0x2];
+      /* 0x16 */ u8 unk16;
+      union {
+        /* 0x17 */ u8 unk17;
+        struct {
+          /* 0x17 */ u8 f17hi : 2;
+          /* 0x17 */ u8 f17lo : 6;
+        };
+      };
     };
   };
-  /* 0x18 */ u8 pad18[0x17];
+  /* 0x18 */ u8 type;
+  /* 0x19 */ u8 chance;
+  /* 0x1A */ u8 pad1A[0x15];
   /* 0x2F */ u8 unk2F;
   /* 0x30 */ u8 pad30[0x4];
 } PatrolNode;

@@ -54,6 +54,10 @@ void BindRegionsToObjects(Object *arg0, s32 arg1);
 void CopyStaticsToSquads(s32 arg0, Object *arg1);
 s8 GetClosestPatrolNode(f32 x, f32 y, f32 z, s8 arg3);
 s32 GetNextNodeNumber(u8 arg0, u8 arg1, u8 arg2, PatrolNode *node);
+f32 GetRange(f32 x1, f32 y1, f32 z1, f32 x2, f32 y2, f32 z2);
+s32 mathDiffAngle(s16 angle1, s16 angle2); /* wider than the s16 definition in
+                                              math_util.s: this TU's declaration is
+                                              what makes IDO re-narrow the return */
 void SquaddieControl(Object *arg0, s32 arg1);
 void doorUnlock(s32 arg0, s32 arg1);
 void squadsAddToActiveSquaddies(DisactivatedSquaddie *arg0);
@@ -384,7 +388,88 @@ void GetFormationInfo(Object *arg0, u8 *arg1, u8 *arg2, u8 *arg3) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/ProcessNodeChange.s")
+s32 ProcessNodeChange(u8 arg0) {
+    Object *obj;
+    PatrolNode *dest;
+    PatrolNode *dest2;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 range;
+    s32 prev;
+    s16 ang;
+    u8 var_a3;
+
+    obj = D_800FEA14_B9254->unk58;
+    dest = &PatrolNodes[arg0];
+    if (arg0 == (D_800FEA14_B9254->unk3C & 0xFF)) {
+        return 0;
+    }
+    D_800FEA14_B9254->unk3C <<= 8;
+    D_800FEA14_B9254->unk3C |= arg0;
+    prev = ((D_800FEA14_B9254->unk3C & 0xFFFF) >> 8) & 0xFF;
+    var_a3 = D_800FEA14_B9254->unk3C & 0xFF;
+    if (dest->type == 5) {
+        dest2 = &PatrolNodes[((D_800FEA14_B9254->unk3C & 0xFFFF) >> 8)];
+        if (dest2->type == 5) {
+            D_800FEA14_B9254->unk33 = 0x20;
+        } else {
+            D_800FEA14_B9254->unk33 = 0x1D;
+        }
+    }
+    if (prev) {
+        x = PatrolNodes[var_a3].x;
+        y = PatrolNodes[var_a3].y;
+        z = PatrolNodes[var_a3].z;
+    } else {
+        x = D_800FEA14_B9254->unk58->segment.trans.x_position;
+        y = D_800FEA14_B9254->unk58->segment.trans.y_position;
+        z = D_800FEA14_B9254->unk58->segment.trans.z_position;
+    }
+    D_800FEA14_B9254->unk66 = x;
+    D_800FEA14_B9254->unk68 = y;
+    D_800FEA14_B9254->unk6A = z;
+    D_800FEA14_B9254->unk40 = dest->x;
+    D_800FEA14_B9254->unk42 = dest->y;
+    D_800FEA14_B9254->unk44 = dest->z;
+    range = GetRange(x, y, z, dest->x, dest->y, dest->z);
+    if (range != 0.0f) {
+        D_800FEA14_B9254->unk6C = 0.0f;
+        D_800FEA14_B9254->unk70 = D_800FEA14_B9254->unk24b / range;
+    } else {
+        D_800FEA14_B9254->unk6C = 1.0f;
+        D_800FEA14_B9254->unk70 = 0.0f;
+    }
+    if ((u8) (dest->flags & 4)) {
+        D_800FEA14_B9254->unk28 |= 0x1000;
+        if (dest->type == 8) {
+            if (mathRnd(1, 0x64) < dest->chance) {
+                D_800FEA14_B9254->unk28 &= ~0x1000;
+            }
+        }
+    } else {
+        D_800FEA14_B9254->unk28 &= ~0x1000;
+    }
+    if (D_800FEA14_B9254->unk33 != 0x1D) {
+        if (D_800FEA14_B9254->unk0 >= 2) {
+            D_800FEA14_B9254->unk3E =
+                Arctanf(obj->segment.trans.x_position - dest->x, obj->segment.trans.z_position - dest->z);
+            ang = mathDiffAngle(D_800FEA10_B9250->segment.trans.rotation.x, D_800FEA14_B9254->unk3E);
+            ang = ang >> 9;
+            if (ang < 0) {
+                ang = -ang;
+            }
+            if (ang <= 0) {
+                ang = 1;
+            }
+            D_800FEA14_B9254->unk2E = ang;
+            D_800FEA14_B9254->unk33 = 0x15;
+            D_800FEA14_B9254->f34hi = 0;
+            squadsBehaviour = 0x15;
+        }
+    }
+    return 1;
+}
 
 void func_80051CCC_528CC(void) {
     s32 i;
@@ -527,7 +612,7 @@ void squadsInitialiseAfterObjects(void) {
     }
 
     if (D_800FE9F0_B9230 != 0) {
-        D_800A38E4_A44E4 = (Object **) mmAlloc(D_800FE9F0_B9230 * sizeof(Object**), COLOUR_TAG_YELLOW);
+        D_800A38E4_A44E4 = (Object **) mmAlloc(D_800FE9F0_B9230 * sizeof(Object **), COLOUR_TAG_YELLOW);
         j = 0;
         for (i = first; i < last; i++) {
             obj = list[i];
@@ -563,13 +648,15 @@ void squadsInitialiseAfterObjects(void) {
         D_800FEA14_B9254 = D_800FEA10_B9250->racer;
         CopyStaticsToSquads(0, D_800FEA10_B9250);
         if (D_800FEA14_B9254->f1Alo == 6) {
-            k = GetClosestPatrolNode(D_800FEA10_B9250->segment.trans.x_position, D_800FEA10_B9250->segment.trans.y_position,
+            k = GetClosestPatrolNode(D_800FEA10_B9250->segment.trans.x_position,
+                                     D_800FEA10_B9250->segment.trans.y_position,
                                      D_800FEA10_B9250->segment.trans.z_position, 0);
             if (k != 0) {
                 node = &PatrolNodes[k & 0xff];
                 if ((node->f17hi != 0) && (node != NULL)) {
                     D_800FEA14_B9254->unk3C = node->unk16;
-                    ProcessNodeChange(GetNextNodeNumber(D_800FEA14_B9254->unk30, D_800FEA14_B9254->unk3C & 0xFF, 0, node));
+                    ProcessNodeChange(
+                        GetNextNodeNumber(D_800FEA14_B9254->unk30, D_800FEA14_B9254->unk3C & 0xFF, 0, node));
                     D_800FEA14_B9254->unk33 = 0x1F;
                 }
             } else {
