@@ -41,6 +41,8 @@ extern s32 *Findex;
 extern s32 Fmax;
 extern s8 D_800A0980_A1580;
 extern f32 D_800F2F60_F3B60;
+extern RomDefHeader *D_800F2CD8_B17C8[];
+extern s32 D_800F2CE0_B17D0[];
 
 extern s32 D_800A089C_A149C; // Globally used in level.c
 
@@ -49,5 +51,11 @@ s32 *objGetTable(s32 index);
 void objUndoPlayerTumble(Object *obj);
 void objDoPlayerTumble(Object *this);
 s32 objTvTimes(s32 timer);
+void GetRomlistInfo(RomDefHeader **list, s32 *size, s32 index);
+Object **objGetObjList(s32 *first, s32 *last);
+s16 objGetControlNo(s32 arg0);
+f32 GetRange(f32 x1, f32 y1, f32 z1, f32 x2, f32 y2, f32 z2);
+f32 GetRangeSquared(f32 x1, f32 y1, f32 z1, f32 x2, f32 y2, f32 z2);
+Object *objSetupObject(LevelObjectEntryCommon *entry, s32 spawnFlags);
 
 #endif

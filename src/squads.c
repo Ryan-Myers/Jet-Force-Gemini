@@ -1,7 +1,14 @@
+#include "squads.h"
+#include "anim.h"
 #include "common.h"
+#include "level.h"
 #include "math/math.h"
+#include "objects.h"
+#include "overlays/overlay154.h"
+#include "overlays/overlay3.h"
 #include "pi.h"
 #include "runLink.h"
+#include "spranim.h"
 #include "src/memory.h"
 
 const char D_800AD890[] = "CRITICAL ERROR: objSetupObject() returned NULL\n";
@@ -42,28 +49,6 @@ UNUSED u8 AnimPathNumbers[0x40];
 s32 MaxPatrolNodes;
 PatrolNode *PatrolNodes;
 
-Object **objGetObjList(s32 *first, s32 *last);
-extern void GetRomlistInfo(RomDefHeader **list, s32 *size, s32 which);
-extern s32 levelGetObjectID(s32 arg0);
-extern void doorRegisterOpener(s32 arg0, s32 arg1);
-extern s32 objGetControlNo(s16 arg0);
-s32 ProcessNodeChange(u8 arg0);
-s32 levelObjectFlagSet(s32 arg0);
-void AIPointInit(s32 **arg0);
-void BindRegionsToObjects(Object *arg0, s32 arg1);
-void CopyStaticsToSquads(s32 arg0, Object *arg1);
-s8 GetClosestPatrolNode(f32 x, f32 y, f32 z, s8 arg3);
-s32 GetNextNodeNumber(u8 arg0, u8 arg1, u8 arg2, PatrolNode *node);
-f32 GetRange(f32 x1, f32 y1, f32 z1, f32 x2, f32 y2, f32 z2);
-s32 mathDiffAngle(s16 angle1, s16 angle2); /* wider than the s16 definition in
-                                              math_util.s: this TU's declaration is
-                                              what makes IDO re-narrow the return */
-void SquaddieControl(Object *arg0, s32 arg1);
-void doorUnlock(s32 arg0, s32 arg1);
-void squadsAddToActiveSquaddies(DisactivatedSquaddie *arg0);
-Object *objSetupObject(StaticInstanceSpawn *spawn, s32 arg1);
-extern AnimPath **animpath;
-
 int squadsIsTribal(s32 arg0) {
     return ((arg0 >= 0x11C) && (arg0 < 0x121)) || (arg0 == 0x66) || (arg0 == 0x70) || (arg0 == 0x90) ||
            (arg0 == 0x97) || (arg0 == 0x157) || (arg0 == 0xA5);
@@ -75,7 +60,7 @@ Object **squadsGetSquadronList(s32 *arg0) {
 }
 
 s32 BaddyTypeToIndex(s32 arg0) {
-    switch (arg0) { /* irregular */
+    switch (arg0) {
         case 0x29:
             return 0;
         case 0x5F:
@@ -189,6 +174,7 @@ s32 BaddyTypeToIndex(s32 arg0) {
     }
 }
 
+#ifdef VERSION_us
 void CreateStaticInstance(s32 arg0) {
     u8 *slot;
     StaticInstanceSpawn spawn;
@@ -206,7 +192,7 @@ void CreateStaticInstance(s32 arg0) {
         spawn.unkC = 0;
         spawn.unkE = D_800FEA10_B9250->segment.trans.rotation.x;
         spawn.unk10 = 0;
-        D_800FEA08_B9248 = objSetupObject(&spawn, 4);
+        D_800FEA08_B9248 = objSetupObject((LevelObjectEntryCommon *) &spawn, 4);
         if (D_800FEA08_B9248 != NULL) {
             D_800FEA08_B9248->segment.unk3C = 0;
             D_800FEA0C_B924C = D_800FEA08_B9248->racer;
@@ -217,6 +203,9 @@ void CreateStaticInstance(s32 arg0) {
         }
     }
 }
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/squads/CreateStaticInstance.s")
+#endif
 
 void squadsRememberRomdef(RomDefHeader *arg0) {
     D_800FE9AC_B91EC[D_800FE9A0_B91E0] = arg0;
@@ -507,7 +496,7 @@ void func_80051CCC_528CC(void) {
             racer->unk8C = id;
             door = racer->unk75;
             if (door != 0) {
-                doorRegisterOpener(door & 0xFFFFFFFFu, 0x20);
+                doorRegisterOpener(door & 0xFFFFFFFF, 0x20);
             }
             lp = &lists[0];
             sp = &sizes[0];
@@ -535,9 +524,10 @@ void func_80051CCC_528CC(void) {
     }
 }
 
-#ifndef UNMATCHED
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsInitialiseAfterObjects.s")
-#else
+#ifdef NON_EQUIVALENT
+// void BindRegionsToObjects(void);
+void BindRegionsToObjects(Object *arg0, s32 arg1);
+void AIPointInit(void *arg0); // This should have an arg1...
 void squadsInitialiseAfterObjects(void) {
     s32 j;
     s32 count;
@@ -570,7 +560,7 @@ void squadsInitialiseAfterObjects(void) {
         ptr--;
     }
 
-    AIPointInit(ptr);
+    AIPointInit(ptr); // This should have an arg1... Or maybe this is the wrong function?
     for (i = first; i < last; i++) {
         Object *sq = list[i];
         if (sq->unkA0 != 0) {
@@ -579,7 +569,7 @@ void squadsInitialiseAfterObjects(void) {
         if (sq->behaviorId == 0x1B) {
             racer = sq->racer;
             SquaddieControl(sq, sq->segment.unk3C);
-            BindRegionsToObjects(sq, 0);
+            BindRegionsToObjects(sq, 0); // This should be void with no args...
             k = 4;
             while (k--) {
                 id = racer->animPathId[k];
@@ -709,6 +699,8 @@ void squadsInitialiseAfterObjects(void) {
         }
     }
 }
+#else
+#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsInitialiseAfterObjects.s")
 #endif
 
 void squadsInit(void) {
@@ -733,7 +725,6 @@ void squadsPreInit(RomDefHeader *list, s32 listSize) {
     }
 }
 
-extern void ReallyAddInterestingEvent(s32 arg0, s16 arg1, s16 arg2, s16 arg3, u8 arg4, u8 arg5, u8 arg6);
 void squadsAddInterestingEvent(s32 arg0, s16 arg1, s16 arg2, s16 arg3, u8 arg4, u8 arg5, u8 arg6) {
     if (runlinkIsModuleLoaded(3) != 0) {
         ReallyAddInterestingEvent(arg0, arg1, arg2, arg3, (s32) arg4, (s32) arg5, (s32) arg6);

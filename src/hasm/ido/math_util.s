@@ -1787,8 +1787,8 @@ LEAF(Arctanf)
 END(Arctanf)
 
 /**
-s16 mathDiffAngle(s16 angle1, s16 angle2) {
-    s16 ret;
+s32 mathDiffAngle(s16 angle1, s16 angle2) {
+    s32 ret;
 
     ret = angle2 - angle1;
     if (ret < 0x8000) {
@@ -1803,7 +1803,7 @@ s16 mathDiffAngle(s16 angle1, s16 angle2) {
 }
 */
 
-/* s16 mathDiffAngle(s16 angle1, s16 angle2); */
+/* s32 mathDiffAngle(s16 angle1, s16 angle2); */
 LEAF(mathDiffAngle)
     lui        t0, 1
     sub        v0, a1, a0
