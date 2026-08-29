@@ -33,6 +33,7 @@ void mathMtxF2L(Matrix, Mtx*);
 void mathMtxXFMF(Matrix mf, float x, float y, float z, float *ox, float *oy, float *oz);
 void mathMtxFastXFMF(Matrix* mf, f32* in, f32* out);
 void pointListRPY(s32 count, Vec3s *rotation, f32 *in, f32 *out);
+s32 mathDiffAngle(s16 angle1, s16 angle2);
 
 extern float sinf(float angle); //official name: fsin
 extern float cosf(float angle);

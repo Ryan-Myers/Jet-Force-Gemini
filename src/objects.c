@@ -84,7 +84,11 @@ Object *objGetObject(s32 index) {
     return ObjList[index];
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/objGetObjList.s")
+Object **objGetObjList(s32 *first, s32 *last) {
+    *first = D_800F2CAC_F38AC;
+    *last = ObjListCount;
+    return ObjList;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objGetControlNo.s")
 
@@ -265,7 +269,10 @@ s32 *objGetTable(s32 index) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objCreateBonusItem.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/objects/GetRomlistInfo.s")
+void GetRomlistInfo(RomDefHeader **list, s32 *size, s32 index) {
+    *list = D_800F2CD8_B17C8[index];
+    *size = D_800F2CE0_B17D0[index];
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objRegisterDependancy.s")
 
@@ -275,25 +282,25 @@ s32 *objGetTable(s32 index) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/objects/objCutCameraActive.s")
 
-f32 GetRange(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
+f32 GetRange(f32 x1, f32 y1, f32 z1, f32 x2, f32 y2, f32 z2) {
     f32 temp_f0;
     f32 temp_f16;
     f32 temp_f2;
 
-    temp_f0 = arg0 - arg3;
-    temp_f2 = arg1 - arg4;
-    temp_f16 = arg2 - arg5;
+    temp_f0 = x1 - x2;
+    temp_f2 = y1 - y2;
+    temp_f16 = z1 - z2;
     return sqrtf((temp_f0 * temp_f0) + (temp_f2 * temp_f2) + (temp_f16 * temp_f16));
 }
 
-f32 GetRangeSquared(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
+f32 GetRangeSquared(f32 x1, f32 y1, f32 z1, f32 x2, f32 y2, f32 z2) {
     f32 temp_f16;
     f32 temp_f18;
     f32 temp_f2;
 
-    temp_f2 = arg0 - arg3;
-    temp_f16 = arg1 - arg4;
-    temp_f18 = arg2 - arg5;
+    temp_f2 = x1 - x2;
+    temp_f16 = y1 - y2;
+    temp_f18 = z1 - z2;
     return (temp_f2 * temp_f2) + (temp_f16 * temp_f16) + (temp_f18 * temp_f18);
 }
 

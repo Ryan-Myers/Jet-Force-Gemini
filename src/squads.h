@@ -12,5 +12,6 @@ extern s32 PlayersDisguise;
 void squadsInitialiseAfterObjects(void);
 void squadsInitialiseBeforeObjects(void);
 void squadsPreInit(RomDefHeader *list, s32 listSize);
+s32 ProcessNodeChange(u8 arg0);
 
 #endif
