@@ -151,6 +151,7 @@ void func_8004FC64_50864(OSScTask *task);
 Gfx *func_8004FF64_50B64(OSSched *sc, 
     char **retFile, u32 *retUnk0xc, s32 *retUnk0x10,
     char **retFile_2, u32 *retUnk0xc_2, s32 *retUnk0x10_2);
+Gfx *func_8004FC6C_5086C(OSSched *, s32, Gfx *, OSMesgQueue *, Gfx *);
 
 extern char D_800AD510[];// = "(Audio task)";
 extern char D_800AD520[];// = "(Game task)";

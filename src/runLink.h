@@ -3,6 +3,8 @@
 
 #include <PR/ultratypes.h>
 
+extern s32 D_800A38F0_A44F0;
+
 // This function is unique in that it has no specific limit on arguments, 
 // and they can change even within the same function call it.
 // This empty signature seems to be the way to handle it.

@@ -95,6 +95,8 @@ void    n_alSynSetLpf_freq(N_ALVoice *v, f32 arg1);
 void    n_alSynNew(ALSynConfig *c);
 void    n_alSynDelete(void);
 
+void alSurround_OutputType(u8 mode);
+
 
 /*
  * Audio Library (AL) stuff

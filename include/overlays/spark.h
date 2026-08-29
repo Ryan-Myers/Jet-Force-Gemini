@@ -3,7 +3,6 @@
 
 #include <PR/ultratypes.h>
 
-// sometimes take one arg, sometimes doesn't
-void sparkUpdate();
+void sparkUpdate(s32);
 
 #endif

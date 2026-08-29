@@ -132,6 +132,9 @@
 // OtherMode_L values.
 #define DKR_OML_COMMON G_AC_NONE | G_ZS_PIXEL
 
+// needed for RM_AA_ZB_OPA_SURF
+#define GBL_c0(m1a, m1b, m2a, m2b) 0
+
 // modified version of RM_AA_ZB_XLU_LINE, with ALPHA_CVG_SEL disabled
 #define	RM_AA_ZB_XLU_LINE_MOD(clk) \
     AA_EN | Z_CMP | IM_RD | CVG_X_ALPHA | \
@@ -151,20 +154,24 @@
 
 /****** F3DDKR display list commands ******/
 
-#define G_TRIN  5
+// older G_DMAOFFSETS overlaps with G_TRI1
+#define G_DMAOFFSETS (G_IMMFIRST - 0)
+#define G_POL  5
 #define G_DMADL 7
 #define G_MTX_DKR_INDEX_0 0
 #define G_MTX_DKR_INDEX_1 1
 #define G_MTX_DKR_INDEX_2 2
-#define G_MW_BILLBOARD 0x02 //0x01 = billboarding enabled, 0x00 = disabled
-#define G_MW_MVPMATRIX 0x0A  //Specifies the index of the mvp matrix. 
+#define G_MW_SPRITEMODE 0x02 //0x01 = billboarding enabled, 0x00 = disabled
+#define G_MW_MTXOFFSET 0x0A  //Specifies the index of the mvp matrix. 
 #define G_VTX_APPEND 1
+#define G_TEXDMA 2
+#define G_DP_BLOCK 7
 
 #define gDkrEnableBillboard(pkt)            \
-	gMoveWd(pkt, G_MW_BILLBOARD, 0, 1)  
+	gMoveWd(pkt, G_MW_SPRITEMODE, 0, 1)  
 
 #define gDkrDisableBillboard(pkt)           \
-	gMoveWd(pkt, G_MW_BILLBOARD, 0, 0)
+	gMoveWd(pkt, G_MW_SPRITEMODE, 0, 0)
 
 #define gSPVertexDKR(pkt, v, n, v0) \
     gDma1p(pkt, G_VTX, v, (((n) * 8 + (n)) << 1) + 8, ((n)-1)<<3|(((u32)(v) & 6))|(v0))
@@ -175,14 +182,14 @@
 #define gSPMatrixDKR(pkt, m, i) \
     gSPMatrix(pkt, m, (i) << 6)
 #define gSPSelectMatrixDKR(pkt, num)   \
-	gMoveWd(pkt, G_MW_MVPMATRIX, 0, (num) << 6)
+	gMoveWd(pkt, G_MW_MTXOFFSET, 0, (num) << 6)
 
 #define TRIN_DISABLE_TEXTURE 0
 #define TRIN_ENABLE_TEXTURE 1
 
 #define gSPPolygon(dl, ptr, numTris, texEnabled) {                                                                                  \
     Gfx *_g = (Gfx *)(dl);                                                                                                          \
-    _g->words.w0 = _SHIFTL((((numTris) - 1) << 4) | (texEnabled), 16, 8) | _SHIFTL(G_TRIN, 24, 8) | _SHIFTL(((numTris)*16), 0, 16); \
+    _g->words.w0 = _SHIFTL((((numTris) - 1) << 4) | (texEnabled), 16, 8) | _SHIFTL(G_POL, 24, 8) | _SHIFTL(((numTris)*16), 0, 16); \
     _g->words.w1 = (unsigned int)(ptr);                                                                                             \
 }
 

@@ -1,3 +1,4 @@
+#include "diRcpTrace.h"
 #include "common.h"
 #include "memory.h"
 
@@ -21,8 +22,8 @@ s32 D_801012A0_B1750[2];
 UNUSED u8 D_801012A8_B1758[0x1008];
 
 void diRcpTraceInit(void) {
-    D_800A64B0_A70B0[0] = mmAlloc(DIRCPTRACE_BUFFER_SIZE, COLOUR_TAG_CYAN);
-    D_800A64B0_A70B0[1] = mmAlloc(DIRCPTRACE_BUFFER_SIZE, COLOUR_TAG_CYAN);
+    D_800A64B0_A70B0[0] = (DLDebugInfo *) mmAlloc(DIRCPTRACE_BUFFER_SIZE, COLOUR_TAG_CYAN);
+    D_800A64B0_A70B0[1] = (DLDebugInfo *) mmAlloc(DIRCPTRACE_BUFFER_SIZE, COLOUR_TAG_CYAN);
 }
 
 void diRcpTraceReset(void) {

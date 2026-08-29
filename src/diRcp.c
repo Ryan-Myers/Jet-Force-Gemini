@@ -1,43 +1,39 @@
+#include "diRcp.h"
 #include "common.h"
 #include "types.h"
 
-// older G_DMAOFFSETS overlaps with G_TRI1
-#define G_DMAOFFSETS (G_IMMFIRST - 0)
-
-// needed for RM_AA_ZB_OPA_SURF
-#define GBL_c0(m1a, m1b, m2a, m2b) 0
-
-const char D_800AE6C0[] = ">>>> %x: ";
-const char D_800AE6CC[] = "     %x: ";
-
 // forward declarations
 static s32 diRcpVertex(Gfx *dList);
-static s32 diRcpReserved1(Gfx *dList);
+static s32 diRcpPolygon(Gfx *dList);
 static s32 diRcpMatrix(Gfx *dList);
-static s32 diRcpReserved0(Gfx *dList, char *arg1);
-static s32 diRcpReserved2(Gfx *dList);
-static s32 diRcpMoveMem(Gfx *dList);
+static s32 diRcpTexDma(Gfx *dList, char *dmaCommand);
+static s32 diRcpDPBlock(Gfx *dList);
+static s32 diRcpViewport(Gfx *dList);
 static s32 diRcpDisplayList(Gfx *dList);
-static s32 diRcpStrNameMacro(Gfx *dList, char *arg1, char *arg2);
+static s32 diRcpStrNameMacro(Gfx *dList, char *command, char *macro);
 static s32 diRcpPrimColor(Gfx *dList);
-static s32 diRcpColor(Gfx *dList, char *arg1, char *arg2);
-static s32 diRcpDmaOffsets(Gfx *dList, char *arg1);
+static s32 diRcpColor(Gfx *dList, char *command, char *macro);
+static s32 diRcpDmaOffsets(Gfx *dList, char *command);
 static s32 diRcpMoveWd(Gfx *dList);
-static s32 diRcpStrName(Gfx *dList, char *arg1);
-static s32 diRcpOtherMode(Gfx *dList, char *arg1);
-static s32 diRcpGeometryMode(Gfx *dList, char *str, char *arg2);
+static s32 diRcpStrName(Gfx *dList, char *command);
+static s32 diRcpOtherMode(Gfx *dList, char *command);
+static s32 diRcpGeometryMode(Gfx *dList, char *command, char *macro);
 
-void diRcpPrintDL(Gfx *dList, UNUSED s32 arg1, s32 count) {
+void diRcpPrintDL(Gfx *dList, Gfx *dList2, s32 count) {
     u8 *gListIt;
     s32 i;
+
+    stubbed_printf(">>>> %x: ", dList);
+    stubbed_printf("     %x: ", dList2);
+
     gListIt = (u8 *) dList;
     for (i = 0; i < count; i++) {
         switch (gListIt[0]) {
             case G_VTX:
                 gListIt += diRcpVertex((Gfx *) gListIt);
                 break;
-            case G_RESERVED1:
-                gListIt += diRcpReserved1((Gfx *) gListIt);
+            case G_POL:
+                gListIt += diRcpPolygon((Gfx *) gListIt);
                 break;
             case G_SPNOOP:
                 gListIt += diRcpStrName((Gfx *) gListIt, "G_SPNOOP");
@@ -45,17 +41,17 @@ void diRcpPrintDL(Gfx *dList, UNUSED s32 arg1, s32 count) {
             case G_MTX:
                 gListIt += diRcpMatrix((Gfx *) gListIt);
                 break;
-            case G_RESERVED0:
-                gListIt += diRcpReserved0((Gfx *) gListIt, "G_TEXDMA");
+            case G_TEXDMA:
+                gListIt += diRcpTexDma((Gfx *) gListIt, "G_TEXDMA");
                 break;
             case G_MOVEMEM:
-                gListIt += diRcpMoveMem((Gfx *) gListIt);
+                gListIt += diRcpViewport((Gfx *) gListIt);
                 break;
             case G_DL:
                 gListIt += diRcpDisplayList((Gfx *) gListIt);
                 break;
-            case G_RESERVED2:
-                gListIt += diRcpReserved2((Gfx *) gListIt);
+            case G_DP_BLOCK:
+                gListIt += diRcpDPBlock((Gfx *) gListIt);
                 break;
             case G_RESERVED3:
                 gListIt += diRcpStrName((Gfx *) gListIt, "G_RESERVED3");
@@ -204,368 +200,438 @@ void diRcpPrintDL(Gfx *dList, UNUSED s32 arg1, s32 count) {
     }
 }
 
-const char D_800AEA14[] = "%20s: gSPVertex(0x%x, 0x%x, %d, %d);\n";
-const char D_800AEA3C[] = "G_VTX";
-const char D_800AEA44[] = "%20s: gSPPolygon(0x%x, 0x%x, %d, %d);\n";
-const char D_800AEA6C[] = "G_POL";
-const char D_800AEA74[] = "GARBAGE";
-const char D_800AEA7C[] = "NOMTXMULT";
-const char D_800AEA88[] = "MTXMULT";
-const char D_800AEA90[] = "%20s: gSPMatrix2(0x%x, 0x%x, %d, %s, %d);\n";
-const char D_800AEABC[] = "G_MTX";
-const char D_800AEAC4[] = "%20s: gSPLoadTextureOffsets(%d, %08x);\n";
-const char D_800AEAEC[] = "%20s: gSPDPBlock(0x%x, 0x%x, %d);\n";
-const char D_800AEB10[] = "G_DP_BLOCK";
-const char D_800AEB1C[] = "%20s: gSPViewport(0x%x, 0x%x);\n";
-const char D_800AEB3C[] = "G_MOVEMEM";
-const char D_800AEB48[] = "%20s: gSPDisplayList(0x%x, 0x%x);\n";
-const char D_800AEB6C[] = "G_DL";
-const char D_800AEB74[] = "%20s: gSPBranchList(0x%x, 0x%x);\n";
-const char D_800AEB98[] = "G_DL";
-const char D_800AEBA0[] = "%20s: Unknown G_DL command\n";
-const char D_800AEBBC[] = "G_DL";
-const char D_800AEBC4[] = "%20s: %s(0x%08x);\n";
-const char D_800AEBD8[] = "%20s: gDPSetPrimColor(0x%08x, %d, %d, %d, %d, %d, %d);\n";
-const char D_800AEC10[] = "G_SETPRIMCOLOR";
-const char D_800AEC20[] = "%20s: %s(0x%08x, %2d, %2d, %2d, %2d);\n";
-const char D_800AEC48[] = "%20s: gSPSetDMAOffsets(%08x, %08x)\n";
-const char D_800AEC6C[] = "G_MW_SEGMENT";
-const char D_800AEC7C[] = "G_MW_CLIP";
-const char D_800AEC88[] = "G_MW_MTXOFFSET";
-const char D_800AEC98[] = "G_MW_POINTS";
-const char D_800AECA4[] = "G_MW_SPRITEMODE";
-const char D_800AECB4[] = "G_MW_FOG";
-
-static void func_80066594_67194(Gfx *dList, s32 *w0_24_31, s32 *w0_16_23, s32 *w0_0_15, s32 *w1) {
-    *w0_24_31 = (dList->words.w0 >> 0x18) & 0xFF;
-    *w1 = (dList->words.w0 >> 0x10) & 0xFF;
-    *w0_0_15 = dList->words.w0 & 0xFFFF;
-    *w0_16_23 = dList->words.w1;
+/**
+ * Decode a gDma1p macro, which is basically just a Gdma struct.
+ * This is used for gSPVertex and gSPMatrix, among others.
+ */
+static void Decode_gDma1p(Gfx *pkt, s32 *command, s32 *addr, s32 *length, s32 *parameter) {
+    *command = (pkt->words.w0 >> 24) & 0xFF;
+    *parameter = (pkt->words.w0 >> 16) & 0xFF;
+    *length = pkt->words.w0 & 0xFFFF;
+    *addr = pkt->words.w1;
 }
 
-static void func_800665D8_671D8(Gfx *dList, s32 *w0_24_31, s32 *w0_8_23, s32 *w0_0_7, s32 *w1) {
-    *w0_24_31 = (dList->words.w0 >> 0x18) & 0xFF;
-    *w0_8_23 = (dList->words.w0 >> 8) & 0xFFFF;
-    *w0_0_7 = dList->words.w0 & 0xFF;
-    *w1 = dList->words.w1;
+/**
+ * Decode a gImmp21, which is basically just used by the gMoveWd macro.
+ */
+static void Decode_gMoveWd(Gfx *pkt, s32 *command, s32 *offset, s32 *index, s32 *data) {
+    *command = (pkt->words.w0 >> 24) & 0xFF;
+    *offset = (pkt->words.w0 >> 8) & 0xFFFF;
+    *index = pkt->words.w0 & 0xFF;
+    *data = pkt->words.w1;
 }
 
 static s32 diRcpVertex(Gfx *dList) {
-    s32 w0_24_31;
-    s32 w0_16_23;
-    s32 w0_0_15;
-    s32 w1;
-    s32 pad[4];
+    s32 command;
+    s32 addr;
+    s32 length;
+    s32 parameter;
+    s32 pad[3];
 
-    func_80066594_67194(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
-    return 8;
+    Decode_gDma1p(dList, &command, &addr, &length, &parameter);
+
+    stubbed_printf("%20s: gSPVertex(0x%x, 0x%x, %d, %d);\n", "G_VTX", dList, addr, length, command);
+
+    return sizeof(Gfx);
 }
 
-static s32 diRcpReserved1(Gfx *dList) {
-    s32 w0_24_31;
-    s32 w0_16_23;
-    s32 w0_0_15;
-    s32 w1;
-    s32 pad[4];
+static s32 diRcpPolygon(Gfx *dList) {
+    s32 command;
+    s32 addr;
+    s32 length;
+    s32 parameter;
+    s32 pad[3];
 
-    func_80066594_67194(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
-    return 8;
+    Decode_gDma1p(dList, &command, &addr, &length, &parameter);
+
+    stubbed_printf("%20s: gSPPolygon(0x%x, 0x%x, %d, %d);\n", "G_POL", dList, addr, length, command);
+
+    return sizeof(Gfx);
 }
 
 static s32 diRcpMatrix(Gfx *dList) {
-    s32 w0_24_31;
-    s32 w0_16_23;
-    s32 w0_0_15;
-    s32 w1;
-    s32 pad[8];
+    s32 command;
+    s32 addr;
+    s32 length;
+    s32 parameter;
+    s32 pad[4];
+    char *type1 = "GARBAGE";
+    char *type2 = "NOMTXMULT";
+    char *type3 = "MTXMULT";
 
-    func_80066594_67194(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
-    return 8;
+    Decode_gDma1p(dList, &command, &addr, &length, &parameter);
+
+    stubbed_printf("%20s: gSPMatrix2(0x%x, 0x%x, %d, %s, %d);\n", "G_MTX", dList, addr, length, type1, command);
+    return sizeof(Gfx);
 }
 
-static s32 diRcpReserved0(Gfx *dList, char *arg1) {
-    return 8;
+static s32 diRcpTexDma(Gfx *dList, char *dmaCommand) {
+    stubbed_printf("%20s: gSPLoadTextureOffsets(%d, %08x);\n", dmaCommand, dList, dList->words.w1);
+    return sizeof(Gfx);
 }
 
-static s32 diRcpReserved2(Gfx *dList) {
-    s32 w0_24_31;
-    s32 w0_16_23;
-    s32 w0_0_15;
-    s32 w1;
-    s32 pad[2];
+static s32 diRcpDPBlock(Gfx *dList) {
+    s32 command;
+    s32 addr;
+    s32 length;
+    s32 parameter;
+    s32 pad;
 
-    func_80066594_67194(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
-    return 8;
+    Decode_gDma1p(dList, &command, &addr, &length, &parameter);
+
+    stubbed_printf("%20s: gSPDPBlock(0x%x, 0x%x, %d);\n", "G_DP_BLOCK", dList, addr, length);
+
+    return sizeof(Gfx);
 }
 
-static s32 diRcpMoveMem(Gfx *dList) {
-    s32 w0_24_31;
-    s32 w0_16_23;
-    s32 w0_0_15;
-    s32 w1;
-    s32 pad[2];
+static s32 diRcpViewport(Gfx *dList) {
+    s32 command;
+    s32 addr;
+    s32 length;
+    s32 parameter;
+    s32 pad;
 
-    func_80066594_67194(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
-    return 8;
+    Decode_gDma1p(dList, &command, &addr, &length, &parameter);
+
+    stubbed_printf("%20s: gSPViewport(0x%x, 0x%x);\n", "G_MOVEMEM", dList, addr);
+
+    return sizeof(Gfx);
 }
 
 static s32 diRcpDisplayList(Gfx *dList) {
-    s32 w0_24_31;
-    s32 w0_16_23;
-    s32 w0_0_15;
-    s32 w1;
-    s32 pad[2];
+    s32 command;
+    s32 addr;
+    s32 length;
+    s32 parameter;
+    s32 pad;
 
-    func_80066594_67194(dList, &w0_24_31, &w0_16_23, &w0_0_15, &w1);
-    return 8;
+    Decode_gDma1p(dList, &command, &addr, &length, &parameter);
+
+    if (parameter == G_DL_PUSH) {
+        stubbed_printf("%20s: gSPDisplayList(0x%x, 0x%x);\n", "G_DL", dList, addr);
+    } else if (parameter == G_DL_NOPUSH) {
+        stubbed_printf("%20s: gSPBranchList(0x%x, 0x%x);\n", "G_DL", dList, addr);
+    } else {
+        stubbed_printf("%20s: Unknown G_DL command\n", "G_DL");
+    }
+
+    return sizeof(Gfx);
 }
 
-static s32 diRcpStrNameMacro(UNUSED Gfx *dList, UNUSED char *arg1, UNUSED char *arg2) {
-    return 8;
+static s32 diRcpStrNameMacro(Gfx *dList, char *command, char *macro) {
+    stubbed_printf("%20s: %s(0x%08x);\n", command, macro, dList);
+    return sizeof(Gfx);
 }
 
 static s32 diRcpPrimColor(UNUSED Gfx *dList) {
-    return 8;
+    stubbed_printf("%20s: gDPSetPrimColor(0x%08x, %d, %d, %d, %d, %d, %d);\n", "G_SETPRIMCOLOR", dList,
+                   dList->words.w0 >> 8 & 0xFF, dList->words.w0 & 0xFF, (dList->words.w1 >> 24) & 0xFF,
+                   (dList->words.w1 >> 16) & 0xFF, (dList->words.w1 >> 8) & 0xFF, dList->words.w1 & 0xFF);
+
+    return sizeof(Gfx);
 }
 
-static s32 diRcpColor(UNUSED Gfx *dList, UNUSED char *arg1, UNUSED char *arg2) {
-    return 8;
+static s32 diRcpColor(Gfx *dList, char *command, char *macro) {
+    stubbed_printf("%20s: %s(0x%08x, %2d, %2d, %2d, %2d);\n", command, macro, dList, (dList->words.w1 >> 24) & 0xFF,
+                   (dList->words.w1 >> 16) & 0xFF, (dList->words.w1 >> 8) & 0xFF, dList->words.w1 & 0xFF);
+    return sizeof(Gfx);
 }
 
-static s32 diRcpDmaOffsets(Gfx *dList, UNUSED char *arg1) {
+static s32 diRcpDmaOffsets(Gfx *dList, char *command) {
     if (dList) {}
-    return 8;
+    stubbed_printf("%20s: gSPSetDMAOffsets(%08x, %08x)\n", command, dList, dList);
+    return sizeof(Gfx);
 }
 
 static s32 diRcpMoveWd(Gfx *dList) {
-    s32 w0_24_31;
-    s32 w0_0_7;
-    s32 w0_8_23;
-    s32 w1;
+    s32 command;
+    s32 index;
+    s32 offset;
+    s32 data;
     char str[0x2C];
 
-    func_800665D8_671D8(dList, &w0_24_31, &w0_8_23, &w0_0_7, &w1);
-    switch (w0_0_7) {
-        case 6:
+    Decode_gMoveWd(dList, &command, &offset, &index, &data);
+    switch (index) {
+        case G_MW_SEGMENT:
+            stubbed_printf("G_MW_SEGMENT");
             break;
-        case 4:
+        case G_MW_CLIP:
+            stubbed_printf("G_MW_CLIP");
             break;
-        case 10:
+        case G_MW_MTXOFFSET:
+            stubbed_printf("G_MW_MTXOFFSET");
             break;
-        case 12:
+        case G_MW_POINTS:
+            stubbed_printf("G_MW_POINTS");
             break;
-        case 2:
+        case G_MW_SPRITEMODE:
+            stubbed_printf("G_MW_SPRITEMODE");
             break;
-        case 8:
-            w0_24_31 = w0_0_7; // fakematch
+        case G_MW_FOG:
+            stubbed_printf("G_MW_FOG");
+            command = index; // fakematch
             break;
         default:
-            sprintf(str, "UNKNOWN INDEX %d", w0_0_7);
+            sprintf(str, "UNKNOWN INDEX %d", index);
             break;
     }
-    if (w0_24_31 && w0_24_31) {} // fakematch
-    return 8;
+    if (command && command) {} // fakematch
+    stubbed_printf("%20s: %s offset = %d, data = 0x%08x\n", "G_MOVEWORD", dList, offset, data);
+    return sizeof(Gfx);
 }
 
-const char D_800AECD4[] = "%20s: %s offset = %d, data = 0x%08x\n";
-const char D_800AECFC[] = "G_MOVEWORD";
-
-static s32 diRcpStrName(UNUSED Gfx *dList, char *arg1) {
-    char sp20[0x50];
+static s32 diRcpStrName(UNUSED Gfx *dList, char *command) {
+    char print[0x50];
     s32 pad[2];
 
-    sprintf(sp20, "%20s", arg1);
-    return 8;
+    sprintf(print, "%20s", command);
+    return sizeof(Gfx);
 }
 
-const char D_800AED10[] = "%s: 0x%08x  0x%08x\n";
-
-static s32 diRcpOtherMode(Gfx *dList, char *arg1) {
+static s32 diRcpOtherMode(Gfx *dList, char *command) {
     char sp30[0x50];
     s32 bits;
-    s32 w0_8_15;
-    s32 w1Lower16;
+    s32 shiftValue;
+    s32 data;
 
-    w0_8_15 = (dList->words.w0 >> 8) & 0xFF;
-    w1Lower16 = dList->words.w1;
-    sprintf(sp30, "%20s", arg1);
-    switch (w0_8_15) {
+    shiftValue = (dList->words.w0 >> 8) & 0xFF;
+    data = dList->words.w1;
+
+    stubbed_printf("%s: 0x%08x  0x%08x\n", command, dList, data);
+
+    sprintf(sp30, "%20s", command);
+
+    switch (shiftValue) {
+        case G_MDSFT_ALPHACOMPARE:
+            stubbed_printf("%20s: gSetAlphaCompare(%x)\n", command, data);
+            break;
+        case G_MDSFT_ZSRCSEL:
+            stubbed_printf("%20s: gSetDepthSource(%x)\n", command, data);
+            break;
         case G_MDSFT_RENDERMODE:
-            w1Lower16 &= 0xFFFF;
-            if (w1Lower16 != (RM_AA_ZB_OPA_SURF(0)) && w1Lower16 != (RM_RA_ZB_OPA_SURF(0)) &&
-                w1Lower16 != (RM_AA_ZB_XLU_SURF(0)) && w1Lower16 != (RM_AA_ZB_OPA_DECAL(0)) &&
-                w1Lower16 != (RM_RA_ZB_OPA_DECAL(0)) && w1Lower16 != (RM_AA_ZB_XLU_DECAL(0)) &&
-                w1Lower16 != (RM_AA_ZB_OPA_INTER(0)) &&
-                // missing check for RM_RA_ZB_OPA_INTER
-                w1Lower16 != (RM_AA_ZB_XLU_INTER(0)) && w1Lower16 != (RM_AA_ZB_XLU_LINE(0)) &&
-                w1Lower16 != (RM_AA_ZB_DEC_LINE(0)) && w1Lower16 != (RM_AA_ZB_TEX_EDGE(0)) &&
-                w1Lower16 != (RM_AA_ZB_TEX_INTER(0)) && w1Lower16 != (RM_AA_ZB_SUB_SURF(0)) &&
-                w1Lower16 != (RM_AA_ZB_PCL_SURF(0)) && w1Lower16 != (RM_AA_ZB_OPA_TERR(0)) &&
-                w1Lower16 != (RM_AA_ZB_TEX_TERR(0)) && w1Lower16 != (RM_AA_ZB_SUB_TERR(0)) &&
-                w1Lower16 != (RM_AA_OPA_SURF(0)) && w1Lower16 != (RM_RA_OPA_SURF(0)) &&
-                w1Lower16 != (RM_AA_XLU_SURF(0)) && w1Lower16 != (RM_AA_XLU_LINE(0)) &&
-                w1Lower16 != (RM_AA_DEC_LINE(0)) && w1Lower16 != (RM_AA_TEX_EDGE(0)) &&
-                w1Lower16 != (RM_AA_SUB_SURF(0)) && w1Lower16 != (RM_AA_PCL_SURF(0)) &&
-                w1Lower16 != (RM_AA_OPA_TERR(0)) && w1Lower16 != (RM_AA_TEX_TERR(0)) &&
-                w1Lower16 != (RM_AA_SUB_TERR(0)) && w1Lower16 != (RM_ZB_OPA_SURF(0)) &&
-                w1Lower16 != (RM_ZB_XLU_SURF(0)) && w1Lower16 != (RM_ZB_OPA_DECAL(0)) &&
-                w1Lower16 != (RM_ZB_XLU_DECAL(0)) && w1Lower16 != (RM_ZB_CLD_SURF(0)) &&
-                w1Lower16 != (RM_ZB_OVL_SURF(0)) && w1Lower16 != (RM_ZB_PCL_SURF(0)) && w1Lower16 != (RM_OPA_SURF(0)) &&
-                w1Lower16 != (RM_XLU_SURF(0)) && w1Lower16 != (RM_TEX_EDGE(0)) && w1Lower16 != (RM_CLD_SURF(0)) &&
-                w1Lower16 != (RM_PCL_SURF(0)) && w1Lower16 != (RM_ADD(0)) && w1Lower16 != (RM_NOOP(0)) &&
-                w1Lower16 != (RM_VISCVG(0)) && w1Lower16 != (RM_OPA_CI(0))) {
-                bits = (w1Lower16 >> 8) & 3;
+            data &= 0xFFFF;
+
+            stubbed_printf("%20s: gSetRenderMode(", command);
+
+            if (data == (RM_AA_ZB_OPA_SURF(0))) {
+                stubbed_printf("RM_AA_ZB_OPA_SURF");
+            } else if (data == (RM_RA_ZB_OPA_SURF(0))) {
+                stubbed_printf("RM_RA_ZB_OPA_SURF");
+            } else if (data == (RM_AA_ZB_XLU_SURF(0))) {
+                stubbed_printf("RM_AA_ZB_XLU_SURF");
+            } else if (data == (RM_AA_ZB_OPA_DECAL(0))) {
+                stubbed_printf("RM_AA_ZB_OPA_DECAL");
+            } else if (data == (RM_RA_ZB_OPA_DECAL(0))) {
+                stubbed_printf("RM_RA_ZB_OPA_DECAL");
+            } else if (data == (RM_AA_ZB_XLU_DECAL(0))) {
+                stubbed_printf("RM_AA_ZB_XLU_DECAL");
+            } else if (data == (RM_AA_ZB_OPA_INTER(0))) {
+                stubbed_printf("RM_AA_ZB_OPA_INTER");
+                // } else if (data == (RM_RA_ZB_OPA_INTER(0))) {
+                //     stubbed_printf("RM_RA_ZB_OPA_INTER");
+            } else if (data == (RM_AA_ZB_XLU_INTER(0))) {
+                stubbed_printf("RM_AA_ZB_XLU_INTER");
+            } else if (data == (RM_AA_ZB_XLU_LINE(0))) {
+                stubbed_printf("RM_AA_ZB_XLU_LINE");
+            } else if (data == (RM_AA_ZB_DEC_LINE(0))) {
+                stubbed_printf("RM_AA_ZB_DEC_LINE");
+            } else if (data == (RM_AA_ZB_TEX_EDGE(0))) {
+                stubbed_printf("RM_AA_ZB_TEX_EDGE");
+            } else if (data == (RM_AA_ZB_TEX_INTER(0))) {
+                stubbed_printf("RM_AA_ZB_TEX_INTER");
+            } else if (data == (RM_AA_ZB_SUB_SURF(0))) {
+                stubbed_printf("RM_AA_ZB_SUB_SURF");
+            } else if (data == (RM_AA_ZB_PCL_SURF(0))) {
+                stubbed_printf("RM_AA_ZB_PCL_SURF");
+            } else if (data == (RM_AA_ZB_OPA_TERR(0))) {
+                stubbed_printf("RM_AA_ZB_OPA_TERR");
+            } else if (data == (RM_AA_ZB_TEX_TERR(0))) {
+                stubbed_printf("RM_AA_ZB_TEX_TERR");
+            } else if (data == (RM_AA_ZB_SUB_TERR(0))) {
+                stubbed_printf("RM_AA_ZB_SUB_TERR");
+            } else if (data == (RM_AA_OPA_SURF(0))) {
+                stubbed_printf("RM_AA_OPA_SURF");
+            } else if (data == (RM_RA_OPA_SURF(0))) {
+                stubbed_printf("RM_RA_OPA_SURF");
+            } else if (data == (RM_AA_XLU_SURF(0))) {
+                stubbed_printf("RM_AA_XLU_SURF");
+            } else if (data == (RM_AA_XLU_LINE(0))) {
+                stubbed_printf("RM_AA_XLU_LINE");
+            } else if (data == (RM_AA_DEC_LINE(0))) {
+                stubbed_printf("RM_AA_DEC_LINE");
+            } else if (data == (RM_AA_TEX_EDGE(0))) {
+                stubbed_printf("RM_AA_TEX_EDGE");
+            } else if (data == (RM_AA_SUB_SURF(0))) {
+                stubbed_printf("RM_AA_SUB_SURF");
+            } else if (data == (RM_AA_PCL_SURF(0))) {
+                stubbed_printf("RM_AA_PCL_SURF");
+            } else if (data == (RM_AA_OPA_TERR(0))) {
+                stubbed_printf("RM_AA_OPA_TERR");
+            } else if (data == (RM_AA_TEX_TERR(0))) {
+                stubbed_printf("RM_AA_TEX_TERR");
+            } else if (data == (RM_AA_SUB_TERR(0))) {
+                stubbed_printf("RM_AA_SUB_TERR");
+            } else if (data == (RM_ZB_OPA_SURF(0))) {
+                stubbed_printf("RM_ZB_OPA_SURF");
+            } else if (data == (RM_ZB_XLU_SURF(0))) {
+                stubbed_printf("RM_ZB_XLU_SURF");
+            } else if (data == (RM_ZB_OPA_DECAL(0))) {
+                stubbed_printf("RM_ZB_OPA_DECAL");
+            } else if (data == (RM_ZB_XLU_DECAL(0))) {
+                stubbed_printf("RM_ZB_XLU_DECAL");
+            } else if (data == (RM_ZB_CLD_SURF(0))) {
+                stubbed_printf("RM_ZB_CLD_SURF");
+            } else if (data == (RM_ZB_OVL_SURF(0))) {
+                stubbed_printf("RM_ZB_OVL_SURF");
+            } else if (data == (RM_ZB_PCL_SURF(0))) {
+                stubbed_printf("RM_ZB_PCL_SURF");
+            } else if (data == (RM_OPA_SURF(0))) {
+                stubbed_printf("RM_OPA_SURF");
+            } else if (data == (RM_XLU_SURF(0))) {
+                stubbed_printf("RM_XLU_SURF");
+            } else if (data == (RM_TEX_EDGE(0))) {
+                stubbed_printf("RM_TEX_EDGE");
+            } else if (data == (RM_CLD_SURF(0))) {
+                stubbed_printf("RM_CLD_SURF");
+            } else if (data == (RM_PCL_SURF(0))) {
+                stubbed_printf("RM_PCL_SURF");
+            } else if (data == (RM_ADD(0))) {
+                stubbed_printf("RM_ADD");
+            } else if (data == (RM_NOOP(0))) {
+                stubbed_printf("RM_NOOP");
+            } else if (data == (RM_VISCVG(0))) {
+                stubbed_printf("RM_VISCVG");
+            } else if (data == (RM_OPA_CI(0))) {
+                stubbed_printf("RM_OPA_CI");
+            } else {
+                if (data & AA_EN) {
+                    stubbed_printf("AA | ");
+                }
+                if (data & Z_CMP) {
+                    stubbed_printf("Z_CMP | ");
+                }
+                if (data & Z_UPD) {
+                    stubbed_printf("Z_UPD | ");
+                }
+                if (data & IM_RD) {
+                    stubbed_printf("IM_RD | ");
+                }
+                if (data & CLR_ON_CVG) {
+                    stubbed_printf("CLR_ON_CVG | ");
+                }
+
+                bits = (data >> 8) & 3;
                 switch (bits) {
                     case 0:
-                    case 2:
+                        stubbed_printf("CVG_CLAMP | ");
                         break;
                     case 1:
+                        stubbed_printf("CVG_WRAP | ");
+                        break;
+                    case 2:
+                        stubbed_printf("CVG_FULL | ");
+                        break;
                     case 3:
+                        stubbed_printf("CVG_SAVE | ");
                         break;
                 }
-                bits = (w1Lower16 >> 10) & 3;
+
+                bits = (data >> 10) & 3;
                 switch (bits) {
                     case 0:
+                        stubbed_printf("OPA | ");
+                        break;
                     case 1:
+                        stubbed_printf("INTER | ");
+                        break;
                     case 2:
+                        stubbed_printf("XLU | ");
+                        break;
                     case 3:
+                        stubbed_printf("DECAL | ");
                         break;
                 }
+
+                if (data & CVG_X_ALPHA) {
+                    stubbed_printf("CVG_X_ALPHA | ");
+                }
+                if (data & ALPHA_CVG_SEL) {
+                    stubbed_printf("ALPHA_CVG_SEL | ");
+                }
+                if (data & FORCE_BL) {
+                    stubbed_printf("FORCE_BL | ");
+                }
+
+                stubbed_printf(");\n");
                 break;
             }
             break;
-        case G_MDSFT_ALPHACOMPARE:
-        case G_MDSFT_ZSRCSEL:
         case G_MDSFT_BLENDER:
+            stubbed_printf("%20s: gSetBlender() - UNSUPPORTED\n", command);
             break;
     }
 
-    return 8;
+    return sizeof(Gfx);
 }
 
-const char D_800AED2C[] = "%20s: gSetAlphaCompare(%x)\n";
-const char D_800AED48[] = "%20s: gSetDepthSource(%x)\n";
-const char D_800AED64[] = "%20s: gSetRenderMode(";
-const char D_800AED7C[] = "RM_AA_ZB_OPA_SURF";
-const char D_800AED90[] = "RM_RA_ZB_OPA_SURF";
-const char D_800AEDA4[] = "RM_AA_ZB_XLU_SURF";
-const char D_800AEDB8[] = "RM_AA_ZB_OPA_DECAL";
-const char D_800AEDCC[] = "RM_RA_ZB_OPA_DECAL";
-const char D_800AEDE0[] = "RM_AA_ZB_XLU_DECAL";
-const char D_800AEDF4[] = "RM_AA_ZB_OPA_INTER";
-const char D_800AEE08[] = "RM_AA_ZB_XLU_INTER";
-const char D_800AEE1C[] = "RM_AA_ZB_XLU_LINE";
-const char D_800AEE30[] = "RM_AA_ZB_DEC_LINE";
-const char D_800AEE44[] = "RM_AA_ZB_TEX_EDGE";
-const char D_800AEE58[] = "RM_AA_ZB_TEX_INTER";
-const char D_800AEE6C[] = "RM_AA_ZB_SUB_SURF";
-const char D_800AEE80[] = "RM_AA_ZB_PCL_SURF";
-const char D_800AEE94[] = "RM_AA_ZB_OPA_TERR";
-const char D_800AEEA8[] = "RM_AA_ZB_TEX_TERR";
-const char D_800AEEBC[] = "RM_AA_ZB_SUB_TERR";
-const char D_800AEED0[] = "RM_AA_OPA_SURF";
-const char D_800AEEE0[] = "RM_RA_OPA_SURF";
-const char D_800AEEF0[] = "RM_AA_XLU_SURF";
-const char D_800AEF00[] = "RM_AA_XLU_LINE";
-const char D_800AEF10[] = "RM_AA_DEC_LINE";
-const char D_800AEF20[] = "RM_AA_TEX_EDGE";
-const char D_800AEF30[] = "RM_AA_SUB_SURF";
-const char D_800AEF40[] = "RM_AA_PCL_SURF";
-const char D_800AEF50[] = "RM_AA_OPA_TERR";
-const char D_800AEF60[] = "RM_AA_TEX_TERR";
-const char D_800AEF70[] = "RM_AA_SUB_TERR";
-const char D_800AEF80[] = "RM_ZB_OPA_SURF";
-const char D_800AEF90[] = "RM_ZB_XLU_SURF";
-const char D_800AEFA0[] = "RM_ZB_OPA_DECAL";
-const char D_800AEFB0[] = "RM_ZB_XLU_DECAL";
-const char D_800AEFC0[] = "RM_ZB_CLD_SURF";
-const char D_800AEFD0[] = "RM_ZB_OVL_SURF";
-const char D_800AEFE0[] = "RM_ZB_PCL_SURF";
-const char D_800AEFF0[] = "RM_OPA_SURF";
-const char D_800AEFFC[] = "RM_XLU_SURF";
-const char D_800AF008[] = "RM_TEX_EDGE";
-const char D_800AF014[] = "RM_CLD_SURF";
-const char D_800AF020[] = "RM_PCL_SURF";
-const char D_800AF02C[] = "RM_ADD";
-const char D_800AF034[] = "RM_NOOP";
-const char D_800AF03C[] = "RM_VISCVG";
-const char D_800AF048[] = "RM_OPA_CI";
-const char D_800AF054[] = "AA | ";
-const char D_800AF05C[] = "Z_CMP | ";
-const char D_800AF068[] = "Z_UPD | ";
-const char D_800AF074[] = "IM_RD | ";
-const char D_800AF080[] = "CLR_ON_CVG | ";
-const char D_800AF090[] = "CVG_CLAMP | ";
-const char D_800AF0A0[] = "CVG_WRAP | ";
-const char D_800AF0AC[] = "CVG_FULL | ";
-const char D_800AF0B8[] = "CVG_SAVE | ";
-const char D_800AF0C4[] = "OPA | ";
-const char D_800AF0CC[] = "INTER | ";
-const char D_800AF0D8[] = "XLU | ";
-const char D_800AF0E0[] = "DECAL | ";
-const char D_800AF0EC[] = "CVG_X_ALPHA | ";
-const char D_800AF0FC[] = "ALPHA_CVG_SEL | ";
-const char D_800AF110[] = "FORCE_BL | ";
-const char D_800AF11C[] = ");\n";
-const char D_800AF120[] = "%20s: gSetBlender() - UNSUPPORTED\n";
-
-static s32 diRcpGeometryMode(Gfx *dList, char *str, UNUSED char *arg2) {
-    char sp38[0x50];
+static s32 diRcpGeometryMode(Gfx *dList, char *command, char *macro) {
+    char s[0x50];
     s32 pad;
     s32 word1;
     s32 bitMask;
-    s32 sp28;
+    s32 addPipe;
 
     bitMask = 1;
-    sp28 = TRUE;
+    addPipe = TRUE;
     word1 = dList->words.w1;
-    sprintf(sp38, "%20s", str);
+    sprintf(s, "%20s", command);
     do {
-        stubbed_printf(sp38, "%20s: %s(");
-        stubbed_printf(sp38, "|");
+        stubbed_printf("%20s: %s(", command, macro);
         if (word1 & bitMask) {
-            if (sp28) {
-                sp28 = FALSE;
+            if (addPipe) {
+                stubbed_printf("|");
+                addPipe = FALSE;
             }
             switch (bitMask) {
                 case G_ZBUFFER:
-                    stubbed_printf(sp38, "G_ZBUFFER");
+                    stubbed_printf("G_ZBUFFER");
                     break;
                 case G_TEXTURE_ENABLE:
-                    stubbed_printf(sp38, "G_TEXTURE_ENABLE");
+                    stubbed_printf("G_TEXTURE_ENABLE");
                     break;
                 case G_SHADE:
-                    stubbed_printf(sp38, "G_SHADE");
+                    stubbed_printf("G_SHADE");
                     break;
                 case G_SHADING_SMOOTH:
-                    stubbed_printf(sp38, "G_SHADING_SMOOTH");
+                    stubbed_printf("G_SHADING_SMOOTH");
                     break;
                 case G_CULL_FRONT:
-                    stubbed_printf(sp38, "G_CULL_FRONT");
+                    stubbed_printf("G_CULL_FRONT");
                     break;
                 case G_CULL_BACK:
-                    stubbed_printf(sp38, "G_CULL_BACK");
+                    stubbed_printf("G_CULL_BACK");
                     break;
                 case G_FOG:
-                    stubbed_printf(sp38, "G_FOG");
+                    stubbed_printf("G_FOG");
                     break;
                 case G_LIGHTING:
-                    stubbed_printf(sp38, "G_LIGHTING");
+                    stubbed_printf("G_LIGHTING");
                     break;
                 case G_TEXTURE_GEN:
-                    stubbed_printf(sp38, "G_TEXTURE_GEN");
+                    stubbed_printf("G_TEXTURE_GEN");
                     break;
                 case G_TEXTURE_GEN_LINEAR:
-                    stubbed_printf(sp38, "G_TEXTURE_GEN_LINEAR");
+                    stubbed_printf("G_TEXTURE_GEN_LINEAR");
                     break;
                 case G_LOD:
-                    stubbed_printf(sp38, "G_LOD");
+                    stubbed_printf("G_LOD");
                     break;
             }
         } else {
+            stubbed_printf(");\n");
         }
-        stubbed_printf(sp38, ");\n");
         bitMask <<= 1;
     } while (bitMask <= 0x100000);
-    return 8;
+
+    return sizeof(Gfx);
 }
