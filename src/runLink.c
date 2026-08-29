@@ -823,10 +823,17 @@ void runlinkInitialise(void) {
 #endif
 
 void runlinkSuspendCode(s32 overlayIndex) {
+#ifdef VERSION_kiosk
+    OverlayHeader *overlay;
+    s32 pad;
+    PendingOverlayLoad *pendingLoad;
+    s32 remaining;
+#else
     OverlayHeader *overlay;
     PendingOverlayLoad *pendingLoad;
     s32 remaining;
     s32 savedDelay;
+#endif
 
     overlay = &overlayTable[overlayIndex];
     if (overlay->VramBase != 0) {
@@ -834,14 +841,20 @@ void runlinkSuspendCode(s32 overlayIndex) {
         remaining = ARRAY_COUNT(gPendingOverlayLoads) - 1;
         do {
             if (pendingLoad->overlayIndex == 0xFFB) {
+#ifdef VERSION_us
                 savedDelay = mmGetDelay();
+#endif
                 pendingLoad->unk0 = overlay->VramBase;
                 pendingLoad->overlayIndex = overlayIndex;
                 mmSetDelay(0);
                 D_800A38F0_A44F0 = TRUE;
                 runlinkFreeCode(overlayIndex);
                 D_800A38F0_A44F0 = FALSE;
+#ifdef VERSION_kiosk
+                mmSetDelay(2);
+#else
                 mmSetDelay(savedDelay);
+#endif
                 mmAllocAtAddr(overlay->DataSize + overlay->RodataSize + overlay->RelocationTableSize,
                               (void *) (pendingLoad->unk0 + overlay->TextSize), COLOUR_TAG_GREY);
                 return;
