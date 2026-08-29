@@ -1,6 +1,8 @@
 #include "common.h"
+#include "math/math.h"
 #include "pi.h"
 #include "runLink.h"
+#include "src/memory.h"
 
 const char D_800AD890[] = "CRITICAL ERROR: objSetupObject() returned NULL\n";
 const char D_800AD8C0[] = "GFDS:%d ???\n";
@@ -8,21 +10,21 @@ const char D_800AD8D0[] = "**** WARNING: Duplicate squadron ID:%d ****\n";
 const char D_800AD900[] = "WARNING:Can't lock to node, no nodes\n";
 
 // .data
-u32 *BaddyDataArray = NULL;   // Effectively unused
-u32 *D_800A38E4_A44E4 = NULL; // Unknown type
+u32 *BaddyDataArray = NULL;       // Effectively unused
+Object **D_800A38E4_A44E4 = NULL; // Unknown type
 
 // .bss
-void *D_800FE9A0_B91E0;
-void *DisactivatedSquaddies;
+s32 D_800FE9A0_B91E0;
+DisactivatedSquaddie **DisactivatedSquaddies;
 s32 D_800FE9A8_B91E8;
-s32 D_800FE9AC_B91EC;
+RomDefHeader **D_800FE9AC_B91EC;
 s32 SquadsModuleFlags;
 #ifdef VERSION_kiosk
 u8 D_800FE9B8_B91F8[5];
 #else
 u8 D_800FE9B8_B91F8[0x35];
 #endif
-u8 D_800FE9ED_B922D; // Linked with above?
+u8 D_800FE9ED_B922D;
 u8 squadsBehaviour;
 s32 D_800FE9F0_B9230;
 s32 SquaddieGrowlTimer;
@@ -38,39 +40,676 @@ UNUSED u8 PathLists[0x3C];
 s32 *D_800FEA54_B9294;
 UNUSED u8 AnimPathNumbers[0x40];
 s32 MaxPatrolNodes;
-void *PatrolNodes;
+PatrolNode *PatrolNodes;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsIsTribal.s")
+Object **objGetObjList(s32 *first, s32 *last);
+extern void GetRomlistInfo(RomDefHeader **list, s32 *size, s32 which);
+extern s32 levelGetObjectID(s32 arg0);
+extern void doorRegisterOpener(s32 arg0, s32 arg1);
+extern s32 objGetControlNo(s16 arg0);
+s32 ProcessNodeChange(u8 arg0);
+s32 levelObjectFlagSet(s32 arg0);
+void AIPointInit(s32 **arg0);
+void BindRegionsToObjects(Object *arg0, s32 arg1);
+void CopyStaticsToSquads(s32 arg0, Object *arg1);
+s8 GetClosestPatrolNode(f32 x, f32 y, f32 z, s8 arg3);
+s32 GetNextNodeNumber(u8 arg0, u8 arg1, u8 arg2, PatrolNode *node);
+f32 GetRange(f32 x1, f32 y1, f32 z1, f32 x2, f32 y2, f32 z2);
+s32 mathDiffAngle(s16 angle1, s16 angle2); /* wider than the s16 definition in
+                                              math_util.s: this TU's declaration is
+                                              what makes IDO re-narrow the return */
+void SquaddieControl(Object *arg0, s32 arg1);
+void doorUnlock(s32 arg0, s32 arg1);
+void squadsAddToActiveSquaddies(DisactivatedSquaddie *arg0);
+Object *objSetupObject(StaticInstanceSpawn *spawn, s32 arg1);
+extern AnimPath **animpath;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsGetSquadronList.s")
+int squadsIsTribal(s32 arg0) {
+    return ((arg0 >= 0x11C) && (arg0 < 0x121)) || (arg0 == 0x66) || (arg0 == 0x70) || (arg0 == 0x90) ||
+           (arg0 == 0x97) || (arg0 == 0x157) || (arg0 == 0xA5);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/BaddyTypeToIndex.s")
+Object **squadsGetSquadronList(s32 *arg0) {
+    *arg0 = D_800FE9F0_B9230;
+    return D_800A38E4_A44E4;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/CreateStaticInstance.s")
+s32 BaddyTypeToIndex(s32 arg0) {
+    switch (arg0) { /* irregular */
+        case 0x29:
+            return 0;
+        case 0x5F:
+            return 1;
+        case 0xBE:
+            return 2;
+        case 0xBD:
+            return 3;
+        case 0x67:
+            return 4;
+        case 0x78:
+            return 5;
+        case 0x8C:
+            return 6;
+        case 0x83:
+            return 7;
+        case 0x2A:
+            return 9;
+        case 0x2B:
+            return 8;
+        case 0x2D:
+            return 10;
+        case 0x54:
+            return 11;
+        case 0x68:
+            return 12;
+        case 0x8D:
+            return 13;
+        case 0x99:
+            return 14;
+        case 0x9C:
+            return 15;
+        case 0xDF:
+            return 16;
+        case 0xE0:
+            return 17;
+        case 0xE1:
+            return 18;
+        case 0xE6:
+            return 19;
+        case 0xEE:
+            return 20;
+        case 0xEF:
+            return 21;
+        case 0x12F:
+            return 22;
+        case 0xF2:
+            return 23;
+        case 0xF3:
+            return 24;
+        case 0x66:
+            return 25;
+        case 0x11C:
+            return 26;
+        case 0x11D:
+            return 27;
+        case 0x11E:
+            return 28;
+        case 0x11F:
+            return 29;
+        case 0x120:
+            return 30;
+        case 0x121:
+            return 31;
+        case 0xF1:
+            return 32;
+        case 0xF5:
+            return 33;
+        case 0xF6:
+            return 34;
+        case 0x122:
+            return 35;
+        case 0x143:
+            return 36;
+        case 0x144:
+            return 37;
+        case 0x149:
+            return 38;
+        case 0x150:
+            return 39;
+        case 0x151:
+            return 40;
+        case 0x152:
+            return 41;
+        case 0x153:
+            return 42;
+        case 0x166:
+            return 43;
+        case 0x70:
+            return 44;
+        case 0x90:
+            return 45;
+        case 0xA5:
+            return 46;
+        case 0x97:
+            return 47;
+        case 0x157:
+            return 48;
+        case 0x112:
+            return 49;
+        case 0x6D:
+            return 50;
+        case 0x1E5:
+            return 51;
+        case 0x269:
+            return 52;
+        case 0x2CE:
+            return 53;
+        default:
+            return -1;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsRememberRomdef.s")
+void CreateStaticInstance(s32 arg0) {
+    u8 *slot;
+    StaticInstanceSpawn spawn;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/AddToDisactivatedSquaddies.s")
+    slot = &D_800FE9B8_B91F8[BaddyTypeToIndex(arg0)];
+    if (*slot == 0) {
+        *slot = 1;
+        D_800FEA14_B9254 = NULL;
+        spawn.objectId = arg0;
+        spawn.unk2 = 0x12;
+        spawn.unk4 = 0;
+        spawn.unk6 = 0;
+        spawn.unk8 = 0;
+        spawn.unkA = 0;
+        spawn.unkC = 0;
+        spawn.unkE = D_800FEA10_B9250->segment.trans.rotation.x;
+        spawn.unk10 = 0;
+        D_800FEA08_B9248 = objSetupObject(&spawn, 4);
+        if (D_800FEA08_B9248 != NULL) {
+            D_800FEA08_B9248->segment.unk3C = 0;
+            D_800FEA0C_B924C = D_800FEA08_B9248->racer;
+            D_800FEA08_B9248->segment.trans.flags |= 0x400;
+            D_800FEA0C_B924C->flags = 0;
+            D_800FEA0C_B924C->bit08 = 1;
+            D_800FEA0C_B924C->unk24 = 0;
+        }
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/GetFirstDisactivatedSquaddie.s")
+void squadsRememberRomdef(RomDefHeader *arg0) {
+    D_800FE9AC_B91EC[D_800FE9A0_B91E0] = arg0;
+    D_800FE9A0_B91E0 = D_800FE9A0_B91E0 + 1;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsInitialiseBeforeObjects.s")
+void AddToDisactivatedSquaddies(DisactivatedSquaddie *arg0) {
+    DisactivatedSquaddies[D_800FE9A8_B91E8] = arg0;
+    D_800FE9A8_B91E8 = D_800FE9A8_B91E8 + 1;
+    if (D_800FE9A8_B91E8 >= D_800FE9A0_B91E0) {
+        D_800FE9A8_B91E8 = 0;
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/GetSquadronFromIdentifier.s")
+void *GetFirstDisactivatedSquaddie(s32 arg0) {
+    s32 i;
+    DisactivatedSquaddie **slot;
+    DisactivatedSquaddie *squaddie;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/GetSquaddieFromIdentifiers.s")
+    i = D_800FE9A0_B91E0;
+    slot = DisactivatedSquaddies;
+    if (i > 0x100) {
+        return NULL;
+    }
+    if (DisactivatedSquaddies != NULL) {
+        while (i--) {
+            squaddie = *slot;
+            if ((squaddie != NULL) && (arg0 == squaddie->unk11)) {
+                *slot = NULL;
+                return squaddie;
+            }
+            slot++;
+        }
+    }
+    return NULL;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsCheckEnemyPointers.s")
+void squadsInitialiseBeforeObjects(void) {
+    D_800FE9AC_B91EC = (RomDefHeader **) mmAlloc(0x400, 0xFFFF00FFU);
+    SquadsModuleFlags = 1;
+    DisactivatedSquaddies = 0;
+    D_800FE9A0_B91E0 = 0;
+    D_800FE9F0_B9230 = 0;
+    SquaddieGrowlTimer = mathRnd(0xF0, 0x168);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsCheckGrenades.s")
+void *GetSquadronFromIdentifier(s16 arg0) {
+    s32 i;
+    Object *node;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/GetFormationInfo.s")
+    i = D_800FE9F0_B9230;
+    while (i--) {
+        node = D_800A38E4_A44E4[i];
+        if ((node->unkA0 == 0) && (arg0 == ((Object_Squadron *) node->racer)->unk64)) {
+            return node;
+        }
+    }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/ProcessNodeChange.s")
+    return NULL;
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/func_80051CCC_528CC.s")
+void *GetSquaddieFromIdentifiers(s16 arg0, s16 arg1) {
+    s32 i;
+    Object *node;
+    Object_Squadron *squadron;
+    Object_Racer *racer;
+    Object *obj;
 
+    i = D_800FE9F0_B9230;
+    while (i--) {
+        node = D_800A38E4_A44E4[i];
+        squadron = (Object_Squadron *) node->racer;
+        if (arg0 == squadron->unk64) {
+            obj = squadron->unk58;
+            while (obj != NULL) {
+                racer = obj->racer;
+                if ((obj->unkA0 == 0) && (arg1 == ((Object_Grenade *) racer)->unk15)) {
+                    return obj;
+                }
+                obj = ((Object_Grenade *) racer)->next;
+            }
+            return NULL;
+        }
+    }
+    return NULL;
+}
+
+void squadsCheckEnemyPointers(Object *arg0) {
+    s32 i;
+    Object *node;
+    Object_Racer *racer;
+    Object *obj;
+
+    i = D_800FE9F0_B9230;
+    while (i--) {
+        node = D_800A38E4_A44E4[i];
+        racer = node->racer;
+        obj = (Object *) racer->unk58;
+        while (obj != NULL) {
+            node = (Object *) obj->racer;
+            if (((Object_Grenade *) node)->ennemy == arg0) {
+                ((Object_Grenade *) node)->ennemy = NULL;
+            }
+            obj = ((Object_Grenade *) node)->next;
+        }
+    }
+}
+
+void squadsCheckGrenades(Object *arg0) {
+    s32 i;
+    Object *node;
+    Object_Racer *racer;
+    Object *obj;
+
+    i = D_800FE9F0_B9230;
+    while (i--) {
+        node = (Object **) D_800A38E4_A44E4[i];
+        racer = node->racer;
+        obj = (Object *) racer->unk58;
+        while (obj != NULL) {
+            node = (Object *) obj->racer;
+            if (((Object_Grenade *) node)->owner == arg0) {
+                ((Object_Grenade *) node)->owner = NULL;
+                return;
+            }
+            obj = ((Object_Grenade *) node)->next;
+        }
+    }
+}
+
+void GetFormationInfo(Object *arg0, u8 *arg1, u8 *arg2, u8 *arg3) {
+    Object_Racer *temp_v0;
+    s16 temp_a0;
+    f32 var_f0;
+
+    temp_v0 = arg0->racer;
+    if ((D_800FEA0C_B924C != NULL) && (temp_v0 != NULL) && (temp_a0 = temp_v0->unk2A, (temp_a0 != 0))) {
+        var_f0 = (f32) D_800FEA0C_B924C->unkA6 / (f32) temp_a0;
+    } else {
+        var_f0 = 1.0f;
+    }
+    if (temp_v0->unk30 == 3) {
+        *arg1 = temp_v0->unk6;
+        *arg2 = temp_v0->unk8;
+        *arg3 = temp_v0->unk7;
+    } else if ((temp_v0->unk30 == 4) || ((var_f0 * 100.0f) < (f32) (0x64 - temp_v0->unkD))) {
+        *arg1 = temp_v0->unk9;
+        *arg2 = temp_v0->unkB;
+        *arg3 = temp_v0->unkA;
+    } else {
+        *arg1 = temp_v0->unk3;
+        *arg2 = temp_v0->unk5;
+        *arg3 = temp_v0->unk4;
+    }
+    temp_v0->unk32 = *arg3;
+    temp_v0->unk31 = *arg1;
+    if ((*arg3 == 8) && (D_800FEA0C_B924C != NULL) && ((D_800FEA0C_B924C->flags << 9) >> 31)) {
+        *arg3 = 9;
+        temp_v0->unk2E = 0;
+    }
+    temp_a0 = temp_v0->unk33;
+    if (temp_a0 != 0) {
+        if (temp_a0 != 0x1A) {
+            *arg3 = temp_a0;
+            return;
+        }
+        *arg1 = 0xA;
+        *arg3 = temp_v0->unk33;
+    }
+}
+
+s32 ProcessNodeChange(u8 arg0) {
+    Object *obj;
+    PatrolNode *dest;
+    PatrolNode *dest2;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 range;
+    s32 prev;
+    s16 ang;
+    u8 var_a3;
+
+    obj = D_800FEA14_B9254->unk58;
+    dest = &PatrolNodes[arg0];
+    if (arg0 == (D_800FEA14_B9254->unk3C & 0xFF)) {
+        return 0;
+    }
+    D_800FEA14_B9254->unk3C <<= 8;
+    D_800FEA14_B9254->unk3C |= arg0;
+    prev = ((D_800FEA14_B9254->unk3C & 0xFFFF) >> 8) & 0xFF;
+    var_a3 = D_800FEA14_B9254->unk3C & 0xFF;
+    if (dest->type == 5) {
+        dest2 = &PatrolNodes[((D_800FEA14_B9254->unk3C & 0xFFFF) >> 8)];
+        if (dest2->type == 5) {
+            D_800FEA14_B9254->unk33 = 0x20;
+        } else {
+            D_800FEA14_B9254->unk33 = 0x1D;
+        }
+    }
+    if (prev) {
+        x = PatrolNodes[var_a3].x;
+        y = PatrolNodes[var_a3].y;
+        z = PatrolNodes[var_a3].z;
+    } else {
+        x = D_800FEA14_B9254->unk58->segment.trans.x_position;
+        y = D_800FEA14_B9254->unk58->segment.trans.y_position;
+        z = D_800FEA14_B9254->unk58->segment.trans.z_position;
+    }
+    D_800FEA14_B9254->unk66 = x;
+    D_800FEA14_B9254->unk68 = y;
+    D_800FEA14_B9254->unk6A = z;
+    D_800FEA14_B9254->unk40 = dest->x;
+    D_800FEA14_B9254->unk42 = dest->y;
+    D_800FEA14_B9254->unk44 = dest->z;
+    range = GetRange(x, y, z, dest->x, dest->y, dest->z);
+    if (range != 0.0f) {
+        D_800FEA14_B9254->unk6C = 0.0f;
+        D_800FEA14_B9254->unk70 = D_800FEA14_B9254->unk24b / range;
+    } else {
+        D_800FEA14_B9254->unk6C = 1.0f;
+        D_800FEA14_B9254->unk70 = 0.0f;
+    }
+    if ((u8) (dest->flags & 4)) {
+        D_800FEA14_B9254->unk28 |= 0x1000;
+        if (dest->type == 8) {
+            if (mathRnd(1, 0x64) < dest->chance) {
+                D_800FEA14_B9254->unk28 &= ~0x1000;
+            }
+        }
+    } else {
+        D_800FEA14_B9254->unk28 &= ~0x1000;
+    }
+    if (D_800FEA14_B9254->unk33 != 0x1D) {
+        if (D_800FEA14_B9254->unk0 >= 2) {
+            D_800FEA14_B9254->unk3E =
+                Arctanf(obj->segment.trans.x_position - dest->x, obj->segment.trans.z_position - dest->z);
+            ang = mathDiffAngle(D_800FEA10_B9250->segment.trans.rotation.x, D_800FEA14_B9254->unk3E);
+            ang = ang >> 9;
+            if (ang < 0) {
+                ang = -ang;
+            }
+            if (ang <= 0) {
+                ang = 1;
+            }
+            D_800FEA14_B9254->unk2E = ang;
+            D_800FEA14_B9254->unk33 = 0x15;
+            D_800FEA14_B9254->f34hi = 0;
+            squadsBehaviour = 0x15;
+        }
+    }
+    return 1;
+}
+
+void func_80051CCC_528CC(void) {
+    s32 i;
+    Object **list;
+    s32 first;
+    s32 last;
+    RomDefHeader **lp;
+    s32 total;
+    s32 *sp;
+    s32 *endp;
+    RomDefHeader *lists[2];
+    RomDefHeader *entry;
+    Object_Racer *racer;
+    s32 sizes[2];
+    s32 id;
+    Object *obj;
+    s32 door;
+
+    GetRomlistInfo(&lists[1], &sizes[1], 1);
+    GetRomlistInfo(&lists[0], &sizes[0], 0);
+    list = objGetObjList(&first, &last);
+    endp = &sizes[2];
+    for (i = first; i < last; i++) {
+        obj = list[i];
+        if (obj->unkA0 != 0) {
+            continue;
+        }
+        if (obj->behaviorId == 0x17) {
+            racer = obj->racer;
+            if (racer->unk2C == 0x2CE) {
+                continue;
+            }
+            id = levelGetObjectID(racer->unk1);
+            racer->unk88 = id;
+            racer->unk8C = id;
+            door = racer->unk75;
+            if (door != 0) {
+                doorRegisterOpener(door & 0xFFFFFFFFu, 0x20);
+            }
+            lp = &lists[0];
+            sp = &sizes[0];
+            do {
+                entry = *lp;
+                total = 0;
+                while (total < *sp) {
+                    if (objGetControlNo(entry->id) == 0x18) {
+                        if (entry->unk11 == racer->unk64b) {
+                            entry->unk18 = racer->unk8C;
+                            racer->unk8C = racer->unk8C + 1;
+                        }
+                    }
+                    total += entry->size;
+                    entry = (RomDefHeader *) ((u32) entry + entry->size);
+                }
+                sp++;
+                lp++;
+                endp = &sizes[2];
+            } while (sp != endp);
+            if (racer->unk63 >= racer->unk1) {
+                racer->unk30 = 7;
+            }
+        }
+    }
+}
+
+#ifndef UNMATCHED
 #pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsInitialiseAfterObjects.s")
+#else
+void squadsInitialiseAfterObjects(void) {
+    s32 j;
+    s32 count;
+    DisactivatedSquaddie **dp;
+    s32 i;
+    PatrolNode *node;
+    Object *obj;
+    s32 **ptr;
+    s32 k;
+    s32 first;
+    s32 last;
+    Object **list;
+    s16 id;
+    Object_Racer *racer;
+    AnimPath *path;
+    AnimPath *ap;
+    DisactivatedSquaddie *ds;
+    if (runlinkIsModuleLoaded(3) == 0) {
+        mmFree(D_800FE9AC_B91EC);
+        return;
+    }
+    func_80051CCC_528CC();
+    list = objGetObjList(&first, &last);
+    D_800FE9A8_B91E8 = 0;
+    SquadsModuleFlags = 0x40;
+    ptr = &D_800FEA54_B9294;
+    i = 16;
+    while (i--) {
+        *ptr = NULL;
+        ptr--;
+    }
+
+    AIPointInit(ptr);
+    for (i = first; i < last; i++) {
+        Object *sq = list[i];
+        if (sq->unkA0 != 0) {
+            continue;
+        }
+        if (sq->behaviorId == 0x1B) {
+            racer = sq->racer;
+            SquaddieControl(sq, sq->segment.unk3C);
+            BindRegionsToObjects(sq, 0);
+            k = 4;
+            while (k--) {
+                id = racer->animPathId[k];
+                if ((id & (-1)) != (-1)) {
+                    path = animpath[id];
+                    ap = path->unk20;
+                    count = racer->animNodeIdx[k];
+                    while (count--) {
+                        ap = ap->unk28;
+                    }
+
+                    ap->unk1E = racer->unk11;
+                }
+            }
+        }
+    }
+
+    node = PatrolNodes;
+    i = MaxPatrolNodes;
+    while (i--) {
+        node->unk2F = 0;
+        node++;
+    }
+
+    D_800FE9F0_B9230 = 0;
+    for (i = first; i < last; i++) {
+        if (list[i]->behaviorId == 0x17) {
+            D_800FE9F0_B9230++;
+        }
+    }
+
+    if (D_800FE9F0_B9230 != 0) {
+        D_800A38E4_A44E4 = (Object **) mmAlloc(D_800FE9F0_B9230 * sizeof(Object **), COLOUR_TAG_YELLOW);
+        j = 0;
+        for (i = first; i < last; i++) {
+            obj = list[i];
+            if (obj->behaviorId == 0x17) {
+                D_800A38E4_A44E4[j++] = obj;
+                count = j - 1;
+
+                while (count-- > 0) {
+                    if (D_800A38E4_A44E4[count]) {}
+                }
+            }
+        }
+    } else {
+        D_800A38E4_A44E4 = NULL;
+    }
+    SquadsModuleFlags |= 8;
+    j = sizeof(D_800FE9B8_B91F8) + 1;
+    while (j--) {
+        D_800FE9B8_B91F8[j] = 0;
+    }
+
+    j = D_800FE9F0_B9230;
+    while (j--) {
+        D_800FEA10_B9250 = D_800A38E4_A44E4[j];
+        D_800FEA14_B9254 = D_800FEA10_B9250->racer;
+        CreateStaticInstance(D_800FEA14_B9254->unk2C);
+    }
+
+    SquadsModuleFlags &= ~8;
+    j = D_800FE9F0_B9230;
+    while (j--) {
+        D_800FEA10_B9250 = D_800A38E4_A44E4[j];
+        D_800FEA14_B9254 = D_800FEA10_B9250->racer;
+        CopyStaticsToSquads(0, D_800FEA10_B9250);
+        if (D_800FEA14_B9254->f1Alo == 6) {
+            k = GetClosestPatrolNode(D_800FEA10_B9250->segment.trans.x_position,
+                                     D_800FEA10_B9250->segment.trans.y_position,
+                                     D_800FEA10_B9250->segment.trans.z_position, 0);
+            if (k != 0) {
+                node = &PatrolNodes[k & 0xff];
+                if ((node->f17hi != 0) && (node != NULL)) {
+                    D_800FEA14_B9254->unk3C = node->unk16;
+                    ProcessNodeChange(
+                        GetNextNodeNumber(D_800FEA14_B9254->unk30, D_800FEA14_B9254->unk3C & 0xFF, 0, node));
+                    D_800FEA14_B9254->unk33 = 0x1F;
+                }
+            } else {
+                D_800FEA14_B9254->f1Alo = 2;
+            }
+        }
+    }
+
+    if (D_800FE9A0_B91E0) {
+        DisactivatedSquaddies = (DisactivatedSquaddie **) mmAlloc(D_800FE9A0_B91E0 * 4, COLOUR_TAG_YELLOW);
+        dp = DisactivatedSquaddies;
+        i = D_800FE9A0_B91E0;
+        while (i--) {
+            *dp = NULL;
+            dp++;
+        }
+
+        i = D_800FE9A0_B91E0;
+        while (i--) {
+            ds = ((DisactivatedSquaddie **) D_800FE9AC_B91EC)[i];
+            D_800FEA10_B9250 = GetSquadronFromIdentifier(ds->unk11);
+            D_800FEA14_B9254 = D_800FEA10_B9250->racer;
+            if (D_800FEA14_B9254->f1Ahi == 1) {
+                AddToDisactivatedSquaddies(ds);
+            } else {
+                squadsAddToActiveSquaddies(ds);
+            }
+        }
+    }
+    mmFree(D_800FE9AC_B91EC);
+    list = objGetObjList(&first, &last);
+    for (i = first; i < last; i++) {
+        ds = (DisactivatedSquaddie *) list[i];
+        if (((Object *) ds)->behaviorId == 0x17) {
+            D_800FEA14_B9254 = ((Object *) ds)->racer;
+            if (D_800FEA14_B9254->unk75 != 0) {
+                k = 1;
+                for (count = 0; count < (s32) D_800FEA14_B9254->unk1; count++) {
+                    if (levelObjectFlagSet(D_800FEA14_B9254->unk88 + count) == 0) {
+                        k = 0;
+                        break;
+                    }
+                }
+
+                if (k != 0) {
+                    doorUnlock(D_800FEA14_B9254->unk75, 0);
+                    D_800FEA14_B9254->unk28 |= 8;
+                }
+            }
+        }
+    }
+}
+#endif
 
 void squadsInit(void) {
     BaddyDataArray = piRomLoad(0x3E);
@@ -94,6 +733,16 @@ void squadsPreInit(RomDefHeader *list, s32 listSize) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/squadsAddInterestingEvent.s")
+extern void ReallyAddInterestingEvent(s32 arg0, s16 arg1, s16 arg2, s16 arg3, u8 arg4, u8 arg5, u8 arg6);
+void squadsAddInterestingEvent(s32 arg0, s16 arg1, s16 arg2, s16 arg3, u8 arg4, u8 arg5, u8 arg6) {
+    if (runlinkIsModuleLoaded(3) != 0) {
+        ReallyAddInterestingEvent(arg0, arg1, arg2, arg3, (s32) arg4, (s32) arg5, (s32) arg6);
+    }
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/squads/CopyStaticsToKernel.s")
+void CopyStaticsToKernel(Object *arg0, Object *arg1) {
+    D_800FEA08_B9248 = arg0;
+    D_800FEA0C_B924C = D_800FEA08_B9248 != NULL ? arg0->racer : 0;
+    D_800FEA10_B9250 = arg1;
+    D_800FEA14_B9254 = D_800FEA10_B9250 != NULL ? arg1->racer : 0;
+}
