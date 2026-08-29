@@ -244,12 +244,12 @@ void *GetFirstDisactivatedSquaddie(s32 arg0) {
 }
 
 void squadsInitialiseBeforeObjects(void) {
-    D_800FE9AC_B91EC = (RomDefHeader **) mmAlloc(0x400, 0xFFFF00FFU);
+    D_800FE9AC_B91EC = (RomDefHeader **) mmAlloc(0x400, COLOUR_TAG_YELLOW);
     SquadsModuleFlags = 1;
     DisactivatedSquaddies = 0;
     D_800FE9A0_B91E0 = 0;
     D_800FE9F0_B9230 = 0;
-    SquaddieGrowlTimer = mathRnd(0xF0, 0x168);
+    SquaddieGrowlTimer = mathRnd(240, 360);
 }
 
 void *GetSquadronFromIdentifier(s16 arg0) {
@@ -322,7 +322,7 @@ void squadsCheckGrenades(Object *arg0) {
 
     i = D_800FE9F0_B9230;
     while (i--) {
-        node = (Object **) D_800A38E4_A44E4[i];
+        node = (Object *) D_800A38E4_A44E4[i];
         racer = node->racer;
         obj = (Object *) racer->unk58;
         while (obj != NULL) {
@@ -432,7 +432,7 @@ s32 ProcessNodeChange(u8 arg0) {
     if ((u8) (dest->flags & 4)) {
         D_800FEA14_B9254->unk28 |= 0x1000;
         if (dest->type == 8) {
-            if (mathRnd(1, 0x64) < dest->chance) {
+            if (mathRnd(1, 100) < dest->chance) {
                 D_800FEA14_B9254->unk28 &= ~0x1000;
             }
         }
