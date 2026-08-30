@@ -86,6 +86,7 @@ extern void *tuneSeqPlayer;               // 0x800A0660 Start of .data
 extern u32 gUnresolvedSymbolAddr;
 
 extern s32 overlayCount;
+extern s32 AllowSelfDestructing;
 
 // typedef struct runlinkModule {
 //     s32 unk0;
@@ -103,7 +104,7 @@ extern void *__CODE_SECTION_START;
 // This empty signature seems to be the way to handle it.
 s32 TrapDanglingJump(); 
 
-void runlinkFreeCode(s32 arg0);
+void runlinkFreeCode(s32 overlayIndex);
 void runlinkInitialise(void);
 s32 runlinkDownloadCode(s32);
 void runlinkLowMemoryPanic(void);

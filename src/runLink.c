@@ -784,7 +784,25 @@ void runlinkSetDestructTimer(s32 index, u16 selfDestructTimer, u16 refCount) {
     gSelfDestructTimers[index].refCount = refCount;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkTick.s")
+void runlinkTick(void) {
+    OverlayTimerEntry *timerEntry;
+    s32 overlayIndex;
+
+    overlayIndex = overlayCount;
+    if (AllowSelfDestructing) {
+        while (overlayIndex--) {
+            timerEntry = &gSelfDestructTimers[overlayIndex];
+            if (timerEntry->refCount != 0) {
+                timerEntry->refCount--;
+            }
+            if (timerEntry->selfDestructTimer != 0) {
+                if (--timerEntry->selfDestructTimer == 0) {
+                    runlinkFreeCode(overlayIndex);
+                }
+            }
+        }
+    }
+}
 
 /**
  * Called when memory is low - frees overlays that have no references.
