@@ -36,7 +36,7 @@ extern s8 widescreenVOffset;
 extern u8 D_800A51A0_A5DA0;
 extern u8 D_800A51A4_A5DA4;
 extern u8 D_800A51A8_A5DA8;
-extern u8 D_800FF386_B1D86;
+extern u8 D_800FF386_B1916;
 extern u8 frontEndMode;
 extern u8 multiGameType;
 extern u8 selectedControlModes[];

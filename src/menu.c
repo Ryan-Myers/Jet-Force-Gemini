@@ -39,6 +39,25 @@ extern FrontEndObject D_800A51DC_A5DDC[];
 extern FrontEndObject currentobjects[];
 extern s32 currentGameTime;
 s8 mainGetPauseMode(void);
+/* menu.c's own .bss: exactly the 16 bytes at 0x800FF1B0..BF.  playChoice is
+   per-player and must be DEFINED here rather than extern -- a defined object is
+   addressed section-relative, so IDO shares one `lui $at` across all four
+   stores in initFront(), which is what the ROM does.  playStatus and
+   gameoverFade come along because IDO gives .bss 16-byte alignment AND rounds
+   its size to 16, so the block has to start and end on a 16-byte boundary. */
+s32 playStatus;
+u8 playChoice[4];
+u8 gameoverFade[8];
+
+extern void *frontendptrs[];
+extern u8 D_800FF6C8_B1C58[];
+extern s16 *D_800A51D0_A5DD0;
+extern s16 D_800A51D8_A5DD8;
+extern u8 *D_800FF3A8_B1938[];
+extern s16 D_800A51D4_A5DD4;
+void *mmAlloc(s32 size, u32 colourTag);
+u32 *piRomLoad(u32 assetIndex);
+
 void frontInstruments(Gfx **dl);
 void diRcpTrace(Gfx *gdl, char *file, s32 line);
 extern const char D_800AD370_ADF70[];
@@ -97,9 +116,9 @@ typedef struct FrontRect {
 } FrontRect;
 
 void frontDrawRectangles(s32 arg0, s32 count, FrontRect *rects, s32 arg3);
-extern s32 D_800FF3E8_B1DE8[4];
+extern s32 D_800FF3E8_B1978[4];
 extern u8 frontJoyDxRepeat[4];
-extern u8 D_800FF3E4_B1DE4[4];
+extern u8 D_800FF3E4_B1974[4];
 extern u8 okayed;
 extern u8 disable;
 extern u8 numberOfCameras;
@@ -109,7 +128,35 @@ void func_80059A04_5A604(void);
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setLanguage.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/initFront.s")
+void initFront(void) {
+    s32 i;
+
+    D_800FF3A8_B1938[0] = mmAlloc(0xFA8, -1);
+    for (i = 0; i < 3; i++) {
+        D_800FF3A8_B1938[i] = D_800FF3A8_B1938[i - 1] + 0x538;
+    }
+    front_text = mmAlloc(0x3000, -1);
+    setLanguage(0);
+    i = 0;
+    while (i < 180) {
+        frontendptrs[i] = NULL;
+        i++;
+    }
+    D_800A51A0_A5DA0 = 0;
+    D_800A51D0_A5DD0 = piRomLoad(0x1A);
+    D_800A51D4_A5DD4 = 0;
+    while (D_800A51D0_A5DD0[D_800A51D4_A5DD4] != -1) {
+        D_800A51D4_A5DD4++;
+    }
+    D_800A51D8_A5DD8 = 0;
+    for (i = 0; i < D_800A51D4_A5DD4; i++) {
+        D_800FF6C8_B1C58[i] = 0;
+    }
+    i = 0;
+    while (i < 4) {
+        playChoice[i++] = 2;
+    }
+}
 
 void frontFreeMode(void) {
     if (runlinkIsModuleLoaded(12) != 0) {
@@ -419,9 +466,9 @@ void func_80059A04_5A604(void) {
     s32 i;
 
     for (i = 0; i < 4; i++) {
-        D_800FF3E8_B1DE8[i] = -1;
+        D_800FF3E8_B1978[i] = -1;
         frontJoyDxRepeat[i] = 20;
-        D_800FF3E4_B1DE4[i] = 15;
+        D_800FF3E4_B1974[i] = 15;
     }
 }
 
@@ -474,11 +521,11 @@ char *frontGetWorldName(s32 world) {
 }
 
 s32 frontGetLanguage(void) {
-    return D_800FF386_B1D86;
+    return D_800FF386_B1916;
 }
 
 void frontSetLanguage(s32 language) {
-    D_800FF386_B1D86 = language;
+    D_800FF386_B1916 = language;
     setLanguage(language);
 }
 
