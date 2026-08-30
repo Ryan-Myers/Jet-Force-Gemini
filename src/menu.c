@@ -19,6 +19,46 @@
 #include "PR/n_libaudio.h"
 #include "runLink.h"
 
+typedef struct FrontEndObject {
+    /* 0x00 */ s16 unk0;
+    /* 0x02 */ s16 unk2;
+    /* 0x04 */ s16 unk4;
+    /* 0x06 */ s16 unk6;
+    /* 0x08 */ f32 unk8;
+    /* 0x0C */ f32 unkC;
+    /* 0x10 */ f32 unk10;
+    /* 0x14 */ f32 unk14;
+    /* 0x18 */ f32 unk18;
+    /* 0x1C */ s8 unk1C;
+    /* 0x1D */ s8 unk1D;
+    /* 0x1E */ s8 unk1E;
+    /* 0x1F */ s8 unk1F;
+} FrontEndObject;
+
+extern FrontEndObject D_800A51DC_A5DDC[];
+extern FrontEndObject currentobjects[];
+extern s32 currentGameTime;
+s8 mainGetPauseMode(void);
+extern u8 D_800A5194_A5D94;
+void setLanguage(s32 language);
+void fxScreenEffect(s32 arg0, s32 *screen, s32 width, s32 height, s32 x1, s32 y1, s32 x2, s32 y2, s32 arg8);
+void fxQueueScreenEffect(s32 *screen, s32 width, s32 height, s32 x1, s32 y1, s32 x2, s32 y2, s32 arg7);
+void frontPlayerScreenLimits(s32 player, s32 *x1, s32 *y1, s32 *x2, s32 *y2);
+extern s16 D_800A508C_A5C8C[];
+s32 frontGet2PlayerSplit(void);
+
+typedef struct FrontRect {
+    /* 0x0 */ s16 x1;
+    /* 0x2 */ s16 y1;
+    /* 0x4 */ s16 x2;
+    /* 0x6 */ s16 y2;
+    /* 0x8 */ u32 colour;
+} FrontRect;
+
+void frontDrawRectangles(s32 arg0, s32 count, FrontRect *rects, s32 arg3);
+extern s32 D_800FF3E8_B1DE8[4];
+extern u8 frontJoyDxRepeat[4];
+extern u8 D_800FF3E4_B1DE4[4];
 extern u8 okayed;
 extern u8 disable;
 extern u8 numberOfCameras;
@@ -113,23 +153,99 @@ u8 frontGetMode(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontUpdate.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontDemoMessage.s")
+void frontDemoMessage(Gfx **dl, s32 arg1) {
+    s32 x;
+    s32 y;
+
+    D_800A5194_A5D94 += arg1;
+    if (D_800A5194_A5D94 & 0x10) {
+        x = 0xA0;
+        y = 0xD0;
+        viConvertXY(&x, &y);
+        setLanguage(frontGetLanguage());
+        fontUseFont(2);
+        fontBackground(0, 0, 0, 0);
+        fontColour(0, 0, 0, 255, 255);
+        fontPrintXY(dl, x + 1, y + 1, front_text[49], 12);
+        fontColour(255, 255, 255, 0, 255);
+        fontPrintXY(dl, x, y, front_text[49], 12);
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontInstruments.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontUpdateTimer.s")
+s32 frontUpdateTimer(s32 arg0, s32 limit, s32 delta) {
+    s32 ret = 0;
+
+    if (mainGetPauseMode() == 0) {
+        currentGameTime += delta;
+    }
+    if (currentGameTime >= limit) {
+        currentGameTime = limit;
+        ret = 1;
+    }
+    return ret;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontPrintNum.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontDrawRectangles.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontDrawRectangle.s")
+void frontDrawRectangle(s32 arg0, s32 x1, s32 y1, s32 x2, s32 y2, u32 colour) {
+    FrontRect rect;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontFlashScreen.s")
+    rect.x1 = x1;
+    rect.y1 = y1;
+    rect.x2 = x2;
+    rect.y2 = y2;
+    rect.colour = colour;
+    frontDrawRectangles(arg0, 1, &rect, 1);
+}
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontPlayerScreenLimits.s")
+void frontFlashScreen(s32 arg0, s32 player, s32 arg2) {
+    s32 x1;
+    s32 y1;
+    s32 x2;
+    s32 y2;
+    s32 width;
+    s32 height;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/func_80059A04_5A604.s")
+    frontPlayerScreenLimits(player, &x1, &y1, &x2, &y2);
+    viGetCurrentSize(&width, &height);
+    if (arg0) {
+        fxScreenEffect(arg0, otherScreen, width, height, x1, y1, x2, y2, arg2);
+    } else {
+        fxQueueScreenEffect(otherScreen, width, height, x1, y1, x2, y2, arg2);
+    }
+}
+
+void frontPlayerScreenLimits(s32 player, s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
+    s32 mode;
+    s32 idx;
+    s32 unused;
+
+    mode = viGetVideoMode();
+    idx = (((numberOfCameras - 1) << 2) + player) << 2;
+    if ((mode & 1) || (numberOfCameras == 2 && frontGet2PlayerSplit())) {
+        idx += 0x40;
+    }
+    *x1 = D_800A508C_A5C8C[idx];
+    *y1 = D_800A508C_A5C8C[idx + 1];
+    viConvertXY(x1, y1);
+    *x2 = D_800A508C_A5C8C[idx + 2];
+    *y2 = D_800A508C_A5C8C[idx + 3];
+    viConvertXY(x2, y2);
+}
+
+void func_80059A04_5A604(void) {
+    s32 i;
+
+    for (i = 0; i < 4; i++) {
+        D_800FF3E8_B1DE8[i] = -1;
+        frontJoyDxRepeat[i] = 20;
+        D_800FF3E4_B1DE4[i] = 15;
+    }
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/func_80059A98_5A698.s")
 
@@ -145,7 +261,21 @@ const char D_800AD390_ADF90[] = "loadFrontEndItem() - Item no %d out of range 0-
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setupFrontEndList.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/setupFrontEndObject.s")
+void setupFrontEndObject(s32 index) {
+    currentobjects[index].unk0 = D_800A51DC_A5DDC[index].unk0;
+    currentobjects[index].unk2 = D_800A51DC_A5DDC[index].unk2;
+    currentobjects[index].unk4 = D_800A51DC_A5DDC[index].unk4;
+    currentobjects[index].unk6 = D_800A51DC_A5DDC[index].unk6;
+    currentobjects[index].unkC = D_800A51DC_A5DDC[index].unkC;
+    currentobjects[index].unk10 = D_800A51DC_A5DDC[index].unk10;
+    currentobjects[index].unk14 = D_800A51DC_A5DDC[index].unk14;
+    currentobjects[index].unk8 = D_800A51DC_A5DDC[index].unk8;
+    currentobjects[index].unk18 = D_800A51DC_A5DDC[index].unk18;
+    currentobjects[index].unk1C = D_800A51DC_A5DDC[index].unk1C;
+    currentobjects[index].unk1D = D_800A51DC_A5DDC[index].unk1D;
+    currentobjects[index].unk1E = D_800A51DC_A5DDC[index].unk1E;
+    currentobjects[index].unk1F = D_800A51DC_A5DDC[index].unk1F;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontDrawObj.s")
 
