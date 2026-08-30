@@ -19,6 +19,13 @@
 #include "PR/n_libaudio.h"
 #include "runLink.h"
 
+extern u8 okayed;
+extern u8 disable;
+extern u8 numberOfCameras;
+s32 levelGetScreenMode(void);
+void frontInitMode(void);
+void func_80059A04_5A604(void);
+
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/setLanguage.s")
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/initFront.s")
@@ -86,7 +93,19 @@ void frontFreeMode(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontInitMode.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetMode.s")
+void frontSetMode(s32 mode) {
+    frontFreeMode();
+    frontEndMode = mode;
+    frontInitMode();
+    func_80059A04_5A604();
+    okayed = 0;
+    disable = 1;
+    if (mode == 0) {
+        multiPlayerGame = 0;
+        numberOfPlayers = 1;
+        numberOfCameras = 1;
+    }
+}
 
 u8 frontGetMode(void) {
     return frontEndMode;
@@ -140,7 +159,9 @@ s32 frontGetWorldLevel(void) {
     return 0;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetWorldName.s")
+char *frontGetWorldName(s32 world) {
+    return front_text[D_800A5918_A6518[world]];
+}
 
 s32 frontGetLanguage(void) {
     return D_800FF386_B1D86;
@@ -151,7 +172,17 @@ void frontSetLanguage(s32 language) {
     setLanguage(language);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetScreenMode.s")
+s32 frontGetScreenMode(void) {
+    s32 mode = 0;
+
+    if (someResVar.bit30) {
+        mode |= 1;
+    }
+    if (someResVar.bit29) {
+        mode |= 2;
+    }
+    return mode;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetScreenMode.s")
 
@@ -163,7 +194,17 @@ u8 frontRecallScreenMode(void) {
     return D_800A51A4_A5DA4;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGetLevelScreenMode.s")
+s32 frontGetLevelScreenMode(void) {
+    switch (D_800A51A8_A5DA8) {
+        case 3:
+            return 3;
+        case 2:
+            return levelGetScreenMode() | 2;
+        case 1:
+            return 1;
+    }
+    return levelGetScreenMode();
+}
 
 s8 frontGetWideAdjust(void) {
     return widescreenVOffset;
@@ -219,7 +260,12 @@ void frontSetBgmVolume(s32 volume) {
     amTuneSetGlobalVolume(volume);
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontGet2PlayerSplit.s")
+s32 frontGet2PlayerSplit(void) {
+    s32 split;
+
+    split = someResVar.bit28;
+    return split;
+}
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSet2PlayerSplit.s")
 

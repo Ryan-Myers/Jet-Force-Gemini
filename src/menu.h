@@ -9,7 +9,9 @@
 typedef struct Resbitfield {
     u32 bi31 : 1;
     u32 bit30 : 1;
-    u32 rest : 30;
+    u32 bit29 : 1;
+    u32 bit28 : 1;
+    u32 rest : 28;
 } Resbitfield;
 extern Resbitfield someResVar;
 extern u64 globalflags;
@@ -34,6 +36,8 @@ extern u8 D_800FF386_B1D86;
 extern u8 frontEndMode;
 extern u8 multiGameType;
 extern u8 selectedControlModes[];
+extern char **front_text;
+extern u16 D_800A5918_A6518[];
 
 void frontFreeMode(void);
 u8 frontGetMode(void);
