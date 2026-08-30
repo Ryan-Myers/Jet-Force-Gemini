@@ -254,28 +254,6 @@ s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/ProcessRelocationEntry.s")
 #endif
 
-// Forward declarations
-s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex);
-void runlinkResumeCode(s32 overlayIndex);
-
-typedef struct RelocContext {
-    u32 unk0;      // 0x00 - unused?
-    u8 *textBase;  // 0x04 - gRelocTextBase
-    u8 *dataBase;  // 0x08 - gRelocDataBase
-    u8 *bssBase;   // 0x0C
-    u8 *relocBase; // 0x10 - relocation table base
-} RelocContext;
-extern RelocContext gRelocContext;
-
-typedef struct PendingOverlayLoad {
-    u32 unk0;         // 0x00 - possibly status/flags
-    s32 overlayIndex; // 0x04 - overlay number being loaded
-} PendingOverlayLoad; // 8 bytes
-
-extern PendingOverlayLoad gPendingOverlayLoads[16];
-extern s32 mmColourTagUnk2;
-extern s32 D_800B0B50_B1750;
-
 /**
  * Downloads and links an overlay module into memory.
  * @param overlayIndex Index of the overlay to load
@@ -777,7 +755,21 @@ void runlinkSuspendCode(s32 overlayIndex) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkResumeCode.s")
 
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkResumeAll.s")
+void runlinkResumeAll(void) {
+    PendingOverlayLoad *pendingLoad;
+    s32 overlayIndex;
+    s32 remaining;
+
+    pendingLoad = gPendingOverlayLoads;
+    remaining = ARRAY_COUNT(gPendingOverlayLoads);
+    while (remaining--) {
+        if (pendingLoad->overlayIndex != 0xFFB) {
+            overlayIndex = pendingLoad->overlayIndex;
+            runlinkResumeCode(overlayIndex);
+        }
+        pendingLoad++;
+    }
+}
 
 void runlinkSetDestructTimer(s32 index, u16 selfDestructTimer, u16 refCount) {
     gSelfDestructTimers[index].selfDestructTimer = selfDestructTimer;

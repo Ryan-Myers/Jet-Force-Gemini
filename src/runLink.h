@@ -88,6 +88,25 @@ extern u32 gUnresolvedSymbolAddr;
 extern s32 overlayCount;
 extern s32 AllowSelfDestructing;
 
+// Forward declarations
+typedef struct RelocContext {
+    u32 unk0;      // 0x00 - unused?
+    u8 *textBase;  // 0x04 - gRelocTextBase
+    u8 *dataBase;  // 0x08 - gRelocDataBase
+    u8 *bssBase;   // 0x0C
+    u8 *relocBase; // 0x10 - relocation table base
+} RelocContext;
+extern RelocContext gRelocContext;
+
+typedef struct PendingOverlayLoad {
+    u32 unk0;         // 0x00 - possibly status/flags
+    s32 overlayIndex; // 0x04 - overlay number being loaded
+} PendingOverlayLoad; // 8 bytes
+
+extern PendingOverlayLoad gPendingOverlayLoads[16];
+extern s32 mmColourTagUnk2;
+extern s32 D_800B0B50_B1750;
+
 // typedef struct runlinkModule {
 //     s32 unk0;
 //     u8 pad4[25];
@@ -112,5 +131,7 @@ s32 runlinkIsModuleLoaded(s32 module);
 s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char **symbolName);
 void runlinkFlushModules(void);
 char *GetSymbolName(u32 symbolIndex);
+void runlinkResumeCode(s32 overlayIndex);
+s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex);
 
 #endif
