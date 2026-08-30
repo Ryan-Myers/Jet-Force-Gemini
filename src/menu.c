@@ -39,6 +39,47 @@ extern FrontEndObject D_800A51DC_A5DDC[];
 extern FrontEndObject currentobjects[];
 extern s32 currentGameTime;
 s8 mainGetPauseMode(void);
+void frontInstruments(Gfx **dl);
+void diRcpTrace(Gfx *gdl, char *file, s32 line);
+extern const char D_800AD370_ADF70[];
+extern const char D_800AD380_ADF80[];
+extern void *frontpol;
+void func_80059A98_5A698(Gfx **dl);
+s32 frontInitMultiInstruments(void);
+void frontRarepage(Gfx **dl);
+void frontStartScreen(Gfx **dl);
+void frontOptionsPage(Gfx **dl);
+void frontMap(Gfx **dl);
+void frontCharSelect(Gfx **dl);
+void frontMultiSelect(Gfx **dl);
+void frontMultiModeSelect(Gfx **dl);
+void frontMultiStats(Gfx **dl);
+void frontCredits(Gfx **dl);
+void frontKeyboard(Gfx **dl);
+void frontMenuFrameDraw(void);
+void frontMenuFrameTick(Gfx **dl);
+void frontInitMenuFrame(void);
+void frontInitRarepage(void);
+void frontInitStartScreen(void);
+void frontInitOptionsPage(s32 arg0);
+void frontInitMap(s32 arg0);
+void frontInitCharSelect(void);
+void frontInitMultiSelect(void);
+void frontInitMultiModeSelect(void);
+void frontInitMultiStats(void);
+void frontCreditsInit(void);
+void frontKeyboardInit(void);
+void frontInitInstruments(void);
+void sprintInitInstruments(void);
+void sparkUpdate(void);
+extern Gfx *frontgfx;
+extern Mtx *frontmtx;
+extern Vtx *frontvtx;
+Object **objGetPlayerlist(s32 *count);
+void frontDeathMatchScores(s32 count, Object **players, Gfx **dl);
+void duckshootDrawTargets(Gfx **gfx, Mtx **mtx, Vtx **vtx, s32 players);
+void sprintDrawInstruments(Gfx **gfx, Mtx **mtx, Vtx **vtx, s32 players);
+void frontSingleInstruments(Object *player, Gfx **dl);
 extern u8 D_800A5194_A5D94;
 void setLanguage(s32 language);
 void fxScreenEffect(s32 arg0, s32 *screen, s32 width, s32 height, s32 x1, s32 y1, s32 x2, s32 y2, s32 arg8);
@@ -131,7 +172,62 @@ void frontFreeMode(void) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontInitMode.s")
+void frontInitMode(void) {
+    frontInitMenuFrame();
+    if (D_800A51A0_A5DA0 == 0) {
+        switch (frontEndMode) {
+            case 0:
+                break;
+            case 2:
+                frontInitRarepage();
+                break;
+            case 3:
+                frontInitStartScreen();
+                break;
+            case 4:
+                frontInitOptionsPage(0);
+                break;
+            case 17:
+                frontInitMap(0);
+                break;
+            case 5:
+                frontInitCharSelect();
+                break;
+            case 6:
+                frontInitMultiSelect();
+                break;
+            case 8:
+                frontInitMultiModeSelect();
+                break;
+            case 18:
+            case 19:
+            case 20:
+            case 21:
+            case 22:
+                frontInitMultiStats();
+                break;
+            case 23:
+                frontCreditsInit();
+                break;
+            case 24:
+                frontKeyboardInit();
+                break;
+            case 16:
+                if ((multiPlayerGame && multiGameType == 4) || racingInGame) {
+                    sprintInitInstruments();
+                } else {
+                    runlinkDownloadCode(6);
+                    if (numberOfPlayers == 1) {
+                        frontInitInstruments();
+                    } else {
+                        sparkUpdate();
+                    }
+                }
+                break;
+        }
+        D_800A51A0_A5DA0 = 1;
+    }
+}
 
 void frontSetMode(s32 mode) {
     frontFreeMode();
@@ -151,7 +247,67 @@ u8 frontGetMode(void) {
     return frontEndMode;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontUpdate.s")
+s32 frontUpdate(Gfx **gfx, Mtx **mtx, Vtx **vtx, void **pol, Gfx **dl) {
+    func_80059A98_5A698(dl);
+    frontgfx = *gfx;
+    frontmtx = *mtx;
+    frontvtx = *vtx;
+    frontpol = *pol;
+    diRcpTrace(frontgfx, (char *) D_800AD370_ADF70, 0x256);
+    if (frontInitMultiInstruments()) {
+        switch (frontEndMode) {
+            case 0:
+                break;
+            case 2:
+                frontRarepage(dl);
+                break;
+            case 3:
+                frontStartScreen(dl);
+                break;
+            case 4:
+                frontOptionsPage(dl);
+                break;
+            case 17:
+                frontMap(dl);
+                break;
+            case 5:
+                frontCharSelect(dl);
+                break;
+            case 6:
+                frontMultiSelect(dl);
+                break;
+            case 8:
+                frontMultiModeSelect(dl);
+                break;
+            case 18:
+            case 19:
+            case 20:
+            case 21:
+            case 22:
+                frontMultiStats(dl);
+                break;
+            case 23:
+                frontCredits(dl);
+                break;
+            case 24:
+                frontKeyboard(dl);
+                break;
+            case 16:
+                frontInstruments(dl);
+                break;
+        }
+    }
+    frontMenuFrameDraw();
+    frontMenuFrameTick(dl);
+    diRcpTrace(frontgfx, (char *) D_800AD380_ADF80, 0x27A);
+    *gfx = frontgfx;
+    *mtx = frontmtx;
+    *vtx = frontvtx;
+    *pol = frontpol;
+    disable = 0;
+    return 0;
+}
+
 
 void frontDemoMessage(Gfx **dl, s32 arg1) {
     s32 x;
@@ -172,7 +328,29 @@ void frontDemoMessage(Gfx **dl, s32 arg1) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontInstruments.s")
+void frontInstruments(Gfx **dl) {
+    s32 count;
+    Object **players;
+
+    players = objGetPlayerlist(&count);
+    if (multiPlayerGame) {
+        switch (multiGameType & 0xF) {
+            case 0:
+                frontDeathMatchScores(count, players, dl);
+                break;
+            case 6:
+                duckshootDrawTargets(&frontgfx, &frontmtx, &frontvtx, numberOfPlayers);
+                break;
+            case 4:
+                duckshootDrawTargets(&frontgfx, &frontmtx, &frontvtx, numberOfPlayers);
+                break;
+        }
+    } else if (racingInGame) {
+        sprintDrawInstruments(&frontgfx, &frontmtx, &frontvtx, numberOfPlayers);
+    } else if (count > 0) {
+        frontSingleInstruments(players[0], dl);
+    }
+}
 
 s32 frontUpdateTimer(s32 arg0, s32 limit, s32 delta) {
     s32 ret = 0;
@@ -255,6 +433,8 @@ void func_80059A04_5A604(void) {
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/loadFrontEndList.s")
 
+const char D_800AD370_ADF70[] = "front/front.c";
+const char D_800AD380_ADF80[] = "front/front.c";
 const char D_800AD390_ADF90[] = "loadFrontEndItem() - Item no %d out of range 0-%d\n";
 
 #pragma GLOBAL_ASM("asm/nonmatchings/menu/loadFrontEndItem.s")
@@ -314,7 +494,21 @@ s32 frontGetScreenMode(void) {
     return mode;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetScreenMode.s")
+void frontSetScreenMode(s32 mode) {
+    if ((mode & 3) != D_800A51A8_A5DA8) {
+        D_800A51A8_A5DA8 = mode & 3;
+        if (D_800A51A8_A5DA8 & 1) {
+            globalflags.res.bit30 = 1;
+        } else {
+            globalflags.res.bit30 = 0;
+        }
+        if (D_800A51A8_A5DA8 & 2) {
+            globalflags.res.bit29 = 1;
+        } else {
+            globalflags.res.bit29 = 0;
+        }
+    }
+}
 
 void frontStoreScreenMode(void) {
     D_800A51A4_A5DA4 = D_800A51A8_A5DA8;
@@ -397,7 +591,9 @@ s32 frontGet2PlayerSplit(void) {
     return split;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSet2PlayerSplit.s")
+void frontSet2PlayerSplit(s32 split) {
+    globalflags.res.bit28 = split & 1;
+}
 
 u8 frontGetTargetControl(s32 mode) {
     return selectedControlModes[mode & 3];

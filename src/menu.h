@@ -14,7 +14,11 @@ typedef struct Resbitfield {
     u32 rest : 28;
 } Resbitfield;
 extern Resbitfield someResVar;
-extern u64 globalflags;
+typedef struct GlobalFlags {
+    /* 0x00 */ u8 pad00[0x6C];
+    /* 0x6C */ Resbitfield res;
+} GlobalFlags;
+extern GlobalFlags globalflags;
 extern MultiPlayer multiPlayer[4]; // Size: 0xA0 - Total Size: 0x280
 extern MultiCharacter multiCharacter[4]; // Size: 0x76 - Total Size: 0x1D8
 extern u8 multiCharacterType[4];
