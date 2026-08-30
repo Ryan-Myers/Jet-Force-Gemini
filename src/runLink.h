@@ -90,11 +90,16 @@ extern s32 AllowSelfDestructing;
 
 // Forward declarations
 typedef struct RelocContext {
-    u32 unk0;      // 0x00 - unused?
-    u8 *textBase;  // 0x04 - gRelocTextBase
-    u8 *dataBase;  // 0x08 - gRelocDataBase
-    u8 *bssBase;   // 0x0C
-    u8 *relocBase; // 0x10 - relocation table base
+    union {
+        u8 *bases[5];      // An array of base addresses for different sections: unused, text, data, bss, reloc
+        struct {
+            u8 *unused;    // 0x00 - Unknown
+            u8 *textBase;  // 0x04 - gRelocTextBase
+            u8 *dataBase;  // 0x08 - gRelocDataBase
+            u8 *bssBase;   // 0x0C
+            u8 *relocBase; // 0x10 - relocation table base
+        };
+    };
 } RelocContext;
 extern RelocContext gRelocContext;
 
@@ -104,6 +109,31 @@ typedef struct PendingOverlayLoad {
 } PendingOverlayLoad; // 8 bytes
 
 extern PendingOverlayLoad gPendingOverlayLoads[16];
+
+/**
+ * Timer/state entry for overlay self-destruct system.
+ * gSelfDestructTimers points to an array indexed by overlay number.
+ *
+ * The 16-bit word layout:
+ *   - selfDestructTimer (10 bits, bits 6-15): Ticks until overlay auto-unloads, 0 = disabled
+ *   - refCount (6 bits, bits 0-5): Reference counter or usage flags
+ *
+ * runlinkTick() decrements both timers each frame.
+ * When selfDestructTimer reaches 0 and refCount is also 0, runlinkFreeCode() is called.
+ *
+ * runlinkSetDestructTimer(overlayIndex, selfDestructTimer, refCount) sets both fields.
+ */
+typedef struct OverlayTimerEntry {
+    union {
+        u16 packed; // Full 16-bit access: selfDestructTimer[9:0] << 6 | refCount[5:0]
+        struct {
+            u16 selfDestructTimer : 10;
+            u16 refCount : 6;
+        };
+    };
+} OverlayTimerEntry;
+
+extern OverlayTimerEntry *gSelfDestructTimers;
 extern s32 mmColourTagUnk2;
 extern s32 D_800B0B50_B1750;
 
@@ -117,6 +147,22 @@ extern void *__BSS_SECTION_START;
 extern void *__BSS_SECTION_END;
 extern void *__DATA_SECTION_START;
 extern void *__CODE_SECTION_START;
+
+extern s32 D_800A38F4_A44F4; // Some flag cleared at init
+extern s32 D_800A38F8_A44F8; // Symbol table size (D_1FED550 - D_1FEB040)
+
+// ROM addresses for runlink tables
+extern u8 symbolsTable_offsets_ROM_START[];
+extern u8 symbolsTable_offsets_ROM_END[];
+extern u8 overlayRomTable_ROM_START[];
+extern u8 overlayRomTable_ROM_END[];
+extern u8 overlayTable_ROM_START[];
+extern u8 overlayTable_ROM_END[];
+extern u8 mainRelocTable_ROM_START[];
+extern u8 mainRelocTable_ROM_END[];
+extern u8 overlayCode_ROM_START[];
+extern u8 overlayCode_ROM_END[];
+extern u8 overlayData_ROM_START[];
 
 // This function is unique in that it has no specific limit on arguments, 
 // and they can change even within the same function call it.
@@ -133,5 +179,6 @@ void runlinkFlushModules(void);
 char *GetSymbolName(u32 symbolIndex);
 void runlinkResumeCode(s32 overlayIndex);
 s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex);
+s32 runlinkEnsureJumpIsValid(void **jumpAddress);
 
 #endif

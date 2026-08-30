@@ -275,7 +275,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
 
     // Already loaded - return success
     if (overlay->VramBase != 0) {
-        return 1;
+        return TRUE;
     }
 
     // Check if this overlay is already being loaded (re-entrancy check)
@@ -283,7 +283,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
     if (relocCount != 0) { // check count *just in case*
         while (relocCount--) {
             if (overlayIndex == overlayLoad->overlayIndex) {
-                return 0; // Already in progress
+                return FALSE; // Already in progress
             }
             overlayLoad++;
         }
@@ -299,7 +299,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
     mmColourTagUnk2 = -1;
 
     if (overlay->VramBase == 0) {
-        return 0; // Allocation failed
+        return FALSE; // Allocation failed
     }
 
     // If there's a secondary relocation table, allocate and load it
@@ -307,7 +307,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
         relocTable = (RelocationEntry *) mmAlloc(overlay->SecondaryRelocationTableSize, COLOUR_TAG_GREY);
         if (relocTable == NULL) {
             mmFree((void *) overlay->VramBase);
-            return 0;
+            return FALSE;
         }
         // Load secondary relocation table from ROM
         romCopy(overlay->RomAddress + overlay->TextSize + overlay->DataSize + overlay->RelocationTableSize,
@@ -397,7 +397,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
                 gRelocContext.bssBase = (u8 *) gRelocContext.dataBase + overlay->DataSize;
                 gRelocContext.relocBase = (u8 *) gRelocContext.bssBase + overlay->RodataSize;
                 relocEntry = (RelocationEntry *) gRelocContext.relocBase;
-                relocCount = (u32) overlay->RelocationTableSize >> 3;
+                relocCount = overlay->RelocationTableSize / sizeof(RelocationEntry);
             }
 
             while (relocCount-- > 0) {
@@ -428,10 +428,71 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
         ((void (*)(void))(overlay->VramBase + overlay->InitFunction))();
     }
 
-    return 1;
+    return TRUE;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkEnsureJumpIsValid.s")
+s32 runlinkEnsureJumpIsValid(void **jumpAddress) {
+    OverlayHeader *overlay;
+    RelocationEntry *relocEntry;
+    s32 relocCount;
+    s32 overlayIndex;
+    s32 section;
+    s32 overlayNumber;
+
+    if (*jumpAddress != TrapDanglingJump) {
+        return FALSE;
+    }
+
+    if (overlayCount) {}
+    if (1) {}
+    if (1) {}
+
+    overlay = overlayTable;
+    for (overlayIndex = 0; overlayIndex < overlayCount; overlayIndex++) {
+        if (overlay->VramBase != 0) {
+            if (overlayIndex == 0) {
+                // Main module - use special relocation context
+                gRelocContext.textBase = (u8 *) &__CODE_SECTION_START; // Start of .text
+                gRelocContext.dataBase = (u8 *) &__DATA_SECTION_START; // Start of .data
+                gRelocContext.bssBase = (u8 *) &__BSS_SECTION_START;
+                gRelocContext.relocBase = (u8 *) mainRelocTable;
+                relocEntry = (RelocationEntry *) mainRelocTable;
+                relocCount = mainRelocCount;
+            } else {
+                // Other overlay - set up context for it
+                gRelocContext.textBase = (u8 *) overlay->VramBase;
+                gRelocContext.dataBase = (u8 *) gRelocContext.textBase + overlay->TextSize;
+                gRelocContext.bssBase = (u8 *) gRelocContext.dataBase + overlay->DataSize;
+                gRelocContext.relocBase = (u8 *) gRelocContext.bssBase + overlay->RodataSize;
+                relocEntry = (RelocationEntry *) gRelocContext.relocBase;
+                relocCount = overlay->RelocationTableSize / sizeof(RelocationEntry);
+            }
+            while (relocCount--) {
+                switch (relocEntry->relocType) {
+                    case RELOC_TYPE_DATA:
+                        section = 2; // dataBase
+                        break;
+                    default:
+                        section = 1; // textBase
+                        break;
+                }
+
+                if ((u8 *) jumpAddress == (gRelocContext.bases[section] + relocEntry->targetOffset)) {
+                    overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
+                    if (overlayNumber >= 0xFFC) {
+                        overlayNumber = 0;
+                    }
+                    runlinkDownloadCode(overlayNumber);
+                    return TRUE;
+                }
+                relocEntry++;
+            }
+        }
+        overlay++;
+    }
+
+    return FALSE;
+}
 
 s32 runlinkIsModuleLoaded(s32 module) {
     return overlayTable[module].VramBase;
@@ -475,31 +536,6 @@ void runlinkCallResumeFunction(s32 overlayIndex) {
 }
 
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkFreeCode.s")
-
-/**
- * Timer/state entry for overlay self-destruct system.
- * gSelfDestructTimers points to an array indexed by overlay number.
- *
- * The 16-bit word layout:
- *   - selfDestructTimer (10 bits, bits 6-15): Ticks until overlay auto-unloads, 0 = disabled
- *   - refCount (6 bits, bits 0-5): Reference counter or usage flags
- *
- * runlinkTick() decrements both timers each frame.
- * When selfDestructTimer reaches 0 and refCount is also 0, runlinkFreeCode() is called.
- *
- * runlinkSetDestructTimer(overlayIndex, selfDestructTimer, refCount) sets both fields.
- */
-typedef struct OverlayTimerEntry {
-    union {
-        u16 packed; // Full 16-bit access: selfDestructTimer[9:0] << 6 | refCount[5:0]
-        struct {
-            u16 selfDestructTimer : 10;
-            u16 refCount : 6;
-        };
-    };
-} OverlayTimerEntry;
-
-extern OverlayTimerEntry *gSelfDestructTimers;
 
 /**
  * Unloads an overlay and patches all references back to TrapDanglingJump.
@@ -613,21 +649,6 @@ void runlinkFlushModules(void) {
         pendingLoad++;
     }
 }
-
-extern s32 D_800A38F4_A44F4; // Some flag cleared at init
-extern s32 D_800A38F8_A44F8; // Symbol table size (D_1FED550 - D_1FEB040)
-
-// ROM addresses for runlink tables
-extern u8 symbolsTable_offsets_ROM_START[];
-extern u8 symbolsTable_offsets_ROM_END[];
-extern u8 overlayRomTable_ROM_START[];
-extern u8 overlayRomTable_ROM_END[];
-extern u8 overlayTable_ROM_START[];
-extern u8 overlayTable_ROM_END[];
-extern u8 mainRelocTable_ROM_START[];
-extern u8 mainRelocTable_ROM_END[];
-extern u8 overlayCode_ROM_START[];
-extern u8 overlayCode_ROM_END[];
 
 #ifdef NON_EQUIVALENT
 /**
