@@ -10,6 +10,12 @@ const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";
 const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
 #endif
 
+// .data
+s32 D_800A38F0_A44F0 = FALSE;
+s32 D_800A38F4_A44F4 = TRUE;
+s32 D_800A38F8_A44F8 = 0; // symbol table size?
+s32 AllowSelfDestructing = TRUE;
+
 // .bss
 OverlayHeader *overlayTable;
 RelocTableEntry *mainRelocTable;

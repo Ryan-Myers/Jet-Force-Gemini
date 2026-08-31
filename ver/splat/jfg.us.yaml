@@ -314,7 +314,7 @@ segments:
       - [0xA41B0, data, rcpFast3d]
       - [0xA44B0, data, sched]
       - [0xA44E0, .data, squads]
-      - [0xA44F0, data, runLink]
+      - [0xA44F0, .data, runLink]
       - [0xA4500, .data, gameVi]
       - [0xA4790, data, textures]
       - [0xA5B20, .data, screen]
