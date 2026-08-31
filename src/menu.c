@@ -1,11 +1,10 @@
 #include "menu.h"
-#include "models.h"
-#include "textures.h"
 #include "audio.h"
 #include "common.h"
 #include "font.h"
 #include "gameVi.h"
 #include "gsSnd.h"
+#include "models.h"
 #include "overlays/overlay12.h"
 #include "overlays/overlay14.h"
 #include "overlays/overlay31.h"
@@ -20,6 +19,7 @@
 #include "overlays/overlay9.h"
 #include "PR/n_libaudio.h"
 #include "runLink.h"
+#include "textures.h"
 
 extern s32 currentGameTime;
 s8 mainGetPauseMode(void);
@@ -437,7 +437,10 @@ void frontPrintNum(s32 number, s32 x, s32 y, s32 fontId, s32 minDigits, u32 colo
     frontgfx++;
     cmd++;
     {
-        Gfx *_g = frontgfx++; nCmds = tex->numberOfCommands - 1; _g->words.w0 = (_SHIFTL(G_DMADL, 24, 8) | _SHIFTL(nCmds, 16, 8) | _SHIFTL((nCmds * 8), 0, 16)); _g->words.w1 = (unsigned int) ((s32) cmd + 0x80000000);
+        Gfx *_g = frontgfx++;
+        nCmds = tex->numberOfCommands - 1;
+        _g->words.w0 = (_SHIFTL(G_DMADL, 24, 8) | _SHIFTL(nCmds, 16, 8) | _SHIFTL((nCmds * 8), 0, 16));
+        _g->words.w1 = (unsigned int) ((s32) cmd + 0x80000000);
     }
     gDPSetPrimColorRGBA(frontgfx++, colour1);
     digits = 0;
@@ -445,8 +448,7 @@ void frontPrintNum(s32 number, s32 x, s32 y, s32 fontId, s32 minDigits, u32 colo
         sVal = ((number - 1) % 10) * (charW << 5);
         xh -= advance << 2;
         xl -= advance << 2;
-        gSPTextureRectangle(frontgfx++, xl, y << 2, xh, yh, 0,
-                            sVal, sBase, 0x400, -0x400);
+        gSPTextureRectangle(frontgfx++, xl, y << 2, xh, yh, 0, sVal, sBase, 0x400, -0x400);
         digits++;
         number /= 10;
     }
@@ -455,8 +457,7 @@ void frontPrintNum(s32 number, s32 x, s32 y, s32 fontId, s32 minDigits, u32 colo
     while (digits != 0) {
         xh -= advance << 2;
         xl -= advance << 2;
-        gSPTextureRectangle(frontgfx++, xl, y << 2, xh, yh, 0,
-                            9 * (charW << 5), sBase, 0x400, -0x400);
+        gSPTextureRectangle(frontgfx++, xl, y << 2, xh, yh, 0, 9 * (charW << 5), sBase, 0x400, -0x400);
         number /= 10;
         digits--;
     }
@@ -501,8 +502,12 @@ void frontDrawRectangles(Gfx **dList, s32 count, FrontRect *rects, s32 arg3) {
             x1 = rects->x1;
             y1 = rects->y1;
             if (x1 < width && y1 < height) {
-                if (x1 < 0) { x1 = 0; }
-                if (y1 < 0) { y1 = 0; }
+                if (x1 < 0) {
+                    x1 = 0;
+                }
+                if (y1 < 0) {
+                    y1 = 0;
+                }
                 FRONT_CLAMP_MAX(x2, width);
                 FRONT_CLAMP_MAX(y2, height);
                 if (colour != rects->colour) {
@@ -803,8 +808,7 @@ void frontDrawObj(s32 index) {
         gDPPipeSync(frontgfx++);
         gDPSetPrimColor(frontgfx++, 0, 0, frR, D_800A51B8_A5DB8, frB, objtrans);
         gDPSetEnvColorRGBA(frontgfx++, -0x100);
-        camDo2DSprite(&frontgfx, &frontmtx, &frontvtx, &seg,
-                      tex, D_800A51C4_A5DC4, objtrans);
+        camDo2DSprite(&frontgfx, &frontmtx, &frontvtx, &seg, tex, D_800A51C4_A5DC4, objtrans);
         gDPPipeSync(frontgfx++);
         gDPSetPrimColorRGBA(frontgfx++, -1);
         return;
