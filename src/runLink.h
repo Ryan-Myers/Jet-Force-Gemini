@@ -123,7 +123,6 @@ typedef struct OverlayTimerEntry {
     };
 } OverlayTimerEntry;
 
-
 extern OverlayHeader D_1ED2780[];   // overlayTable
 extern RomTableEntry D_1ED0270[]; // overlayRomTable
 extern RelocTableEntry D_1ECF220[];     // mainRelocTable ROM address

@@ -4,6 +4,7 @@
 #include "mips.h"
 #include "pi.h"
 
+// .rodata
 const char D_800ADC90[] = "WARNING: Unimplemented linkage operation %d\n";
 const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";
 #ifdef VERSION_us

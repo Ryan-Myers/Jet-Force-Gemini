@@ -105,7 +105,7 @@ segments:
       - [0x763A0, hasm, ../libultra/src/os/exceptasm]
       - [0x76D50, c, ../libultra/src/os/createthread]
       - [0x76E40, c, ../libultra/src/gu/perspective]
-      - [0x76FC0, c, refractOutputAssembler] # Could be hasm as it uses bnel which isn't mips1
+      - [0x76FC0, asm, hasm/refractOutputAssembler]
       - [0x773A0, c, anim]
       - [0x7ADF0, c, hit]
       - [0x84A40, c, fmvInit]
@@ -433,7 +433,7 @@ segments:
       - { type: .bss, vram: 0x800FBB50, name: joy }
       - { type: .bss, vram: 0x800FBBD0, name: level }
       - { type: bss, vram: 0x800FBEC0, name: main }
-      - { type: bss, vram: 0x800FE2F0, name: refractOutputAssembler }
+      - { type: bss, vram: 0x800FE2F0, name: hasm/refractOutputAssembler }
       - { type: .bss, vram: 0x800FE310, name: memory }
       - { type: .bss, vram: 0x800FE880, name: ../libultra/src/io/motor }
       - { type: bss, vram: 0x800FEAC0, name: saves }

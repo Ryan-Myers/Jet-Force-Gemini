@@ -77,7 +77,7 @@ endif
 
 MATH_DIR  = $(SRC_DIR)/math
 LIBULTRA_DIR = libultra
-ASM_DIRS  = $(ASM_DIR) $(ASM_DIR)/data $(ASM_DIR)/nonmatchings $(ASM_DIR)/data/libultra $(ASM_DIR)/hasm $(ASM_DIR)/libultra $(ASM_DIR)/libultra/src/flash
+ASM_DIRS  = $(ASM_DIR) $(ASM_DIR)/data $(ASM_DIR)/nonmatchings $(ASM_DIR)/data/libultra $(ASM_DIR)/data/hasm $(ASM_DIR)/hasm $(ASM_DIR)/libultra $(ASM_DIR)/libultra/src/flash
 HASM_DIRS = $(SRC_DIR)/hasm $(SRC_DIR)/hasm/ido $(LIBULTRA_DIR)/src/os $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/libc $(LIBULTRA_DIR)/src/naudio
 LIBULTRA_SRC_DIRS  = $(LIBULTRA_DIR) $(LIBULTRA_DIR)/src $(LIBULTRA_DIR)/src/naudio 
 LIBULTRA_SRC_DIRS += $(LIBULTRA_DIR)/src/debug $(LIBULTRA_DIR)/src/gu $(LIBULTRA_DIR)/src/io 
