@@ -366,7 +366,9 @@ typedef struct ObjectHeader48 {
 } ObjectHeader48;
 
 typedef struct ObjectHeader {
-             u8 pad0[0x25];
+             u8 pad0[0x1F];
+  /* 0x1F */ s8 unk1F;
+             u8 pad20[0x5];
   /* 0x25 */ s8 unk25;
              u8 pad26[0x20];
   /* 0x48 */ ObjectHeader48 *unk48;
@@ -395,7 +397,9 @@ typedef struct ObjectSegment {
   /* 0x0000 */ ObjectTransform trans;
   /* 0x0018 */ u8 pad18[0x10];
   /* 0x0028 */ f32 unk28; /* animation value; sprDPset reads it as float bits */
-  /* 0x002C */ u8 pad2C[0x10];
+  /* 0x002C */ u8 pad2C[0xD];
+  /* 0x0039 */ u8 unk39;
+  /* 0x003A */ u8 pad3A[0x2];
   /* 0x003C */ s32 unk3C;
   /* 0x0040 */ ObjectHeader *header;
 } ObjectSegment;
@@ -413,7 +417,8 @@ typedef struct Object {
   /* 0x004A */ s16 unk4A;
   /* 0x004C */ u8 pad4C[0x68 - 0x4C];
   /* 0x0068 */ Object_Racer *racer; //Object_64 in DKR.
-  /* 0x006C */ u8 pad6C[8];
+  /* 0x006C */ struct Object_Racer **unk6C;
+  /* 0x0070 */ u8 pad70[4];
   /* 0x0074 */ s32 *unk74;
   /* 0x0078 */ u8 pad78[0x28];
   /* 0x00A0 */ u8 unkA0;

@@ -1,4 +1,6 @@
 #include "menu.h"
+#include "models.h"
+#include "textures.h"
 #include "audio.h"
 #include "common.h"
 #include "font.h"
@@ -57,26 +59,48 @@ extern u8 *D_800FF3A8_B1938[];
 extern s16 D_800A51D4_A5DD4;
 void *mmAlloc(s32 size, u32 colourTag);
 u32 *piRomLoad(u32 assetIndex);
+extern u32 *D_800A51AC_A5DAC;
+/* NOTE: pi.h declares this second parameter as u32.  It is void * here on
+   purpose: with a u32 parameter the (u32) cast on front_text becomes a separate
+   value and IDO emits `move a1,v1` instead of loading straight into a1. */
+s32 piRomLoadSection(u32 assetIndex, void *address, s32 assetOffset, s32 size);
 
-void frontInstruments(Gfx **dl);
+void frontInstruments(s32 updateRate);
+Object *objSetupObject(StaticInstanceSpawn *spawn, s32 arg1);
+
+/* menu.c builds a SHORTER spawn record than CreateStaticInstance's
+   StaticInstanceSpawn: only fields through 0x0C are written and the local is
+   0x10 bytes, which is what puts it at sp+0x28 in a 0x38 frame. */
+typedef struct FrontEndSpawn {
+    /* 0x0 */ s16 objectId;
+    /* 0x2 */ s8 unk2;
+    /* 0x3 */ u8 pad3;
+    /* 0x4 */ s16 unk4;
+    /* 0x6 */ s16 unk6;
+    /* 0x8 */ s16 unk8;
+    /* 0xA */ s8 unkA;
+    /* 0xB */ s8 unkB;
+    /* 0xC */ s8 unkC;
+    /* 0xD */ u8 padD[0x3];
+} FrontEndSpawn;
 void diRcpTrace(Gfx *gdl, char *file, s32 line);
 extern const char D_800AD370_ADF70[];
 extern const char D_800AD380_ADF80[];
 extern void *frontpol;
-void func_80059A98_5A698(Gfx **dl);
+void func_80059A98_5A698(s32 updateRate);
 s32 frontInitMultiInstruments(void);
-void frontRarepage(Gfx **dl);
-void frontStartScreen(Gfx **dl);
-void frontOptionsPage(Gfx **dl);
-void frontMap(Gfx **dl);
-void frontCharSelect(Gfx **dl);
-void frontMultiSelect(Gfx **dl);
-void frontMultiModeSelect(Gfx **dl);
-void frontMultiStats(Gfx **dl);
-void frontCredits(Gfx **dl);
-void frontKeyboard(Gfx **dl);
+void frontRarepage(s32 updateRate);
+void frontStartScreen(s32 updateRate);
+void frontOptionsPage(s32 updateRate);
+void frontMap(s32 updateRate);
+void frontCharSelect(s32 updateRate);
+void frontMultiSelect(s32 updateRate);
+void frontMultiModeSelect(s32 updateRate);
+void frontMultiStats(s32 updateRate);
+void frontCredits(s32 updateRate);
+void frontKeyboard(s32 updateRate);
 void frontMenuFrameDraw(void);
-void frontMenuFrameTick(Gfx **dl);
+void frontMenuFrameTick(s32 updateRate);
 void frontInitMenuFrame(void);
 void frontInitRarepage(void);
 void frontInitStartScreen(void);
@@ -95,10 +119,10 @@ extern Gfx *frontgfx;
 extern Mtx *frontmtx;
 extern Vtx *frontvtx;
 Object **objGetPlayerlist(s32 *count);
-void frontDeathMatchScores(s32 count, Object **players, Gfx **dl);
+void frontDeathMatchScores(s32 count, Object **players, s32 updateRate);
 void duckshootDrawTargets(Gfx **gfx, Mtx **mtx, Vtx **vtx, s32 players);
 void sprintDrawInstruments(Gfx **gfx, Mtx **mtx, Vtx **vtx, s32 players);
-void frontSingleInstruments(Object *player, Gfx **dl);
+void frontSingleInstruments(Object *player, s32 updateRate);
 extern u8 D_800A5194_A5D94;
 void setLanguage(s32 language);
 void fxScreenEffect(s32 arg0, s32 *screen, s32 width, s32 height, s32 x1, s32 y1, s32 x2, s32 y2, s32 arg8);
@@ -115,10 +139,32 @@ typedef struct FrontRect {
     /* 0x8 */ u32 colour;
 } FrontRect;
 
-void frontDrawRectangles(s32 arg0, s32 count, FrontRect *rects, s32 arg3);
+extern Gfx D_800A58F8_A64F8[];
+void frontDrawRectangles(Gfx **dList, s32 count, FrontRect *rects, s32 arg3);
+void freeFrontEndItem(s32 item);
+void objFreeObject(Object *obj);
+void objDoFrees(void);
+void loadFrontEndItem(s32 item);
+void setupFrontEndObject(s32 index);
+void freeFrontEndList(s16 *list);
+void loadFrontEndList(s16 *list);
+void setupFrontEndList(s16 *list);
+extern void *frontendptrs[];
+extern u8 D_800FF6C8_B1C58[];
+extern s16 *D_800A51D0_A5DD0;
+extern s16 D_800A51D8_A5DD8;
 extern s32 D_800FF3E8_B1978[4];
-extern u8 frontJoyDxRepeat[4];
-extern u8 D_800FF3E4_B1974[4];
+extern s32 frontJoyHeld[4];
+extern s32 frontJoyPressed[4];
+extern s8 frontJoyDx[4];
+extern s8 frontJoyDy[4];
+/* joy.h is not included here; this TU sees the joystick getters as returning
+   int, which is what the ROM's code assumes (no narrowing after the calls). */
+s32 joyGetButtons(s32 player);
+s32 joyGetStickX(s32 player);
+s32 joyGetStickY(s32 player);
+extern s8 frontJoyDxRepeat[4];
+extern s8 D_800FF3E4_B1974[4];
 extern u8 okayed;
 extern u8 disable;
 extern u8 numberOfCameras;
@@ -126,7 +172,45 @@ s32 levelGetScreenMode(void);
 void frontInitMode(void);
 void func_80059A04_5A604(void);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/setLanguage.s")
+void setLanguage(s32 language) {
+    s32 idx;
+    s32 i;
+    s32 size;
+
+    if (D_800A51AC_A5DAC == NULL) {
+        D_800A51AC_A5DAC = piRomLoad(7);
+    }
+    switch (language) {
+        default:
+            idx = 1;
+            break;
+        case 4:
+            idx = 5;
+            break;
+        case 3:
+            idx = 4;
+            break;
+        case 2:
+            idx = 3;
+            break;
+        case 1:
+            idx = 2;
+            break;
+    }
+    size = D_800A51AC_A5DAC[idx + 1];
+    idx = D_800A51AC_A5DAC[idx];
+    size -= idx;
+    if (front_text != NULL) {
+        piRomLoadSection(6, front_text, idx, size);
+        for (i = 0; i < (s32) D_800A51AC_A5DAC[0]; i++) {
+            if ((s32) front_text[i] == -1) {
+                front_text[i] = NULL;
+            } else {
+                front_text[i] = (char *) ((s32) front_text[i] + (s32) front_text);
+            }
+        }
+    }
+}
 
 void initFront(void) {
     s32 i;
@@ -294,8 +378,8 @@ u8 frontGetMode(void) {
     return frontEndMode;
 }
 
-s32 frontUpdate(Gfx **gfx, Mtx **mtx, Vtx **vtx, void **pol, Gfx **dl) {
-    func_80059A98_5A698(dl);
+s32 frontUpdate(Gfx **gfx, Mtx **mtx, Vtx **vtx, void **pol, s32 updateRate) {
+    func_80059A98_5A698(updateRate);
     frontgfx = *gfx;
     frontmtx = *mtx;
     frontvtx = *vtx;
@@ -306,46 +390,46 @@ s32 frontUpdate(Gfx **gfx, Mtx **mtx, Vtx **vtx, void **pol, Gfx **dl) {
             case 0:
                 break;
             case 2:
-                frontRarepage(dl);
+                frontRarepage(updateRate);
                 break;
             case 3:
-                frontStartScreen(dl);
+                frontStartScreen(updateRate);
                 break;
             case 4:
-                frontOptionsPage(dl);
+                frontOptionsPage(updateRate);
                 break;
             case 17:
-                frontMap(dl);
+                frontMap(updateRate);
                 break;
             case 5:
-                frontCharSelect(dl);
+                frontCharSelect(updateRate);
                 break;
             case 6:
-                frontMultiSelect(dl);
+                frontMultiSelect(updateRate);
                 break;
             case 8:
-                frontMultiModeSelect(dl);
+                frontMultiModeSelect(updateRate);
                 break;
             case 18:
             case 19:
             case 20:
             case 21:
             case 22:
-                frontMultiStats(dl);
+                frontMultiStats(updateRate);
                 break;
             case 23:
-                frontCredits(dl);
+                frontCredits(updateRate);
                 break;
             case 24:
-                frontKeyboard(dl);
+                frontKeyboard(updateRate);
                 break;
             case 16:
-                frontInstruments(dl);
+                frontInstruments(updateRate);
                 break;
         }
     }
     frontMenuFrameDraw();
-    frontMenuFrameTick(dl);
+    frontMenuFrameTick(updateRate);
     diRcpTrace(frontgfx, (char *) D_800AD380_ADF80, 0x27A);
     *gfx = frontgfx;
     *mtx = frontmtx;
@@ -375,7 +459,7 @@ void frontDemoMessage(Gfx **dl, s32 arg1) {
     }
 }
 
-void frontInstruments(Gfx **dl) {
+void frontInstruments(s32 updateRate) {
     s32 count;
     Object **players;
 
@@ -383,7 +467,7 @@ void frontInstruments(Gfx **dl) {
     if (multiPlayerGame) {
         switch (multiGameType & 0xF) {
             case 0:
-                frontDeathMatchScores(count, players, dl);
+                frontDeathMatchScores(count, players, updateRate);
                 break;
             case 6:
                 duckshootDrawTargets(&frontgfx, &frontmtx, &frontvtx, numberOfPlayers);
@@ -395,7 +479,7 @@ void frontInstruments(Gfx **dl) {
     } else if (racingInGame) {
         sprintDrawInstruments(&frontgfx, &frontmtx, &frontvtx, numberOfPlayers);
     } else if (count > 0) {
-        frontSingleInstruments(players[0], dl);
+        frontSingleInstruments(players[0], updateRate);
     }
 }
 
@@ -412,9 +496,136 @@ s32 frontUpdateTimer(s32 arg0, s32 limit, s32 delta) {
     return ret;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontPrintNum.s")
+extern Gfx D_800A58A0_A64A0[];
+extern Gfx D_A58E8[];
+TextureHeader *texFrame(TextureHeader *texHead, s32 offset);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontDrawRectangles.s")
+void frontPrintNum(s32 number, s32 x, s32 y, s32 fontId, s32 minDigits, u32 colour1, u32 colour2) {
+    TextureHeader *tex;
+    s32 xl;
+    Gfx *cmd;
+    s32 xh;
+    s32 yh;
+    s32 nCmds;
+    s32 sBase;
+    s32 advance;
+    s32 charW;
+    s32 digits;
+    s32 pad;
+    s32 width;
+    s32 height;
+    s32 sVal;
+
+    viGetCurrentSize(&width, &height);
+    x += (u32) width >> 1;
+    y = ((u32) height >> 1) - y;
+    tex = frontendptrs[fontId];
+    pad = fontId;
+    if (tex == NULL) {
+        return;
+    }
+    if (pad != 8) {
+        if (pad == 9) {
+            charW = 8;
+            advance = 8;
+        }
+    } else {
+        charW = 11;
+        advance = 12;
+    }
+    gSPDisplayList(frontgfx++, D_800A58A0_A64A0);
+    gDkrDmaDisplayList(frontgfx++, D_A58E8, 2);
+    xl = x << 2;
+    sBase = (tex->height - 1) << 5;
+    xh = (charW << 2) + xl;
+    yh = (tex->height << 2) + (y << 2);
+    cmd = tex->cmd;
+    frontgfx->words.w0 = cmd->words.w0;
+    frontgfx->words.w1 = (s32) texFrame(tex, 0) + 0x80000000;
+    frontgfx++;
+    cmd++;
+    {
+        Gfx *_g = frontgfx++; nCmds = tex->numberOfCommands - 1; _g->words.w0 = (_SHIFTL(G_DMADL, 24, 8) | _SHIFTL(nCmds, 16, 8) | _SHIFTL((nCmds * 8), 0, 16)); _g->words.w1 = (unsigned int) ((s32) cmd + 0x80000000);
+    }
+    gDPSetPrimColorRGBA(frontgfx++, colour1);
+    digits = 0;
+    while (number != 0) {
+        sVal = ((number - 1) % 10) * (charW << 5);
+        xh -= advance << 2;
+        xl -= advance << 2;
+        gSPTextureRectangle(frontgfx++, xl, y << 2, xh, yh, 0,
+                            sVal, sBase, 0x400, -0x400);
+        digits++;
+        number /= 10;
+    }
+    gDPSetPrimColorRGBA(frontgfx++, colour2);
+    digits = minDigits - digits;
+    while (digits != 0) {
+        xh -= advance << 2;
+        xl -= advance << 2;
+        gSPTextureRectangle(frontgfx++, xl, y << 2, xh, yh, 0,
+                            9 * (charW << 5), sBase, 0x400, -0x400);
+        number /= 10;
+        digits--;
+    }
+}
+
+/* IDO will copy-propagate the comparison's register into the assignment if the
+   two live in one `if` statement, emitting `move` where the ROM re-reads the
+   bound from the stack.  Splitting them with the usual do/while(0) + break
+   keeps them separate statements and restores the `lw`. */
+#define FRONT_CLAMP_MAX(v, m) \
+    do {                      \
+        if ((v) <= (m)) {     \
+            break;            \
+        }                     \
+        (v) = (m);            \
+    } while (0)
+
+void frontDrawRectangles(Gfx **dList, s32 count, FrontRect *rects, s32 arg3) {
+    /* These five must be declared ahead of width/height: they supply the 20
+       bytes that put width at sp+0x58 and height at sp+0x54. */
+    s32 x1;
+    s32 y1;
+    s32 x2;
+    s32 y2;
+    u32 colour;
+    s32 width;
+    s32 height;
+
+    viGetCurrentSize(&width, &height);
+    gSPDisplayList((*dList)++, D_800A58F8_A64F8);
+    if (arg3) {
+        gDPSetOtherMode((*dList)++, 0x082C0F, 0x00504340);
+    } else {
+        gDPSetOtherMode((*dList)++, 0x082C0F, 0x00504240);
+    }
+    colour = rects->colour;
+    gDPSetPrimColorRGBA((*dList)++, colour);
+    while (count--) {
+        x2 = rects->x2;
+        y2 = rects->y2;
+        if (x2 >= 0 && y2 >= 0) {
+            x1 = rects->x1;
+            y1 = rects->y1;
+            if (x1 < width && y1 < height) {
+                if (x1 < 0) { x1 = 0; }
+                if (y1 < 0) { y1 = 0; }
+                FRONT_CLAMP_MAX(x2, width);
+                FRONT_CLAMP_MAX(y2, height);
+                if (colour != rects->colour) {
+                    colour = rects->colour;
+                    gDPPipeSync((*dList)++);
+                    gDPSetPrimColorRGBA((*dList)++, colour);
+                }
+                gDPFillRectangle((*dList)++, x1, y1, x2, y2);
+            }
+        }
+        rects++;
+    }
+    texDPInit(dList);
+    gDPSetPrimColorRGBA((*dList)++, -1);
+}
 
 void frontDrawRectangle(s32 arg0, s32 x1, s32 y1, s32 x2, s32 y2, u32 colour) {
     FrontRect rect;
@@ -424,7 +635,7 @@ void frontDrawRectangle(s32 arg0, s32 x1, s32 y1, s32 x2, s32 y2, u32 colour) {
     rect.x2 = x2;
     rect.y2 = y2;
     rect.colour = colour;
-    frontDrawRectangles(arg0, 1, &rect, 1);
+    frontDrawRectangles((Gfx **) arg0, 1, &rect, 1);
 }
 
 void frontFlashScreen(s32 arg0, s32 player, s32 arg2) {
@@ -472,21 +683,174 @@ void func_80059A04_5A604(void) {
     }
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/func_80059A98_5A698.s")
+void func_80059A98_5A698(s32 updateRate) {
+    s32 i;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/freeFrontEndList.s")
+    for (i = 0; i < 4; i++) {
+        frontJoyHeld[i] = joyGetButtons(i);
+        frontJoyPressed[i] = frontJoyHeld[i] & ~D_800FF3E8_B1978[i];
+        D_800FF3E8_B1978[i] = frontJoyHeld[i];
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/freeFrontEndItem.s")
+        frontJoyDx[i] = joyGetStickX(i);
+        if (frontJoyDx[i] < -0x23) {
+            if (frontJoyDxRepeat[i] < 0) {
+                frontJoyDxRepeat[i] += updateRate;
+                if (frontJoyDxRepeat[i] >= 0) {
+                    frontJoyDxRepeat[i] = -0xF;
+                } else {
+                    frontJoyDx[i] = 0;
+                }
+            } else {
+                frontJoyDxRepeat[i] = -0x14;
+            }
+        } else if (frontJoyDx[i] >= 0x24) {
+            if (frontJoyDxRepeat[i] > 0) {
+                frontJoyDxRepeat[i] -= updateRate;
+                if (frontJoyDxRepeat[i] <= 0) {
+                    frontJoyDxRepeat[i] = 0xF;
+                } else {
+                    frontJoyDx[i] = 0;
+                }
+            } else {
+                frontJoyDxRepeat[i] = 0x14;
+            }
+        } else {
+            frontJoyDx[i] = 0;
+            frontJoyDxRepeat[i] = 0;
+        }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/loadFrontEndList.s")
+        frontJoyDy[i] = joyGetStickY(i);
+        if (frontJoyDy[i] < -0x23) {
+            if (D_800FF3E4_B1974[i] < 0) {
+                D_800FF3E4_B1974[i] += updateRate;
+                if (D_800FF3E4_B1974[i] >= 0) {
+                    D_800FF3E4_B1974[i] = -0xF;
+                } else {
+                    frontJoyDy[i] = 0;
+                }
+            } else {
+                D_800FF3E4_B1974[i] = -0x14;
+            }
+        } else if (frontJoyDy[i] >= 0x24) {
+            if (D_800FF3E4_B1974[i] > 0) {
+                D_800FF3E4_B1974[i] -= updateRate;
+                if (D_800FF3E4_B1974[i] <= 0) {
+                    D_800FF3E4_B1974[i] = 0xF;
+                } else {
+                    frontJoyDy[i] = 0;
+                }
+            } else {
+                D_800FF3E4_B1974[i] = 0x14;
+            }
+        } else {
+            frontJoyDy[i] = 0;
+            D_800FF3E4_B1974[i] = 0;
+        }
+    }
+}
+
+void freeFrontEndList(s16 *list) {
+    s16 *p;
+    s32 item;
+
+    if (*list == -1) {
+        return;
+    }
+    p = list;
+    do {
+        item = *p;
+        p++;
+        freeFrontEndItem(item);
+    } while (*p != -1);
+}
+
+void freeFrontEndItem(s32 item) {
+    if (D_800FF6C8_B1C58[item] != 0) {
+        if (frontendptrs[item] != NULL) {
+            if ((D_800A51D0_A5DD0[item] & 0xC000) == 0xC000 && frontendptrs[item] != NULL) {
+                texFreeTexture((void *) (u32) frontendptrs[item]);
+            } else if (D_800A51D0_A5DD0[item] & 0x8000) {
+                texFreeSprite((void *) (u32) frontendptrs[item]);
+            } else if (D_800A51D0_A5DD0[item] & 0x4000) {
+                objFreeObject((void *) (u32) frontendptrs[item]);
+            } else {
+                modFreeModel((void *) (u32) frontendptrs[item]);
+            }
+        }
+        frontendptrs[item] = NULL;
+        D_800FF6C8_B1C58[item] = 0;
+        D_800A51D8_A5DD8--;
+        objDoFrees();
+    }
+}
+
+void loadFrontEndList(s16 *list) {
+    s16 *p;
+    s32 item;
+
+    if (*list == -1) {
+        return;
+    }
+    p = list;
+    do {
+        item = *p;
+        p++;
+        loadFrontEndItem(item);
+    } while (*p != -1);
+}
 
 const char D_800AD370_ADF70[] = "front/front.c";
 const char D_800AD380_ADF80[] = "front/front.c";
 const char D_800AD390_ADF90[] = "loadFrontEndItem() - Item no %d out of range 0-%d\n";
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/loadFrontEndItem.s")
+ModelInstance_JFG *modLoadModel(s32 id, s32 arg1);
+void loadFrontEndItem(s32 item) {
+    FrontEndSpawn spawn;
+    Object *obj;
+    Object_Racer *racer;
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/setupFrontEndList.s")
+    if (D_800FF6C8_B1C58[item] == 0) {
+        if ((D_800A51D0_A5DD0[item] & 0xC000) == 0xC000) {
+            frontendptrs[item] = texLoadTexture(D_800A51D0_A5DD0[item] & 0x3FFF);
+        } else if (D_800A51D0_A5DD0[item] & 0x8000) {
+            frontendptrs[item] = texLoadSprite(D_800A51D0_A5DD0[item] & 0x3FFF, 0);
+        } else if (D_800A51D0_A5DD0[item] & 0x4000) {
+            spawn.objectId = D_800A51D0_A5DD0[item] & 0x3FFF;
+            spawn.unk2 = 10;
+            spawn.unk4 = 0;
+            spawn.unk6 = 0;
+            spawn.unk8 = 0;
+            spawn.unkC = 0;
+            spawn.unkB = 0x40;
+            spawn.unkA = 0;
+            obj = objSetupObject((StaticInstanceSpawn *) &spawn, 0);
+            if (obj->segment.header->unk1F > 0) {
+                racer = obj->unk6C[0];
+                racer->unkA = 2;
+            }
+            frontendptrs[item] = obj;
+        } else {
+            frontendptrs[item] = modLoadModel(D_800A51D0_A5DD0[item] & 0x3FFF, 0);
+        }
+        D_800FF6C8_B1C58[item] = 1;
+        D_800A51D8_A5DD8++;
+    }
+}
+
+void setupFrontEndList(s16 *list) {
+    s16 *p;
+    s32 item;
+
+    if (*list == -1) {
+        return;
+    }
+    p = list;
+    do {
+        item = *p;
+        p++;
+        setupFrontEndObject(item);
+    } while (*p != -1);
+}
 
 void setupFrontEndObject(s32 index) {
     currentobjects[index].unk0 = D_800A51DC_A5DDC[index].unk0;
@@ -504,9 +868,223 @@ void setupFrontEndObject(s32 index) {
     currentobjects[index].unk1F = D_800A51DC_A5DDC[index].unk1F;
 }
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontDrawObj.s")
+extern s32 objtrans;
+extern u8 frR;
+extern u8 D_800A51B8_A5DB8;
+extern u8 frB;
+extern s32 D_800A51C4_A5DC4;
+void objPrintObject(Gfx **gfx, Mtx **mtx, Vtx **vtx, Object *obj);
+void camDo2DSprite(Gfx **gfx, Mtx **mtx, Vtx **vtx, ObjectSegment1 *seg, void *tex, s32 a5, s32 a6);
+void camPushModelMtx(Gfx **dList, Mtx **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
+void camPopModelMtx(Gfx **dlist);
 
-#pragma GLOBAL_ASM("asm/nonmatchings/menu/frontSetupMultiPickup.s")
+void frontDrawObj(s32 index) {
+    FrontEndObject *o;
+    Gfx *g1;
+    ModelInstance_JFG *mod;
+    Gfx *g2;
+    ObjectSegment1 seg;
+    void *tex;
+    Object *obj;
+    s32 type;
+    Gfx *g3;
+    o = &currentobjects[index];
+    if (frontendptrs[o->unk6] == NULL) {
+        return;
+    }
+    if ((D_800A51D0_A5DD0[o->unk6] & 0xC000) == 0xC000) {
+        return;
+    }
+    seg.trans.rotation.x = o->unk0;
+    seg.trans.rotation.y = o->unk2;
+    seg.trans.rotation.z = o->unk4;
+    seg.trans.position.x = o->unkC;
+    seg.trans.position.y = o->unk10;
+    seg.trans.position.z = o->unk14;
+    seg.trans.scale = o->unk8;
+    type = D_800A51D0_A5DD0[o->unk6];
+    if (type & 0x4000) {
+        obj = frontendptrs[o->unk6];
+        obj->segment.trans.rotation.x = o->unk0;
+        obj->segment.trans.rotation.y = o->unk2;
+        obj->segment.trans.rotation.z = o->unk4;
+        obj->segment.trans.position.x = o->unkC;
+        obj->segment.trans.position.y = o->unk10;
+        obj->segment.trans.position.z = o->unk14;
+        obj->segment.trans.scale = o->unk8;
+        obj->segment.unk39 = objtrans;
+        objPrintObject(&frontgfx, &frontmtx, &frontvtx, obj);
+        return;
+    }
+    if (type & 0x8000) {
+        seg.unk28 = o->unk18;
+        tex = frontendptrs[o->unk6];
+        gDPPipeSync(frontgfx++);
+        gDPSetPrimColor(frontgfx++, 0, 0, frR, D_800A51B8_A5DB8, frB, objtrans);
+        gDPSetEnvColorRGBA(frontgfx++, -0x100);
+        camDo2DSprite(&frontgfx, &frontmtx, &frontvtx, &seg,
+                      tex, D_800A51C4_A5DC4, objtrans);
+        gDPPipeSync(frontgfx++);
+        gDPSetPrimColorRGBA(frontgfx++, -1);
+        return;
+    }
+    gDPPipeSync(frontgfx++);
+    if (objtrans < 0xFF) {
+        gDPSetPrimColorRGBA(frontgfx++, (objtrans & 0xFF) | -0x100);
+    } else {
+        gDPSetPrimColorRGBA(frontgfx++, -1);
+    }
+    gDPSetEnvColorRGBA(frontgfx++, -0x100);
+    seg.unk28 = o->unk18 * 0.0625f;
+    mod = frontendptrs[o->unk6];
+    if (mod->objModel->unk4E == 0) {
+        camPushModelMtx(&frontgfx, &frontmtx, &seg.trans, 1.0f, 0.0f);
+        g1 = frontgfx++;
+        g1->words.w0 = ((((s32 *) mod->unk10)[mod->unkB] + 0x80000000) & 0xFFFFFF) | 0xBF000000;
+        g1->words.w1 = (s32) mod->unk4 + 0x80000000;
+        g2 = frontgfx++;
+        g2->words.w0 = 0x06000000;
+        g2->words.w1 = (s32) mod->objModel->unk74 + 0x80000000;
+        g3 = frontgfx++;
+        g3->words.w1 = 0;
+        g3->words.w0 = 0xBF000000;
+        camPopModelMtx(&frontgfx);
+    }
+    if (objtrans < 0xFF) {
+        gDPPipeSync(frontgfx++);
+        gDPSetPrimColorRGBA(frontgfx++, -1);
+    }
+}
+
+typedef struct MultiPickupHdr {
+    /* 0x0 */ s16 objectId;
+    /* 0x2 */ s8 unk2;
+    /* 0x3 */ u8 pad3;
+    /* 0x4 */ s16 unk4;
+    /* 0x6 */ s16 unk6;
+    /* 0x8 */ s16 unk8;
+} MultiPickupHdr;
+
+typedef struct MultiPickup {
+    union {
+        /* 0x0 */ MultiPickupHdr hdr;
+        /* 0x0 */ u8 bytes[0xA];
+    };
+    /* 0xA */ s8 unkA;
+    /* 0xB */ s8 unkB;
+} MultiPickup;
+
+typedef struct PickupInfo {
+    /* 0x0 */ s16 objectId;
+    /* 0x2 */ s16 unk2;
+    /* 0x4 */ s16 unk4;
+    /* 0x6 */ s16 unk6;
+} PickupInfo;
+
+typedef struct DeathMatchEntry {
+    /* 0x0 */ s32 level;
+    /* 0x4 */ PickupInfo *lists[3];
+} DeathMatchEntry;
+
+extern u8 multiObjectList;
+DeathMatchEntry *getDeathMatchObjectTable(void);
+s32 mainGetCurrentLevel(void);
+
+void frontSetupMultiPickup(MultiPickup *arg0) {
+    /* The original had more locals than survive here; `unused0`/`unused1`/
+       `unused2` stand in for them.  Only three homes are load bearing: `i` at
+       sp+0x78, `spawn` at sp+0x50 and `table` at sp+0x28 (i and table are the
+       two variables the call to mainGetCurrentLevel spills), and the declared
+       local block must total 0x58 bytes so the frame comes out 0x80. */
+    s32 unused0;
+    s32 i;
+    s32 unused1[7];
+    MultiPickup spawn;
+    PickupInfo *info;
+    Object *obj;
+    u8 *src;
+    u8 *dst;
+    s32 level;
+    s32 size;
+    s32 n;
+    s32 unused2[2];
+    DeathMatchEntry *table;
+
+    table = NULL;
+    if ((multiGameType & 0xF) == 0) {
+        table = getDeathMatchObjectTable();
+    }
+    if (table == NULL) {
+        return;
+    }
+    i = 0;
+    level = mainGetCurrentLevel();
+    while (table[i].level >= 0 && table[i].level != level) {
+        i++;
+    }
+    if (table[i].level != level) {
+        return;
+    }
+    info = table[i].lists[multiObjectList];
+    switch (info[arg0->unkA].objectId) {
+        case 0xCF:
+        case 0xE7:
+        case 0xE8:
+            spawn.unkB = info[arg0->unkA].unk2;
+            spawn.unkA = info[arg0->unkA].unk4;
+            size = 0x10;
+            break;
+        case 0xA9:
+        case 0xE9:
+            spawn.unkA = info[arg0->unkA].unk2;
+            spawn.unkB = info[arg0->unkA].unk4;
+            size = 0xC;
+            break;
+        case 0xFA:
+        case 0xFB:
+        case 0xFC:
+        case 0xFD:
+        case 0xFE:
+        case 0xFF:
+        case 0x100:
+        case 0x101:
+        case 0x102:
+        case 0x103:
+        case 0x104:
+        case 0x105:
+        case 0x123:
+        case 0x124:
+        case 0x125:
+            spawn.unkA = 0;
+            spawn.unkB = info[arg0->unkA].unk2;
+            size = 0xC;
+            break;
+        case 0x12A:
+            spawn.unkA = info[arg0->unkA].unk2;
+            spawn.unkB = info[arg0->unkA].unk4;
+            size = 0xC;
+            break;
+        case 0x33C:
+            spawn.unkA = info[arg0->unkA].unk2;
+            spawn.unkB = info[arg0->unkA].unk4;
+            size = 0xC;
+            break;
+        default:
+            return;
+    }
+    src = (u8 *) arg0;
+    dst = (u8 *) &spawn;
+    n = 9;
+    do {
+        *dst++ = *src++;
+    } while (n--);
+    spawn.hdr.objectId = info[arg0->unkA].objectId;
+    spawn.hdr.unk2 = size;
+    obj = objSetupObject((StaticInstanceSpawn *) &spawn, 1);
+    if (obj != NULL) {
+        obj->segment.unk3C = 0;
+    }
+}
 
 s32 frontGameSelected(void) {
     return 0;

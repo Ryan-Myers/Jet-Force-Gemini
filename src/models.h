@@ -66,7 +66,9 @@ typedef struct ModInst_UnkC {
 /* Size: 0x24 bytes */
 typedef struct ModelInstance_JFG {
     /* 0x00 */ ObjectModel_JFG *objModel;
-    /* 0x04 */ u8 pad4[0x8];
+    /* 0x04 */ void *unk4;
+    /* 0x08 */ u8 pad8[0x3];
+    /* 0x0B */ s8 unkB;
     /* 0x0C */ ModInst_UnkC *unkC;
     /* 0x10 */ u8 unk10[0x70];
     /* 0x80 */ s8 *unk80[2];
