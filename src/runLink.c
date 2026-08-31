@@ -853,9 +853,9 @@ void runlinkResumeCode(s32 overlayIndex) {
             mmSetDelay(0);
             mmFree(relocTable);
 #ifdef VERSION_kiosk
-        mmSetDelay(2);
+            mmSetDelay(2);
 #else
-        mmSetDelay(relocSavedDelay);
+            mmSetDelay(relocSavedDelay);
 #endif
         }
 
