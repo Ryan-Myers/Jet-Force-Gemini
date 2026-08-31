@@ -774,7 +774,135 @@ void runlinkSuspendCode(s32 overlayIndex) {
     }
 }
 
+#if 0
+void runlinkResumeCode(s32 overlayIndex) {
+    OverlayHeader *overlay;
+    UNUSED s32 pad;
+    PendingOverlayLoad *pendingLoad;
+    s32 savedDelay;
+    s32 relocSavedDelay;
+    RelocationEntry *relocTable;
+    RelocationEntry *relocEntry;
+    s32 relocCount;
+    s32 otherIndex;
+    s32 overlayNumber;
+    s32 found;
+
+    overlay = &overlayTable[overlayIndex];
+    pendingLoad = gPendingOverlayLoads;
+    found = FALSE;
+    relocTable = NULL;
+    relocCount = ARRAY_COUNT(gPendingOverlayLoads);
+    while (relocCount--) {
+        if (overlayIndex == pendingLoad->overlayIndex) {
+            found = TRUE;
+            break;
+        }
+        pendingLoad++;
+    }
+
+    if (found) {
+        savedDelay = mmGetDelay();
+        mmSetDelay(0);
+        mmFree((void *) (pendingLoad->unk0 + overlay->TextSize));
+        mmSetDelay(savedDelay);
+
+        overlay->VramBase = (s32) mmAllocAtAddr(overlay->TextSize + overlay->DataSize + overlay->RodataSize +
+                                                    overlay->RelocationTableSize,
+                                                (void *) pendingLoad->unk0, COLOUR_TAG_GREY);
+        if (overlay->VramBase == 0) {
+            return;
+        }
+
+        if (overlay->SecondaryRelocationTableSize) {
+            relocTable = (RelocationEntry *) mmAlloc(overlay->SecondaryRelocationTableSize, COLOUR_TAG_GREY);
+            if (relocTable == NULL) {
+                mmFree((void *) overlay->VramBase);
+                return;
+            }
+            romCopy(overlay->RomAddress + overlay->TextSize + overlay->DataSize + overlay->RelocationTableSize,
+                    (u32) relocTable, overlay->SecondaryRelocationTableSize);
+        }
+
+        gRelocContext.textBase = (u8 *) overlay->VramBase;
+        gRelocContext.dataBase = (u8 *) gRelocContext.textBase + overlay->TextSize;
+        gRelocContext.bssBase = (u8 *) gRelocContext.dataBase + overlay->DataSize;
+        gRelocContext.relocBase = (u8 *) gRelocContext.bssBase + overlay->RodataSize;
+        romCopy(overlay->RomAddress, overlay->VramBase, overlay->TextSize);
+
+        if (relocTable != NULL) {
+            relocSavedDelay = mmGetDelay();
+            relocCount = overlay->SecondaryRelocationTableSize / sizeof(RelocationEntry);
+            relocEntry = relocTable;
+            while (relocCount-- > 0) {
+                if ((relocEntry->targetOffset) < overlay->TextSize &&
+                    ProcessRelocationEntry(relocEntry, overlayIndex) == 2) {
+                    relocCount--;
+                    relocEntry++;
+                }
+                relocEntry++;
+            }
+            mmSetDelay(0);
+            mmFree(relocTable);
+            mmSetDelay(relocSavedDelay);
+        }
+
+        relocCount = overlay->RelocationTableSize / sizeof(RelocationEntry);
+        relocEntry = (RelocationEntry *) gRelocContext.relocBase;
+        while (relocCount-- > 0) {
+            if ((relocEntry->targetOffset) < overlay->TextSize &&
+                ProcessRelocationEntry(relocEntry, overlayIndex) == 2) {
+                relocCount--;
+                relocEntry++;
+            }
+            relocEntry++;
+        }
+
+        overlay = overlayTable;
+        for (otherIndex = 0; otherIndex < overlayCount; otherIndex++) {
+            if (overlay->VramBase != 0 && otherIndex != overlayIndex) {
+                if (otherIndex == 0) {
+                    // Main module - use special relocation context
+                    gRelocContext.textBase = (u8 *) &__CODE_SECTION_START; // Start of .text
+                    gRelocContext.dataBase = (u8 *) &__DATA_SECTION_START; // Start of .data
+                    gRelocContext.bssBase = (u8 *) &__BSS_SECTION_START;
+                    gRelocContext.relocBase = (u8 *) mainRelocTable;
+                    relocEntry = (RelocationEntry *) mainRelocTable;
+                    relocCount = mainRelocCount;
+                } else {
+                    // Other overlay - set up context for it
+                    gRelocContext.textBase = (u8 *) overlay->VramBase;
+                    gRelocContext.dataBase = (u8 *) gRelocContext.textBase + overlay->TextSize;
+                    gRelocContext.bssBase = (u8 *) gRelocContext.dataBase + overlay->DataSize;
+                    gRelocContext.relocBase = (u8 *) gRelocContext.bssBase + overlay->RodataSize;
+                    relocEntry = (RelocationEntry *) gRelocContext.relocBase;
+                    relocCount = overlay->RelocationTableSize / sizeof(RelocationEntry);
+                }
+
+                while (relocCount-- > 0) {
+                    overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
+                    if (overlayNumber >= 0xFFC) {
+                        overlayNumber = 0;
+                    }
+                    if (overlayNumber == overlayIndex && ((relocEntry->relocType) == RELOC_TYPE_EXTERNAL ||
+                                                          (relocEntry->relocType) == RELOC_TYPE_DATA)) {
+                        if (ProcessRelocationEntry(relocEntry, otherIndex) == 2) {
+                            relocCount--;
+                            relocEntry++;
+                        }
+                    }
+                    relocEntry++;
+                }
+            }
+            overlay++;
+        }
+
+        pendingLoad->overlayIndex = 0xFFB;
+    }
+}
+#else
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkResumeCode.s")
+#endif
 
 void runlinkResumeAll(void) {
     PendingOverlayLoad *pendingLoad;
