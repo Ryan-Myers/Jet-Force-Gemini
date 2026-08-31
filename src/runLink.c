@@ -491,7 +491,9 @@ s32 runlinkEnsureJumpIsValid(void **jumpAddress) {
         overlay++;
     }
 
+#ifdef VERSION_us
     return FALSE;
+#endif
 }
 
 s32 runlinkIsModuleLoaded(s32 module) {
@@ -774,7 +776,7 @@ void runlinkSuspendCode(s32 overlayIndex) {
     }
 }
 
-#if 0
+#if 1
 void runlinkResumeCode(s32 overlayIndex) {
     OverlayHeader *overlay;
     UNUSED s32 pad;
@@ -802,11 +804,16 @@ void runlinkResumeCode(s32 overlayIndex) {
     }
 
     if (found) {
+#ifdef VERSION_us
         savedDelay = mmGetDelay();
+#endif
         mmSetDelay(0);
         mmFree((void *) (pendingLoad->unk0 + overlay->TextSize));
+#ifdef VERSION_kiosk
+        mmSetDelay(2);
+#else
         mmSetDelay(savedDelay);
-
+#endif
         overlay->VramBase = (s32) mmAllocAtAddr(overlay->TextSize + overlay->DataSize + overlay->RodataSize +
                                                     overlay->RelocationTableSize,
                                                 (void *) pendingLoad->unk0, COLOUR_TAG_GREY);
@@ -831,7 +838,9 @@ void runlinkResumeCode(s32 overlayIndex) {
         romCopy(overlay->RomAddress, overlay->VramBase, overlay->TextSize);
 
         if (relocTable != NULL) {
+#ifdef VERSION_us
             relocSavedDelay = mmGetDelay();
+#endif
             relocCount = overlay->SecondaryRelocationTableSize / sizeof(RelocationEntry);
             relocEntry = relocTable;
             while (relocCount-- > 0) {
@@ -844,7 +853,11 @@ void runlinkResumeCode(s32 overlayIndex) {
             }
             mmSetDelay(0);
             mmFree(relocTable);
-            mmSetDelay(relocSavedDelay);
+#ifdef VERSION_kiosk
+        mmSetDelay(2);
+#else
+        mmSetDelay(relocSavedDelay);
+#endif
         }
 
         relocCount = overlay->RelocationTableSize / sizeof(RelocationEntry);
