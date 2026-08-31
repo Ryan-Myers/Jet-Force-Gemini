@@ -21,24 +21,6 @@
 #include "PR/n_libaudio.h"
 #include "runLink.h"
 
-typedef struct FrontEndObject {
-    /* 0x00 */ s16 unk0;
-    /* 0x02 */ s16 unk2;
-    /* 0x04 */ s16 unk4;
-    /* 0x06 */ s16 unk6;
-    /* 0x08 */ f32 unk8;
-    /* 0x0C */ f32 unkC;
-    /* 0x10 */ f32 unk10;
-    /* 0x14 */ f32 unk14;
-    /* 0x18 */ f32 unk18;
-    /* 0x1C */ s8 unk1C;
-    /* 0x1D */ s8 unk1D;
-    /* 0x1E */ s8 unk1E;
-    /* 0x1F */ s8 unk1F;
-} FrontEndObject;
-
-extern FrontEndObject D_800A51DC_A5DDC[];
-extern FrontEndObject currentobjects[];
 extern s32 currentGameTime;
 s8 mainGetPauseMode(void);
 /* menu.c's own .bss: exactly the 16 bytes at 0x800FF1B0..BF.  playChoice is
@@ -51,126 +33,41 @@ s32 playStatus;
 u8 playChoice[4];
 u8 gameoverFade[8];
 
-extern void *frontendptrs[];
-extern u8 D_800FF6C8_B1C58[];
-extern s16 *D_800A51D0_A5DD0;
-extern s16 D_800A51D8_A5DD8;
-extern u8 *D_800FF3A8_B1938[];
-extern s16 D_800A51D4_A5DD4;
 void *mmAlloc(s32 size, u32 colourTag);
 u32 *piRomLoad(u32 assetIndex);
-extern u32 *D_800A51AC_A5DAC;
 /* NOTE: pi.h declares this second parameter as u32.  It is void * here on
    purpose: with a u32 parameter the (u32) cast on front_text becomes a separate
    value and IDO emits `move a1,v1` instead of loading straight into a1. */
 s32 piRomLoadSection(u32 assetIndex, void *address, s32 assetOffset, s32 size);
 
-void frontInstruments(s32 updateRate);
 Object *objSetupObject(StaticInstanceSpawn *spawn, s32 arg1);
 
-/* menu.c builds a SHORTER spawn record than CreateStaticInstance's
-   StaticInstanceSpawn: only fields through 0x0C are written and the local is
-   0x10 bytes, which is what puts it at sp+0x28 in a 0x38 frame. */
-typedef struct FrontEndSpawn {
-    /* 0x0 */ s16 objectId;
-    /* 0x2 */ s8 unk2;
-    /* 0x3 */ u8 pad3;
-    /* 0x4 */ s16 unk4;
-    /* 0x6 */ s16 unk6;
-    /* 0x8 */ s16 unk8;
-    /* 0xA */ s8 unkA;
-    /* 0xB */ s8 unkB;
-    /* 0xC */ s8 unkC;
-    /* 0xD */ u8 padD[0x3];
-} FrontEndSpawn;
 void diRcpTrace(Gfx *gdl, char *file, s32 line);
 extern const char D_800AD370_ADF70[];
 extern const char D_800AD380_ADF80[];
-extern void *frontpol;
-void func_80059A98_5A698(s32 updateRate);
-s32 frontInitMultiInstruments(void);
-void frontRarepage(s32 updateRate);
-void frontStartScreen(s32 updateRate);
-void frontOptionsPage(s32 updateRate);
-void frontMap(s32 updateRate);
-void frontCharSelect(s32 updateRate);
-void frontMultiSelect(s32 updateRate);
-void frontMultiModeSelect(s32 updateRate);
-void frontMultiStats(s32 updateRate);
-void frontCredits(s32 updateRate);
-void frontKeyboard(s32 updateRate);
-void frontMenuFrameDraw(void);
-void frontMenuFrameTick(s32 updateRate);
-void frontInitMenuFrame(void);
-void frontInitRarepage(void);
-void frontInitStartScreen(void);
-void frontInitOptionsPage(s32 arg0);
-void frontInitMap(s32 arg0);
-void frontInitCharSelect(void);
-void frontInitMultiSelect(void);
-void frontInitMultiModeSelect(void);
-void frontInitMultiStats(void);
-void frontCreditsInit(void);
-void frontKeyboardInit(void);
-void frontInitInstruments(void);
 void sprintInitInstruments(void);
 void sparkUpdate(void);
-extern Gfx *frontgfx;
-extern Mtx *frontmtx;
-extern Vtx *frontvtx;
 Object **objGetPlayerlist(s32 *count);
-void frontDeathMatchScores(s32 count, Object **players, s32 updateRate);
 void duckshootDrawTargets(Gfx **gfx, Mtx **mtx, Vtx **vtx, s32 players);
 void sprintDrawInstruments(Gfx **gfx, Mtx **mtx, Vtx **vtx, s32 players);
-void frontSingleInstruments(Object *player, s32 updateRate);
-extern u8 D_800A5194_A5D94;
-void setLanguage(s32 language);
 void fxScreenEffect(s32 arg0, s32 *screen, s32 width, s32 height, s32 x1, s32 y1, s32 x2, s32 y2, s32 arg8);
 void fxQueueScreenEffect(s32 *screen, s32 width, s32 height, s32 x1, s32 y1, s32 x2, s32 y2, s32 arg7);
-void frontPlayerScreenLimits(s32 player, s32 *x1, s32 *y1, s32 *x2, s32 *y2);
-extern s16 D_800A508C_A5C8C[];
-s32 frontGet2PlayerSplit(void);
 
-typedef struct FrontRect {
-    /* 0x0 */ s16 x1;
-    /* 0x2 */ s16 y1;
-    /* 0x4 */ s16 x2;
-    /* 0x6 */ s16 y2;
-    /* 0x8 */ u32 colour;
-} FrontRect;
-
-extern Gfx D_800A58F8_A64F8[];
-void frontDrawRectangles(Gfx **dList, s32 count, FrontRect *rects, s32 arg3);
-void freeFrontEndItem(s32 item);
+TextureHeader *texFrame(TextureHeader *texHead, s32 offset);
+ModelInstance_JFG *modLoadModel(s32 id, s32 arg1);
+void objPrintObject(Gfx **gfx, Mtx **mtx, Vtx **vtx, Object *obj);
+void camDo2DSprite(Gfx **gfx, Mtx **mtx, Vtx **vtx, ObjectSegment1 *seg, void *tex, s32 a5, s32 a6);
+void camPushModelMtx(Gfx **dList, Mtx **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
+void camPopModelMtx(Gfx **dlist);
 void objFreeObject(Object *obj);
 void objDoFrees(void);
-void loadFrontEndItem(s32 item);
-void setupFrontEndObject(s32 index);
-void freeFrontEndList(s16 *list);
-void loadFrontEndList(s16 *list);
-void setupFrontEndList(s16 *list);
-extern void *frontendptrs[];
-extern u8 D_800FF6C8_B1C58[];
-extern s16 *D_800A51D0_A5DD0;
-extern s16 D_800A51D8_A5DD8;
-extern s32 D_800FF3E8_B1978[4];
-extern s32 frontJoyHeld[4];
-extern s32 frontJoyPressed[4];
-extern s8 frontJoyDx[4];
-extern s8 frontJoyDy[4];
 /* joy.h is not included here; this TU sees the joystick getters as returning
    int, which is what the ROM's code assumes (no narrowing after the calls). */
 s32 joyGetButtons(s32 player);
 s32 joyGetStickX(s32 player);
 s32 joyGetStickY(s32 player);
-extern s8 frontJoyDxRepeat[4];
-extern s8 D_800FF3E4_B1974[4];
-extern u8 okayed;
-extern u8 disable;
 extern u8 numberOfCameras;
 s32 levelGetScreenMode(void);
-void frontInitMode(void);
-void func_80059A04_5A604(void);
 
 void setLanguage(s32 language) {
     s32 idx;
@@ -439,7 +336,6 @@ s32 frontUpdate(Gfx **gfx, Mtx **mtx, Vtx **vtx, void **pol, s32 updateRate) {
     return 0;
 }
 
-
 void frontDemoMessage(Gfx **dl, s32 arg1) {
     s32 x;
     s32 y;
@@ -495,10 +391,6 @@ s32 frontUpdateTimer(s32 arg0, s32 limit, s32 delta) {
     }
     return ret;
 }
-
-extern Gfx D_800A58A0_A64A0[];
-extern Gfx D_A58E8[];
-TextureHeader *texFrame(TextureHeader *texHead, s32 offset);
 
 void frontPrintNum(s32 number, s32 x, s32 y, s32 fontId, s32 minDigits, u32 colour1, u32 colour2) {
     TextureHeader *tex;
@@ -803,7 +695,6 @@ const char D_800AD370_ADF70[] = "front/front.c";
 const char D_800AD380_ADF80[] = "front/front.c";
 const char D_800AD390_ADF90[] = "loadFrontEndItem() - Item no %d out of range 0-%d\n";
 
-ModelInstance_JFG *modLoadModel(s32 id, s32 arg1);
 void loadFrontEndItem(s32 item) {
     FrontEndSpawn spawn;
     Object *obj;
@@ -867,16 +758,6 @@ void setupFrontEndObject(s32 index) {
     currentobjects[index].unk1E = D_800A51DC_A5DDC[index].unk1E;
     currentobjects[index].unk1F = D_800A51DC_A5DDC[index].unk1F;
 }
-
-extern s32 objtrans;
-extern u8 frR;
-extern u8 D_800A51B8_A5DB8;
-extern u8 frB;
-extern s32 D_800A51C4_A5DC4;
-void objPrintObject(Gfx **gfx, Mtx **mtx, Vtx **vtx, Object *obj);
-void camDo2DSprite(Gfx **gfx, Mtx **mtx, Vtx **vtx, ObjectSegment1 *seg, void *tex, s32 a5, s32 a6);
-void camPushModelMtx(Gfx **dList, Mtx **mtx, ObjectTransform *trans, f32 scale, f32 scaleY);
-void camPopModelMtx(Gfx **dlist);
 
 void frontDrawObj(s32 index) {
     FrontEndObject *o;
@@ -986,7 +867,6 @@ typedef struct DeathMatchEntry {
     /* 0x4 */ PickupInfo *lists[3];
 } DeathMatchEntry;
 
-extern u8 multiObjectList;
 DeathMatchEntry *getDeathMatchObjectTable(void);
 s32 mainGetCurrentLevel(void);
 
