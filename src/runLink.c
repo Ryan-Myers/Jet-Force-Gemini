@@ -776,7 +776,6 @@ void runlinkSuspendCode(s32 overlayIndex) {
     }
 }
 
-#if 1
 void runlinkResumeCode(s32 overlayIndex) {
     OverlayHeader *overlay;
     UNUSED s32 pad;
@@ -913,9 +912,6 @@ void runlinkResumeCode(s32 overlayIndex) {
         pendingLoad->overlayIndex = 0xFFB;
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkResumeCode.s")
-#endif
 
 void runlinkResumeAll(void) {
     PendingOverlayLoad *pendingLoad;
