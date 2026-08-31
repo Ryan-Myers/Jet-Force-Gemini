@@ -437,10 +437,15 @@ void frontPrintNum(s32 number, s32 x, s32 y, s32 fontId, s32 minDigits, u32 colo
     frontgfx++;
     cmd++;
     {
-        Gfx *_g = frontgfx++;
-        nCmds = tex->numberOfCommands - 1;
-        _g->words.w0 = (_SHIFTL(G_DMADL, 24, 8) | _SHIFTL(nCmds, 16, 8) | _SHIFTL((nCmds * 8), 0, 16));
-        _g->words.w1 = (unsigned int) ((s32) cmd + 0x80000000);
+        /* gDkrDmaDisplayList expanded by hand, and DELIBERATELY on one line.
+           The macro references its count argument twice, so `nCmds` has to be a
+           local or IDO computes it two different ways; and as1's list scheduler
+           breaks ready-set ties on the SMALLER source line, so splitting these
+           four statements across four lines re-orders the block and costs two
+           words.  Reformatting this is a silent match break -- leave it alone. */
+        // clang-format off
+        Gfx *_g = frontgfx++; nCmds = tex->numberOfCommands - 1; _g->words.w0 = (_SHIFTL(G_DMADL, 24, 8) | _SHIFTL(nCmds, 16, 8) | _SHIFTL((nCmds * 8), 0, 16)); _g->words.w1 = (unsigned int) ((s32) cmd + 0x80000000);
+        // clang-format on
     }
     gDPSetPrimColorRGBA(frontgfx++, colour1);
     digits = 0;

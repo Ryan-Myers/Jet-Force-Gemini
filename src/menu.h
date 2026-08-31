@@ -1,8 +1,8 @@
 #ifndef _MENU_H_
 #define _MENU_H_
 
-#include <PR/ultratypes.h>
 #include "structs.h"
+#include <PR/ultratypes.h>
 
 // These vars might need to be declared in a global file just for global vars.
 // They're used in multiple files, there might be a globals.c file.
@@ -19,7 +19,7 @@ typedef struct GlobalFlags {
     /* 0x6C */ Resbitfield res;
 } GlobalFlags;
 extern GlobalFlags globalflags;
-extern MultiPlayer multiPlayer[4]; // Size: 0xA0 - Total Size: 0x280
+extern MultiPlayer multiPlayer[4];       // Size: 0xA0 - Total Size: 0x280
 extern MultiCharacter multiCharacter[4]; // Size: 0x76 - Total Size: 0x1D8
 extern u8 multiCharacterType[4];
 extern u8 multiGameLife[4];
@@ -41,8 +41,8 @@ extern u8 frontEndMode;
 extern u8 multiGameType;
 extern u8 multiObjectList;
 extern u8 selectedControlModes[];
-extern char **front_text;    /* language string table; entries are ROM-relative until
-                                fixed up to pointers by setLanguage() */
+extern char **front_text; /* language string table; entries are ROM-relative until
+                             fixed up to pointers by setLanguage() */
 extern u16 D_800A5918_A6518[];
 
 /* ---- front end (src/menu.c) ------------------------------------------- */
@@ -100,14 +100,14 @@ typedef struct FrontRect {
 extern FrontEndObject D_800A51DC_A5DDC[];
 extern FrontEndObject currentobjects[];
 extern void *frontendptrs[];
-extern u8 D_800FF6C8_B1C58[];  /* per-item loaded flag */
+extern u8 D_800FF6C8_B1C58[]; /* per-item loaded flag */
 extern s16 *D_800A51D0_A5DD0; /* per-item type word: 0xC000 texture, 0x8000 sprite,
                                  0x4000 object, else model; low 14 bits = asset id */
-extern s16 D_800A51D8_A5DD8;   /* number of loaded items */
+extern s16 D_800A51D8_A5DD8;  /* number of loaded items */
 extern s16 D_800A51D4_A5DD4;
 extern u8 *D_800FF3A8_B1938[];
-extern u32 *D_800A51AC_A5DAC;  /* language offset table (ROM asset 7); entry i is the
-                                  byte offset of language i's string block */
+extern u32 *D_800A51AC_A5DAC; /* language offset table (ROM asset 7); entry i is the
+                                 byte offset of language i's string block */
 extern s16 D_800A508C_A5C8C[];
 extern u8 D_800A5194_A5D94;
 
