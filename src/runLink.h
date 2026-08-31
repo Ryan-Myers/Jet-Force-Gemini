@@ -2,16 +2,30 @@
 #define _RUNLINK_H_
 
 #include <PR/ultratypes.h>
+#include "mips.h"
 
-extern s32 D_800A38F0_A44F0;
+/**
+ * Overlays work by having functions that call the overlay actually load TrapDanglingJump
+ * That function then uses the overlayRomTable to figure out which overlay to load
+ * and where the function is within that overlay. It then uses runlink to load the overlay
+ * into memory if it is not already loaded, and then jumps to the function within that overlay.
+ *
+ * When a function calls TrapDanglingJump, the return address is shifted back by 8 bytes
+ * to point to the exact VRAM address of the instruction that called the function.
+ * That function address is used to lookup in mainRelocTable and see if it can find that address.
+ * If it finds it, it then loads the index value next to it, which is an index into overlayRomTable.
+ * When it finds the entry in overlayRomTable, it reads the overlay number and function offset
+ * within that overlay. It then calls runlink to load that overlay if it is not already loaded,
+ * and then jumps to the function offset within that overlay.
+ */
 
 /**
  * Relocation entry format used by the overlay dynamic linker.
  * Each entry is 8 bytes and describes how to patch an address reference.
  */
 typedef struct RelocationEntry {
-    /* 0x00 */ u32 symbolIndex; // Index into overlayRomTable, OR local offset for type 1
-    /* 0x04 */ union {
+    u32 symbolIndex; // Index into overlayRomTable, OR local offset for type 1
+    union {
         u32 info;
         struct {
             u32 targetOffset : 24; // Offset into section where relocation should be applied
@@ -42,12 +56,8 @@ typedef struct RelocTableEntry {
             u32 unknown : 8;          // Unknown, almost always seems to be 0x40
         };
     } entry;
-    /* 0x04 */ u32 overlayIndex; // This is an index into overlayRomTable
-} RelocTableEntry;
-extern RelocTableEntry D_1ECF220[];     // mainRelocTable ROM address
-extern RelocTableEntry *mainRelocTable; // mainRelocTable RAM pointer
-
-
+    u32 overlayIndex; // This is an index into overlayRomTable
+} RelocTableEntry; /* 8 bytes */
 
 typedef struct RomTableEntry {
     union {
@@ -57,10 +67,7 @@ typedef struct RomTableEntry {
             u32 FunctionOffset : 20;
         };
     } entry;
-} RomTableEntry;
-
-extern RomTableEntry *overlayRomTable;
-extern RomTableEntry D_1ED0270[]; // overlayRomTable
+} RomTableEntry; /* 4 bytes */
 
 typedef struct OverlayHeader {
     /* 0x00 */ s32 VramBase; // (0 if not loaded, set after alloc)
@@ -73,22 +80,8 @@ typedef struct OverlayHeader {
     /* 0x16 */ u16 SecondaryRelocationTableSize; // This relocation is freed after the overlay is loaded
     /* 0x18 */ s32 InitFunction;                 // -1 if none, offset from VramBase
     /* 0x1C */ s32 ResumeFunction;               // -1 if none, offset from VramBase
-} OverlayHeader;
-extern OverlayHeader D_1ED2780[];   // overlayTable
-extern OverlayHeader *overlayTable; // overlayTable
+} OverlayHeader; /* 0x20 bytes */
 
-extern s32 mainRelocCount;
-extern s32 overlayCount;
-extern void amSetMuteMode(s32 behaviour); // 0x80000450 Start of .text
-extern void *tuneSeqPlayer;               // 0x800A0660 Start of .data
-
-// Placeholder address returned when a symbol cannot be resolved (overlay not loaded)
-extern u32 gUnresolvedSymbolAddr;
-
-extern s32 overlayCount;
-extern s32 AllowSelfDestructing;
-
-// Forward declarations
 typedef struct RelocContext {
     union {
         u8 *bases[5];      // An array of base addresses for different sections: unused, text, data, bss, reloc
@@ -100,15 +93,12 @@ typedef struct RelocContext {
             u8 *relocBase; // 0x10 - relocation table base
         };
     };
-} RelocContext;
-extern RelocContext gRelocContext;
+} RelocContext; /* 0x14 bytes */
 
 typedef struct PendingOverlayLoad {
     u32 unk0;         // 0x00 - possibly status/flags
     s32 overlayIndex; // 0x04 - overlay number being loaded
 } PendingOverlayLoad; // 8 bytes
-
-extern PendingOverlayLoad gPendingOverlayLoads[16];
 
 /**
  * Timer/state entry for overlay self-destruct system.
@@ -133,23 +123,19 @@ typedef struct OverlayTimerEntry {
     };
 } OverlayTimerEntry;
 
-extern OverlayTimerEntry *gSelfDestructTimers;
-extern s32 mmColourTagUnk2;
-extern s32 D_800B0B50_B1750;
 
-// typedef struct runlinkModule {
-//     s32 unk0;
-//     u8 pad4[25];
-// } runlinkModule;
-// extern runlinkModule *overlayTable;
+extern OverlayHeader D_1ED2780[];   // overlayTable
+extern RomTableEntry D_1ED0270[]; // overlayRomTable
+extern RelocTableEntry D_1ECF220[];     // mainRelocTable ROM address
+
+extern void amSetMuteMode(s32 behaviour); // 0x80000450 Start of .text
+extern void *tuneSeqPlayer;               // 0x800A0660 Start of .data
+extern s32 D_800B0B50_B1750; // 0x800B0B50 Start of .bss
 
 extern void *__BSS_SECTION_START;
 extern void *__BSS_SECTION_END;
 extern void *__DATA_SECTION_START;
 extern void *__CODE_SECTION_START;
-
-extern s32 D_800A38F4_A44F4; // Some flag cleared at init
-extern s32 D_800A38F8_A44F8; // Symbol table size (D_1FED550 - D_1FEB040)
 
 // ROM addresses for runlink tables
 extern u8 symbolsTable_offsets_ROM_START[];
@@ -164,21 +150,58 @@ extern u8 overlayCode_ROM_START[];
 extern u8 overlayCode_ROM_END[];
 extern u8 overlayData_ROM_START[];
 
+
+/**
+ * Complete Analysis: How rcpWaitDP Uses TrapDanglingJump
+ *
+ * At VRAM address 0x8004DD50, rcpWaitDP has a jal TrapDanglingJump instruction.
+ * TrapDanglingJump has the ra register set to ra = 0x8004DD58
+ * It then stores the address of the calling jal to t5 with: t5 = ra - 8 = 0x8004DD50
+ * Then is substracted by the base address the start of the text segment: 0x8004DD50 - 0x80000450 = 0x4D900
+ *
+ * Searches assets/mainRelocTable.bin for an entry matching 0x4D900, which it finds at: offset 0xD00
+ * The index value next to it is 0x69E (1694)
+ * That index is then used to lookup in assets/overlayRomTable.bin which is 4 bytes per entry.
+ * So it reads the entry at offset 0x69E * 4 = 0x1A78 and finds 0x00315E34
+ *
+ * ______________________________________________
+ * |Field              | Value                   |
+ * |_____________________________________________|
+ * |Overlay entry      | 0x00315E34              |
+ * |Overlay number	   | 3 (bits 31-20: 0x003)   |
+ * |Function offset	   | 0x15E34 (bits 19-0)     |
+ * |_____________________________________________|
+ *
+ * So according to our symbols, overlay 3 at function offset 0x15E34 is cloneTasksQueueAndWait
+ *
+ * It triggers the dynamic linker to load overlay 3 (if not already loaded)
+ * The actual function called is cloneTasksQueueAndWait at offset 0x15E34 within that overlay
+ */
+
+
 // This function is unique in that it has no specific limit on arguments, 
 // and they can change even within the same function call it.
 // This empty signature seems to be the way to handle it.
-s32 TrapDanglingJump(); 
+extern s32 TrapDanglingJump();
 
-void runlinkFreeCode(s32 overlayIndex);
-void runlinkInitialise(void);
-s32 runlinkDownloadCode(s32);
-void runlinkLowMemoryPanic(void);
-s32 runlinkIsModuleLoaded(s32 module);
-s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char **symbolName);
-void runlinkFlushModules(void);
 char *GetSymbolName(u32 symbolIndex);
-void runlinkResumeCode(s32 overlayIndex);
+void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry, MipsInstruction *patchLocation);
+void PatchInstruction(MipsInstruction *instr, u32 address, u8 relocType);
 s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex);
+s32 runlinkDownloadCode(s32);
 s32 runlinkEnsureJumpIsValid(void **jumpAddress);
+s32 runlinkIsModuleLoaded(s32 module);
+void runlinkCallResumeFunction(s32 overlayIndex);
+void runlinkFreeCode(s32 overlayIndex);
+void runlinkUnloadOverlay(s32 overlayIndex);
+void runlinkFlushModules(void);
+void runlinkInitialise(void);
+void runlinkSuspendCode(s32 overlayIndex);
+void runlinkResumeCode(s32 overlayIndex);
+void runlinkResumeAll(void);
+void runlinkSetDestructTimer(s32 index, u16 selfDestructTimer, u16 refCount);
+void runlinkTick(void);
+void runlinkLowMemoryPanic(void);
+s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char **symbolName);
 
 #endif

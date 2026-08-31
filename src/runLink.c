@@ -12,8 +12,8 @@ const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
 
 // .data
 s32 D_800A38F0_A44F0 = FALSE;
-s32 D_800A38F4_A44F4 = TRUE;
-s32 D_800A38F8_A44F8 = 0; // symbol table size?
+s32 D_800A38F4_A44F4 = TRUE; // Some flag cleared at init
+s32 D_800A38F8_A44F8 = 0;    // Symbol table size (D_1FED550 - D_1FEB040)
 s32 AllowSelfDestructing = TRUE;
 
 // .bss
@@ -26,52 +26,9 @@ UNUSED s32 D_800FEAB4_Pad;
 RelocContext gRelocContext;
 UNUSED s32 D_800FEACC_Pad;
 UNUSED s32 D_800FEAD0_Pad;
-u32 gUnresolvedSymbolAddr;
+u32 gUnresolvedSymbolAddr; // Placeholder address returned when a symbol cannot be resolved (overlay not loaded)
 PendingOverlayLoad gPendingOverlayLoads[16];
 OverlayTimerEntry *gSelfDestructTimers;
-
-
-/**
- * Overlays work by having functions that call the overlay actually load TrapDanglingJump
- * That function then uses the overlayRomTable to figure out which overlay to load
- * and where the function is within that overlay. It then uses runlink to load the overlay
- * into memory if it is not already loaded, and then jumps to the function within that overlay.
- *
- * When a function calls TrapDanglingJump, the return address is shifted back by 8 bytes
- * to point to the exact VRAM address of the instruction that called the function.
- * That function address is used to lookup in mainRelocTable and see if it can find that address.
- * If it finds it, it then loads the index value next to it, which is an index into overlayRomTable.
- * When it finds the entry in overlayRomTable, it reads the overlay number and function offset
- * within that overlay. It then calls runlink to load that overlay if it is not already loaded,
- * and then jumps to the function offset within that overlay.
- */
-
-/**
- * Complete Analysis: How rcpWaitDP Uses TrapDanglingJump
- *
- * At VRAM address 0x8004DD50, rcpWaitDP has a jal TrapDanglingJump instruction.
- * TrapDanglingJump has the ra register set to ra = 0x8004DD58
- * It then stores the address of the calling jal to t5 with: t5 = ra - 8 = 0x8004DD50
- * Then is substracted by the base address the start of the text segment: 0x8004DD50 - 0x80000450 = 0x4D900
- *
- * Searches assets/mainRelocTable.bin for an entry matching 0x4D900, which it finds at: offset 0xD00
- * The index value next to it is 0x69E (1694)
- * That index is then used to lookup in assets/overlayRomTable.bin which is 4 bytes per entry.
- * So it reads the entry at offset 0x69E * 4 = 0x1A78 and finds 0x00315E34
- *
- * ______________________________________________
- * |Field              | Value                   |
- * |_____________________________________________|
- * |Overlay entry      | 0x00315E34              |
- * |Overlay number	    | 3 (bits 31-20: 0x003)   |
- * |Function offset	| 0x15E34 (bits 19-0)     |
- * |_____________________________________________|
- *
- * So according to our symbols, overlay 3 at function offset 0x15E34 is cloneTasksQueueAndWait
- *
- * It triggers the dynamic linker to load overlay 3 (if not already loaded)
- * The actual function called is cloneTasksQueueAndWait at offset 0x15E34 within that overlay
- */
 
 #ifdef NON_EQUIVALENT
 // ROM addresses for symbol name lookup tables
