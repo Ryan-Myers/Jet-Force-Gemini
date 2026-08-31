@@ -10,6 +10,21 @@ const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";
 const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
 #endif
 
+// .bss
+OverlayHeader *overlayTable;
+RelocTableEntry *mainRelocTable;
+RomTableEntry *overlayRomTable;
+s32 overlayCount;
+s32 mainRelocCount;
+UNUSED s32 D_800FEAB4_Pad;
+RelocContext gRelocContext;
+UNUSED s32 D_800FEACC_Pad;
+UNUSED s32 D_800FEAD0_Pad;
+u32 gUnresolvedSymbolAddr;
+PendingOverlayLoad gPendingOverlayLoads[16];
+OverlayTimerEntry *gSelfDestructTimers;
+
+
 /**
  * Overlays work by having functions that call the overlay actually load TrapDanglingJump
  * That function then uses the overlayRomTable to figure out which overlay to load
