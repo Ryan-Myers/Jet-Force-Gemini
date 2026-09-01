@@ -134,13 +134,15 @@ extern s32 D_800B0B50_B1750; // 0x800B0B50 Start of .bss
 extern void *__BSS_SECTION_START;
 extern void *__BSS_SECTION_END;
 extern void *__DATA_SECTION_START;
+extern void *__DATA_SECTION_END;
 extern void *__CODE_SECTION_START;
+extern void *__CODE_SECTION_END;
 
 // ROM addresses for runlink tables
-extern u32 symbolsTable_offsets_ROM_START[]; // Symbol offset table (4 bytes per entry)
-extern u32 symbolsTable_offsets_ROM_END[];
-extern u32 symbolsTable_symbol_names_ROM_START[];
-extern u32 symbolsTable_symbol_names_ROM_END[];
+extern u8 symbolsTable_offsets_ROM_START[]; // Symbol offset table (4 bytes per entry)
+extern u8 symbolsTable_offsets_ROM_END[];
+extern u8 symbolsTable_symbol_names_ROM_START[];
+extern u8 symbolsTable_symbol_names_ROM_END[];
 extern u8 overlayRomTable_ROM_START[];
 extern u8 overlayRomTable_ROM_END[];
 extern u8 overlayTable_ROM_START[];
@@ -150,8 +152,14 @@ extern u8 mainRelocTable_ROM_END[];
 extern u8 overlayCode_ROM_START[];
 extern u8 overlayCode_ROM_END[];
 extern u8 overlayData_ROM_START[];
+extern u8 overlayData_ROM_END[];
 
-#define OVERLAY_SECTION_MAIN 0x000 //The main code section that's always in RAM
+#define SYMBOLS_TABLE_OFFSETS_SIZE ((u32) (symbolsTable_offsets_ROM_END - symbolsTable_offsets_ROM_START))
+#define OVERLAY_TABLE_SIZE ((u32) (overlayTable_ROM_END - overlayTable_ROM_START))
+#define OVERLAY_ROM_TABLE_SIZE ((u32) (overlayRomTable_ROM_END - overlayRomTable_ROM_START))
+#define MAIN_RELOC_TABLE_SIZE ((u32) (mainRelocTable_ROM_END - mainRelocTable_ROM_START))
+
+#define OVERLAY_SECTION_MAIN 0x000 // The main code section that's always in RAM
 #define OVERLAY_SECTION_UNUSED 0xFFB
 #define OVERLAY_SECTION_DATA_0 0xFFC // Only seemingly used for osTvType
 #define OVERLAY_SECTION_DATA_1 0xFFD
