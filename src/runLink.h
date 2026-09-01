@@ -137,8 +137,10 @@ extern void *__DATA_SECTION_START;
 extern void *__CODE_SECTION_START;
 
 // ROM addresses for runlink tables
-extern u8 symbolsTable_offsets_ROM_START[];
-extern u8 symbolsTable_offsets_ROM_END[];
+extern u32 symbolsTable_offsets_ROM_START[]; // Symbol offset table (4 bytes per entry)
+extern u32 symbolsTable_offsets_ROM_END[];
+extern u32 symbolsTable_symbol_names_ROM_START[];
+extern u32 symbolsTable_symbol_names_ROM_END[];
 extern u8 overlayRomTable_ROM_START[];
 extern u8 overlayRomTable_ROM_END[];
 extern u8 overlayTable_ROM_START[];

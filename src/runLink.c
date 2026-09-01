@@ -32,10 +32,6 @@ PendingOverlayLoad gPendingOverlayLoads[16];
 OverlayTimerEntry *gSelfDestructTimers;
 
 #ifdef NON_EQUIVALENT
-// ROM addresses for symbol name lookup tables
-extern u32 D_1FEB040[]; // Symbol offset table (4 bytes per entry)
-extern u8 D_1FED550[];  // Symbol string table base
-
 /**
  * Retrieves a symbol name from ROM given its index.
  * @param symbolIndex Index into the symbol offset table
@@ -43,33 +39,28 @@ extern u8 D_1FED550[];  // Symbol string table base
  */
 char *GetSymbolName(u32 symbolIndex) {
     char stringBuffer[96]; // Buffer for string data
+    char *result = stringBuffer;
     u32 offsetAddr;
-    u32 stringOffset;
-    u32 stringAddr;
-    u32 bufferOffset;
     u32 offsetTableEntry[2]; // 8-byte aligned buffer for offset table read
 
     // Calculate ROM address of offset table entry
-    offsetAddr = (u32) &D_1FEB040[symbolIndex];
+    offsetAddr = (u32) &symbolsTable_offsets_ROM_START[symbolIndex];
 
     // Read 8 bytes aligned (ROM requires 8-byte aligned reads)
-    romCopy(offsetAddr & ~7, (u32) offsetTableEntry, 8);
+    romCopy(offsetAddr & ~7, (u32) offsetTableEntry, sizeof(offsetTableEntry));
 
     // Extract the 4-byte offset value using low bits to index into buffer
-    stringOffset = ((((*((u32 *) (((u8 *) offsetTableEntry) + (offsetAddr & 7)))))) & 0xFFFFFFFFFFFFFFFF);
+    offsetAddr = *((u32 *) (((u8 *) offsetTableEntry) + (offsetAddr & 7)));
+    if (((!result) && (!result)) && (!result)) {}
 
     // Calculate string ROM address
-    stringAddr = stringOffset + (u32) D_1FED550;
+    offsetAddr = offsetAddr + (u32) symbolsTable_symbol_names_ROM_START;
 
-    // Save offset within aligned block
-    bufferOffset = stringAddr & 7;
-    if (((!stringBuffer) && (!stringBuffer)) && (!stringBuffer)) {}
-    if (!bufferOffset) {}
     // Read 96 bytes of string data (aligned)
-    romCopy(stringAddr & ~7, (u32) stringBuffer, 96);
+    romCopy(offsetAddr & ~7, (u32) result, sizeof(stringBuffer));
 
     // Return pointer to string within buffer
-    return stringBuffer + bufferOffset;
+    return &result[offsetAddr & 7];
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/GetSymbolName.s")
@@ -128,7 +119,7 @@ void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry
  * Patches a MIPS instruction with a relocated address.
  * @param instr     Pointer to the instruction to patch
  * @param address   The resolved address to patch in
- * @param patchOperation The patch operation type (RELOC_PATCH_WORD, RELOC_PATCH_JAL, RELOC_PATCH_HI16, RELOC_PATCH_LO16)
+ * @param patchOperation The patch operation type
  */
 void PatchInstruction(MipsInstruction *instr, u32 address, u8 patchOperation) {
     u32 instrWord;
@@ -161,77 +152,71 @@ void PatchInstruction(MipsInstruction *instr, u32 address, u8 patchOperation) {
     osInvalICache(instr, sizeof(MipsInstruction));
 }
 
-// Could be NON_MATCHING, but not 100% sure.
-#ifdef NON_EQUIVALENT
-// Relocation section base addresses (set by runlinkDownloadCode when loading an overlay)
-extern u8 *gRelocTextBase; // Base address of overlay's .text section being relocated
-extern u8 *gRelocDataBase; // Base address for type-3 relocations (alternate section)
-
 // Returns how many entries were consumed (important for the HI16/LO16 pair case where it processes 2 entries at once).
 s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
-    u32 combinedAddr;
-    u8 *resolvedAddr;
     MipsInstruction *patchLocation;
-    MipsInstruction *nextPatchLocation;
-    s32 overlayNumber;
     s32 patchOperation;
-    s32 resolveType;
+    u32 resolvedAddr;
+    MipsInstruction *nextPatchLocation;
+    u32 combinedAddr;
+    s32 overlayNumber;
+    s32 relocType;
     u32 nextLoImmediate;
     u32 currLoImmediate;
 
     patchOperation = relocEntry->patchOperation;
-    resolveType = relocEntry->resolveType;
+    relocType = relocEntry->relocType;
     if (relocEntry->relocType == RELOC_TYPE_DATA) {
-        patchLocation = (MipsInstruction *) &gRelocDataBase[relocEntry->targetOffset];
+        patchLocation = (MipsInstruction *) &gRelocContext.bases[RELOC_BASE_DATA][relocEntry->targetOffset];
         relocEntry->relocType = RELOC_TYPE_EXTERNAL; // Change to external so that it can be resolved normally
     } else {
-        patchLocation = (MipsInstruction *) &gRelocTextBase[relocEntry->targetOffset];
+        patchLocation = (MipsInstruction *) &gRelocContext.bases[RELOC_BASE_TEXT][relocEntry->targetOffset];
     }
-    resolvedAddr = ResolveRelocAddress(relocEntry->symbolIndex, otIndex, relocEntry, patchLocation);
+
+    resolvedAddr = (u32) ResolveRelocAddress(relocEntry->symbolIndex, otIndex, relocEntry, patchLocation);
+
     if (patchOperation == RELOC_PATCH_HI16) {
         overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
         if (overlayNumber > OVERLAY_SECTION_UNUSED) {
-            overlayNumber = 0;
+            overlayNumber = OVERLAY_SECTION_MAIN;
         }
         if (relocEntry->relocType == RELOC_TYPE_EXTERNAL && (overlayTable[overlayNumber].VramBase == 0)) {
             resolvedAddr = (u32) &gUnresolvedSymbolAddr;
         }
-        nextPatchLocation = (MipsInstruction *) &gRelocTextBase[relocEntry[1].targetOffset];
-        currLoImmediate = patchLocation->itype.upper;
-        nextLoImmediate = nextPatchLocation->itype.upper;
+        nextPatchLocation = (MipsInstruction *) &gRelocContext.bases[RELOC_BASE_TEXT][relocEntry[1].targetOffset];
+        currLoImmediate = patchLocation->itype.immediate;
+        nextLoImmediate = nextPatchLocation->itype.immediate;
         if (nextLoImmediate & 0x8000) {
             nextLoImmediate |= 0xFFFF0000;
         }
-        combinedAddr = (currLoImmediate << 16) + nextLoImmediate;
-        // combinedAddr = ((currLoImmediate << 2) << 14) + nextLoImmediate;
-        if (combinedAddr != (u32) &gUnresolvedSymbolAddr) {
-            resolvedAddr += combinedAddr;
+        currLoImmediate = (currLoImmediate << 16) + nextLoImmediate;
+        if (currLoImmediate != (u32) &gUnresolvedSymbolAddr) {
+            resolvedAddr += currLoImmediate;
         }
         PatchInstruction(patchLocation, resolvedAddr, RELOC_PATCH_HI16);
         PatchInstruction(nextPatchLocation, resolvedAddr, RELOC_PATCH_LO16);
-        relocEntry->resolveType = resolveType;
+        relocEntry->relocType = relocType;
         return 2;
-    }
-    if (patchOperation == RELOC_PATCH_LO16) {
+    } else if (patchOperation == RELOC_PATCH_LO16) {
         overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
         if (overlayNumber > OVERLAY_SECTION_UNUSED) {
-            overlayNumber = 0;
+            overlayNumber = OVERLAY_SECTION_MAIN;
         }
         if (relocEntry->relocType == RELOC_TYPE_EXTERNAL && (overlayTable[overlayNumber].VramBase == 0)) {
             resolvedAddr = (u32) &gUnresolvedSymbolAddr;
         }
-        PatchInstruction(patchLocation, resolvedAddr + patchLocation->itype.upper, RELOC_PATCH_LO16);
-        relocEntry->resolveType = resolveType;
+
+        resolvedAddr += patchLocation->itype.immediate;
+
+        PatchInstruction(patchLocation, resolvedAddr, RELOC_PATCH_LO16);
+        relocEntry->relocType = relocType;
         return 1;
     } else {
         PatchInstruction(patchLocation, resolvedAddr, patchOperation);
-        relocEntry->resolveType = resolveType;
+        relocEntry->relocType = relocType;
         return 1;
     }
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/ProcessRelocationEntry.s")
-#endif
 
 /**
  * Downloads and links an overlay module into memory.
@@ -599,7 +584,7 @@ void runlinkFreeCode(s32 overlayIndex) {
                         instr = (MipsInstruction *) &gRelocContext.bases[RELOC_BASE_DATA][relocEntry->targetOffset];
                         relocEntry->relocType = RELOC_TYPE_EXTERNAL;
                     } else {
-                        instr =(MipsInstruction *) &gRelocContext.bases[RELOC_BASE_TEXT][relocEntry->targetOffset];
+                        instr = (MipsInstruction *) &gRelocContext.bases[RELOC_BASE_TEXT][relocEntry->targetOffset];
                     }
 
                     // Patch the instruction to point to TrapDanglingJump if it's a JAL instuction
