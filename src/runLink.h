@@ -87,10 +87,10 @@ typedef struct RelocContext {
         u8 *bases[5];      // An array of base addresses for different sections: unused, text, data, bss, reloc
         struct {
             u8 *unused;    // 0x00 - Unknown
-            u8 *textBase;  // 0x04 - gRelocTextBase
-            u8 *dataBase;  // 0x08 - gRelocDataBase
-            u8 *bssBase;   // 0x0C
-            u8 *relocBase; // 0x10 - relocation table base
+            u8 *textBase;  // 0x04 - .text
+            u8 *dataBase;  // 0x08 - .data
+            u8 *bssBase;   // 0x0C - .bss
+            u8 *relocBase; // 0x10 - relocation table
         };
     };
 } RelocContext; /* 0x14 bytes */

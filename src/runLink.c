@@ -13,8 +13,8 @@ const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
 
 // .data
 s32 gStopCallResumeFunction = FALSE;
-s32 D_800A38F4_A44F4 = TRUE; // Some flag cleared at init
-s32 D_800A38F8_A44F8 = 0;    // Symbol table size (D_1FED550 - D_1FEB040)
+s32 gRunlinkNeedsInit = TRUE; // Set to FALSE once the init function has completed.
+s32 gSymbolTableSize = 0;
 s32 AllowSelfDestructing = TRUE;
 
 // .bss
@@ -429,7 +429,7 @@ s32 runlinkEnsureJumpIsValid(void **jumpAddress) {
     overlay = overlayTable;
     for (overlayIndex = 0; overlayIndex < gOverlayCount; overlayIndex++) {
         if (overlay->VramBase != 0) {
-            if (overlayIndex == 0) {
+            if (overlayIndex == OVERLAY_SECTION_MAIN) {
                 // Main module - use special relocation context
                 gRelocContext.textBase = (u8 *) &__CODE_SECTION_START; // Start of .text
                 gRelocContext.dataBase = (u8 *) &__DATA_SECTION_START; // Start of .data
@@ -449,10 +449,10 @@ s32 runlinkEnsureJumpIsValid(void **jumpAddress) {
             while (relocCount--) {
                 switch (relocEntry->relocType) {
                     case RELOC_TYPE_DATA:
-                        section = 2; // dataBase
+                        section = RELOC_BASE_DATA;
                         break;
                     default:
-                        section = 1; // textBase
+                        section = RELOC_BASE_TEXT;
                         break;
                 }
 
@@ -746,7 +746,7 @@ void runlinkInitialise(void) {
     s32 i;
 
     // Store symbol table size for GetSymbolName
-    D_800A38F8_A44F8 = symbolsTable_offsets_ROM_END - symbolsTable_offsets_ROM_START;
+    gSymbolTableSize = symbolsTable_offsets_ROM_END - symbolsTable_offsets_ROM_START;
 
     // Allocate and copy overlayTable from ROM
     // Extra 0x20 bytes at start for main module header (overlay 0)
@@ -804,7 +804,8 @@ void runlinkInitialise(void) {
         overlayEntry++;
     }
 
-    D_800A38F4_A44F4 = 0;
+    // Mark initialization as complete
+    gRunlinkNeedsInit = FALSE;
 }
 #else
 #pragma GLOBAL_ASM("asm/nonmatchings/runLink/runlinkInitialise.s")
@@ -1081,13 +1082,13 @@ s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char *
         *symbolName = "unknown";
     }
 
-    if (D_800A38F4_A44F4 != 0) {
+    if (gRunlinkNeedsInit) {
         *moduleAddress = address - 0x80000450; //(u32) &__CODE_SECTION_START;
         return TRUE;
     }
 
     if (symbolName != NULL) {
-        count = D_800A38F8_A44F8;
+        count = gSymbolTableSize;
         while (count--) {
             overlayBase = overlayTable;
             overlay = &overlayBase[romEntry->entry.OverlayNumber];
