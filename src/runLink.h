@@ -149,6 +149,20 @@ extern u8 overlayCode_ROM_START[];
 extern u8 overlayCode_ROM_END[];
 extern u8 overlayData_ROM_START[];
 
+#define OVERLAY_SECTION_MAIN 0x000 //The main code section that's always in RAM
+#define OVERLAY_SECTION_UNUSED 0xFFB
+#define OVERLAY_SECTION_DATA_0 0xFFC // Only seemingly used for osTvType
+#define OVERLAY_SECTION_DATA_1 0xFFD
+#define OVERLAY_SECTION_DATA_2 0xFFE
+#define OVERLAY_SECTION_BSS 0xFFF
+
+typedef enum {
+    RELOC_BASE_UNUSED = 0,
+    RELOC_BASE_TEXT = 1,
+    RELOC_BASE_DATA = 2,
+    RELOC_BASE_BSS = 3,
+    RELOC_BASE_RELOC = 4
+} RelocContextBase;
 
 /**
  * Complete Analysis: How rcpWaitDP Uses TrapDanglingJump
@@ -185,7 +199,7 @@ extern s32 TrapDanglingJump();
 
 char *GetSymbolName(u32 symbolIndex);
 void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry, MipsInstruction *patchLocation);
-void PatchInstruction(MipsInstruction *instr, u32 address, u8 relocType);
+void PatchInstruction(MipsInstruction *instr, u32 address, u8 patchOperation);
 s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex);
 s32 runlinkDownloadCode(s32);
 s32 runlinkEnsureJumpIsValid(void **jumpAddress);

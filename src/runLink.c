@@ -12,7 +12,7 @@ const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
 #endif
 
 // .data
-s32 D_800A38F0_A44F0 = FALSE;
+s32 gStopCallResumeFunction = FALSE;
 s32 D_800A38F4_A44F4 = TRUE; // Some flag cleared at init
 s32 D_800A38F8_A44F8 = 0;    // Symbol table size (D_1FED550 - D_1FEB040)
 s32 AllowSelfDestructing = TRUE;
@@ -88,15 +88,15 @@ void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry
     switch (relocEntry->relocType) {
         case RELOC_TYPE_EXTERNAL: // R_MIPS_32: Absolute symbol reference
             switch (overlayNumber) {
-                case 0xFFD: // Data section
+                case OVERLAY_SECTION_DATA_1: // Data section
                     overlayNumber = 0;
                     addressOffset = (u32) &__DATA_SECTION_START - (u32) &__CODE_SECTION_START;
                     break;
-                case 0xFFE: // Data section
+                case OVERLAY_SECTION_DATA_2: // Data section
                     overlayNumber = 0;
                     addressOffset = (u32) &__DATA_SECTION_START - (u32) &__CODE_SECTION_START;
                     break;
-                case 0xFFF: // BSS section
+                case OVERLAY_SECTION_BSS: // BSS section
                     overlayNumber = 0;
                     addressOffset = (u32) &__BSS_SECTION_START - (u32) &__CODE_SECTION_START;
                     break;
@@ -128,17 +128,17 @@ void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry
  * Patches a MIPS instruction with a relocated address.
  * @param instr     Pointer to the instruction to patch
  * @param address   The resolved address to patch in
- * @param relocType The relocation type (2=R_MIPS_32, 4=R_MIPS_26, 5=HI16, 6=LO16)
+ * @param patchOperation The patch operation type (RELOC_PATCH_WORD, RELOC_PATCH_JAL, RELOC_PATCH_HI16, RELOC_PATCH_LO16)
  */
-void PatchInstruction(MipsInstruction *instr, u32 address, u8 relocType) {
+void PatchInstruction(MipsInstruction *instr, u32 address, u8 patchOperation) {
     u32 instrWord;
     u32 temp;
 
-    switch (relocType) {
-        case RELOC_PATCH_WORD: // R_MIPS_32: Store full 32-bit address
+    switch (patchOperation) {
+        case RELOC_PATCH_WORD: // Store full 32-bit address
             instr->word = address;
             break;
-        case RELOC_PATCH_JAL: // R_MIPS_26: Patch jump target (preserve opcode)
+        case RELOC_PATCH_JAL: // Patch jump target (preserve opcode)
             temp = (address >> 2) & 0x03FFFFFF;
             instrWord = instr->word;
             temp ^= instrWord;
@@ -146,14 +146,14 @@ void PatchInstruction(MipsInstruction *instr, u32 address, u8 relocType) {
             temp ^= instrWord;
             instr->word = temp;
             break;
-        case RELOC_PATCH_HI16: // R_MIPS_HI16: Patch upper 16 bits of address
+        case RELOC_PATCH_HI16: // Patch upper 16 bits of address
             temp = address >> 16;
             if (address & 0x8000) {
                 temp++; // Adjust for sign extension of LO16
             }
             instr->itype.upper = (u16) temp;
             break;
-        case RELOC_PATCH_LO16: // R_MIPS_LO16: Patch lower 16 bits of address
+        case RELOC_PATCH_LO16: // Patch lower 16 bits of address
             instr->itype.upper = (u16) address;
             break;
     }
@@ -190,7 +190,7 @@ s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
     resolvedAddr = ResolveRelocAddress(relocEntry->symbolIndex, otIndex, relocEntry, patchLocation);
     if (patchOperation == RELOC_PATCH_HI16) {
         overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
-        if (overlayNumber >= 0xFFC) {
+        if (overlayNumber > OVERLAY_SECTION_UNUSED) {
             overlayNumber = 0;
         }
         if (relocEntry->relocType == RELOC_TYPE_EXTERNAL && (overlayTable[overlayNumber].VramBase == 0)) {
@@ -214,7 +214,7 @@ s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
     }
     if (patchOperation == RELOC_PATCH_LO16) {
         overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
-        if (overlayNumber >= 0xFFC) {
+        if (overlayNumber > OVERLAY_SECTION_UNUSED) {
             overlayNumber = 0;
         }
         if (relocEntry->relocType == RELOC_TYPE_EXTERNAL && (overlayTable[overlayNumber].VramBase == 0)) {
@@ -382,7 +382,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
             while (relocCount-- > 0) {
                 // Check if this relocation references the newly loaded overlay
                 overlayNum = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
-                if (overlayNum > 0xFFB) {
+                if (overlayNum > OVERLAY_SECTION_UNUSED) {
                     overlayNum = 0;
                 }
 
@@ -458,7 +458,7 @@ s32 runlinkEnsureJumpIsValid(void **jumpAddress) {
 
                 if ((u8 *) jumpAddress == (gRelocContext.bases[section] + relocEntry->targetOffset)) {
                     overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
-                    if (overlayNumber >= 0xFFC) {
+                    if (overlayNumber > OVERLAY_SECTION_UNUSED) {
                         overlayNumber = 0;
                     }
                     runlinkDownloadCode(overlayNumber);
@@ -519,7 +519,7 @@ void runlinkCallResumeFunction(s32 overlayIndex) {
 void runlinkFreeCode(s32 overlayIndex) {
     OverlayHeader *overlay;
     RelocationEntry *relocEntry;
-    MipsInstruction *patchLocation;
+    MipsInstruction *instr;
     s32 overlayNum;
     s32 i;
     s32 loadedAddress;
@@ -529,28 +529,26 @@ void runlinkFreeCode(s32 overlayIndex) {
     u32 address;
 
     overlay = &overlayTable[overlayIndex];
-    if (D_800A38F0_A44F0 == 0) {
+    if (gStopCallResumeFunction == FALSE) {
         runlinkCallResumeFunction(overlayIndex);
     }
 
     loadedAddress = overlay->VramBase;
     if (loadedAddress == 0) {
-        found = FALSE;
         // Overlay not loaded - check if it's in pending list
-        i = 0;
+        found = FALSE;
         relocCount = ARRAY_COUNT(gPendingOverlayLoads);
-        while (relocCount--) {
+        for (i = 0; relocCount--; i++) {
             if (overlayIndex == gPendingOverlayLoads[i].overlayIndex) {
                 found = TRUE;
                 break;
             }
-            i++;
         }
 
         if (found) {
             // Free the pending load's memory (base + TextSize offset)
             mmFree((void *) (gPendingOverlayLoads[i].unk0 + overlay->TextSize));
-            gPendingOverlayLoads[i].overlayIndex = 0xFFB; // Mark slot as unused
+            gPendingOverlayLoads[i].overlayIndex = OVERLAY_SECTION_UNUSED; // Mark slot as unused
         }
         return;
     }
@@ -559,7 +557,6 @@ void runlinkFreeCode(s32 overlayIndex) {
     mmFree((void *) loadedAddress);
     overlay->VramBase = 0;
 
-    // Clear overlay timer entry - reset selfDestructTimer and refCount
     gSelfDestructTimers[overlayIndex].selfDestructTimer = 0;
     gSelfDestructTimers[overlayIndex].refCount = 0;
 
@@ -567,7 +564,7 @@ void runlinkFreeCode(s32 overlayIndex) {
     for (i = 0; i < gOverlayCount; i++, overlay++) {
         loadedAddress = overlay->VramBase;
         if (loadedAddress != 0 && i != overlayIndex) {
-            if (i == 0) {
+            if (i == OVERLAY_SECTION_MAIN) {
                 // Main module - use special relocation context
                 gRelocContext.textBase = (u8 *) &__CODE_SECTION_START; // Start of .text
                 gRelocContext.dataBase = (u8 *) &__DATA_SECTION_START; // Start of .data
@@ -585,30 +582,37 @@ void runlinkFreeCode(s32 overlayIndex) {
                 relocCount = overlay->RelocationTableSize / sizeof(RelocationEntry);
             }
 
+            // Iterate through reloc and patch entries referencing this overlay
             while (relocCount--) {
+                // Save the original relocation type before potentially modifying it
                 relocType = relocEntry->relocType;
+
                 overlayNum = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
-                if (overlayNum >= 0xFFC) {
-                    overlayNum = 0;
+                // Treat all overlay numbers used for data/bss as the main overlay
+                if (overlayNum > OVERLAY_SECTION_UNUSED) {
+                    overlayNum = OVERLAY_SECTION_MAIN;
                 }
 
+                // Patch the section being unloaded only
                 if (overlayNum == overlayIndex) {
                     if (relocEntry->relocType == RELOC_TYPE_DATA) {
-                        patchLocation = (MipsInstruction *) &gRelocContext.bases[2][relocEntry->targetOffset];
-                        relocEntry->relocType = 0;
+                        instr = (MipsInstruction *) &gRelocContext.bases[RELOC_BASE_DATA][relocEntry->targetOffset];
+                        relocEntry->relocType = RELOC_TYPE_EXTERNAL;
                     } else {
-                        patchLocation = (MipsInstruction *) &gRelocContext.bases[1][relocEntry->targetOffset];
+                        instr =(MipsInstruction *) &gRelocContext.bases[RELOC_BASE_TEXT][relocEntry->targetOffset];
                     }
 
+                    // Patch the instruction to point to TrapDanglingJump if it's a JAL instuction
                     if (relocEntry->patchOperation == RELOC_PATCH_JAL) {
-                        address = (u32) TrapDanglingJump;
+                        address = (u32) &TrapDanglingJump;
                     } else {
                         address = NULL;
                     }
 
-                    PatchInstruction(patchLocation, address, relocEntry->patchOperation);
+                    PatchInstruction(instr, address, relocEntry->patchOperation);
                 }
 
+                // Reset the relocation entry to its original type if it was modified.
                 relocEntry->relocType = relocType;
                 relocEntry++;
             }
@@ -657,7 +661,7 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
 
         // Free the pending load's memory (base + TextSize offset)
         mmFree((void *) (pendingLoad->unk0 + overlay->TextSize));
-        pendingLoad->overlayIndex = 0xFFB; // Mark slot as unused
+        pendingLoad->overlayIndex = OVERLAY_SECTION_UNUSED; // Mark slot as unused
         return;
     }
 
@@ -676,7 +680,7 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
         relocType = relocEntry->relocType;
         overlayNum = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
 
-        if (overlayNum >= 0xFFC) {
+        if (overlayNum > OVERLAY_SECTION_UNUSED) {
             overlayNum = 0;
         }
 
@@ -720,9 +724,9 @@ void runlinkFlushModules(void) {
     }
 
     for (overlayIndex = ARRAY_COUNT(gPendingOverlayLoads); overlayIndex--;) {
-        if (pendingLoad->overlayIndex != 0xFFB) {
+        if (pendingLoad->overlayIndex != OVERLAY_SECTION_UNUSED) {
             mmFree((void *) (overlayTable[pendingLoad->overlayIndex].TextSize + pendingLoad->unk0));
-            pendingLoad->overlayIndex = 0xFFB;
+            pendingLoad->overlayIndex = OVERLAY_SECTION_UNUSED;
         }
 
         pendingLoad++;
@@ -774,12 +778,12 @@ void runlinkInitialise(void) {
     // +1 for the main module (overlay 0)
     overlayCount = (overlayTableSize / sizeof(OverlayHeader)) + 1;
 
-    // Initialize pending overlay load slots to unused (0xFFB)
+    // Initialize pending overlay load slots to unused
     // Loop from end to start
     pendingSlot = &gPendingOverlayLoads[ARRAY_COUNT(gPendingOverlayLoads) - 1];
     i = ARRAY_COUNT(gPendingOverlayLoads);
     while (i--) {
-        pendingSlot->overlayIndex = 0xFFB;
+        pendingSlot->overlayIndex = OVERLAY_SECTION_UNUSED;
         pendingSlot--;
     }
 
@@ -829,16 +833,16 @@ void runlinkSuspendCode(s32 overlayIndex) {
         pendingLoad = gPendingOverlayLoads;
         remaining = ARRAY_COUNT(gPendingOverlayLoads) - 1;
         do {
-            if (pendingLoad->overlayIndex == 0xFFB) {
+            if (pendingLoad->overlayIndex == OVERLAY_SECTION_UNUSED) {
 #ifdef VERSION_us
                 savedDelay = mmGetDelay();
 #endif
                 pendingLoad->unk0 = overlay->VramBase;
                 pendingLoad->overlayIndex = overlayIndex;
                 mmSetDelay(0);
-                D_800A38F0_A44F0 = TRUE;
+                gStopCallResumeFunction = TRUE;
                 runlinkFreeCode(overlayIndex);
-                D_800A38F0_A44F0 = FALSE;
+                gStopCallResumeFunction = FALSE;
 #ifdef VERSION_kiosk
                 mmSetDelay(2);
 #else
@@ -970,7 +974,7 @@ void runlinkResumeCode(s32 overlayIndex) {
 
                 while (relocCount-- > 0) {
                     overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
-                    if (overlayNumber >= 0xFFC) {
+                    if (overlayNumber > OVERLAY_SECTION_UNUSED) {
                         overlayNumber = 0;
                     }
                     if (overlayNumber == overlayIndex && ((relocEntry->relocType) == RELOC_TYPE_EXTERNAL ||
@@ -986,7 +990,7 @@ void runlinkResumeCode(s32 overlayIndex) {
             overlay++;
         }
 
-        pendingLoad->overlayIndex = 0xFFB;
+        pendingLoad->overlayIndex = OVERLAY_SECTION_UNUSED;
     }
 }
 
@@ -998,7 +1002,7 @@ void runlinkResumeAll(void) {
     pendingLoad = gPendingOverlayLoads;
     remaining = ARRAY_COUNT(gPendingOverlayLoads);
     while (remaining--) {
-        if (pendingLoad->overlayIndex != 0xFFB) {
+        if (pendingLoad->overlayIndex != OVERLAY_SECTION_UNUSED) {
             overlayIndex = pendingLoad->overlayIndex;
             runlinkResumeCode(overlayIndex);
         }
