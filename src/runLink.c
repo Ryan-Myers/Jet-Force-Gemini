@@ -142,10 +142,10 @@ void PatchInstruction(MipsInstruction *instr, u32 address, u8 patchOperation) {
             if (address & 0x8000) {
                 temp++; // Adjust for sign extension of LO16
             }
-            instr->itype.upper = (u16) temp;
+            instr->itype.immediate = (u16) temp;
             break;
         case RELOC_PATCH_LO16: // Patch lower 16 bits of address
-            instr->itype.upper = (u16) address;
+            instr->itype.immediate = (u16) address;
             break;
     }
     osWritebackDCache(instr, sizeof(MipsInstruction));
