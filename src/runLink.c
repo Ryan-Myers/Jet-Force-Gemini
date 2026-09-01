@@ -628,7 +628,7 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
     OverlayHeader *overlay;
     PendingOverlayLoad *pendingLoad;
     RelocationEntry *relocEntry;
-    MipsInstruction *patchLocation;
+    MipsInstruction *instr;
     s32 overlayNum;
     s32 loadedAddress;
     s32 relocType;
@@ -643,8 +643,8 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
     address = loadedAddress;
 
     if (address == 0) {
-        found = FALSE;
         // Overlay not loaded - check if it's in pending list
+        found = FALSE;
         pendingLoad = gPendingOverlayLoads;
         i = ARRAY_COUNT(gPendingOverlayLoads);
         while (i--) {
@@ -655,13 +655,11 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
             pendingLoad++;
         }
 
-        if (found == FALSE) {
-            return;
+        if (found) {
+            // Free the pending load's memory (base + TextSize offset)
+            mmFree((void *) (pendingLoad->unk0 + overlay->TextSize));
+            pendingLoad->overlayIndex = OVERLAY_SECTION_UNUSED; // Mark slot as unused
         }
-
-        // Free the pending load's memory (base + TextSize offset)
-        mmFree((void *) (pendingLoad->unk0 + overlay->TextSize));
-        pendingLoad->overlayIndex = OVERLAY_SECTION_UNUSED; // Mark slot as unused
         return;
     }
 
@@ -669,7 +667,6 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
     mmFree((void *) address);
     overlay->VramBase = 0;
 
-    // Clear overlay timer entry - reset selfDestructTimer and refCount
     gSelfDestructTimers[overlayIndex].selfDestructTimer = 0;
     gSelfDestructTimers[overlayIndex].refCount = 0;
 
@@ -677,38 +674,36 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
     relocEntry = (RelocationEntry *) mainRelocTable;
     i = mainRelocCount;
     while (i--) {
+        // Save the original relocation type before potentially modifying it
         relocType = relocEntry->relocType;
+
         overlayNum = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
 
+        // Treat all overlay numbers used for data/bss as the main overlay
         if (overlayNum > OVERLAY_SECTION_UNUSED) {
-            overlayNum = 0;
+            overlayNum = OVERLAY_SECTION_MAIN;
         }
 
+        // Patch the section being unloaded only
         if (overlayNum == overlayIndex) {
-            // This entry references the overlay being unloaded
             if (relocEntry->relocType == RELOC_TYPE_DATA) {
-                // Type 3: data section relocation
-                patchLocation = (MipsInstruction *) ((u8 *) &__DATA_SECTION_START + (relocEntry->targetOffset));
+                instr = (MipsInstruction *) ((u8 *) &__DATA_SECTION_START + (relocEntry->targetOffset));
                 relocEntry->relocType = RELOC_TYPE_EXTERNAL;
             } else {
-                // Other types: text section relocation
-                patchLocation = (MipsInstruction *) ((u8 *) &__CODE_SECTION_START + (relocEntry->targetOffset));
+                instr = (MipsInstruction *) ((u8 *) &__CODE_SECTION_START + (relocEntry->targetOffset));
             }
 
-            // Get patchOperation and determine what to patch
-            patchOperation = relocEntry->patchOperation;
-            if ((patchOperation ^ 0) == RELOC_PATCH_JAL) { // FAKE MATCH
-                // Patch back to TrapDanglingJump
+            // Patch the instruction to point to TrapDanglingJump if it's a JAL instuction
+            if (relocEntry->patchOperation == RELOC_PATCH_JAL) {
                 address = (u32) TrapDanglingJump;
             } else {
-                // Clear the reference
                 address = NULL;
             }
-            PatchInstruction(patchLocation, address, patchOperation);
+            PatchInstruction(instr, address, relocEntry->patchOperation);
         }
 
+        // Reset the relocation entry to its original type if it was modified.
         relocEntry->relocType = relocType;
-
         relocEntry++;
     }
 }
