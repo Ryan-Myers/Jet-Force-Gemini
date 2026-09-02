@@ -1035,7 +1035,7 @@ void runlinkLowMemoryPanic(void) {
  * @return TRUE if the address belongs to a loaded module, FALSE otherwise.
  */
 s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char **symbolName) {
-    s32 overlayVram;
+    u32 overlayVram;
     RomTableEntry *romEntry;
     OverlayHeader *overlayBase;
     OverlayHeader *overlay;
@@ -1063,8 +1063,8 @@ s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char *
         while (count--) {
             overlayBase = overlayTable;
             overlay = &overlayBase[romEntry->entry.OverlayNumber];
-            overlayVram = (s32) overlay->VramBase;
-            if (overlayVram != 0) {
+            overlayVram = (u32) overlay->VramBase;
+            if (overlayVram != NULL) {
                 symbolOffset = romEntry->entry.FunctionOffset;
                 symbolAddress = overlayVram + symbolOffset;
                 if (overlay->TextSize >= symbolOffset && address >= symbolAddress && bestAddress < symbolAddress) {

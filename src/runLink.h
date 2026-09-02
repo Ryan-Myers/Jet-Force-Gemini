@@ -71,10 +71,10 @@ typedef struct RomTableEntry {
 
 typedef struct OverlayHeader {
     /* 0x00 */ void *VramBase; // (0 if not loaded, set after alloc)
-    /* 0x04 */ s32 RomAddress;
-    /* 0x08 */ s32 TextSize;
-    /* 0x0C */ s32 DataSize;
-    /* 0x10 */ s32 RodataSize;
+    /* 0x04 */ u32 RomAddress;
+    /* 0x08 */ u32 TextSize;
+    /* 0x0C */ u32 DataSize;
+    /* 0x10 */ u32 RodataSize;
     /* 0x14 */ u16 RelocationTableSize; // This relocation stays in memory after the overlay is loaded, so that other
                                         // overlays can reference it
     /* 0x16 */ u16 SecondaryRelocationTableSize; // This relocation is freed after the overlay is loaded
