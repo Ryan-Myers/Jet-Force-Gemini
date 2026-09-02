@@ -96,8 +96,8 @@ typedef struct RelocContext {
 } RelocContext; /* 0x14 bytes */
 
 typedef struct PendingOverlayLoad {
-    u32 unk0;         // 0x00 - possibly status/flags
-    s32 overlayIndex; // 0x04 - overlay number being loaded
+    /* 0x00 */ void *VramBase;   // Address in VRAM where the overlay will be loaded
+    /* 0x04 */ s32 overlayIndex; // overlay number being loaded
 } PendingOverlayLoad; // 8 bytes
 
 /**
