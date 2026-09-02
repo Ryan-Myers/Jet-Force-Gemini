@@ -1,5 +1,13 @@
 # Jet Force Gemini
 
+[![Code Progress]][progress]
+
+[Code Progress]: https://decomp.dev/Ryan-Myers/Jet-Force-Gemini/us.svg?mode=shield
+[progress]: https://decomp.dev/Ryan-Myers/Jet-Force-Gemini
+
+> [!IMPORTANT]  
+> This is a human made decompilation, and we're not currently accepting work from AI sources. This is still a hobby project, and why let the machine have all the fun?
+
 A repository exploring a decompilation of Jet Force Gemini.
 
 This uses the US ROM by default, but it will also support the kiosk ROM if so desired. Work on PAL and JPN is so far minimal to not started.
