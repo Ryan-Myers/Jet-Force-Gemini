@@ -3,13 +3,7 @@
 #include "memory.h"
 #include "mips.h"
 #include "pi.h"
-
-// .rodata
-const char D_800ADC90[] = "WARNING: Unimplemented linkage operation %d\n";
-const char D_800ADCC0[] = "ERROR:MIPS_HI16 without matching MIPS_LO16\n";
-#ifdef VERSION_us
-const char D_800AD12C[] = "REALLOC: %08x (%d)\n";
-#endif
+#include "types.h"
 
 // .data
 s32 gStopCallResumeFunction = FALSE;
@@ -33,8 +27,6 @@ OverlayTimerEntry *gSelfDestructTimers;
 
 /**
  * Retrieves a symbol name from ROM given its index.
- * @param symbolIndex Index into the symbol offset table
- * @return Pointer to the symbol name string (in stack buffer - use immediately!)
  */
 char *GetSymbolName(u32 symbolIndex) {
     u32 stringOffset;
@@ -144,6 +136,9 @@ void PatchInstruction(MipsInstruction *instr, u32 address, u8 patchOperation) {
         case RELOC_PATCH_LO16: // Patch lower 16 bits of address
             instr->itype.immediate = (u16) address;
             break;
+        default:
+            stubbed_printf("WARNING: Unimplemented linkage operation %d\n", patchOperation);
+            break;
     }
     osWritebackDCache(instr, sizeof(MipsInstruction));
     osInvalICache(instr, sizeof(MipsInstruction));
@@ -173,6 +168,10 @@ s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
     resolvedAddr = (u32) ResolveRelocAddress(relocEntry->symbolIndex, otIndex, relocEntry, patchLocation);
 
     if (patchOperation == RELOC_PATCH_HI16) {
+        if (relocEntry[1].patchOperation != RELOC_PATCH_LO16) {
+            stubbed_printf("ERROR:MIPS_HI16 without matching MIPS_LO16\n");
+        }
+
         overlayNumber = overlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
         if (overlayNumber > OVERLAY_SECTION_UNUSED) {
             overlayNumber = OVERLAY_SECTION_MAIN;
@@ -823,6 +822,11 @@ void runlinkSuspendCode(s32 overlayIndex) {
         } while (remaining--);
     }
 }
+
+// Not sure where to put this RODATA string. It could be referring to reallocating something in the runLinkSuspendCode though.
+#ifdef VERSION_us
+const char D_800AD12C_ADD2C[] = "REALLOC: %08x (%d)\n";
+#endif
 
 void runlinkResumeCode(s32 overlayIndex) {
     OverlayHeader *overlay;
