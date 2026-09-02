@@ -105,7 +105,7 @@ segments:
       - [0x763A0, hasm, ../libultra/src/os/exceptasm]
       - [0x76D50, c, ../libultra/src/os/createthread]
       - [0x76E40, c, ../libultra/src/gu/perspective]
-      - [0x76FC0, c, refractOutputAssembler] # Could be hasm as it uses bnel which isn't mips1
+      - [0x76FC0, hasm, hasm/refractOutputAssembler]
       - [0x773A0, c, anim]
       - [0x7ADF0, c, hit]
       - [0x84A40, c, fmvInit]
@@ -310,7 +310,7 @@ segments:
       - [0xA4C00, data, rcpFast3d]
       - [0xA4F00, data, sched]
       - [0xA4F30, .data, squads]
-      - [0xA4F40, data, runLink]
+      - [0xA4F40, .data, runLink]
       - [0xA4F50, .data, gameVi]
       - [0xA5160, data, textures]
       - [0xA64F0, .data, screen]
@@ -433,7 +433,7 @@ segments:
       - { type: .bss, vram: 0x800FBB50, name: joy }
       - { type: .bss, vram: 0x800FBBD0, name: level }
       - { type: bss, vram: 0x800FBEC0, name: main }
-      - { type: bss, vram: 0x800FE2F0, name: refractOutputAssembler }
+      - { type: .bss, vram: 0x800FE2F0, name: hasm/refractOutputAssembler }
       - { type: .bss, vram: 0x800FE310, name: memory }
       - { type: .bss, vram: 0x800FE880, name: ../libultra/src/io/motor }
       - { type: bss, vram: 0x800FEAC0, name: saves }
@@ -441,7 +441,7 @@ segments:
       - { type: bss, vram: 0x800FED90, name: rcpFast3d }
       - { type: bss, vram: 0x800FF660, name: sched }
       - { type: .bss, vram: 0x800FF6B0, name: squads }
-      - { type: bss, vram: 0x800FF780, name: runLink }
+      - { type: .bss, vram: 0x800FF780, name: runLink }
       - { type: .bss, vram: 0x800FF840, name: gameVi }
       - { type: bss, vram: 0x800FF9C0, name: textures }
       - { type: bss, vram: 0x800FFA30, name: menu } # so many variables in here are referenced in several files.

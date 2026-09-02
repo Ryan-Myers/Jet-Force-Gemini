@@ -12,8 +12,8 @@ typedef union MipsInstruction {
         unsigned int target : 26; // J/JAL target address >> 2 (bits 0-25)
     } jump;
     struct {
-        unsigned short immediate; // immediate value (bits 0-15)
         unsigned short upper;     // rs/rt/opcode (bits 16-31)
+        unsigned short immediate; // immediate value (bits 0-15)
     } itype;
     // MIPS instruction format for shift instructions
     struct {

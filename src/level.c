@@ -84,7 +84,7 @@ void levelGetCounts(void) {
 
     D_800FB118_B5958 = hdrBuf;
     for (i = 0; i < D_800FB124_B1764; i++) {
-        piRomLoadSection(0x1F, (u32) D_800FB118_B5958, D_800FB110_B1750[i], sizeof(LevelHeader) + 4);
+        piRomLoadSection(0x1F, D_800FB118_B5958, D_800FB110_B1750[i], sizeof(LevelHeader) + 4);
 
         if (D_800FB128_B1768 < D_800FB118_B5958->unk20) {
             D_800FB128_B1768 = D_800FB118_B5958->unk20;

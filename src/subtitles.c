@@ -230,11 +230,11 @@ void subtitleStart(s32 textID) {
                 textID += 50;
                 break;
         }
-        piRomLoadSection(5, (u32) (*gGameTextTable)->entries, (textID & ~1) << 2, 16);
+        piRomLoadSection(5, (*gGameTextTable)->entries, (textID & ~1) << 2, 16);
         entries = (*gGameTextTable)->entries;
         temp = ((s32) entries[textID & 1]) & 0xFF000000;
         size = (((s32) entries[(textID & 1) + 1]) & 0xFFFFFF) - (((s32) entries[textID & 1]) & 0xFFFFFF);
-        piRomLoadSection(4, (u32) gGameTextTableEntries[D_80104594_B1784], ((s32) entries[textID & 1]) ^ temp, size);
+        piRomLoadSection(4, gGameTextTableEntries[D_80104594_B1784], ((s32) entries[textID & 1]) ^ temp, size);
         gCurrentTextProperties = gGameTextTableEntries[D_80104594_B1784];
         find_next_subtitle();
         D_80104594_B1784 = (D_80104594_B1784 + 1) & 1;

@@ -60,14 +60,14 @@ void *screenLoad(s32 screenIndex) {
     decompressedAddr = NULL;
     sp1C = (u8 *) mmAlloc(0x10, COLOUR_TAG_BLUE);
     if (sp1C != NULL) {
-        piRomLoadSection(0x13, (u32) sp1C, start, 0x10);
+        piRomLoadSection(0x13, sp1C, start, 0x10);
         uncompressedSize = rzipUncompressSize(sp1C) + 0x80;
         mmFree(sp1C);
         decompressedAddr = (u8 *) mmAlloc(uncompressedSize, COLOUR_TAG_BLUE);
         if (decompressedAddr != NULL) {
             compressedAddr = (u32) ((decompressedAddr + uncompressedSize) - size);
             compressedAddr -= (compressedAddr & 0xF);
-            piRomLoadSection(0x13, compressedAddr, start, size);
+            piRomLoadSection(0x13, (void *) compressedAddr, start, size);
             rzipUncompress((u8 *) (compressedAddr & 0xFFFFFFFF), decompressedAddr); // fakematch
         }
     }

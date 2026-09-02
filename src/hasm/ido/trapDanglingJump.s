@@ -67,12 +67,12 @@ LEAF(TrapDanglingJump)
     sw         v0, 0x58($sp)              /* Save return value registers (may be set by caller) */
     sw         v1, 0x5C($sp)    
     subu       t5, ra, 8                  /* t5 = address of JAL that called the stub */
-    lw         t0, overlayCount           /* t0 = number of overlays to search */
+    lw         t0, gOverlayCount          /* t0 = number of overlays to search */
     lw         t1, overlayTable           /* t1 = pointer to first overlay header */
 
     /* === OUTER LOOP: Iterate through all loaded overlays === */
 search_next_overlay:
-    lw         v0, overlayCount
+    lw         v0, gOverlayCount
     subu       v0, v0, t0                 /* v0 = how many overlays we`ve checked */
     beqz       v0, search_main_module     /* First iteration: check main module`s relocations */
     
