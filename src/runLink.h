@@ -70,7 +70,7 @@ typedef struct RomTableEntry {
 } RomTableEntry; /* 4 bytes */
 
 typedef struct OverlayHeader {
-    /* 0x00 */ s32 VramBase; // (0 if not loaded, set after alloc)
+    /* 0x00 */ void *VramBase; // (0 if not loaded, set after alloc)
     /* 0x04 */ s32 RomAddress;
     /* 0x08 */ s32 TextSize;
     /* 0x0C */ s32 DataSize;
