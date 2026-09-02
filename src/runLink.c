@@ -2,8 +2,7 @@
 #include "common.h"
 #include "memory.h"
 #include "mips.h"
-
-void romCopy(u32 romOffset, void *ramAddress, s32 numBytes);
+#include "pi.h"
 
 // .rodata
 const char D_800ADC90[] = "WARNING: Unimplemented linkage operation %d\n";
@@ -272,8 +271,8 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
             return FALSE;
         }
         // Load secondary relocation table from ROM
-        romCopy(overlay->RomAddress + overlay->TextSize + overlay->DataSize + overlay->RelocationTableSize,
-                (u32) relocTable, overlay->SecondaryRelocationTableSize);
+        romCopy(overlay->RomAddress + overlay->TextSize + overlay->DataSize + overlay->RelocationTableSize, relocTable,
+                overlay->SecondaryRelocationTableSize);
     }
 
     // Set up relocation context with section base addresses
@@ -301,7 +300,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
         }
 
         // Load relocation table after BSS
-        romCopy(overlay->RomAddress + overlay->TextSize + overlay->DataSize, (u32) gRelocContext.relocBase,
+        romCopy(overlay->RomAddress + overlay->TextSize + overlay->DataSize, gRelocContext.relocBase,
                 overlay->RelocationTableSize);
     }
 
@@ -729,16 +728,16 @@ void runlinkInitialise(void) {
     // Allocate and copy overlayTable from ROM
     // Extra 0x20 bytes at start for main module header (overlay 0)
     overlayTable = (OverlayHeader *) mmAlloc(OVERLAY_TABLE_SIZE + sizeof(OverlayHeader), COLOUR_TAG_WHITE);
-    romCopy((u32) &overlayTable_ROM_START, (u32) (overlayTable + 1), OVERLAY_TABLE_SIZE);
+    romCopy((u32) &overlayTable_ROM_START, (overlayTable + 1), OVERLAY_TABLE_SIZE);
 
     // Allocate and copy overlayRomTable from ROM
     overlayRomTable = (RomTableEntry *) mmAlloc(OVERLAY_ROM_TABLE_SIZE, COLOUR_TAG_WHITE);
-    romCopy((u32) &overlayRomTable_ROM_START, (u32) overlayRomTable, OVERLAY_ROM_TABLE_SIZE);
+    romCopy((u32) &overlayRomTable_ROM_START, overlayRomTable, OVERLAY_ROM_TABLE_SIZE);
 
     // Allocate and copy mainRelocTable from ROM
     // First word contains the count, actual table starts at +4
     mainRelocTable = (RelocTableEntry *) mmAlloc(MAIN_RELOC_TABLE_SIZE, COLOUR_TAG_WHITE);
-    romCopy((u32) &mainRelocTable_ROM_START, (u32) mainRelocTable, MAIN_RELOC_TABLE_SIZE);
+    romCopy((u32) &mainRelocTable_ROM_START, mainRelocTable, MAIN_RELOC_TABLE_SIZE);
 
     // Extract mainRelocCount from first word, then advance pointer past it
     mainRelocCount = *((u32 *) mainRelocTable);
@@ -873,7 +872,7 @@ void runlinkResumeCode(s32 overlayIndex) {
                 return;
             }
             romCopy(overlay->RomAddress + overlay->TextSize + overlay->DataSize + overlay->RelocationTableSize,
-                    (u32) relocTable, overlay->SecondaryRelocationTableSize);
+                    relocTable, overlay->SecondaryRelocationTableSize);
         }
 
         gRelocContext.textBase = (u8 *) overlay->VramBase;

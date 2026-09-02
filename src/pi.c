@@ -33,7 +33,7 @@ void piInit(void) {
     osCreatePiManager((OSPri) 150, &gPIMesgQueue, gPIMesgBuf, ARRAY_COUNT(gPIMesgBuf));
     assetTableSize = __ASSETS_LUT_END - __ASSETS_LUT_START;
     gAssetsLookupTable = (Fs *) mmAlloc(assetTableSize, COLOUR_TAG_GREY);
-    romCopy((u32) __ASSETS_LUT_START, (u32) gAssetsLookupTable, (s32) assetTableSize);
+    romCopy((u32) __ASSETS_LUT_START, gAssetsLookupTable, (s32) assetTableSize);
 }
 
 /**
@@ -58,7 +58,7 @@ u32 *piRomLoad(u32 assetIndex) {
     if (out == 0) {
         return NULL;
     }
-    romCopy((u32) (start + __ASSETS_LUT_END), (u32) out, size);
+    romCopy((u32) (start + __ASSETS_LUT_END), out, size);
     return out;
 }
 
@@ -80,7 +80,7 @@ UNUSED u8 *piRomLoadCompressed(u32 assetIndex, s32 extraMemory) {
     start = ((s32 *) out)[0];
     size = ((s32 *) out)[1] - start;
     gzipHeaderRamPos = (u8 *) mmAlloc(8, COLOUR_TAG_WHITE);
-    romCopy((u32) (start + __ASSETS_LUT_END), (u32) gzipHeaderRamPos, 8);
+    romCopy((u32) (start + __ASSETS_LUT_END), gzipHeaderRamPos, 8);
     totalSpace = rzipUncompressSize(gzipHeaderRamPos) + extraMemory;
     mmFree(gzipHeaderRamPos);
     out = (u8 *) mmAlloc(totalSpace + extraMemory, COLOUR_TAG_GREY);
@@ -89,7 +89,7 @@ UNUSED u8 *piRomLoadCompressed(u32 assetIndex, s32 extraMemory) {
     }
     gzipHeaderRamPos = (out + totalSpace) - size;
     if (1) {} // Fakematch
-    romCopy((u32) (start + __ASSETS_LUT_END), (u32) gzipHeaderRamPos, size);
+    romCopy((u32) (start + __ASSETS_LUT_END), gzipHeaderRamPos, size);
     rzipUncompress(gzipHeaderRamPos, out);
     return out;
 }
@@ -98,7 +98,7 @@ UNUSED u8 *piRomLoadCompressed(u32 assetIndex, s32 extraMemory) {
  * Loads part of an asset section to a specific memory address.
  * Returns the size argument.
  */
-s32 piRomLoadSection(u32 assetIndex, u32 address, s32 assetOffset, s32 size) {
+s32 piRomLoadSection(u32 assetIndex, void *address, s32 assetOffset, s32 size) {
     u32 *index;
     s32 start;
 
@@ -156,17 +156,17 @@ s32 D_800A3530_A4130 = 0;
 /**
  * Copies data from the game cartridge to a ram address.
  */
-void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes) {
+void romCopy(u32 romOffset, void *ramAddress, s32 numBytes) {
     OSMesg dmaMesg;
     s32 numBytesToDMA;
 
-    osInvalDCache((u32 *) ramAddress, numBytes);
+    osInvalDCache(ramAddress, numBytes);
     numBytesToDMA = MAX_TRANSFER_SIZE;
     while (numBytes > 0) {
         if (numBytes < numBytesToDMA) {
             numBytesToDMA = numBytes;
         }
-        osPiStartDma(&gAssetsDmaIoMesg, OS_MESG_PRI_NORMAL, OS_READ, romOffset, (u32 *) ramAddress, numBytesToDMA,
+        osPiStartDma(&gAssetsDmaIoMesg, OS_MESG_PRI_NORMAL, OS_READ, romOffset, ramAddress, numBytesToDMA,
                      &gDmaMesgQueue);
         osRecvMesg(&gDmaMesgQueue, &dmaMesg, OS_MESG_BLOCK);
 #ifdef VERSION_us
@@ -176,6 +176,6 @@ void romCopy(u32 romOffset, u32 ramAddress, s32 numBytes) {
 #endif
         numBytes -= numBytesToDMA;
         romOffset += numBytesToDMA;
-        ramAddress += numBytesToDMA;
+        ramAddress = (void *) ((u32) ramAddress + numBytesToDMA);
     }
 }
