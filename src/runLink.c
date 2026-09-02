@@ -823,7 +823,8 @@ void runlinkSuspendCode(s32 overlayIndex) {
     }
 }
 
-// Not sure where to put this RODATA string. It could be referring to reallocating something in the runLinkSuspendCode though.
+// Not sure where to put this RODATA string.
+// It could be referring to reallocating something in the runLinkSuspendCode.
 #ifdef VERSION_us
 const char D_800AD12C_ADD2C[] = "REALLOC: %08x (%d)\n";
 #endif
