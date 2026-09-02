@@ -2,7 +2,8 @@
 #include "common.h"
 #include "memory.h"
 #include "mips.h"
-#include "pi.h"
+
+void romCopy(u32 romOffset, void *ramAddress, s32 numBytes);
 
 // .rodata
 const char D_800ADC90[] = "WARNING: Unimplemented linkage operation %d\n";
@@ -31,40 +32,37 @@ u32 gUnresolvedSymbolAddr; // Placeholder address returned when a symbol cannot 
 PendingOverlayLoad gPendingOverlayLoads[16];
 OverlayTimerEntry *gSelfDestructTimers;
 
-#ifdef NON_EQUIVALENT
 /**
  * Retrieves a symbol name from ROM given its index.
  * @param symbolIndex Index into the symbol offset table
  * @return Pointer to the symbol name string (in stack buffer - use immediately!)
  */
 char *GetSymbolName(u32 symbolIndex) {
-    char stringBuffer[96]; // Buffer for string data
-    char *result = stringBuffer;
-    u32 offsetAddr;
-    u32 offsetTableEntry[2]; // 8-byte aligned buffer for offset table read
+    u32 stringOffset;
+    u32 romOffset;
+    char buffer[96];
 
     // Calculate ROM address of offset table entry
-    offsetAddr = (u32) &symbolsTable_offsets_ROM_START[symbolIndex];
+    romOffset = (u32) ((u32 *) symbolsTable_offsets_ROM_START + symbolIndex);
 
     // Read 8 bytes aligned (ROM requires 8-byte aligned reads)
-    romCopy(offsetAddr & ~7, (u32) offsetTableEntry, sizeof(offsetTableEntry));
+    romCopy(romOffset & ~7, buffer, 8);
 
     // Extract the 4-byte offset value using low bits to index into buffer
-    offsetAddr = *((u32 *) (((u8 *) offsetTableEntry) + (offsetAddr & 7)));
-    if (((!result) && (!result)) && (!result)) {}
+    stringOffset = (*(u32 *) &buffer[romOffset & 7]);
 
     // Calculate string ROM address
-    offsetAddr = offsetAddr + (u32) symbolsTable_symbol_names_ROM_START;
+    stringOffset += (u32) symbolsTable_symbol_names_ROM_START;
+
+    romOffset = stringOffset & 7;
+    stringOffset = stringOffset & ~7;
 
     // Read 96 bytes of string data (aligned)
-    romCopy(offsetAddr & ~7, (u32) result, sizeof(stringBuffer));
+    romCopy(stringOffset, buffer, sizeof(buffer));
 
     // Return pointer to string within buffer
-    return &result[offsetAddr & 7];
+    return &buffer[romOffset];
 }
-#else
-#pragma GLOBAL_ASM("asm/nonmatchings/runLink/GetSymbolName.s")
-#endif
 
 void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry, MipsInstruction *patchLocation) {
     s32 address;
