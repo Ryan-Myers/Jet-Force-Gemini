@@ -1,8 +1,8 @@
 #ifndef _TRACK_H_
 #define _TRACK_H_
 
-#include <PR/ultratypes.h>
 #include "math/math.h"
+#include <PR/ultratypes.h>
 
 s32 trackPolyHeight(f32, f32, f32 *, s32);
 void trackSetFog(s32 fogIdx, s16 near, s16 far, s16 arg3, u8 red, u8 green, u8 blue, s8 arg7);

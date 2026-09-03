@@ -20,9 +20,10 @@ fi
 
 echo "Formatting C files. This will take a bit"
 echo "Running clang-format..."
-clang-format ${FORMAT_OPTS} src/**/*.c
+clang-format ${FORMAT_OPTS} src/**/*.c src/**/*.h
 echo "Running clang-tidy..."
-clang-tidy ${TIDY_OPTS} src/**/*.c -- ${COMPILER_OPTS} &> /dev/null
+clang-tidy ${TIDY_OPTS} src/**/*.c src/**/*.h -- ${COMPILER_OPTS} &> /dev/null
 echo "Adding missing final new lines..."
 find src/ -type f -name "*.c" -exec sed -i -e '$a\' {} \;
+find src/ -type f -name "*.h" -exec sed -i -e '$a\' {} \;
 echo "Done formatting all files." 

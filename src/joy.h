@@ -1,8 +1,8 @@
 #ifndef _JOY_H_
 #define _JOY_H_
 
-#include <PR/ultratypes.h>
 #include <PR/os_message.h>
+#include <PR/ultratypes.h>
 
 OSMesgQueue *joyMessageQ(void);
 s32 joyInit(void);

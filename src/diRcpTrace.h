@@ -1,8 +1,8 @@
 #ifndef _DIRCPTRACE_H_
 #define _DIRCPTRACE_H_
 
-#include <PR/ultratypes.h>
 #include <PR/gbi.h>
+#include <PR/ultratypes.h>
 
 void diRcpTraceInit(void);
 void diRcpTraceReset(void);

@@ -1,10 +1,10 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#include <PR/ultratypes.h>
 #include "enums.h"
 #include "gbi.h"
 #include "structs.h"
+#include <PR/ultratypes.h>
 #include <sched.h>
 
 extern s8 D_800FD7BC_B3B0C;
@@ -15,10 +15,10 @@ extern u64 Time[1024];
 extern void *securitybuffer;
 extern s32 mainGameMode;
 extern u8 mainGameAutoSave;
-extern s16 D_800A3230_A3E30; //mainGameWindowIsChanging
+extern s16 D_800A3230_A3E30; // mainGameWindowIsChanging
 extern s16 D_800A3260_A3E60;
-extern s32 D_800A331C_A3F1C; //RamTest1Result
-extern s32 D_800A3320_A3F20; //RamTest2Result
+extern s32 D_800A331C_A3F1C; // RamTest1Result
+extern s32 D_800A3320_A3F20; // RamTest2Result
 extern s32 D_800FD7D0_B8010;
 extern s32 load_save_flags;
 extern s16 D_800A323C_A3E3C;
@@ -36,7 +36,7 @@ extern s32 debugInputCode[14];
 extern s32 debugInputCount;
 extern s8 D_800FD7BD_B3B0D;
 
-//Window Size Vars
+// Window Size Vars
 extern s16 mainGameWindowSizeX1;
 extern s16 mainGameWindowSizeY1;
 extern s16 mainGameWindowSizeX2;
@@ -51,7 +51,7 @@ extern UnkD_800FE217 D_800FD757_B7F97[8];
 extern void segSetBase(Gfx **dlist, s32 segment, s32 base);
 
 #ifdef VERSION_kiosk
-// The kiosk doesn't have this function, but it can be used so many times in a single function, 
+// The kiosk doesn't have this function, but it can be used so many times in a single function,
 // so this is a macro to avoid having to ifdef it out multiple times.
 #define mainPreNMI()
 #else

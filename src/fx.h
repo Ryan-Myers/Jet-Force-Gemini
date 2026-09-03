@@ -1,8 +1,8 @@
 #ifndef _FX_H_
 #define _FX_H_
 
-#include <PR/ultratypes.h>
 #include <PR/gbi.h>
+#include <PR/ultratypes.h>
 
 typedef struct UnkScreenStruct {
     u8 unk0;
@@ -19,12 +19,12 @@ s32 fxFadeOn(void);
 void fxFreeNightVision(s32); // guess
 void fxClearLevelEffects(void);
 void fxCpuTextureFlush(void);
-void setupClearScreen(UnkScreenStruct*);
+void setupClearScreen(UnkScreenStruct *);
 void fxInitNightVision(s32);
 
-void fxDrawNightVision(Gfx**);
+void fxDrawNightVision(Gfx **);
 void fxSetClipWindow(s32);
 void fxUpdateLevelEffects(s32);
-void fxSPDPRipple(Gfx**, s32, s32, s32, s32, s32);
+void fxSPDPRipple(Gfx **, s32, s32, s32, s32, s32);
 
 #endif

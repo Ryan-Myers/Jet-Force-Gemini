@@ -1,15 +1,15 @@
 #ifndef _CAMLIGHT_H_
 #define _CAMLIGHT_H_
 
-#include <PR/ultratypes.h>
+#include "gameVi.h"
+#include "structs.h"
+#include "textures.h"
+#include "types.h"
 #include <PR/gbi.h>
 #include <PR/sp.h>
-#include "gameVi.h"
-#include "textures.h"
-#include "structs.h"
-#include "types.h"
+#include <PR/ultratypes.h>
 
-#define MAX_CAMLIGHTS 50 
+#define MAX_CAMLIGHTS 50
 
 typedef struct CamLight_inner2 {
     /* 0x00 */ char pad[0x2D];
@@ -80,11 +80,10 @@ typedef struct UnkStruct_Arg1 {
     /* 0x1F */ u8 unk1F;
 } UnkStruct_Arg1; /* size = 0x20 */
 
-
 void camlightUpdate(CamLight *arg0);
 void camlightUpdate(CamLight *arg0);
 void camlightDelete(CamLight *);
-CamLight *camlightAdd(CamLight_inner* arg0, UnkStruct_Arg1 *arg1);
+CamLight *camlightAdd(CamLight_inner *arg0, UnkStruct_Arg1 *arg1);
 void camlightFlush(void);
 
 #endif

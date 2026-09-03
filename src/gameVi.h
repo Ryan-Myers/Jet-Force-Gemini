@@ -1,8 +1,8 @@
 #ifndef _GAME_VI_H_
 #define _GAME_VI_H_
 
-#include <ultra64.h>
 #include "PR/sched.h"
+#include <ultra64.h>
 
 #define REFRESH_50HZ 50
 #define REFRESH_60HZ 60
@@ -20,17 +20,18 @@
 
 #define PAL_HEIGHT_DIFFERENCE 24
 
-#define ASPECT_RATIO_PAL  (LOW_RES_WIDTH / LOW_RES_PAL_HEIGHT)
+#define ASPECT_RATIO_PAL (LOW_RES_WIDTH / LOW_RES_PAL_HEIGHT)
 #define ASPECT_RATIO_NTSC (LOW_RES_WIDTH / LOW_RES_NTSC_HEIGHT)
 #define ASPECT_RATIO_MPAL (LOW_RES_WIDTH / LOW_RES_MPAL_HEIGHT)
 
-#define HEIGHT_RATIO_PAL  (LOW_RES_PAL_HEIGHT / LOW_RES_NTSC_HEIGHT)
+#define HEIGHT_RATIO_PAL (LOW_RES_PAL_HEIGHT / LOW_RES_NTSC_HEIGHT)
 #define HEIGHT_RATIO_NTSC (LOW_RES_NTSC_HEIGHT / LOW_RES_NTSC_HEIGHT)
 #define HEIGHT_RATIO_MPAL (LOW_RES_MPAL_HEIGHT / LOW_RES_NTSC_HEIGHT)
 
 #define BUFFER_SIZE_ALIGNMENT 0x30
 #define BUFFER_SIZE(width, height) (((width) * (height) * 2)) // Framebuffers are 16-bit (2 bytes) per pixel.
-#define BUFFER_SIZE_ALIGNED(width, height) (BUFFER_SIZE(width, height) + BUFFER_SIZE_ALIGNMENT) // Framebuffers require 64 byte alignment.
+#define BUFFER_SIZE_ALIGNED(width, height) \
+    (BUFFER_SIZE(width, height) + BUFFER_SIZE_ALIGNMENT) // Framebuffers require 64 byte alignment.
 
 // Framebuffers require 64 byte alignment.
 #define FBALIGN(a) ((s32 *) (((s32) (a) + 0x3F) & ~0x3F))
@@ -42,25 +43,31 @@
 #define MAX_RESOLUTION_SETTINGS (ARRAY_COUNT(resolutionSettings) - 3)
 #endif
 
-#define VIDEO_MODE_SET(index) ((index) & 3) // Keeps the value within the range of 0-3, which is the number of video modes per TV type.
+#define VIDEO_MODE_SET(index) \
+    ((index) & 3) // Keeps the value within the range of 0-3, which is the number of video modes per TV type.
 #define RESOLUTION_INDEX_MPAL_OFFSET (MAX_RESOLUTION_SETTINGS / 3)
 #define RESOLUTION_INDEX_PAL_OFFSET (2 * (MAX_RESOLUTION_SETTINGS / 3))
-#define RESOLUTION_IS_WIDESCREEN(index) ((index) & 1) // Widescreen resolutions are odd indexed in the resolutionSettings array.
-#define RESOLUTION_RESOLUTION_CHECK(index) ((index) & 3) // Higher resolutions are even indexed in the resolutionSettings array as the 3rd and 4th setting for each TV Type.
+#define RESOLUTION_IS_WIDESCREEN(index) \
+    ((index) & 1) // Widescreen resolutions are odd indexed in the resolutionSettings array.
+#define RESOLUTION_RESOLUTION_CHECK(index) \
+    ((index) & 3) // Higher resolutions are even indexed in the resolutionSettings array as the 3rd and 4th setting for
+                  // each TV Type.
 
 // The last 3 resolutions in the resolutionSettings array are reset modes
 #define RESOLUTION_RESET_NTSC 12
 #define RESOLUTION_RESET_MPAL 13
 #define RESOLUTION_RESET_PAL 14
 
-
 /**
  * Keeps the value within the range.
  */
-#define CLAMP(x, low, high) {       \
-    if ((x) < (low)) (x) = (low);   \
-    if ((x) > (high)) (x) = (high); \
-}
+#define CLAMP(x, low, high) \
+    {                       \
+        if ((x) < (low))    \
+            (x) = (low);    \
+        if ((x) > (high))   \
+            (x) = (high);   \
+    }
 
 /**
  * Values for the rate game logic will work depending on the framerate. Vanilla DKR will default to LOGIC_30FPS (2)

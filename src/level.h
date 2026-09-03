@@ -1,8 +1,8 @@
 #ifndef _LEVEL_H_
 #define _LEVEL_H_
 
-#include <PR/ultratypes.h>
 #include "structs.h"
+#include <PR/ultratypes.h>
 
 typedef struct {
     u8 unk0;

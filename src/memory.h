@@ -13,10 +13,10 @@ typedef enum MemoryPools {
 } MemoryPools;
 
 typedef enum MempoolFlags {
-    SLOT_FREE = 0,             // The slot is free.
-    SLOT_USED = (1 << 0),      // The slot is used.
-    SLOT_LOCKED = (1 << 1),    // The slot is used, and cannot be freed by normal means.
-    SLOT_SAFEGUARD = (1 << 2)  // The slot is used, and marks the stopping point of a global pool clear.
+    SLOT_FREE = 0,            // The slot is free.
+    SLOT_USED = (1 << 0),     // The slot is used.
+    SLOT_LOCKED = (1 << 1),   // The slot is used, and cannot be freed by normal means.
+    SLOT_SAFEGUARD = (1 << 2) // The slot is used, and marks the stopping point of a global pool clear.
 } MempoolFlags;
 
 #define RAM_END 0x80400000
@@ -53,28 +53,28 @@ typedef enum MempoolFlags {
 #define COLOUR_TAG_PURPLE 0xAA55FFFF
 
 #define INDEX_NOT_SET -1
-    
+
 /* Size: 0x14 bytes */
 typedef struct MemoryPoolSlot {
-/* 0x00 */ u8 *data; 
-/* 0x04 */ s32 size;
-/* 0x08 */ s16 flags;
-    // 0x00 = Slot is free 
+    /* 0x00 */ u8 *data;
+    /* 0x04 */ s32 size;
+    /* 0x08 */ s16 flags;
+    // 0x00 = Slot is free
     // 0x01 = Slot is being used?
     // 0x02 = ???
     // 0x04 = ???
-/* 0x0A */ s16 prevIndex;
-/* 0x0C */ s16 nextIndex;
-/* 0x0E */ s16 index;
-/* 0x10 */ u32 colourTag;
+    /* 0x0A */ s16 prevIndex;
+    /* 0x0C */ s16 nextIndex;
+    /* 0x0E */ s16 index;
+    /* 0x10 */ u32 colourTag;
 } MemoryPoolSlot;
 
 /* Size: 0x10 bytes */
 typedef struct MemoryPool {
-/* 0x00 */ s32 maxNumSlots;
-/* 0x04 */ s32 curNumSlots;
-/* 0x08 */ MemoryPoolSlot *slots;
-/* 0x0C */ s32 size;
+    /* 0x00 */ s32 maxNumSlots;
+    /* 0x04 */ s32 curNumSlots;
+    /* 0x08 */ MemoryPoolSlot *slots;
+    /* 0x0C */ s32 size;
 } MemoryPool;
 
 /* Size: 0x8 bytes */
@@ -95,7 +95,7 @@ extern s32 gPoolRAMSize[POOL_COUNT]; // Stores the size of each pool. Used in De
 extern s32 mmColourTagOverlayIndex;
 
 // This variable doesn't truly exist in memory.
-// It's just defined as the end of BSS, and it's 
+// It's just defined as the end of BSS, and it's
 // symbol needs to be in the undefined syms place.
 extern MemoryPoolSlot gMainMemoryPool;
 
@@ -112,7 +112,7 @@ u8 *mmAlign4(u8 *address);
 MemoryPoolSlot *mempool_init(MemoryPoolSlot *slots, s32 poolSize, s32 numSlots);
 void mempool_slot_clear(MemoryPools poolIndex, s32 slotIndex);
 s32 mempool_slot_assign(MemoryPools poolIndex, s32 slotIndex, s32 size, s32 slotIsTaken, s32 newSlotIsTaken,
-                              u32 colourTag);
+                        u32 colourTag);
 void mempool_free_addr(u8 *address);
 MemoryPoolSlot *mempool_slot_find(MemoryPools poolIndex, s32 size, u32 colourTag);
 void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag);

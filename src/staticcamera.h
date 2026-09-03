@@ -1,9 +1,9 @@
 #ifndef _STATICCAMERA_H_
 #define _STATICCAMERA_H_
 
+#include "camera.h"
 #include "structs.h"
 #include <ultra64.h>
-#include "camera.h"
 
 // Seems to be different from the regular camera struct because it's loading floats in the first few positions.
 typedef struct LobbyCamStruct {

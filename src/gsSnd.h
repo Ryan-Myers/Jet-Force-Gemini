@@ -38,34 +38,34 @@ typedef struct ALSoundStateLists {
 
 /* Size: 0x64? */
 typedef struct SoundPlayer {
-    ALPlayer        node;
-    ALEventQueue    evtq;
-    ALEvent         nextEvent;
-    ALSynth        *drvr;
-    ALSoundState   *lastSoundState;
-    ALSoundState   *soundStatesArray;
-    s32             maxSystemSoundChannels;
-    s32             maxActiveSounds;
-    s32             frameTime;
-    ALMicroTime     nextDelta;
-    ALMicroTime     curTime;
+    ALPlayer node;
+    ALEventQueue evtq;
+    ALEvent nextEvent;
+    ALSynth *drvr;
+    ALSoundState *lastSoundState;
+    ALSoundState *soundStatesArray;
+    s32 maxSystemSoundChannels;
+    s32 maxActiveSounds;
+    s32 frameTime;
+    ALMicroTime nextDelta;
+    ALMicroTime curTime;
 } SoundPlayer;
 
 typedef union {
 
-    ALEvent             msg;
+    ALEvent msg;
 
     struct {
-        u16             type;
-        ALSoundState    *state;
-        s32             param;
+        u16 type;
+        ALSoundState *state;
+        s32 param;
     } common;
 
     struct {
-        s16             type;
-        ALSoundState    *state;
-        s32             soundIndex;
-        ALBank          *bank;
+        s16 type;
+        ALSoundState *state;
+        s32 soundIndex;
+        ALBank *bank;
     } retrigger;
 
 } ALSndpEvent;

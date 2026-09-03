@@ -1,9 +1,9 @@
 #ifndef _DICPU_H_
 #define _DICPU_H_
 
-#include <PR/ultratypes.h>
-#include <PR/os_thread.h>
 #include <PR/os_message.h>
+#include <PR/os_thread.h>
+#include <PR/ultratypes.h>
 
 void _bcopy(const void *, void *, size_t);
 

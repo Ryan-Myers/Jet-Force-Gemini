@@ -1,13 +1,12 @@
 #ifndef _SAVES_H_
 #define _SAVES_H_
 
-
 #include "structs.h"
-#include <PR/ultratypes.h>
+#include <PR/os_cont.h>
 #include <PR/os_message.h>
 #include <PR/os_pfs.h>
-#include <PR/os_cont.h>
 #include <PR/os_pi.h>
+#include <PR/ultratypes.h>
 
 #ifdef VERSION_us
 #define nosMotorInit osMotorInit
@@ -49,11 +48,11 @@ typedef struct unkD_800A3EAC {
 extern unkD_800A3EAC D_800A344C_A404C[3];
 extern OSPfs pfs[MAXCONTROLLERS];
 extern OSMesgQueue *sControllerMesgQueue;
-extern s32 D_800FDDB4_B85F4; //UNUSED
+extern s32 D_800FDDB4_B85F4; // UNUSED
 extern u8 gN64FontCodes[];
 extern s8 *sPackDirectory;
 extern u8 sRumblePaksPresent;
-extern u8 D_800A3448_A4048; //sControllerPakPresent?
+extern u8 D_800A3448_A4048; // sControllerPakPresent?
 extern OSMesgQueue flashEventQueue;
 extern OSMesg flashEventBuf[1];
 extern OSMesg cartEventBuf[1];
@@ -68,8 +67,8 @@ extern f32 D_800AD500;
 extern RumbleStruct D_800FDF5A_B879A[];
 extern u8 D_800A3470_A4070;
 extern s32 D_800A3474_A4074[];
-extern u8 D_800A34AC_A40AC[]; // Looks to be the default state for a new save file, which is copied to the save file if the checksum doesn't match.
-
+extern u8 D_800A34AC_A40AC[]; // Looks to be the default state for a new save file, which is copied to the save file if
+                              // the checksum doesn't match.
 
 SIDeviceStatus packFileSize(s32 controllerIndex, s32 fileNum, s32 *fileSize);
 char *string_to_font_codes(char *inString, char *outString, s32 stringLength);
@@ -79,7 +78,8 @@ SIDeviceStatus packOpenFile(s32 controllerIndex, char *fileName, char *fileExt, 
 SIDeviceStatus packReadFile(s32 controllerIndex, s32 fileNum, u8 *data, s32 dataLength);
 s32 packGetFileType(s32 controllerIndex, s32 fileNum);
 char *font_codes_to_string(char *inString, char *outString, s32 stringLength);
-SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName, char *fileExt, u8 *dataToWrite, s32 fileSize);
+SIDeviceStatus packWriteFile(s32 controllerIndex, s32 fileNumber, char *fileName, char *fileExt, u8 *dataToWrite,
+                             s32 fileSize);
 SIDeviceStatus packCopyFile(s32 controllerIndex, s32 fileNumber, s32 secondControllerIndex);
 SIDeviceStatus packDeleteFile(s32 controllerIndex, s32 fileNum);
 void packDirectoryFree(void);
@@ -87,7 +87,8 @@ SIDeviceStatus packFormat(s32 controllerIndex);
 SIDeviceStatus packRepair(s32 controllerIndex);
 SIDeviceStatus packIsPresent(s32 controllerIndex);
 s32 nosMotorInit(OSMesgQueue *mq, OSPfs *pfs, int channel);
-SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char **fileNames, char **fileExtensions, u32 *fileSizes, u8 *fileTypes);
+SIDeviceStatus packDirectory(s32 controllerIndex, s32 maxNumOfFilesToGet, char **fileNames, char **fileExtensions,
+                             u32 *fileSizes, u8 *fileTypes);
 void flashROMInit(void);
 void packInit(void);
 void flashROMWrite(u32 pageNum, u32 *dramAddr);

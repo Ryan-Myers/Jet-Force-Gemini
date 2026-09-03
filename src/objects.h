@@ -1,8 +1,8 @@
 #ifndef _OBJECTS_H_
 #define _OBJECTS_H_
 
-#include <PR/ultratypes.h>
 #include "structs.h"
+#include <PR/ultratypes.h>
 
 /* Size: 10 bytes. Shared across every entry. */
 typedef struct LevelObjectEntryCommon {
@@ -17,7 +17,8 @@ enum ObjectSpawnFlags {
     OBJECT_SPAWN_UNK02 = (1 << 1),
     OBJECT_SPAWN_UNK04 = (1 << 2),
     OBJECT_SPAWN_UNK08 = (1 << 3),
-    OBJECT_SPAWN_NO_LODS = (1 << 4) // Forces the object to have 1 model associate. Used to prevent LoD models of player model racers spawning.
+    OBJECT_SPAWN_NO_LODS = (1 << 4) // Forces the object to have 1 model associate. Used to prevent LoD models of player
+                                    // model racers spawning.
 };
 
 extern s8 D_800F2C60_F3860;

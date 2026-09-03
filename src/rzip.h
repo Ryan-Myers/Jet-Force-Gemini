@@ -1,10 +1,10 @@
 #ifndef _RZIP_H_
 #define _RZIP_H_
 
-#include <PR/ultratypes.h>
 #include "structs.h"
+#include <PR/ultratypes.h>
 
-s32 inflate_block(void); // hasm file
+s32 inflate_block(void);      // hasm file
 void _blkclr(void *, size_t); // bzero hasm alternate name
 
 void rzipInit(void);

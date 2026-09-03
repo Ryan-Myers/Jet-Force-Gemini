@@ -8,13 +8,15 @@ typedef struct TexFontCoords {
     u8 u, v;
 } TexFontCoords;
 
-typedef enum AssetTextures2dEnum { 
+typedef enum AssetTextures2dEnum {
     ASSET_TEX2D_SMALLFONT_0,
     ASSET_TEX2D_SMALLFONT_1,
     ASSET_TEX2D_SMALLFONT_2
 } AssetTextures2dEnum;
 
-#define RENDER_PRINTF_CMD_ARG_BYTE(val) *gDebugPrintBufferEnd = val; gDebugPrintBufferEnd++;
+#define RENDER_PRINTF_CMD_ARG_BYTE(val) \
+    *gDebugPrintBufferEnd = val;        \
+    gDebugPrintBufferEnd++;
 #define RENDER_PRINTF_CMD_ARG_SHORT(val) RENDER_PRINTF_CMD_ARG_BYTE(val) RENDER_PRINTF_CMD_ARG_BYTE(val >> 8)
 
 #define RENDER_PRINTF_CMD_END RENDER_PRINTF_CMD_ARG_BYTE(0)
@@ -38,7 +40,7 @@ typedef enum AssetTextures2dEnum {
     tempY = y >> 8;                          \
     RENDER_PRINTF_CMD_ARG_BYTE(tempY)        \
     RENDER_PRINTF_CMD_END
-    
+
 #define RENDER_PRINTF_CMD_SET_BACKGROUND_COLOR(red, green, blue, alpha) \
     RENDER_PRINTF_CMD_ARG_BYTE(0x85)                                    \
     RENDER_PRINTF_CMD_ARG_BYTE(red)                                     \
@@ -46,7 +48,6 @@ typedef enum AssetTextures2dEnum {
     RENDER_PRINTF_CMD_ARG_BYTE(blue)                                    \
     RENDER_PRINTF_CMD_ARG_BYTE(alpha)                                   \
     RENDER_PRINTF_CMD_END
-
 
 void *memset(void *s, int c, size_t n);
 char *_itoa(unsigned long long int n, char *buflim, unsigned int base, int upper_case);

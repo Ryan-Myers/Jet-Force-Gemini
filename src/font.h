@@ -17,7 +17,7 @@ typedef enum TextFonts {
     FONT_COLOURFUL,
     FONT_SMALL,
     FONT_LARGE,
-    FONT_UNK_FF = 255
+    FONT_UNK_FF = 255,
 } TextFonts;
 
 // typedef enum HorizontalAlignmentFlags {
@@ -56,10 +56,10 @@ extern char *convertBuffer;
 extern DialogueBoxBackground Window[];
 extern u8 fontInUse;
 extern u8 buttonMode;
-extern s16 D_80103FB2_BE7F2; //Window->y2
-extern s16 D_80103FB4_BE7F4; //Window->width
-extern DialogueBoxBackground D_80103FD0_BE810; //Window[1]
-//Window noise?
+extern s16 D_80103FB2_BE7F2;                   // Window->y2
+extern s16 D_80103FB4_BE7F4;                   // Window->width
+extern DialogueBoxBackground D_80103FD0_BE810; // Window[1]
+// Window noise?
 extern s32 D_800A6EA8_A7AA8;
 extern s32 D_800A6EAC_A7AAC;
 extern s32 D_800A6EB0_A7AB0;
@@ -70,29 +70,28 @@ extern s32 D_800A6EB4_A7AB4[9];
 // };
 
 extern Gfx D_800A6E30_A7A30[7];
-extern u32 D_A7858; //Font asset location?
-extern u32 D_A7318; //Font asset location?
+extern u32 D_A7858; // Font asset location?
+extern u32 D_A7318; // Font asset location?
 extern u32 *cache;
 extern u8 *dxTable;
 extern u8 squash;
-extern DialogueTextElement String[]; //Sizeof(32)?
-//dDialogueBoxBegin?
+extern DialogueTextElement String[]; // Sizeof(32)?
+// dDialogueBoxBegin?
 extern char D_800A6F04_A7B04[100];
 
 /* Size: 10 bytes */
 typedef struct FontCharDataAlt {
     u8 textureID; // Texture Pointer Index?
-    u8 ulx; // Upper Left Corner? Maybe only used when FontData->unk20 is 0 for some reason.
-    u8 width; // Font Char Width?
-    u8 height; // Font Char Height?
-    u8 s; // Upper left coordinate for the texture derived from X?
-    u8 t; // Upper left coordinate for the texture derived from Y?
-    u8 lrx; // Related to the lower right X Coordinate.
-    u8 lry; // Related to the lower right Y Coordinate.
+    u8 ulx;       // Upper Left Corner? Maybe only used when FontData->unk20 is 0 for some reason.
+    u8 width;     // Font Char Width?
+    u8 height;    // Font Char Height?
+    u8 s;         // Upper left coordinate for the texture derived from X?
+    u8 t;         // Upper left coordinate for the texture derived from Y?
+    u8 lrx;       // Related to the lower right X Coordinate.
+    u8 lry;       // Related to the lower right Y Coordinate.
     u8 pad[8];
 } FontCharDataAlt;
 extern FontCharDataAlt *Font;
-
 
 #define WINDOW_COUNT 8
 #define POS_CENTRED -0x8000
@@ -128,6 +127,6 @@ u8 *fontGetLine(s32 font, char *text, s32 arg2, u8 **outString);
 u8 fontYSpacing(s32 font);
 
 void func_8006FD98_70998(Gfx **dList, DialogueBoxBackground *box, char *text, AlignmentFlags alignmentFlags);
-void *func_80071388_71F88(u8); //returns cacheline?
+void *func_80071388_71F88(u8); // returns cacheline?
 
 #endif

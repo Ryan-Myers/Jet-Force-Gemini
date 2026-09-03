@@ -1,8 +1,8 @@
 #ifndef _ANIM_H_
 #define _ANIM_H_
 
-#include <PR/ultratypes.h>
 #include "structs.h"
+#include <PR/ultratypes.h>
 
 extern AnimPath **animpath;
 
