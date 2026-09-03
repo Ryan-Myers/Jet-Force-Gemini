@@ -1798,7 +1798,7 @@ D_800A38E4_A44E4 = 0x800A38E4;
 
 gStopCallResumeFunction = 0x800A38F0;
 gRunlinkNeedsInit = 0x800A38F4;
-gSymbolTableSize = 0x800A38F8;
+gNumberOfSymbols = 0x800A38F8;
 AllowSelfDestructing = 0x800A38FC;
 
 videoBufferAllocs = 0x800a3900;
@@ -2403,11 +2403,11 @@ AnimPathNumbers = 0x800fea58;
 MaxPatrolNodes = 0x800fea98;
 PatrolNodes = 0x800fea9c;
 
-overlayTable = 0x800FEAA0;
-mainRelocTable = 0x800FEAA4;
-overlayRomTable = 0x800FEAA8;
+gOverlayTable = 0x800FEAA0;
+gMainRelocTable = 0x800FEAA4;
+gOverlayRomTable = 0x800FEAA8;
 gOverlayCount = 0x800FEAAC;
-mainRelocCount = 0x800FEAB0;
+gMainRelocCount = 0x800FEAB0;
 gRelocContext = 0x800FEAB8; // size:0x14
 gUnresolvedSymbolAddr = 0x800FEAD4;
 gPendingOverlayLoads = 0x800FEAD8; // size:0x80

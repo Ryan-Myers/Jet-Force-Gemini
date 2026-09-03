@@ -24,12 +24,12 @@
  *
  * Register usage:
  *   t0 - remaining overlay count (counts down)
- *   t1 - current overlay header pointer (iterates through overlayTable)
+ *   t1 - current overlay header pointer (iterates through gOverlayTable)
  *   t2 - overlay VRAM base address (or 0x80000450 for main module)
  *   t3 - relocation table pointer
  *   t4 - remaining relocation count (counts down)
  *   t5 - caller`s jump address (ra - 8, points to the JAL instruction)
- *   t6 - pointer into overlayRomTable
+ *   t6 - pointer into gOverlayRomTable
  *   t7 - target overlay index from relocation entry
  *   t8 - final computed target function address
  *   t9 - ROM table entry (overlay_index << 20 | function_offset)
@@ -68,7 +68,7 @@ LEAF(TrapDanglingJump)
     sw         v1, 0x5C($sp)    
     subu       t5, ra, 8                  /* t5 = address of JAL that called the stub */
     lw         t0, gOverlayCount          /* t0 = number of overlays to search */
-    lw         t1, overlayTable           /* t1 = pointer to first overlay header */
+    lw         t1, gOverlayTable          /* t1 = pointer to first overlay header */
 
     /* === OUTER LOOP: Iterate through all loaded overlays === */
 search_next_overlay:
@@ -94,9 +94,9 @@ search_next_overlay:
 
     /* Fall back to main module`s relocation table */
 search_main_module:
-    li         t2, 0x80000450             /* Main module VRAM base */
-    lw         t4, mainRelocCount         /* Number of main module relocations */
-    lw         t3, mainRelocTable         /* Main module relocation table */
+    li         t2, ASM_CODE_VRAM_START    /* Main module VRAM base */
+    lw         t4, gMainRelocCount        /* Number of main module relocations */
+    lw         t3, gMainRelocTable        /* Main module relocation table */
 
     /* === INNER LOOP: Search relocation table for matching stub address === */
 search_relocation_table:
@@ -112,10 +112,10 @@ search_next_relocation:
     /* === FOUND MATCHING RELOCATION === */
     /* This relocation entry tells us which overlay contains the real function */
     
-    lw         v0, overlayRomTable        /* Get ROM table base */
+    lw         v0, gOverlayRomTable       /* Get ROM table base */
     lw         t7, 0x0(t3)                /* t7 = target overlay index */
     sll        t6, t7, 2                  /* t6 = index * 4 (pointer offset) */
-    addu       t6, t6, v0                 /* t6 = &overlayRomTable[overlayIndex] */
+    addu       t6, t6, v0                 /* t6 = &gOverlayRomTable[overlayIndex] */
     
     /* Save search state before calling download function */
     sw         t0, 0x38($sp)
@@ -135,12 +135,12 @@ search_next_relocation:
     beqz       v0, download_failed        /* Download failed? Return 0 */
     
     /* === DOWNLOAD SUCCEEDED: Calculate real function address === */
-    lw         v1, overlayTable
+    lw         v1, gOverlayTable
     lw         t6, 0x4C($sp)              /* Restore ROM table pointer */
     lw         t9, 0x0(t6)                /* t9 = ROM entry (index << 20 | offset) */
     srl        v0, t9, 20                 /* v0 = overlay index */
     sll        v0, v0, 5                  /* v0 = index * 32 (overlay header size) */
-    addu       v0, v0, v1                 /* v0 = &overlayTable[index] */
+    addu       v0, v0, v1                 /* v0 = &gOverlayTable[index] */
     lw         t8, 0x0(v0)                /* t8 = overlay VRAM base (now loaded) */
     and        v0, t9, 0xFFFFF            /* v0 = function offset (low 20 bits) */
     addu       t8, t8, v0                 /* t8 = real function address! */

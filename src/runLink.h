@@ -123,23 +123,20 @@ typedef struct OverlayTimerEntry {
     };
 } OverlayTimerEntry;
 
-extern OverlayHeader D_1ED2780[];   // overlayTable
-extern RomTableEntry D_1ED0270[]; // overlayRomTable
-extern RelocTableEntry D_1ECF220[];     // mainRelocTable ROM address
-
-extern void amSetMuteMode(s32 behaviour); // 0x80000450 Start of .text
-extern void *tuneSeqPlayer;               // 0x800A0660 Start of .data
-extern s32 D_800B0B50_B1750; // 0x800B0B50 Start of .bss
-
+// BSS section boundaries
 extern void *__BSS_SECTION_START;
 extern void *__BSS_SECTION_END;
+
+// Data section includes both .data and .rodata
 extern void *__DATA_SECTION_START;
 extern void *__DATA_SECTION_END;
+
+// Code section starts after the entrypoint
 extern void *__CODE_SECTION_START;
 extern void *__CODE_SECTION_END;
 
 // ROM addresses for runlink tables
-extern u8 symbolsTable_offsets_ROM_START[]; // Symbol offset table (4 bytes per entry)
+extern u8 symbolsTable_offsets_ROM_START[];
 extern u8 symbolsTable_offsets_ROM_END[];
 extern u8 symbolsTable_symbol_names_ROM_START[];
 extern u8 symbolsTable_symbol_names_ROM_END[];
@@ -165,6 +162,15 @@ extern u8 overlayData_ROM_END[];
 #define OVERLAY_SECTION_DATA_1 0xFFD
 #define OVERLAY_SECTION_DATA_2 0xFFE
 #define OVERLAY_SECTION_BSS 0xFFF
+
+// This address is hardcoded into runlinkGetAddressInfo
+// it's the start of the code section *after* entrypoint
+// it's used as the base address for calculating symbol offsets within the main code section.
+#ifdef AVOID_UB
+#define CODE_SECTION_VRAM_START (u32) &__CODE_SECTION_START;
+#else
+#define CODE_SECTION_VRAM_START 0x80000450
+#endif
 
 typedef enum {
     RELOC_BASE_UNUSED = 0,

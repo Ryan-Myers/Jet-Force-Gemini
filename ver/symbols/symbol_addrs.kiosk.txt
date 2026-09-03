@@ -1690,7 +1690,7 @@ D_800A38D4_A44D4 = 0x800A4324;
 D_800A38E4_A44E4 = 0x800A4334;
 gStopCallResumeFunction = 0x800A4340;
 gRunlinkNeedsInit = 0x800A4344;
-gSymbolTableSize = 0x800A4348;
+gNumberOfSymbols = 0x800A4348;
 D_800A3B90_A4790 = 0x800A4560;
 D_800A3BA0_A47A0 = 0x800A4570;
 D_800A3C20_A4820 = 0x800A45F0;
@@ -2358,11 +2358,11 @@ D_800FEA54_B9294 = 0x800FF734;
 AnimPathNumbers = 0x800FF738;
 MaxPatrolNodes = 0x800FF778;
 PatrolNodes = 0x800FF77C;
-overlayTable = 0x800FF780;
-mainRelocTable = 0x800FF784;
-overlayRomTable = 0x800FF788;
+gOverlayTable = 0x800FF780;
+gMainRelocTable = 0x800FF784;
+gOverlayRomTable = 0x800FF788;
 gOverlayCount = 0x800FF78C;
-mainRelocCount = 0x800FF790;
+gMainRelocCount = 0x800FF790;
 gRelocContext = 0x800FF798; // size:0x14
 gUnresolvedSymbolAddr = 0x800FF7B4;
 gPendingOverlayLoads = 0x800FF7B8; // size:0x80
@@ -2650,12 +2650,6 @@ D_800AF7D4 = 0x800AF7D4; // force_not_migration:True
 D_800AF7F0 = 0x800AF7F0; // force_not_migration:True
 D_800AF810 = 0x800AF810; // force_not_migration:True
 D_800AD390_ADF90 = 0x800ADF40; // force_not_migration:True
-
-
-
-// gMainMemoryPool = main_BSS_END;         /* This variable is just supposed to be available at the end of BSS for allocating memory to  */
-// __BSS_SECTION_START = main_BSS_START;   /* Entrypoint addresses */
-// __BSS_SECTION_SIZE = main_BSS_SIZE;     /* Entrypoint addresses */
 
 // xprintf.c
 _spaces = 0x800AA8D0; // type:asciz

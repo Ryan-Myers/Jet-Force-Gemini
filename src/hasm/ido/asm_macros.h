@@ -5,3 +5,6 @@
 #define MULS(rd, rs, rt) \
     mult   rs, rt; \
     mflo   rd
+
+/* TODO: Figure out how to use LD symbols for this in the hasm files */
+#define ASM_CODE_VRAM_START 0x80000450
