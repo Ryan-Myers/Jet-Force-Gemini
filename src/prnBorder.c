@@ -19,7 +19,7 @@ UNUSED s32 D_800A3590_A4190 = 0x20000;
 UNUSED Gfx D_800A3598_A4198[] = { gsSPNoOp(), gsSPNoOp() };
 
 extern s32 frontGet2PlayerSplit(void);
-extern s32 squadsLowMemoryPanic(void);
+extern s32 frontMenuFrameTrackDrawingOn(void);
 
 void prnBorder(Gfx **dList) {
     s32 numCameras;
@@ -30,7 +30,7 @@ void prnBorder(Gfx **dList) {
     u32 halfHeight;
     Gfx *gfx;
 
-    if (!squadsLowMemoryPanic()) {
+    if (!frontMenuFrameTrackDrawingOn()) {
         return;
     }
 
