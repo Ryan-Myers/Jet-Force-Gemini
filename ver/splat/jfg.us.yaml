@@ -449,7 +449,9 @@ segments:
       - { type: .bss, vram: 0x800FEAA0, name: runLink }
       - { type: .bss, vram: 0x800FEB60, name: gameVi }
       - { type: bss, vram: 0x800FECE0, name: textures }
-      - { type: bss, vram: 0x800FED50, name: menu }
+      - { type: bss, vram: 0x800FED50, name: menu_1 }
+      - { type: .bss, vram: 0x800FF1B0, name: menu }
+      - { type: bss, vram: 0x800FF1C0, name: menu_2 }
       - { type: .bss, vram: 0x80100840, name: weather }
       - { type: bss, vram: 0x801008E0, name: particles }
       - { type: .bss, vram: 0x80100960, name: diprint }

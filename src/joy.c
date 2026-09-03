@@ -113,10 +113,10 @@ s32 joyRead(s32 saveDataFlags, s32 updateRate) {
                 }
             }
             if ((saveDataFlags & 0x4000000)) {
-                packLoadGlobalFlagsEprom(&globalflags);
+                packLoadGlobalFlagsEprom((FlashSector *) &globalflags);
             }
             if (saveDataFlags & 0x02000000) {
-                packSaveGlobalFlagsEprom(&globalflags);
+                packSaveGlobalFlagsEprom((FlashSector *) &globalflags);
             }
             // Reset all flags
             saveDataFlags = 0;
