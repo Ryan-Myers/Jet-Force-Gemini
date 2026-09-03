@@ -17,9 +17,7 @@ RelocationEntry *gMainRelocTable;
 RomTableEntry *gOverlayRomTable;
 s32 gOverlayCount;
 s32 gMainRelocCount;
-UNUSED s32 D_800FEAB4_Pad;
 RelocContext gRelocContext;
-UNUSED s32 D_800FEACC_Pad;
 UNUSED s32 D_800FEAD0_Pad;
 u32 gUnresolvedSymbolAddr; // Placeholder address returned when a symbol cannot be resolved (overlay not loaded)
 PendingOverlayLoad gPendingOverlayLoads[16];
@@ -1044,7 +1042,7 @@ s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char *
     OverlayHeader *overlayTable;
     OverlayHeader *overlay;
     s32 count;
-    s32 symbolIndex;
+    u32 symbolIndex;
     u32 bestAddress;
     u32 symbolAddress;
     u32 symbolOffset;
@@ -1074,15 +1072,19 @@ s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char *
             overlay = &overlayTable[romEntry->overlayNumber];
             overlayVram = (u32) overlay->vramBase; // Get the address as an integer so we can add to it.
             if (overlayVram != NULL) {
-                symbolOffset = romEntry->symbolOffset;
+                symbolOffset = romEntry->symbolOffset; // This is the offset from the base address of the overlay
                 symbolAddress = overlayVram + symbolOffset;
-                if (overlay->textSize >= symbolOffset && address >= symbolAddress && bestAddress < symbolAddress) {
+
+                // Check if this symbol is within the text section and is the best match so far.
+                if (symbolOffset <= overlay->textSize && symbolAddress <= address && symbolAddress > bestAddress) {
                     bestAddress = symbolAddress;
-                    symbolIndex = romEntry - gOverlayRomTable;
+                    symbolIndex = (u32) (romEntry - gOverlayRomTable); // Pointer math trick to get the index
                 }
             }
             romEntry++;
         }
+
+        // If any suitable symbol was found, update the symbol name.
         if (bestAddress != 0) {
             *symbolName = GetSymbolName(symbolIndex);
         }
@@ -1092,8 +1094,9 @@ s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char *
     overlay = overlayTable;
     count = gOverlayCount;
     while (count--) {
+        // If the address being queried is between the start and end of this overlay's text section.
         if (address >= (u32) overlay->vramBase && address <= ((u32) overlay->vramBase + overlay->textSize)) {
-            *moduleId = overlay - overlayTable;
+            *moduleId = (s32) (overlay - overlayTable); // Pointer math trick to get the index
             *moduleAddress = address - (u32) overlay->vramBase;
             return TRUE;
         }

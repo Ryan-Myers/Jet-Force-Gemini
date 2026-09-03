@@ -59,16 +59,17 @@ typedef enum {
 
 typedef struct RelocContext {
     union {
-        u8 *bases[5]; // An array of base addresses for different sections: unused, text, data, bss, reloc
+        u8 *bases[6]; // An array of base addresses for different sections: unused, text, data, bss, reloc
         struct {
             u8 *unused;                 // 0x00 - Unknown
             u8 *textBase;               // 0x04 - .text
             u8 *dataBase;               // 0x08 - .data
             u8 *bssBase;                // 0x0C - .bss
             RelocationEntry *relocBase; // 0x10 - relocation table
+            u8 *secondaryRelocBase;     // 0x14 - secondary relocation table (unused)
         };
     };
-} RelocContext; /* 0x14 bytes */
+} RelocContext; /* 0x18 bytes */
 
 typedef struct PendingOverlayLoad {
     /* 0x00 */ void *VramBase;   // Address in VRAM where the overlay will be loaded
