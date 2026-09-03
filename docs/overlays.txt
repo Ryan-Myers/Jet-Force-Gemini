@@ -1,0 +1,1178 @@
+================================================================================
+ JET FORCE GEMINI - OVERLAY / RUNTIME LINKER ("runlink") DOCUMENTATION
+================================================================================
+
+ Primary sources for this document:
+   src/runLink.c                  - the runtime linker itself
+   src/runLink.h                  - structure definitions and constants
+   src/hasm/ido/trapDanglingJump.s - the lazy-load trampoline
+   ver/splat/jfg.us.yaml          - ROM layout of the linker tables
+   tools/overlay_reloc.py         - reference decoder for reloc tables
+   tools/extract_overlays.py      - reference decoder for the overlay table
+
+ Everything below is written against the US retail ROM (baserom.us.z64).
+ Kiosk uses the same formats at different addresses; see section 2.6.
+
+--------------------------------------------------------------------------------
+ TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+ 1.  Overview
+ 2.  ROM layout
+     2.1  The five linker tables
+     2.2  overlayTable          (OverlayHeader[])
+     2.3  overlayRomTable       (RomTableEntry[])
+     2.4  symbolsTable          (offsets + names)
+     2.5  mainRelocTable
+     2.6  Kiosk addresses
+ 3.  Overlay module image format
+     3.1  ROM image layout
+     3.2  RAM image layout
+     3.3  ROM layout of the overlay array
+ 4.  The relocation entry format
+     4.1  Bit layout
+     4.2  relocType values
+     4.3  patchOperation values
+     4.4  Addends (this is the part everybody gets wrong)
+     4.5  HI16/LO16 pairing rules
+     4.6  Pseudo-overlay numbers (0xFFC..0xFFF)
+ 5.  Runtime behaviour
+     5.1  runlinkInitialise
+     5.2  runlinkDownloadCode (load + link)
+     5.3  ProcessRelocationEntry / ResolveRelocAddress / PatchInstruction
+     5.4  Back-patching already-loaded modules
+     5.5  runlinkFreeCode / runlinkUnloadOverlay (unlink)
+     5.6  Suspend / resume
+     5.7  Self-destruct timers
+     5.8  TrapDanglingJump - the lazy call trampoline
+ 6.  Rebuilding an overlay from a compiled object
+     6.1  Required output shape
+     6.2  Linker script
+     6.3  ELF relocation -> JFG relocation mapping
+     6.4  Step-by-step relocation table construction
+     6.5  Building the main-module relocation table
+     6.6  Regenerating overlayRomTable and the symbol table
+     6.7  Filling in the OverlayHeader
+     6.8  Packing overlays back into ROM
+ 7.  Constraints, gotchas and known quirks
+ 8.  Worked example
+
+
+================================================================================
+ 1. OVERVIEW
+================================================================================
+
+Jet Force Gemini does not use fixed-address overlays like most N64 games. It
+ships a full dynamic linker in the main module. Code is split into:
+
+  * The "main module" (overlay index 0). Always resident. Linked normally by the
+    build at fixed VRAM addresses; .text begins at __CODE_SECTION_START
+    (0x80000450 on US, i.e. immediately after the 0x40 header + 0x410
+    entrypoint/boot code).
+
+  * 157 relocatable overlay modules (indices 1..157). These are position
+    independent in the sense that they contain *no absolute addresses at all*.
+    Every address in an overlay image is either zero or an addend, and is filled
+    in at load time from a relocation table that ships alongside the image.
+
+Cross-module references are symbolic. A reference is expressed as an index into
+a global symbol table (overlayRomTable), each entry of which says "overlay N,
+byte offset X". The linker turns that into a real address once overlay N is in
+RAM.
+
+Two directions of linking happen:
+
+  A) When an overlay is loaded, its own relocation table is walked and every
+     entry is patched with real addresses.
+
+  B) When an overlay is loaded or freed, the relocation tables of *all other
+     currently loaded modules* (including the main module) are walked, and any
+     entry that points at the overlay in question is re-patched. On free, JAL
+     sites are patched to point at TrapDanglingJump and everything else is
+     zeroed.
+
+That second direction is what makes the main module's `jal TrapDanglingJump`
+instructions work: they are simply call sites whose target overlay is not
+currently resident.
+
+
+================================================================================
+ 2. ROM LAYOUT
+================================================================================
+
+2.1 THE FIVE LINKER TABLES
+--------------------------
+
+US ROM (baserom.us.z64), from ver/splat/jfg.us.yaml:
+
+  Name                          ROM start    ROM end      Size      Notes
+  ---------------------------------------------------------------------------
+  mainRelocTable                0x1ECF220    0x1ED0270    0x1050    count + entries
+  overlayRomTable               0x1ED0270    0x1ED2780    0x2510    4 bytes/entry
+  overlayTable                  0x1ED2780    0x1ED3B20    0x13A0    0x20 bytes/entry
+  overlay image region          0x1ED3B20    0x1FEB040    -         157 overlays
+  symbolsTable_offsets          0x1FEB040    0x1FED550    0x2510    4 bytes/entry
+  symbolsTable_symbol_names     0x1FED550    0x1FF6820    0x92D0    NUL-terminated
+
+Derived counts:
+  overlay count      = 0x13A0 / 0x20 = 157 real overlays, +1 for the synthetic
+                       main-module entry => gOverlayCount == 158
+  symbol count       = 0x2510 / 4    = 2372 entries in overlayRomTable and in
+                       symbolsTable_offsets (they are parallel arrays)
+
+Note that overlayRomTable and symbolsTable_offsets have identical sizes. That is
+not a coincidence: index i in one corresponds to index i in the other.
+
+The linker script exports these boundaries as:
+  mainRelocTable_ROM_START/END, overlayRomTable_ROM_START/END,
+  overlayTable_ROM_START/END, overlayCode_ROM_START/END,
+  symbolsTable_offsets_ROM_START/END, symbolsTable_symbol_names_ROM_START/END
+
+`overlayCode_ROM_START` is the base that all OverlayHeader::romAddress values
+are relative to (0x1ED3B20 on US).
+
+All five tables must be 8-byte aligned in ROM. `romCopy` is a PI DMA and
+GetSymbolName explicitly masks addresses with ~7 and re-reads 8-byte aligned
+blocks, so misalignment silently corrupts reads.
+
+
+2.2 overlayTable  (OverlayHeader[])
+-----------------------------------
+
+One 0x20-byte big-endian record per overlay, starting with overlay 1. There is
+NO record for overlay 0 in ROM; runlinkInitialise allocates one extra header at
+the front and synthesises the main-module entry at runtime.
+
+  typedef struct OverlayHeader {
+      /* 0x00 */ void *vramBase;                     // ALWAYS 0 in ROM
+      /* 0x04 */ u32   romAddress;                   // offset from overlayCode_ROM_START
+      /* 0x08 */ u32   textSize;                     // bytes
+      /* 0x0C */ u32   dataSize;                     // .data + .rodata, merged
+      /* 0x10 */ u32   bssSize;                      // zeroed at load, not in ROM
+      /* 0x14 */ u16   relocationTableSize;          // BYTES, not entries
+      /* 0x16 */ u16   secondaryRelocationTableSize; // BYTES, not entries
+      /* 0x18 */ s32   initFunction;                 // offset from vramBase, -1 = none
+      /* 0x1C */ s32   resumeFunction;               // offset from vramBase, -1 = none
+  } OverlayHeader;                                   /* 0x20 */
+
+  vramBase   is the "is loaded" flag. 0 == not resident. runlinkInitialise
+             copies the table from ROM verbatim, so it must be 0 in ROM.
+  romAddress is converted to an absolute ROM address in runlinkInitialise by
+             adding overlayCode_ROM_START. Do not store an absolute address.
+  relocationTableSize / secondaryRelocationTableSize are sizes in bytes; the
+             entry count is size/8. Because they are u16, an overlay can hold at
+             most 8191 entries (0xFFF8 bytes) in each table.
+
+  Primary vs secondary relocation table:
+      primary   - stays resident in RAM for the lifetime of the overlay, because
+                  other modules need to walk it when they load/unload. Contains
+                  everything that can be affected by another module coming or
+                  going, plus data-section relocations.
+      secondary - loaded into a scratch allocation, applied once, then freed.
+                  Use for relocations that can never need re-patching (purely
+                  self-relative / local fixups). Keeping these out of the primary
+                  table is a pure memory optimisation.
+      Many overlays have secondaryRelocationTableSize == 0.
+
+  initFunction   is called immediately after linking completes in
+                 runlinkDownloadCode, as `(*(void(*)(void))(vramBase + init))()`.
+  resumeFunction is called by runlinkCallResumeFunction before the module is
+                 freed or suspended, and by runlinkFreeCode/runlinkUnloadOverlay.
+                 (Despite the name it functions as a "you are about to go away /
+                 you are back" notification.)
+
+
+2.3 overlayRomTable  (RomTableEntry[])
+--------------------------------------
+
+The global symbol table used by relocations. One big-endian u32 per symbol:
+
+  typedef struct RomTableEntry {
+      u32 overlayNumber : 12;   // bits 31..20
+      u32 symbolOffset  : 20;   // bits 19..0
+  } RomTableEntry;              /* 0x4 */
+
+  packed = (overlayNumber << 20) | (symbolOffset & 0xFFFFF)
+
+  overlayNumber   0        => main module. symbolOffset is relative to
+                              __CODE_SECTION_START (0x80000450), i.e. the
+                              symbol's VRAM is 0x80000450 + symbolOffset.
+                  1..157   => that overlay. symbolOffset is relative to the
+                              overlay's vramBase, spanning text then data.
+                  0xFFC..0xFFF => pseudo sections, see 4.6.
+
+  The 20-bit offset field caps any single module at 1 MiB of addressable
+  symbol space, and caps main-module symbols at 0x80000450 + 0xFFFFF.
+
+
+2.4 symbolsTable (offsets + names)
+----------------------------------
+
+  symbolsTable_offsets      : u32[nSymbols]. Entry i is a byte offset into
+                              symbolsTable_symbol_names.
+  symbolsTable_symbol_names : a blob of NUL-terminated ASCII strings.
+
+  GetSymbolName(i):
+      off  = u32 at (symbolsTable_offsets_ROM_START + i*4)   (8-aligned DMA)
+      name = C string at (symbolsTable_symbol_names_ROM_START + off)
+
+  This exists only for the crash/debug handler (runlinkGetAddressInfo). It is
+  not required for linking. If you are rebuilding, you can leave both tables
+  byte-identical to the original as long as you do not add symbols; if you do
+  add symbols, both this table and overlayRomTable must grow in lockstep.
+
+  GetSymbolName reads only 96 bytes and returns a pointer into a stack buffer
+  that is dead on return. It is a latent bug in the original code; do not build
+  new tooling that relies on the return value living past the call.
+
+
+2.5 mainRelocTable
+------------------
+
+  Layout in ROM:
+      +0x00 : u32 entryCount
+      +0x04 : RelocationEntry[entryCount]      (8 bytes each)
+
+  runlinkInitialise copies the entire blob (MAIN_RELOC_TABLE_SIZE bytes) into
+  RAM, reads the count out of word 0, then advances gMainRelocTable by 4 so it
+  points at the first entry.
+
+  Every entry describes a patch site inside the *main module*:
+      relocType == RELOC_TYPE_DATA (3) -> targetOffset is relative to
+                                          __DATA_SECTION_START
+      anything else                    -> targetOffset is relative to
+                                          __CODE_SECTION_START (0x80000450)
+
+  This table is what turns the main module's ~hundreds of `jal TrapDanglingJump`
+  stubs into real calls once the owning overlay is resident, and back into
+  TrapDanglingJump when it is freed.
+
+  Size check: 0x1044 - 4 = 0x1040, /8 = 520 entries.
+
+
+2.6 Kiosk addresses
+-------------------
+
+  Kiosk (baserom.kiosk.z64) uses identical formats. Known anchors:
+      overlayTable            0x1A7F9E0
+      overlay image base      0x1A80D60
+      TrapDanglingJump        0x80055150   (US: 0x80054530)
+  Extract the rest with tools/extract_overlays.py after editing its constants,
+  or read them out of ver/splat/jfg.kiosk.yaml.
+
+
+================================================================================
+ 3. OVERLAY MODULE IMAGE FORMAT
+================================================================================
+
+3.1 ROM IMAGE LAYOUT
+--------------------
+
+At (overlayCode_ROM_START + header.romAddress):
+
+    +0                                   .text            textSize bytes
+    +textSize                            .data + .rodata  dataSize bytes
+    +textSize+dataSize                   primary reloc    relocationTableSize
+    +textSize+dataSize+relocSize         secondary reloc  secondaryRelocationTableSize
+
+    Total ROM footprint =
+        textSize + dataSize + relocationTableSize + secondaryRelocationTableSize
+
+  .bss is NOT stored in ROM.
+  There is no separate .rodata section; rodata is merged into data. The runtime
+  only ever tracks three sizes, so anything read-only must be emitted inside the
+  dataSize span.
+
+
+3.2 RAM IMAGE LAYOUT
+--------------------
+
+runlinkDownloadCode makes ONE allocation of
+
+    textSize + dataSize + bssSize + relocationTableSize
+
+and lays it out as:
+
+    vramBase + 0                                   .text
+    vramBase + textSize                            .data (+rodata)
+    vramBase + textSize + dataSize                 .bss   (zero filled)
+    vramBase + textSize + dataSize + bssSize       primary reloc table
+
+The secondary reloc table gets its own temporary mmAlloc and is freed after use.
+
+This layout is hard-coded in three places and must not be changed:
+  * runLink.c, everywhere gRelocContext is populated
+  * trapDanglingJump.s, which recomputes the reloc table address as
+        relocTable = vramBase + [0x08] + [0x0C] + [0x10]
+  * the unload/back-patch loops
+
+The allocation comes from mmAlloc with COLOUR_TAG_GREY, tagged with
+mmColourTagOverlayIndex so the memory manager's debug view can attribute it.
+There is no alignment guarantee beyond what mmAlloc provides; the original
+images are 8-byte aligned in ROM (splat: `align: 0x8, subalign: 0x8`).
+
+
+3.3 ROM LAYOUT OF THE OVERLAY ARRAY
+-----------------------------------
+
+The overlay images form ONE contiguous, tightly packed, non-overlapping array
+spanning 0x1ED3B20 .. 0x1FEB038, immediately followed by 8 bytes of padding and
+then symbolsTable_offsets at 0x1FEB040.
+
+Verified by decoding all 157 headers out of overlayTable in baserom.us.z64 and
+sorting them by romAddress:
+
+  * 0 of 156 adjacent pairs overlap. No overlay's [romAddress, romAddress+size)
+    range intersects any other's.
+  * 0 gaps. Every overlay starts exactly where the previous one ended.
+  * sum of all (textSize + dataSize + relocationTableSize +
+    secondaryRelocationTableSize) == 0x117518 == the distance from
+    overlayCode_ROM_START to the end of the last overlay. Nothing is shared.
+  * Overlay 1 starts at romAddress 0, overlay 157 ends at 0x117518.
+
+  Two pairs of headers appear to share a start offset:
+      overlay 21 and 22 both at 0x68B68
+      overlay 56 and 57 both at 0xA3750
+  These are not overlaps. Overlays 21 and 56 are EMPTY (textSize == dataSize ==
+  bssSize == relocationTableSize == secondaryRelocationTableSize == 0), so they
+  occupy zero bytes and simply inherit the next overlay's offset. They are
+  placeholder slots that keep the index numbering stable.
+
+Practical consequence for rebuilding: because the array is packed with no slack,
+any overlay whose total ROM size changes shifts every subsequent overlay. You
+must rewrite the romAddress of every overlay after it in overlayTable, and
+(if the total grows) move symbolsTable_offsets and symbolsTable_symbol_names,
+which are exported by the linker script and referenced by the splat yaml.
+
+
+================================================================================
+ 4. THE RELOCATION ENTRY FORMAT
+================================================================================
+
+4.1 BIT LAYOUT
+--------------
+
+8 bytes, big-endian:
+
+    word0 : u32 symbolIndex
+    word1 : targetOffset << 8 | patchOperation << 4 | relocType
+
+  struct RelocationEntry {
+      u32 symbolIndex;         // 32 bits
+      u32 targetOffset : 24;   // bits 31..8 of word1
+      u32 patchOperation : 4;  // bits  7..4 of word1
+      u32 relocType : 4;       // bits  3..0 of word1
+  };
+
+  Python encode/decode (see tools/overlay_reloc.py):
+
+      def encode(sym, off, patch, rtype):
+          return struct.pack(">II", sym, (off << 8) | (patch << 4) | rtype)
+
+      def decode(b):
+          sym, info = struct.unpack(">II", b)
+          return sym, (info >> 8) & 0xFFFFFF, (info >> 4) & 0xF, info & 0xF
+
+  targetOffset is 24 bits => a module's patchable span is capped at 16 MiB.
+  It is relative to:
+      .data base  if relocType == RELOC_TYPE_DATA (3)
+      .text base  otherwise
+  ...where "base" means the module's own textBase/dataBase for an overlay, or
+  __CODE_SECTION_START / __DATA_SECTION_START for the main module.
+
+  NOTE: a data-section relocation can only be expressed with relocType 3, which
+  also fixes its resolution semantics to "external". There is no way to express
+  a LOCAL or JUMP relocation whose patch site lives in .data.
+
+
+4.2 relocType VALUES
+--------------------
+
+  0  RELOC_TYPE_EXTERNAL
+        symbolIndex is an index into overlayRomTable.
+        Address = gOverlayTable[ort.overlayNumber].vramBase
+                + ort.symbolOffset
+                + sectionAdjust        (see 4.6)
+        If the owning module is not resident, the resolved value becomes
+        &TrapDanglingJump for JAL/WORD patches, or &gUnresolvedSymbolAddr for
+        HI16/LO16 patches.
+
+  1  RELOC_TYPE_LOCAL
+        symbolIndex is NOT a symbol index. It is a raw byte offset from the
+        *current* module's vramBase (text/data/bss all live in one span, so the
+        offset selects the section implicitly).
+        Address = gOverlayTable[thisOverlay].vramBase + symbolIndex
+        For patchOperation == WORD, the 32-bit word already stored at the patch
+        site is ADDED as an addend.
+        Use this for pointers inside the overlay: jump tables, function pointer
+        arrays, string pointer arrays, self-referencing data.
+
+  2  RELOC_TYPE_JUMP
+        A self-relative J/JAL. The address is taken from the instruction that is
+        already there:
+            Address = (instr.target26 << 2) + gOverlayTable[thisOverlay].vramBase
+        i.e. the ROM image stores (byteOffsetWithinOverlay >> 2) in the 26-bit
+        target field, and the linker simply adds the load address.
+        symbolIndex still has to be a valid overlayRomTable index, because the
+        load/free back-patch loops read gOverlayRomTable[symbolIndex] on every
+        entry to decide whether the entry is affected. Set it to the ORT index of
+        the callee (which will name this same overlay), so the loops correctly
+        classify it.
+
+  3  RELOC_TYPE_DATA
+        Same resolution as RELOC_TYPE_EXTERNAL, but the patch site is in the
+        module's .data section instead of .text. ProcessRelocationEntry
+        temporarily rewrites the entry's relocType to 0, resolves it, then
+        restores the 3. In practice this is always paired with
+        patchOperation == RELOC_PATCH_WORD.
+
+  Values 4..15 are unused. ResolveRelocAddress returns NULL for them, which for
+  a WORD patch writes 0.
+
+
+4.3 patchOperation VALUES
+-------------------------
+
+  2  RELOC_PATCH_WORD   (R_MIPS_32)
+        instr->word = address;
+        Used for data pointers and function pointer tables.
+
+  4  RELOC_PATCH_JAL    (R_MIPS_26)
+        Replaces the low 26 bits with (address >> 2), preserving the opcode:
+            t = ((address >> 2) & 0x03FFFFFF) ^ instrWord;
+            t = (t << 6) >> 6;             // keep only low 26 bits of the xor
+            instr->word = t ^ instrWord;
+        Net effect: instr = (instr & 0xFC000000) | ((address >> 2) & 0x03FFFFFF)
+
+  5  RELOC_PATCH_HI16   (upper half of a LUI)
+        t = address >> 16;
+        if (address & 0x8000) t++;         // compensate for LO16 sign extension
+        instr->immediate = t & 0xFFFF;
+
+  6  RELOC_PATCH_LO16   (immediate of ADDIU/LW/SW/etc.)
+        instr->immediate = address & 0xFFFF;
+
+  0,1,3,7..15 : unimplemented; PatchInstruction prints a warning (stubbed in
+                retail) and writes nothing.
+
+  Every PatchInstruction call is followed by osWritebackDCache + osInvalICache
+  over the single 4-byte instruction, so patched code is immediately safe to
+  execute.
+
+
+4.4 ADDENDS  (the part everybody gets wrong)
+--------------------------------------------
+
+JFG relocations are REL-style, not RELA. There is no addend field in the entry.
+The addend lives in the instruction/word that is being patched, and the rules
+differ per patch operation:
+
+  WORD + RELOC_TYPE_LOCAL
+      addend = the u32 currently at the patch site. It IS added.
+      Final = vramBase + symbolIndex + storedWord
+
+  WORD + RELOC_TYPE_EXTERNAL / RELOC_TYPE_DATA
+      addend is IGNORED. The stored word is overwritten wholesale.
+      => emit 0 at the patch site; encode any offset in the ORT symbolOffset.
+
+  JAL (any type)
+      For type 0: the stored instruction's target field is ignored and
+      overwritten. Emit `jal 0` (0x0C000000) / `j 0` (0x08000000).
+      For type 2: the stored target field IS the payload (see 4.2). Emit
+      `jal (localByteOffset >> 2)`.
+
+  LO16 alone (no preceding HI16 entry)
+      resolvedAddr += instr->immediate;      // ZERO extended, 16 bits
+      The 16-bit immediate at the site is the addend.
+
+  HI16 (+ its mandatory following LO16)
+      addend = (hiInstr.immediate << 16) + signExtend16(loInstr.immediate)
+      i.e. the classic MIPS split-addend reconstruction, read from the two
+      instructions in place. It is added to the resolved address, and then both
+      halves are re-encoded from the result.
+      Guard: if the reconstructed addend happens to equal &gUnresolvedSymbolAddr
+      it is NOT added. That is a re-entrancy guard, not an addend feature.
+
+      => For a plain `lui/addiu` symbol reference with no offset, both
+         immediates must be 0 in the ROM image. If you leave a partially
+         resolved address there, the linker will add it to the real address and
+         corrupt the pointer.
+
+  Critical corollary for round-tripping: unloading a module writes 0 into HI16,
+  LO16 and WORD patch sites (see 5.5). The original addend is therefore
+  DESTROYED on the first unload and is gone on reload. The original game gets
+  away with this because addends on external references are (almost) always
+  zero. If you author a new overlay, keep external-reference addends at zero and
+  fold any constant offset into the overlayRomTable symbolOffset instead.
+
+
+4.5 HI16 / LO16 PAIRING RULES
+-----------------------------
+
+  * A HI16 entry MUST be immediately followed in the table by its matching LO16
+    entry. ProcessRelocationEntry reads `relocEntry[1]` directly and warns
+    "ERROR:MIPS_HI16 without matching MIPS_LO16" otherwise.
+  * ProcessRelocationEntry returns 2 for a HI16 pair; every caller loop then
+    does an extra `relocCount--; relocEntry++;` to skip the LO16 entry. If you
+    break the pairing, the loop's bookkeeping desynchronises and it will walk
+    past the end of the table.
+  * The two entries do NOT have to point at adjacent instructions. The LO16's
+    targetOffset can be anywhere in the section, which is how the compiler's
+    `lui` hoisting is handled.
+  * The pair must share the same symbolIndex and the same relocType.
+  * A LO16 entry that is not preceded by a HI16 entry is legal and is handled by
+    the "LO16 alone" path (its own 16-bit addend, no hi half touched). IDO emits
+    these when it reuses one `lui` for several `lw`s. In that case only the
+    FIRST lo gets paired with the hi; the remaining los must be standalone LO16
+    entries.
+  * Ordering within the table is otherwise free. The original tables are roughly
+    sorted by targetOffset but nothing depends on that.
+
+
+4.6 PSEUDO-OVERLAY NUMBERS (0xFFC .. 0xFFF)
+-------------------------------------------
+
+overlayRomTable entries can name the main module's data and bss instead of a
+real overlay. ResolveRelocAddress special-cases them:
+
+  0xFFC  OVERLAY_SECTION_DATA_0   Present in the table but not handled by
+                                  ResolveRelocAddress's switch. Observed only for
+                                  osTvType. Falls through to the default path,
+                                  which treats it as overlay 0xFFC and indexes
+                                  gOverlayTable out of bounds -- avoid emitting.
+  0xFFD  OVERLAY_SECTION_DATA_1   -> overlayNumber = 0,
+  0xFFE  OVERLAY_SECTION_DATA_2      addressOffset = __DATA_SECTION_START
+                                                   - __CODE_SECTION_START
+  0xFFF  OVERLAY_SECTION_BSS      -> overlayNumber = 0,
+                                     addressOffset = __BSS_SECTION_START
+                                                   - __CODE_SECTION_START
+
+So the final address is:
+    gOverlayTable[0].vramBase (== __CODE_SECTION_START)
+  + ort.symbolOffset
+  + addressOffset
+
+which reduces to __DATA_SECTION_START + symbolOffset, or
+__BSS_SECTION_START + symbolOffset. In other words symbolOffset for these
+pseudo-sections is measured from the start of .data / .bss respectively, not
+from 0x80000450.
+
+Elsewhere in runLink.c (the back-patch and unload loops, and the HI16/LO16 guard
+in ProcessRelocationEntry) any overlayNumber > OVERLAY_SECTION_UNUSED (0xFFB) is
+clamped to 0, so all four pseudo-sections are treated as "belongs to the main
+module" for liveness purposes. Since the main module is never unloaded, these
+relocations are resolved once and never disturbed.
+
+0xFFB (OVERLAY_SECTION_UNUSED) is also the sentinel written into
+PendingOverlayLoad::overlayIndex to mark a free slot.
+
+
+================================================================================
+ 5. RUNTIME BEHAVIOUR
+================================================================================
+
+5.1 runlinkInitialise
+---------------------
+
+Called once at boot, before any overlay can be used.
+
+  1. gSymbolTableOffsetSize = SYMBOLS_TABLE_OFFSETS_SIZE
+     (see quirks: this is the size in BYTES, used as a count)
+  2. mmAlloc(OVERLAY_TABLE_SIZE + 0x20, COLOUR_TAG_WHITE) and DMA the ROM
+     overlayTable into it at +0x20, leaving room for the synthetic entry 0.
+  3. mmAlloc + DMA overlayRomTable.
+  4. mmAlloc + DMA mainRelocTable; read gMainRelocCount from word 0; bump the
+     pointer past it.
+  5. gOverlayCount = OVERLAY_TABLE_SIZE / 0x20 + 1.
+  6. Mark all 16 gPendingOverlayLoads slots as OVERLAY_SECTION_UNUSED.
+  7. Allocate and zero gSelfDestructTimers[gOverlayCount].
+  8. Fill in the synthetic overlay 0 header:
+        vramBase             = &__CODE_SECTION_START
+        romAddress           = 0
+        textSize             = __CODE_SECTION_END - __CODE_SECTION_START
+        dataSize             = __DATA_SECTION_END - __DATA_SECTION_START
+        bssSize              = __BSS_SECTION_END  - __BSS_SECTION_START
+        relocationTableSize  = gMainRelocCount * 8
+        secondaryRelocationTableSize = 0
+  9. For overlays 1..N: romAddress += overlayCode_ROM_START (relative -> absolute)
+ 10. gRunlinkNeedsInit = FALSE
+
+Because step 9 mutates the in-RAM copy, romAddress must be a RELATIVE offset in
+ROM. Re-running runlinkInitialise would double-add.
+
+
+5.2 runlinkDownloadCode (load + link)
+-------------------------------------
+
+  s32 runlinkDownloadCode(s32 overlayIndex)
+
+  1. If vramBase != NULL, already resident -> return TRUE.
+  2. If overlayIndex appears in gPendingOverlayLoads[16], the module is in the
+     suspended state -> return FALSE (re-entrancy / suspend guard).
+  3. mmColourTagOverlayIndex = overlayIndex;
+     vramBase = mmAlloc(text + data + bss + relocSize, COLOUR_TAG_GREY);
+     mmColourTagOverlayIndex = INDEX_NOT_SET;
+     Failure -> return FALSE.
+  4. If secondaryRelocationTableSize != 0, mmAlloc it separately and DMA it from
+     romAddress + textSize + dataSize + relocationTableSize. On failure, free
+     vramBase and return FALSE.
+  5. Populate gRelocContext:
+        textBase  = vramBase
+        dataBase  = textBase + textSize
+        bssBase   = dataBase + dataSize
+        relocBase = bssBase  + bssSize
+  6. DMA the image:
+        bssSize == 0 : one DMA of (text + data + reloc) straight into vramBase
+        bssSize != 0 : DMA (text + data); zero bssSize bytes as u32s; then DMA
+                       relocationTableSize bytes into relocBase.
+     (The bssSize zero loop writes whole u32s, so bssSize should be a multiple
+     of 4; a non-multiple leaves the tail bytes dirty.)
+  7. osInvalICache(vramBase, textSize)
+  8. Walk the secondary table, ProcessRelocationEntry each entry (honouring the
+     "returned 2" skip), then mmFree it with mmSetDelay(0) around the free.
+  9. Walk the primary table the same way.
+ 10. Back-patch every OTHER resident module (see 5.4).
+ 11. If initFunction != -1, call vramBase + initFunction.
+ 12. return TRUE.
+
+Note the order: relocations are fully applied before initFunction runs, so
+initFunction may freely call into anything it references.
+
+
+5.3 ProcessRelocationEntry / ResolveRelocAddress / PatchInstruction
+------------------------------------------------------------------
+
+  s32 ProcessRelocationEntry(RelocationEntry *e, s32 otIndex)
+    returns the number of entries consumed: 2 for a HI16 pair, else 1.
+
+  Flow:
+    a. Choose the patch site:
+         relocType == 3 -> gRelocContext.dataBase + e->targetOffset,
+                           and temporarily set e->relocType = 0
+         otherwise      -> gRelocContext.textBase + e->targetOffset
+    b. resolved = ResolveRelocAddress(e->symbolIndex, otIndex, e, site)
+    c. Dispatch on patchOperation:
+         HI16 : validate e[1] is LO16; recompute the "owning overlay" from
+                gOverlayRomTable[e->symbolIndex].overlayNumber (clamped to 0 if
+                > 0xFFB); if the entry is external and that overlay is NOT
+                resident, force resolved = &gUnresolvedSymbolAddr; reconstruct
+                the split addend from the two instructions and add it unless it
+                equals &gUnresolvedSymbolAddr; patch hi then lo; return 2.
+         LO16 : same residency check; resolved += site->immediate (zero
+                extended); patch; return 1.
+         else : PatchInstruction(site, resolved, patchOperation); return 1.
+    d. Restore the saved relocType (undoing the 3 -> 0 shuffle).
+
+  gRelocContext is a *global*. It is set up by the caller before each table
+  walk. That makes the whole system non-reentrant: never call
+  runlinkDownloadCode from an interrupt or from inside a relocation callback.
+
+  gUnresolvedSymbolAddr is a single u32 in .bss used as a safe dummy target for
+  HI16/LO16 references into a module that is not loaded. Reads/writes through
+  such a pointer hit that word instead of faulting.
+
+
+5.4 BACK-PATCHING ALREADY-LOADED MODULES
+----------------------------------------
+
+After a module is linked, runlinkDownloadCode iterates i = 0 .. gOverlayCount-1,
+skipping the module just loaded and any module with vramBase == NULL.
+
+  For i == 0 (main module) the context is:
+        textBase = &__CODE_SECTION_START
+        dataBase = &__DATA_SECTION_START
+        bssBase  = &__BSS_SECTION_START
+        table    = gMainRelocTable, count = gMainRelocCount
+  For i != 0:
+        textBase = overlay->vramBase
+        dataBase = textBase + textSize
+        bssBase  = dataBase + dataSize
+        table    = bssBase + bssSize, count = relocationTableSize / 8
+
+  For each entry, it looks up gOverlayRomTable[e->symbolIndex].overlayNumber,
+  clamps > 0xFFB to 0, and if that equals the newly loaded overlayIndex AND the
+  entry is relocType 0 or 3, re-runs ProcessRelocationEntry with otIndex = i.
+
+  This is the mechanism that converts `jal TrapDanglingJump` in the main module
+  into a direct call.
+
+  Cost: O(loadedModules * relocEntries) on every single load and free. This is
+  the main reason the primary relocation table is kept as small as possible and
+  everything else is pushed into the secondary table.
+
+
+5.5 runlinkFreeCode / runlinkUnloadOverlay (unlink)
+--------------------------------------------------
+
+  runlinkFreeCode(overlayIndex):
+    1. Unless gStopCallResumeFunction, call runlinkCallResumeFunction.
+    2. If vramBase == NULL: the module may be suspended. If it is in
+       gPendingOverlayLoads, mmFree(pending.VramBase + textSize) (the retained
+       data/bss/reloc tail) and mark the slot UNUSED. Return.
+    3. mmFree(vramBase); vramBase = NULL.
+    4. gSelfDestructTimers[overlayIndex] = {0, 0}.
+    5. For every other resident module (including the main module, using the
+       same context setup as 5.4), walk its relocation table. For each entry
+       whose ORT overlayNumber (clamped) equals overlayIndex:
+            site = (relocType == 3 ? dataBase : textBase) + targetOffset
+            address = (patchOperation == RELOC_PATCH_JAL) ? &TrapDanglingJump : 0
+            PatchInstruction(site, address, patchOperation)
+       and then restore the entry's original relocType.
+
+  runlinkUnloadOverlay(overlayIndex) is the same thing but only walks
+  gMainRelocTable (it does not fix up other overlays), and always calls
+  runlinkCallResumeFunction. runlinkFlushModules uses it to tear down every
+  overlay from gOverlayCount-1 down to 1.
+
+  Consequences of step 5:
+    * JAL sites become `jal TrapDanglingJump`, which is how lazy reloading is
+      re-armed.
+    * WORD sites become 0 (NULL pointer).
+    * HI16/LO16 sites become lui 0 / addiu 0, i.e. address 0 AND addend 0.
+      The original addend is lost permanently.
+
+
+5.6 SUSPEND / RESUME
+--------------------
+
+  runlinkSuspendCode(overlayIndex):
+      Frees the .text of a resident overlay while keeping .data/.bss/reloc.
+      1. Find a free gPendingOverlayLoads slot; record VramBase and index.
+      2. mmSetDelay(0); gStopCallResumeFunction = TRUE; runlinkFreeCode();
+         gStopCallResumeFunction = FALSE; restore delay.
+      3. mmAllocAtAddr(dataSize + bssSize + relocationTableSize,
+                       VramBase + textSize, COLOUR_TAG_GREY)
+         -- reclaims exactly the non-text tail at its original address, so all
+         data pointers into the overlay stay valid.
+
+  runlinkResumeCode(overlayIndex):
+      1. Find the pending slot.
+      2. mmFree the tail, then mmAllocAtAddr the FULL size at the original
+         VramBase (so the whole module lands back where it was).
+      3. Re-DMA the secondary reloc table if present.
+      4. Rebuild gRelocContext, and DMA ONLY textSize bytes from ROM
+         (data and bss are still live in RAM and are deliberately not restored).
+      5. Re-apply relocations, but only those with targetOffset < textSize --
+         i.e. only the ones that patch code, since the data patches survived.
+      6. Back-patch other modules exactly as in 5.4.
+      7. Mark the pending slot UNUSED.
+
+  runlinkResumeAll() resumes every occupied pending slot.
+
+  This "suspend" mode is how the game keeps an overlay's state alive across a
+  memory-tight transition without paying to re-init it.
+
+
+5.7 SELF-DESTRUCT TIMERS
+------------------------
+
+  gSelfDestructTimers is a u16-per-overlay array:
+      selfDestructTimer : 10 bits   ticks until auto-free, 0 = disabled
+      refCount          : 6 bits    "in use recently" countdown
+
+  runlinkSetDestructTimer(index, timer, refCount) sets both.
+  runlinkTick() (per frame, gated on AllowSelfDestructing) decrements refCount
+  when non-zero, decrements selfDestructTimer when non-zero, and calls
+  runlinkFreeCode when the timer hits 0.
+  runlinkLowMemoryPanic() immediately frees every overlay with a non-zero timer
+  and a zero refCount.
+
+
+5.8 TrapDanglingJump - THE LAZY CALL TRAMPOLINE
+-----------------------------------------------
+
+  Source: src/hasm/ido/trapDanglingJump.s  (US VRAM 0x80054530)
+
+  A call site to an unloaded overlay is literally `jal TrapDanglingJump`. There
+  is no per-symbol stub. The trampoline identifies the target purely from the
+  return address.
+
+  Algorithm:
+
+    1. Prologue: allocate 0x60 of stack, save a0-a3, fa0/fa0f/fa1/fa1f, ra, and
+       v0/v1. It must preserve the full argument set because it does not know
+       the callee's signature -- this is why runLink.h declares it as
+       `extern s32 TrapDanglingJump();` with no prototype.
+
+    2. t5 = ra - 8. `ra` points to the instruction after the delay slot, so
+       ra - 8 is the address of the JAL itself.
+
+    3. Outer loop over gOverlayCount modules, walking gOverlayTable by 0x20.
+       On the FIRST iteration it uses the main module:
+           t2 (base)  = ASM_CODE_VRAM_START (0x80000450)
+           t3 (table) = gMainRelocTable
+           t4 (count) = gMainRelocCount
+       On later iterations, for a resident overlay:
+           t2 = header[0x00]                              (vramBase)
+           t3 = t2 + header[0x08] + header[0x0C] + header[0x10]
+                                                          (text+data+bss)
+           t4 = (s16)header[0x14] >> 3                    (relocSize / 8)
+
+    4. Inner loop over relocation entries:
+           candidate = ((entry.word1 >> 8) + t2)          // targetOffset + base
+           if (candidate == t5) -> match found
+
+    5. On match:
+           t6 = &gOverlayRomTable[entry.symbolIndex]
+           a0 = *t6 >> 20                                 // overlay number
+           jal runlinkDownloadCode
+           if (v0 == 0) -> restore args, return 0 (call silently fails)
+
+    6. After a successful load, recompute the real target:
+           t9 = *t6
+           header = gOverlayTable + ((t9 >> 20) << 5)
+           t8 = header[0x00] + (t9 & 0xFFFFF)             // vramBase + offset
+       restore all argument registers, pop the frame, and `jr t8` -- a true tail
+       call, so the callee returns straight to the original caller.
+
+    7. If no relocation entry matches, restore ra, pop, and return with v0/v1
+       undefined.
+
+  Important consequences:
+    * The trampoline searches by patch-site address, so the targetOffset in the
+      relocation entry MUST exactly match the address of the JAL instruction.
+      An off-by-one entry makes the call silently return garbage.
+    * It uses the raw ORT entry, not the relocation's relocType, so only
+      relocType 0 (external) entries can be lazily triggered. A relocType 2
+      (self jump) can never dangle, because the module is by definition loaded.
+    * Only the first matching entry wins; duplicate targetOffsets in one table
+      are a bug.
+
+  tools/overlay_which_func.py implements exactly this lookup offline: given a
+  RAM address that contains `jal TrapDanglingJump`, it reports the real callee.
+  tools/patch_asm.py uses it to rewrite the disassembly so the .s files show the
+  real symbol name instead of TrapDanglingJump.
+
+
+================================================================================
+ 6. REBUILDING AN OVERLAY FROM A COMPILED OBJECT
+================================================================================
+
+This section describes how to take a normally compiled/linked MIPS ELF and turn
+it into a JFG overlay image plus relocation tables.
+
+6.1 REQUIRED OUTPUT SHAPE
+-------------------------
+
+You need to produce four things:
+
+  (a) a flat binary: [ .text ][ .data + .rodata ]
+  (b) a primary relocation table  (8-byte entries)
+  (c) optionally a secondary relocation table
+  (d) a 0x20-byte OverlayHeader
+
+plus, if you introduced new cross-module symbols, updated overlayRomTable /
+symbolsTable entries.
+
+
+6.2 LINKER SCRIPT
+-----------------
+
+Link the overlay at VMA 0 (or at any base you consistently subtract later). 
+What matters is:
+
+  * .text first, at offset 0.
+  * .data and .rodata contiguous immediately after .text, with NO gap.
+    Order them .data then .rodata; they are indistinguishable at runtime.
+  * .bss and COMMON after that. It never appears in the output binary, only its
+    size is recorded. Round its size up to a multiple of 4 (the load-time zero
+    loop writes u32s).
+  * Discard .MIPS.abiflags, .MIPS.options, .note.*, .comment, .pdr, .mdebug*,
+    .reginfo, .gnu.attributes.
+  * Emit section-boundary symbols so the post-link step can compute sizes:
+        oN_TEXT_START/END, oN_DATA_START/END, oN_BSS_START/END
+  * Pad .text and the data blob so that the reloc table starts 8-byte aligned.
+
+Then `objcopy -O binary` the text+data, and keep the ELF around for its
+relocation and symbol tables.
+
+Do NOT let the linker resolve external references. Either link with
+`-r` (partial link) and read the resulting .rel.text / .rel.data sections, or
+link fully with a symbol map that resolves everything to 0 and then reconstruct
+the relocations from the map. The partial-link route is much less error prone.
+
+
+6.3 ELF RELOCATION -> JFG RELOCATION MAPPING
+--------------------------------------------
+
+  ELF r_type          JFG patchOperation      Notes
+  ---------------------------------------------------------------------------
+  R_MIPS_32       ->  2 (WORD)                data pointer / func ptr table
+  R_MIPS_26       ->  4 (JAL)                 j / jal
+  R_MIPS_HI16     ->  5 (HI16)                lui
+  R_MIPS_LO16     ->  6 (LO16)                addiu / lw / sw / etc.
+  R_MIPS_GPREL16, R_MIPS_LITERAL, R_MIPS_GOT*  NOT SUPPORTED. Compile with
+                                               -G 0 and no PIC so these are
+                                               never generated.
+  R_MIPS_PC16, R_MIPS_JALR, R_MIPS_NONE        drop; branches are PC-relative
+                                               and need no fixup because the
+                                               whole module moves as a unit.
+
+  Choosing relocType:
+
+    target symbol lives in ANOTHER module (or in the main module's
+    .text / .data / .bss)
+        -> relocType 0 (EXTERNAL), symbolIndex = overlayRomTable index of that
+           symbol. If the patch site is in your .data section, use relocType 3
+           instead.
+
+    target symbol lives in THIS overlay, and the patch is R_MIPS_26
+        -> relocType 2 (JUMP). Leave the 26-bit target field holding
+           (targetByteOffsetWithinOverlay >> 2). Set symbolIndex to the ORT
+           index of the target (needed by the back-patch loops).
+        -> Alternatively use relocType 0 with an ORT entry naming this overlay;
+           that also works and is what the original build seems to do for some
+           calls. relocType 2 is smaller in that it needs no ORT lookup at
+           resolve time.
+
+    target symbol lives in THIS overlay, and the patch is R_MIPS_32
+        -> relocType 1 (LOCAL). symbolIndex = the target's byte offset from
+           vramBase. Leave the ELF addend in the word at the patch site; the
+           linker adds it.
+
+    target symbol lives in THIS overlay, and the patch is HI16/LO16
+        -> relocType 0 with an ORT entry naming this overlay is the safest
+           choice. relocType 1 also resolves correctly (vramBase + offset) but
+           the HI16 path in ProcessRelocationEntry reads
+           gOverlayRomTable[symbolIndex] to decide residency, and for a LOCAL
+           entry symbolIndex is an offset, not an index -- it will index the
+           ORT out of range. AVOID relocType 1 with HI16/LO16.
+
+  Primary vs secondary placement:
+      put in SECONDARY : relocType 1 and relocType 2 entries whose target is in
+                         this same overlay (they can never be invalidated).
+      put in PRIMARY   : every relocType 0 and 3 entry, i.e. everything that
+                         names another module or the main module. These must
+                         survive because 5.4 and 5.5 need to find them again.
+      Note runlinkResumeCode only re-applies entries with
+      targetOffset < textSize, so any data-section relocation MUST be in the
+      primary table with relocType 3 or it will be lost on resume.
+
+
+6.4 STEP-BY-STEP RELOCATION TABLE CONSTRUCTION
+----------------------------------------------
+
+  1. Partial-link the overlay's objects into one relocatable ELF:
+         ld -r -o overlay.o obj1.o obj2.o ...
+     Then final-link with your overlay .ld at base 0, keeping relocations:
+         ld -T overlay.ld --emit-relocs -o overlay.elf overlay.o
+
+  2. Read .rel.text and .rel.data (or .rela.* if your toolchain emits RELA).
+
+  3. For each relocation record:
+       a. offset  = r_offset - sectionVMA        (section-relative)
+          For a .text relocation, targetOffset = offset.
+          For a .data or .rodata relocation, targetOffset = offset + (rodata ?
+          dataSectionOffsetOfRodata : 0), measured from the START OF .data,
+          because the runtime adds it to dataBase.
+       b. resolve the target symbol to (owningModule, byteOffsetInModule).
+       c. pick relocType and patchOperation per 6.3.
+       d. write the correct addend into the image at the patch site:
+            WORD  + type 0/3 : 0
+            WORD  + type 1   : the ELF addend
+            JAL   + type 0   : 0x0C000000 / 0x08000000 (target field 0)
+            JAL   + type 2   : opcode | ((localByteOffset >> 2) & 0x03FFFFFF)
+            HI16/LO16 + type 0 : 0 in both immediates unless you genuinely need
+                                 an addend (and see the warning in 4.4)
+            LO16 standalone  : the 16-bit addend
+       e. emit the 8-byte entry.
+
+  4. Sort/merge:
+       * Every HI16 entry must be immediately followed by its LO16 partner.
+         If IDO reused a single lui for N lows, emit HI16 + first LO16 as the
+         pair, then the remaining N-1 LO16 entries individually anywhere after.
+       * Remove duplicate (targetOffset, patchOperation) pairs; the trampoline
+         and the back-patch loops assume at most one entry per site.
+       * Sorting by targetOffset ascending matches the original tables and makes
+         diffing easier, but is not required. Sort AFTER pairing, using the
+         HI16's offset as the sort key for the pair so the two stay adjacent.
+
+  5. Split into primary and secondary tables per 6.3, preserving pairing within
+     whichever table each pair ends up in (never split a HI16/LO16 pair across
+     the two tables).
+
+  6. Pad each table to an 8-byte boundary (it already is, entries are 8 bytes)
+     and record the byte sizes in the header.
+
+
+6.5 BUILDING THE MAIN-MODULE RELOCATION TABLE
+---------------------------------------------
+
+Same entry format, with two differences:
+
+  * The blob is prefixed with a u32 entry count.
+  * targetOffset is measured from __CODE_SECTION_START (0x80000450) for text
+    sites and from __DATA_SECTION_START for relocType 3 sites.
+
+Every main-module reference to an overlay symbol produces one entry. For calls,
+the main module's image contains `jal TrapDanglingJump` at the patch site --
+that is the "unloaded" resting state, and it is what PatchInstruction restores
+on unload. For data references it contains 0 / lui 0 / addiu 0.
+
+The decomp build reproduces this by:
+  * linking every overlay symbol to TrapDanglingJump via generated linker script
+    entries (tools/extract_symbols.py, "--linker" style output), so calls
+    naturally assemble to `jal TrapDanglingJump`;
+  * tools/patch_asm.py + tools/overlay_which_func.py rewriting the disassembly
+    so humans see the real callee name.
+
+
+6.6 REGENERATING overlayRomTable AND THE SYMBOL TABLE
+-----------------------------------------------------
+
+  overlayRomTable is a flat u32 array. Entry i:
+      (overlayNumber << 20) | (symbolOffset & 0xFFFFF)
+
+  To add a symbol you must append to BOTH overlayRomTable and
+  symbolsTable_offsets at the same index, and append the name to
+  symbolsTable_symbol_names.
+
+  Rules:
+    * symbolOffset for overlayNumber 0 is (vram - 0x80000450).
+    * symbolOffset for a real overlay is the offset from vramBase, which spans
+      text then data. A data symbol's offset is textSize + offsetInData.
+    * symbolOffset for pseudo-sections 0xFFD/0xFFE is (vram - __DATA_SECTION_START);
+      for 0xFFF it is (vram - __BSS_SECTION_START).
+    * Both tables must stay the same length; runlinkGetAddressInfo and
+      GetSymbolName index them in parallel.
+    * Growing these tables shifts symbolsTable_symbol_names and everything after
+      it. Keep the 8-byte alignment of every table start.
+
+  runlinkGetAddressInfo's symbol search only accepts a symbol whose
+  symbolOffset <= overlay->textSize, so data symbols never appear in crash
+  dumps. That is cosmetic only.
+
+
+6.7 FILLING IN THE OverlayHeader
+--------------------------------
+
+  vramBase                     = 0
+  romAddress                   = (absoluteRomOffset - overlayCode_ROM_START)
+  textSize                     = size of the .text blob (8-byte aligned)
+  dataSize                     = size of .data + .rodata
+  bssSize                      = size of .bss + COMMON, rounded up to 4
+  relocationTableSize          = primaryEntryCount   * 8      (must fit in u16)
+  secondaryRelocationTableSize = secondaryEntryCount * 8      (must fit in u16)
+  initFunction                 = offset of the init entry point from vramBase,
+                                 or -1
+  resumeFunction               = offset of the resume entry point, or -1
+
+  Sanity checks worth asserting in tooling:
+    * textSize + dataSize + relocationTableSize + secondaryRelocationTableSize
+      == the number of bytes you are writing at romAddress.
+    * every entry's targetOffset < (relocType==3 ? dataSize : textSize)
+      -- except that relocType 0/1/2 entries with a data-section site are simply
+      not expressible; if you have one, it must be relocType 3.
+    * every relocType 0/3 entry's symbolIndex < symbolCount.
+    * every relocType 1 entry's symbolIndex < textSize+dataSize+bssSize.
+    * relocationTableSize and secondaryRelocationTableSize <= 0xFFF8.
+
+
+6.8 PACKING OVERLAYS BACK INTO ROM
+----------------------------------
+
+  The overlay array is contiguous and packed (3.3), so the general procedure is
+  a simple relayout:
+
+    1. Emit each overlay's image as [text][data][primary reloc][secondary reloc].
+    2. Walk overlays 1..157 in index order, assigning
+           romAddress[i] = running offset
+           running offset += total size of overlay i
+       Empty overlays contribute 0 and share the next overlay's offset.
+    3. Concatenate the images and write them at overlayCode_ROM_START.
+    4. Write the updated overlayTable at 0x1ED2780.
+    5. Recompute the CRC with tools/n64crc.
+
+  If you only want to replace ONE overlay and leave the rest of the ROM byte
+  identical, its total ROM size must be unchanged:
+       newTotal = textSize + dataSize + relocSize + secondaryRelocSize
+       newTotal == oldTotal
+  Pad the secondary reloc table or the data section to make up the difference if
+  it shrank. If it grows, everything after it shifts and step 2 applies.
+
+  If the whole array grows past 0x117518 bytes it collides with
+  symbolsTable_offsets at 0x1FEB040; those two tables and the trailing padding
+  must then be moved, which means updating ver/splat/jfg.us.yaml and the
+  *_ROM_START/END exports in the linker script.
+
+  Alignment: keep every overlay's romAddress a multiple of 8, since the reloc
+  table inside the image is DMA'd separately when bssSize != 0.
+
+
+================================================================================
+ 7. CONSTRAINTS, GOTCHAS AND KNOWN QUIRKS
+================================================================================
+
+ * gSymbolTableOffsetSize = SYMBOLS_TABLE_OFFSETS_SIZE assigns the table size in
+   BYTES, not the entry count (2372 entries -> 9488). runlinkGetAddressInfo
+   therefore over-iterates overlayRomTable by 4x, reading past the end into
+   overlayTable. It is a debug-only path and only affects the reported symbol
+   name, but do not copy this pattern.
+
+ * OVERLAY_SECTION_DATA_0 (0xFFC) is defined and appears in the table (reported
+   as used only by osTvType) but ResolveRelocAddress has no case for it, so it
+   indexes gOverlayTable[0xFFC]. Do not emit new entries with it.
+
+ * The 20-bit symbolOffset caps a module's symbol-addressable size at 1 MiB and
+   caps main-module symbols to 0x80000450..0x8010044F.
+
+ * The 24-bit targetOffset caps a module's patchable span at 16 MiB.
+
+ * The whole linker is non-reentrant: gRelocContext is a single global, and
+   runlinkDownloadCode guards re-entry only by checking gPendingOverlayLoads.
+
+ * Load/free cost is O(residentModules * relocEntries). Keep primary tables
+   small.
+
+ * Unloading destroys addends at HI16/LO16/WORD sites (4.4). Keep external
+   addends at zero.
+
+ * runlinkResumeCode only re-applies relocations with targetOffset < textSize.
+   Data relocations must therefore be relocType 3 in the primary table.
+
+ * The bss zero loop writes u32s; a bssSize that is not a multiple of 4 leaves
+   trailing bytes uninitialised.
+
+ * runlinkEnsureJumpIsValid(void **jumpAddress) is the C-side equivalent of the
+   trampoline's search: given the address of a word that currently contains
+   TrapDanglingJump, it locates the owning relocation entry and forces the
+   target overlay to load. It returns FALSE immediately if
+   *jumpAddress != TrapDanglingJump.
+
+ * CODE_SECTION_VRAM_START is hard-coded to 0x80000450 (unless AVOID_UB is
+   defined) because runlinkGetAddressInfo uses it before the linker is
+   initialised. ASM_CODE_VRAM_START in trapDanglingJump.s is the same constant.
+
+
+================================================================================
+ 8. WORKED EXAMPLE
+================================================================================
+
+From the analysis in src/runLink.h -- resolving a dangling call in rcpWaitDP:
+
+  1. At VRAM 0x8004DD50 the main module contains `jal TrapDanglingJump`.
+  2. The trampoline is entered with ra = 0x8004DD58, so
+         t5 = ra - 8 = 0x8004DD50
+  3. First outer-loop iteration searches the main module, base
+         t2 = 0x80000450
+     so the entry it is looking for has
+         targetOffset = 0x8004DD50 - 0x80000450 = 0x4D900
+  4. That entry is found at offset 0xD00 in mainRelocTable (entry index 0x1A0).
+     Its word0 (symbolIndex) is 0x69E = 1694.
+  5. overlayRomTable[1694] is at ROM 0x1ED0270 + 0x69E*4 = +0x1A78, value
+         0x00315E34
+         overlayNumber = 0x00315E34 >> 20        = 3
+         symbolOffset  = 0x00315E34 & 0xFFFFF    = 0x15E34
+  6. runlinkDownloadCode(3) loads overlay 3 if it is not already resident.
+  7. Target = gOverlayTable[3].vramBase + 0x15E34, which per the symbol table is
+     cloneTasksQueueAndWait.
+  8. Arguments are restored and `jr t8` tail-calls it.
+
+  The same lookup, offline:
+      python3 tools/overlay_which_func.py baseroms/baserom.us.z64 0x8004DD50
+
+  And to dump a whole overlay's relocation table with symbol names:
+      python3 tools/overlay_reloc.py analyze baseroms/baserom.us.z64 3
+
+================================================================================
+ END
+================================================================================
