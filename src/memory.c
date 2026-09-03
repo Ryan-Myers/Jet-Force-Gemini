@@ -285,7 +285,8 @@ void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag) {
 #endif
                         return curSlot->data;
                     } else {
-                        i = mempool_slot_assign(POOL_MAIN, i, (u32) address - (u32) curSlot->data, FALSE, TRUE, colorTag);
+                        i = mempool_slot_assign(POOL_MAIN, i, (u32) address - (u32) curSlot->data, FALSE, TRUE,
+                                                colorTag);
                         mempool_slot_assign(POOL_MAIN, i, size, TRUE, FALSE, colorTag);
 #ifdef VERSION_kiosk
                         enableInterrupts(intFlags);

@@ -656,7 +656,7 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
     gSelfDestructTimers[overlayIndex].refCount = 0;
 
     // Iterate through mainRelocTable and patch entries referencing this overlay
-    relocEntry = (RelocationEntry *) gMainRelocTable;
+    relocEntry = gMainRelocTable;
     i = gMainRelocCount;
     while (i--) {
         // Save the original relocation type before potentially modifying it

@@ -1,8 +1,8 @@
 #ifndef _RUNLINK_H_
 #define _RUNLINK_H_
 
-#include <PR/ultratypes.h>
 #include "mips.h"
+#include <PR/ultratypes.h>
 
 /**
  * Overlays work by having functions that call the overlay actually load TrapDanglingJump
@@ -24,28 +24,11 @@
  * Each entry is 8 bytes and describes how to patch an address reference.
  */
 typedef struct RelocationEntry {
-    u32 symbolIndex; // Index into overlayRomTable, OR local offset for type 1
-    union {
-        u32 info;
-        struct {
-            u32 targetOffset : 24; // Offset into section where relocation should be applied
-            u32 patchOperation : 4;
-            u32 relocType : 4; // Relocation type (R_MIPS_32=0, LOCAL=1, R_MIPS_26=2, SPECIAL=3, HI16=5, LO16=6)
-        };
-        struct {
-            u8 typeByte; // Low nibble: relocType, High nibble written back after processing
-            u8 offsetHi; // Upper bits of targetOffset
-            u8 offsetMid;
-            union {
-                u8 flags;
-                struct {
-                    u8 patchOperation2 : 4; // 2=R_MIPS_32, 4=JAL, 5=HI16, 6=LO16
-                    u8 resolveType : 4;     // 0=EXTERNAL, 1=LOCAL, 2=JUMP, 3=DATA
-                };
-            };
-        };
-    };
-} RelocationEntry; /* 0x8 bytes */
+    u32 symbolIndex;        // Index into overlayRomTable, OR local offset for type 1
+    u32 targetOffset : 24;  // Offset into section where relocation should be applied
+    u32 patchOperation : 4; // 2=R_MIPS_32, 4=JAL, 5=HI16, 6=LO16
+    u32 relocType : 4;      // Relocation type (R_MIPS_32=0, LOCAL=1, R_MIPS_26=2, SPECIAL=3, HI16=5, LO16=6)
+} RelocationEntry;          /* 0x8 bytes */
 
 typedef struct RomTableEntry {
     u32 OverlayNumber : 12;
@@ -63,7 +46,7 @@ typedef struct OverlayHeader {
     /* 0x16 */ u16 SecondaryRelocationTableSize; // This relocation is freed after the overlay is loaded
     /* 0x18 */ s32 InitFunction;                 // -1 if none, offset from VramBase
     /* 0x1C */ s32 ResumeFunction;               // -1 if none, offset from VramBase
-} OverlayHeader; /* 0x20 bytes */
+} OverlayHeader;                                 /* 0x20 bytes */
 
 // Names for the bases in RelocContext when indexed as an array
 typedef enum {
@@ -76,12 +59,12 @@ typedef enum {
 
 typedef struct RelocContext {
     union {
-        u8 *bases[5];      // An array of base addresses for different sections: unused, text, data, bss, reloc
+        u8 *bases[5]; // An array of base addresses for different sections: unused, text, data, bss, reloc
         struct {
-            u8 *unused;    // 0x00 - Unknown
-            u8 *textBase;  // 0x04 - .text
-            u8 *dataBase;  // 0x08 - .data
-            u8 *bssBase;   // 0x0C - .bss
+            u8 *unused;                 // 0x00 - Unknown
+            u8 *textBase;               // 0x04 - .text
+            u8 *dataBase;               // 0x08 - .data
+            u8 *bssBase;                // 0x0C - .bss
             RelocationEntry *relocBase; // 0x10 - relocation table
         };
     };
@@ -90,7 +73,7 @@ typedef struct RelocContext {
 typedef struct PendingOverlayLoad {
     /* 0x00 */ void *VramBase;   // Address in VRAM where the overlay will be loaded
     /* 0x04 */ s32 overlayIndex; // overlay number being loaded
-} PendingOverlayLoad; // 0x8 bytes
+} PendingOverlayLoad;            // 0x8 bytes
 
 /**
  * Timer/state entry for overlay self-destruct system.
@@ -106,13 +89,8 @@ typedef struct PendingOverlayLoad {
  * runlinkSetDestructTimer(overlayIndex, selfDestructTimer, refCount) sets both fields.
  */
 typedef struct OverlayTimerEntry {
-    union {
-        u16 packed; // Full 16-bit access: selfDestructTimer[9:0] << 6 | refCount[5:0]
-        struct {
-            u16 selfDestructTimer : 10;
-            u16 refCount : 6;
-        };
-    };
+    u16 selfDestructTimer : 10;
+    u16 refCount : 6;
 } OverlayTimerEntry;
 
 // BSS section boundaries
@@ -159,7 +137,7 @@ extern u8 overlayData_ROM_END[];
 // it's the start of the code section *after* entrypoint
 // it's used as the base address for calculating symbol offsets within the main code section.
 #ifdef AVOID_UB
-#define CODE_SECTION_VRAM_START (u32) &__CODE_SECTION_START;
+#define CODE_SECTION_VRAM_START (u32) & __CODE_SECTION_START;
 #else
 #define CODE_SECTION_VRAM_START 0x80000450
 #endif
@@ -191,8 +169,7 @@ extern u8 overlayData_ROM_END[];
  * The actual function called is cloneTasksQueueAndWait at offset 0x15E34 within that overlay
  */
 
-
-// This function is unique in that it has no specific limit on arguments, 
+// This function is unique in that it has no specific limit on arguments,
 // and they can change even within the same function call it.
 // This empty signature seems to be the way to handle it.
 extern s32 TrapDanglingJump();
