@@ -31,21 +31,21 @@ typedef struct RelocationEntry {
 } RelocationEntry;          /* 0x8 bytes */
 
 typedef struct RomTableEntry {
-    u32 OverlayNumber : 12;
-    u32 FunctionOffset : 20;
+    u32 overlayNumber : 12;
+    u32 symbolOffset : 20;
 } RomTableEntry; /* 0x4 bytes */
 
 typedef struct OverlayHeader {
-    /* 0x00 */ void *VramBase; // (0 if not loaded, set after alloc)
-    /* 0x04 */ u32 RomAddress;
-    /* 0x08 */ u32 TextSize;
-    /* 0x0C */ u32 DataSize; // Includes both data and rodata
-    /* 0x10 */ u32 BssSize;
-    /* 0x14 */ u16 RelocationTableSize; // This relocation stays in memory after the overlay is loaded, so that other
+    /* 0x00 */ void *vramBase; // (0 if not loaded, set after alloc)
+    /* 0x04 */ u32 romAddress;
+    /* 0x08 */ u32 textSize;
+    /* 0x0C */ u32 dataSize; // Includes both data and rodata
+    /* 0x10 */ u32 bssSize;
+    /* 0x14 */ u16 relocationTableSize; // This relocation stays in memory after the overlay is loaded, so that other
                                         // overlays can reference it
-    /* 0x16 */ u16 SecondaryRelocationTableSize; // This relocation is freed after the overlay is loaded
-    /* 0x18 */ s32 InitFunction;                 // -1 if none, offset from VramBase
-    /* 0x1C */ s32 ResumeFunction;               // -1 if none, offset from VramBase
+    /* 0x16 */ u16 secondaryRelocationTableSize; // This relocation is freed after the overlay is loaded
+    /* 0x18 */ s32 initFunction;                 // -1 if none, offset from vramBase
+    /* 0x1C */ s32 resumeFunction;               // -1 if none, offset from vramBase
 } OverlayHeader;                                 /* 0x20 bytes */
 
 // Names for the bases in RelocContext when indexed as an array
