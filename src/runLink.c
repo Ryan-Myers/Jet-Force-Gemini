@@ -250,13 +250,14 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
     }
 
     // Mark this overlay as being loaded (for memory manager colour tagging)
-    mmColourTagUnk2 = overlayIndex;
+    mmColourTagOverlayIndex = overlayIndex;
 
     // Allocate memory for overlay (text + data + rodata + relocation table)
     overlay->VramBase = mmAlloc(overlay->TextSize + overlay->DataSize + overlay->BssSize + overlay->RelocationTableSize,
                                 COLOUR_TAG_GREY);
 
-    mmColourTagUnk2 = COLOUR_TAG_WHITE;
+    // Reset the colour tag back to the deault untagged.
+    mmColourTagOverlayIndex = INDEX_NOT_SET;
 
     if (overlay->VramBase == NULL) {
         return FALSE; // Allocation failed

@@ -51,6 +51,8 @@ typedef enum MempoolFlags {
 #define COLOUR_TAG_BLACK 0x000000FF
 // Weather
 #define COLOUR_TAG_PURPLE 0xAA55FFFF
+
+#define INDEX_NOT_SET -1
     
 /* Size: 0x14 bytes */
 typedef struct MemoryPoolSlot {
@@ -90,7 +92,7 @@ typedef struct StackInfo {
 } StackInfo;
 
 extern s32 gPoolRAMSize[POOL_COUNT]; // Stores the size of each pool. Used in Debug menu to show free memory
-extern s32 mmColourTagUnk2;
+extern s32 mmColourTagOverlayIndex;
 
 // This variable doesn't truly exist in memory.
 // It's just defined as the end of BSS, and it's 

@@ -11,8 +11,8 @@
 /************ .data ************/
 
 u8 mmExtendedRam = FALSE;
-s32 mmColourTagUnk1 = COLOUR_TAG_WHITE;
-s32 mmColourTagUnk2 = COLOUR_TAG_WHITE;
+s32 mmColourTagTextureIndex = INDEX_NOT_SET; // Holds the index of the texture being loaded
+s32 mmColourTagOverlayIndex = INDEX_NOT_SET; // Holds the index of the overlay being loaded
 
 /*******************************/
 
@@ -46,6 +46,7 @@ void mmInit(void) {
     mmSetDelay(2);
     gFreeQueueCount = 0;
 }
+
 /**
  * Returns true if the RAM has been extended
  * Official name: mmExtended
@@ -127,10 +128,10 @@ MemoryPoolSlot *mmAlloc(s32 size, u32 colourTag) {
     u32 newColourTag;
     volatile s32 address = 0x666;
     newColourTag = colourTag;
-    if ((u32) mmColourTagUnk1 != COLOUR_TAG_WHITE) {
-        newColourTag = mmColourTagUnk1 | 0xFF000000;
-    } else if ((u32) mmColourTagUnk2 != COLOUR_TAG_WHITE) {
-        newColourTag = mmColourTagUnk2 | 0xFE000000;
+    if ((u32) mmColourTagTextureIndex != COLOUR_TAG_WHITE) {
+        newColourTag = mmColourTagTextureIndex | 0xFF000000;
+    } else if ((u32) mmColourTagOverlayIndex != COLOUR_TAG_WHITE) {
+        newColourTag = mmColourTagOverlayIndex | 0xFE000000;
     } else {
         runlinkGetAddressInfo(address - 8, &moduleId, &moduleAddress, NULL);
         newColourTag = (moduleId << 24) | moduleAddress;
@@ -148,10 +149,10 @@ MemoryPoolSlot *mmAlloc2(s32 size, u32 colourTag) {
     u32 newColourTag;
     volatile s32 address = 0x666;
     newColourTag = colourTag;
-    if ((u32) mmColourTagUnk1 != COLOUR_TAG_WHITE) {
-        newColourTag = mmColourTagUnk1 | 0xFF000000;
-    } else if ((u32) mmColourTagUnk2 != COLOUR_TAG_WHITE) {
-        newColourTag = mmColourTagUnk2 | 0xFE000000;
+    if ((u32) mmColourTagTextureIndex != INDEX_NOT_SET) {
+        newColourTag = mmColourTagTextureIndex | 0xFF000000;
+    } else if ((u32) mmColourTagOverlayIndex != INDEX_NOT_SET) {
+        newColourTag = mmColourTagOverlayIndex | 0xFE000000;
     } else {
         runlinkGetAddressInfo(address - 8, &moduleId, &moduleAddress, NULL);
         newColourTag = (moduleId << 24) | moduleAddress;
@@ -250,10 +251,10 @@ void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag) {
 #ifdef VERSION_kiosk
     intFlags = disableInterrupts();
 #endif
-    if (mmColourTagUnk1 != -1) {
-        colorTag = mmColourTagUnk1 | 0xFF000000;
-    } else if (mmColourTagUnk2 != -1) {
-        colorTag = mmColourTagUnk2 | 0xFE000000;
+    if (mmColourTagTextureIndex != INDEX_NOT_SET) {
+        colorTag = mmColourTagTextureIndex | 0xFF000000;
+    } else if (mmColourTagOverlayIndex != INDEX_NOT_SET) {
+        colorTag = mmColourTagOverlayIndex | 0xFE000000;
     } else {
         runlinkGetAddressInfo(vaddress - 8, &moduleId, &moduleAddress, NULL);
         colorTag = (moduleId << 24) | moduleAddress;
@@ -278,14 +279,14 @@ void *mmAllocAtAddr(s32 size, u8 *address, u32 colorTag) {
                 if ((u32) address >= (u32) curSlot->data &&
                     (u32) address + size <= (u32) curSlot->data + curSlot->size) {
                     if (address == (u8 *) curSlot->data) {
-                        mempool_slot_assign(POOL_MAIN, i, size, 1, 0, colorTag);
+                        mempool_slot_assign(POOL_MAIN, i, size, TRUE, FALSE, colorTag);
 #ifdef VERSION_kiosk
                         enableInterrupts(intFlags);
 #endif
                         return curSlot->data;
                     } else {
-                        i = mempool_slot_assign(POOL_MAIN, i, (u32) address - (u32) curSlot->data, 0, 1, colorTag);
-                        mempool_slot_assign(POOL_MAIN, i, size, 1, 0, colorTag);
+                        i = mempool_slot_assign(POOL_MAIN, i, (u32) address - (u32) curSlot->data, FALSE, TRUE, colorTag);
+                        mempool_slot_assign(POOL_MAIN, i, size, TRUE, FALSE, colorTag);
 #ifdef VERSION_kiosk
                         enableInterrupts(intFlags);
 #endif
@@ -640,11 +641,11 @@ void mmSlotPrint(void) {
                     break;
             }
             stubbed_printf("\n");
-            if (nextIndex == -1) {
+            if (nextIndex == INDEX_NOT_SET) {
                 continue;
             } else {
                 slot = &gMemoryPools[i].slots[slot->nextIndex];
             }
-        } while (nextIndex != -1);
+        } while (nextIndex != INDEX_NOT_SET);
     }
 }
