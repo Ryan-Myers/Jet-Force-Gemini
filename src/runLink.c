@@ -13,7 +13,7 @@ s32 AllowSelfDestructing = TRUE;
 
 // .bss
 OverlayHeader *gOverlayTable;
-RelocTableEntry *gMainRelocTable;
+RelocationEntry *gMainRelocTable;
 RomTableEntry *gOverlayRomTable;
 s32 gOverlayCount;
 s32 gMainRelocCount;
@@ -63,7 +63,7 @@ void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry
     RomTableEntry *romTableEntry;
 
     romTableEntry = &gOverlayRomTable[ortIndex];
-    overlayNumber = romTableEntry->entry.OverlayNumber;
+    overlayNumber = romTableEntry->OverlayNumber;
     addressOffset = 0;
     switch (relocEntry->relocType) {
         case RELOC_TYPE_EXTERNAL: // R_MIPS_32: Absolute symbol reference
@@ -90,7 +90,7 @@ void *ResolveRelocAddress(s32 ortIndex, s32 otIndex, RelocationEntry *relocEntry
                     return &gUnresolvedSymbolAddr;
                 }
             }
-            return (void *) (addressBase + (romTableEntry->entry.FunctionOffset) + addressOffset);
+            return (void *) (addressBase + (romTableEntry->FunctionOffset) + addressOffset);
         case RELOC_TYPE_LOCAL: // Local offset relocation (relative to section base)
             address = (u32) gOverlayTable[otIndex].VramBase + relocEntry->symbolIndex;
             if (relocEntry->patchOperation == RELOC_PATCH_WORD) {
@@ -131,10 +131,10 @@ void PatchInstruction(MipsInstruction *instr, u32 address, u8 patchOperation) {
             if (address & 0x8000) {
                 temp++; // Adjust for sign extension of LO16
             }
-            instr->itype.immediate = (u16) temp;
+            instr->itype.immediate = temp & 0xFFFF;
             break;
         case RELOC_PATCH_LO16: // Patch lower 16 bits of address
-            instr->itype.immediate = (u16) address;
+            instr->itype.immediate = address & 0xFFFF;
             break;
         default:
             stubbed_printf("WARNING: Unimplemented linkage operation %d\n", patchOperation);
@@ -172,7 +172,7 @@ s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
             stubbed_printf("ERROR:MIPS_HI16 without matching MIPS_LO16\n");
         }
 
-        overlayNumber = gOverlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
+        overlayNumber = gOverlayRomTable[relocEntry->symbolIndex].OverlayNumber;
         if (overlayNumber > OVERLAY_SECTION_UNUSED) {
             overlayNumber = OVERLAY_SECTION_MAIN;
         }
@@ -194,7 +194,7 @@ s32 ProcessRelocationEntry(RelocationEntry *relocEntry, s32 otIndex) {
         relocEntry->relocType = relocType;
         return 2;
     } else if (patchOperation == RELOC_PATCH_LO16) {
-        overlayNumber = gOverlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
+        overlayNumber = gOverlayRomTable[relocEntry->symbolIndex].OverlayNumber;
         if (overlayNumber > OVERLAY_SECTION_UNUSED) {
             overlayNumber = OVERLAY_SECTION_MAIN;
         }
@@ -253,8 +253,8 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
     mmColourTagUnk2 = overlayIndex;
 
     // Allocate memory for overlay (text + data + rodata + relocation table)
-    overlay->VramBase = (void *) mmAlloc(
-        overlay->TextSize + overlay->DataSize + overlay->RodataSize + overlay->RelocationTableSize, COLOUR_TAG_GREY);
+    overlay->VramBase = mmAlloc(overlay->TextSize + overlay->DataSize + overlay->BssSize + overlay->RelocationTableSize,
+                                COLOUR_TAG_GREY);
 
     mmColourTagUnk2 = COLOUR_TAG_WHITE;
 
@@ -278,10 +278,10 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
     gRelocContext.textBase = (u8 *) overlay->VramBase;
     gRelocContext.dataBase = (u8 *) gRelocContext.textBase + overlay->TextSize;
     gRelocContext.bssBase = (u8 *) gRelocContext.dataBase + overlay->DataSize;
-    gRelocContext.relocBase = (u8 *) gRelocContext.bssBase + overlay->RodataSize;
+    gRelocContext.relocBase = (RelocationEntry *) ((u8 *) gRelocContext.bssBase + overlay->BssSize);
 
     // Load overlay code and data from ROM
-    if (overlay->RodataSize == 0) {
+    if (overlay->BssSize == 0) {
         // No BSS - copy everything including relocation table
         romCopy(overlay->RomAddress, overlay->VramBase,
                 overlay->TextSize + overlay->DataSize + overlay->RelocationTableSize);
@@ -291,8 +291,8 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
 
         // Zero out BSS section
         {
-            s32 *bssPtr = (s32 *) gRelocContext.bssBase;
-            relocCount = (u32) overlay->RodataSize >> 2;
+            u32 *bssPtr = (u32 *) gRelocContext.bssBase;
+            relocCount = overlay->BssSize / sizeof(u32 *);
             while (relocCount--) {
                 *bssPtr++ = 0;
             }
@@ -309,7 +309,7 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
     // Process secondary relocation table (if present)
     if (relocTable != NULL) {
         savedDelay = mmGetDelay();
-        relocCount = (u32) overlay->SecondaryRelocationTableSize >> 3;
+        relocCount = (u32) overlay->SecondaryRelocationTableSize / sizeof(RelocationEntry);
         relocEntry = relocTable;
 
         while (relocCount-- > 0) {
@@ -327,8 +327,8 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
 
     // Process main relocation table
     relocCount = overlay->RelocationTableSize;
-    relocCount = ((u32) relocCount >> 3);
-    relocEntry = (RelocationEntry *) gRelocContext.relocBase;
+    relocCount = (u32) relocCount / sizeof(RelocationEntry);
+    relocEntry = gRelocContext.relocBase;
 
     while (relocCount-- > 0) {
         if (ProcessRelocationEntry(relocEntry, overlayIndex) == 2) {
@@ -347,22 +347,22 @@ s32 runlinkDownloadCode(s32 overlayIndex) {
                 gRelocContext.textBase = (u8 *) &__CODE_SECTION_START; // Start of .text
                 gRelocContext.dataBase = (u8 *) &__DATA_SECTION_START; // Start of .data
                 gRelocContext.bssBase = (u8 *) &__BSS_SECTION_START;
-                gRelocContext.relocBase = (u8 *) gMainRelocTable;
-                relocEntry = (RelocationEntry *) gMainRelocTable;
+                gRelocContext.relocBase = gMainRelocTable;
+                relocEntry = gMainRelocTable;
                 relocCount = gMainRelocCount;
             } else {
                 // Other overlay - set up context for it
                 gRelocContext.textBase = (u8 *) overlay->VramBase;
                 gRelocContext.dataBase = (u8 *) gRelocContext.textBase + overlay->TextSize;
                 gRelocContext.bssBase = (u8 *) gRelocContext.dataBase + overlay->DataSize;
-                gRelocContext.relocBase = (u8 *) gRelocContext.bssBase + overlay->RodataSize;
-                relocEntry = (RelocationEntry *) gRelocContext.relocBase;
+                gRelocContext.relocBase = (RelocationEntry *) ((u8 *) gRelocContext.bssBase + overlay->BssSize);
+                relocEntry = gRelocContext.relocBase;
                 relocCount = overlay->RelocationTableSize / sizeof(RelocationEntry);
             }
 
             while (relocCount-- > 0) {
                 // Check if this relocation references the newly loaded overlay
-                overlayNum = gOverlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
+                overlayNum = gOverlayRomTable[relocEntry->symbolIndex].OverlayNumber;
                 if (overlayNum > OVERLAY_SECTION_UNUSED) {
                     overlayNum = 0;
                 }
@@ -415,16 +415,16 @@ s32 runlinkEnsureJumpIsValid(void **jumpAddress) {
                 gRelocContext.textBase = (u8 *) &__CODE_SECTION_START; // Start of .text
                 gRelocContext.dataBase = (u8 *) &__DATA_SECTION_START; // Start of .data
                 gRelocContext.bssBase = (u8 *) &__BSS_SECTION_START;
-                gRelocContext.relocBase = (u8 *) gMainRelocTable;
-                relocEntry = (RelocationEntry *) gMainRelocTable;
+                gRelocContext.relocBase = gMainRelocTable;
+                relocEntry = gMainRelocTable;
                 relocCount = gMainRelocCount;
             } else {
                 // Other overlay - set up context for it
                 gRelocContext.textBase = (u8 *) overlay->VramBase;
                 gRelocContext.dataBase = (u8 *) gRelocContext.textBase + overlay->TextSize;
                 gRelocContext.bssBase = (u8 *) gRelocContext.dataBase + overlay->DataSize;
-                gRelocContext.relocBase = (u8 *) gRelocContext.bssBase + overlay->RodataSize;
-                relocEntry = (RelocationEntry *) gRelocContext.relocBase;
+                gRelocContext.relocBase = (RelocationEntry *) ((u8 *) gRelocContext.bssBase + overlay->BssSize);
+                relocEntry = gRelocContext.relocBase;
                 relocCount = overlay->RelocationTableSize / sizeof(RelocationEntry);
             }
             while (relocCount--) {
@@ -438,7 +438,7 @@ s32 runlinkEnsureJumpIsValid(void **jumpAddress) {
                 }
 
                 if ((u8 *) jumpAddress == (gRelocContext.bases[section] + relocEntry->targetOffset)) {
-                    overlayNumber = gOverlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
+                    overlayNumber = gOverlayRomTable[relocEntry->symbolIndex].OverlayNumber;
                     if (overlayNumber > OVERLAY_SECTION_UNUSED) {
                         overlayNumber = 0;
                     }
@@ -553,16 +553,16 @@ void runlinkFreeCode(s32 overlayIndex) {
                 gRelocContext.textBase = (u8 *) &__CODE_SECTION_START; // Start of .text
                 gRelocContext.dataBase = (u8 *) &__DATA_SECTION_START; // Start of .data
                 gRelocContext.bssBase = (u8 *) &__BSS_SECTION_START;
-                gRelocContext.relocBase = (u8 *) gMainRelocTable;
-                relocEntry = (RelocationEntry *) gMainRelocTable;
+                gRelocContext.relocBase = gMainRelocTable;
+                relocEntry = gMainRelocTable;
                 relocCount = gMainRelocCount;
             } else {
                 // Other overlay - set up context for it
                 gRelocContext.textBase = (u8 *) loadedAddress;
                 gRelocContext.dataBase = (u8 *) gRelocContext.textBase + overlay->TextSize;
                 gRelocContext.bssBase = (u8 *) gRelocContext.dataBase + overlay->DataSize;
-                gRelocContext.relocBase = (u8 *) gRelocContext.bssBase + overlay->RodataSize;
-                relocEntry = (RelocationEntry *) gRelocContext.relocBase;
+                gRelocContext.relocBase = (RelocationEntry *) ((u8 *) gRelocContext.bssBase + overlay->BssSize);
+                relocEntry = gRelocContext.relocBase;
                 relocCount = overlay->RelocationTableSize / sizeof(RelocationEntry);
             }
 
@@ -571,7 +571,7 @@ void runlinkFreeCode(s32 overlayIndex) {
                 // Save the original relocation type before potentially modifying it
                 relocType = relocEntry->relocType;
 
-                overlayNum = gOverlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
+                overlayNum = gOverlayRomTable[relocEntry->symbolIndex].OverlayNumber;
                 // Treat all overlay numbers used for data/bss as the main overlay
                 if (overlayNum > OVERLAY_SECTION_UNUSED) {
                     overlayNum = OVERLAY_SECTION_MAIN;
@@ -661,7 +661,7 @@ void runlinkUnloadOverlay(s32 overlayIndex) {
         // Save the original relocation type before potentially modifying it
         relocType = relocEntry->relocType;
 
-        overlayNum = gOverlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
+        overlayNum = gOverlayRomTable[relocEntry->symbolIndex].OverlayNumber;
 
         // Treat all overlay numbers used for data/bss as the main overlay
         if (overlayNum > OVERLAY_SECTION_UNUSED) {
@@ -738,12 +738,12 @@ void runlinkInitialise(void) {
 
     // Allocate and copy mainRelocTable from ROM
     // First word contains the count, actual table starts at +4
-    gMainRelocTable = (RelocTableEntry *) mmAlloc(MAIN_RELOC_TABLE_SIZE, COLOUR_TAG_WHITE);
+    gMainRelocTable = (RelocationEntry *) mmAlloc(MAIN_RELOC_TABLE_SIZE, COLOUR_TAG_WHITE);
     romCopy((u32) &mainRelocTable_ROM_START, gMainRelocTable, MAIN_RELOC_TABLE_SIZE);
 
     // Extract mainRelocCount from first word, then advance pointer past it
     gMainRelocCount = *((u32 *) gMainRelocTable);
-    gMainRelocTable = (RelocTableEntry *) ((u8 *) gMainRelocTable + 4);
+    gMainRelocTable = (RelocationEntry *) ((u8 *) gMainRelocTable + 4);
 
     // Calculate overlay count from table size (each entry is 0x20 bytes)
     // +1 for the main module (overlay 0)
@@ -763,17 +763,17 @@ void runlinkInitialise(void) {
     // Initialize main module header (overlay 0) with section addresses
     gOverlayTable->VramBase = &__CODE_SECTION_START;
     gOverlayTable->RomAddress = 0;
-    gOverlayTable->TextSize = (s32) ((u32) &__CODE_SECTION_END - (u32) &__CODE_SECTION_START);
-    gOverlayTable->DataSize = (s32) ((u32) &__DATA_SECTION_END - (u32) &__DATA_SECTION_START);
-    gOverlayTable->RodataSize = (s32) ((u32) &__BSS_SECTION_END - (u32) &__BSS_SECTION_START);
-    gOverlayTable->RelocationTableSize = gMainRelocCount * sizeof(RelocTableEntry);
+    gOverlayTable->TextSize = ((u32) &__CODE_SECTION_END - (u32) &__CODE_SECTION_START);
+    gOverlayTable->DataSize = ((u32) &__DATA_SECTION_END - (u32) &__DATA_SECTION_START);
+    gOverlayTable->BssSize = ((u32) &__BSS_SECTION_END - (u32) &__BSS_SECTION_START);
+    gOverlayTable->RelocationTableSize = gMainRelocCount * sizeof(RelocationEntry);
     gOverlayTable->SecondaryRelocationTableSize = 0;
 
     // Convert relative ROM addresses to absolute for all overlay entries
-    overlayEntry = gOverlayTable + 1; // Start from overlay 1
+    overlayEntry = gOverlayTable + 1; // Start from overlay 1 to skip the main overlay
     i = gOverlayCount - 1;
     while (i--) {
-        overlayEntry->RomAddress = (s32) (overlayCode_ROM_START + overlayEntry->RomAddress);
+        overlayEntry->RomAddress = ((u32) overlayCode_ROM_START + overlayEntry->RomAddress);
         overlayEntry++;
     }
 
@@ -782,15 +782,13 @@ void runlinkInitialise(void) {
 }
 
 void runlinkSuspendCode(s32 overlayIndex) {
+    OverlayHeader *overlay;
 #ifdef VERSION_kiosk
-    OverlayHeader *overlay;
     s32 pad;
+#endif
     PendingOverlayLoad *pendingLoad;
     s32 remaining;
-#else
-    OverlayHeader *overlay;
-    PendingOverlayLoad *pendingLoad;
-    s32 remaining;
+#ifdef VERSION_us
     s32 savedDelay;
 #endif
 
@@ -814,7 +812,7 @@ void runlinkSuspendCode(s32 overlayIndex) {
 #else
                 mmSetDelay(savedDelay);
 #endif
-                mmAllocAtAddr(overlay->DataSize + overlay->RodataSize + overlay->RelocationTableSize,
+                mmAllocAtAddr(overlay->DataSize + overlay->BssSize + overlay->RelocationTableSize,
                               (void *) ((u32) pendingLoad->VramBase + overlay->TextSize), COLOUR_TAG_GREY);
                 return;
             }
@@ -866,7 +864,7 @@ void runlinkResumeCode(s32 overlayIndex) {
 #else
         mmSetDelay(savedDelay);
 #endif
-        overlay->VramBase = (void *) mmAllocAtAddr(overlay->TextSize + overlay->DataSize + overlay->RodataSize +
+        overlay->VramBase = (void *) mmAllocAtAddr(overlay->TextSize + overlay->DataSize + overlay->BssSize +
                                                        overlay->RelocationTableSize,
                                                    pendingLoad->VramBase, COLOUR_TAG_GREY);
         if (overlay->VramBase == NULL) {
@@ -886,7 +884,7 @@ void runlinkResumeCode(s32 overlayIndex) {
         gRelocContext.textBase = (u8 *) overlay->VramBase;
         gRelocContext.dataBase = (u8 *) gRelocContext.textBase + overlay->TextSize;
         gRelocContext.bssBase = (u8 *) gRelocContext.dataBase + overlay->DataSize;
-        gRelocContext.relocBase = (u8 *) gRelocContext.bssBase + overlay->RodataSize;
+        gRelocContext.relocBase = (RelocationEntry *) ((u8 *) gRelocContext.bssBase + overlay->BssSize);
         romCopy(overlay->RomAddress, overlay->VramBase, overlay->TextSize);
 
         if (relocTable != NULL) {
@@ -913,7 +911,7 @@ void runlinkResumeCode(s32 overlayIndex) {
         }
 
         relocCount = overlay->RelocationTableSize / sizeof(RelocationEntry);
-        relocEntry = (RelocationEntry *) gRelocContext.relocBase;
+        relocEntry = gRelocContext.relocBase;
         while (relocCount-- > 0) {
             if ((relocEntry->targetOffset) < overlay->TextSize &&
                 ProcessRelocationEntry(relocEntry, overlayIndex) == 2) {
@@ -931,21 +929,21 @@ void runlinkResumeCode(s32 overlayIndex) {
                     gRelocContext.textBase = (u8 *) &__CODE_SECTION_START; // Start of .text
                     gRelocContext.dataBase = (u8 *) &__DATA_SECTION_START; // Start of .data
                     gRelocContext.bssBase = (u8 *) &__BSS_SECTION_START;
-                    gRelocContext.relocBase = (u8 *) gMainRelocTable;
-                    relocEntry = (RelocationEntry *) gMainRelocTable;
+                    gRelocContext.relocBase = gMainRelocTable;
+                    relocEntry = gMainRelocTable;
                     relocCount = gMainRelocCount;
                 } else {
                     // Other overlay - set up context for it
                     gRelocContext.textBase = (u8 *) overlay->VramBase;
                     gRelocContext.dataBase = (u8 *) gRelocContext.textBase + overlay->TextSize;
                     gRelocContext.bssBase = (u8 *) gRelocContext.dataBase + overlay->DataSize;
-                    gRelocContext.relocBase = (u8 *) gRelocContext.bssBase + overlay->RodataSize;
-                    relocEntry = (RelocationEntry *) gRelocContext.relocBase;
+                    gRelocContext.relocBase = (RelocationEntry *) ((u8 *) gRelocContext.bssBase + overlay->BssSize);
+                    relocEntry = gRelocContext.relocBase;
                     relocCount = overlay->RelocationTableSize / sizeof(RelocationEntry);
                 }
 
                 while (relocCount-- > 0) {
-                    overlayNumber = gOverlayRomTable[relocEntry->symbolIndex].entry.OverlayNumber;
+                    overlayNumber = gOverlayRomTable[relocEntry->symbolIndex].OverlayNumber;
                     if (overlayNumber > OVERLAY_SECTION_UNUSED) {
                         overlayNumber = 0;
                     }
@@ -1042,7 +1040,7 @@ void runlinkLowMemoryPanic(void) {
 s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char **symbolName) {
     u32 overlayVram;
     RomTableEntry *romEntry;
-    OverlayHeader *overlayBase;
+    OverlayHeader *overlayTable;
     OverlayHeader *overlay;
     s32 count;
     s32 symbolIndex;
@@ -1067,12 +1065,15 @@ s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char *
 
     if (symbolName != NULL) {
         count = gNumberOfSymbols;
+
+        // Iterate through every symbol entry looking for the best candidate
         while (count--) {
-            overlayBase = gOverlayTable;
-            overlay = &overlayBase[romEntry->entry.OverlayNumber];
-            overlayVram = (u32) overlay->VramBase;
+            overlayTable = gOverlayTable; // Assign the global to a local first for some reason
+
+            overlay = &overlayTable[romEntry->OverlayNumber];
+            overlayVram = (u32) overlay->VramBase; // Get the address as an integer so we can add to it.
             if (overlayVram != NULL) {
-                symbolOffset = romEntry->entry.FunctionOffset;
+                symbolOffset = romEntry->FunctionOffset;
                 symbolAddress = overlayVram + symbolOffset;
                 if (overlay->TextSize >= symbolOffset && address >= symbolAddress && bestAddress < symbolAddress) {
                     bestAddress = symbolAddress;
@@ -1086,12 +1087,12 @@ s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char *
         }
     }
 
-    overlayBase = gOverlayTable;
-    overlay = overlayBase;
+    overlayTable = gOverlayTable;
+    overlay = overlayTable;
     count = gOverlayCount;
     while (count--) {
         if (address >= (u32) overlay->VramBase && address <= ((u32) overlay->VramBase + overlay->TextSize)) {
-            *moduleId = overlay - overlayBase;
+            *moduleId = overlay - overlayTable;
             *moduleAddress = address - (u32) overlay->VramBase;
             return TRUE;
         }

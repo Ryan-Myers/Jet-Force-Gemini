@@ -45,42 +45,34 @@ typedef struct RelocationEntry {
             };
         };
     };
-} RelocationEntry; /* 8 bytes */
-
-typedef struct RelocTableEntry {
-    union {
-        u32 bytes;
-        struct {
-            u32 functionAddress : 24; // This is the address of the calling function less 0x80000450 (0x8004DD50 -
-                                      // 0x80000450 = 0x4D900)
-            u32 unknown : 8;          // Unknown, almost always seems to be 0x40
-        };
-    } entry;
-    u32 overlayIndex; // This is an index into overlayRomTable
-} RelocTableEntry; /* 8 bytes */
+} RelocationEntry; /* 0x8 bytes */
 
 typedef struct RomTableEntry {
-    union {
-        u32 bytes;
-        struct {
-            u32 OverlayNumber : 12;
-            u32 FunctionOffset : 20;
-        };
-    } entry;
-} RomTableEntry; /* 4 bytes */
+    u32 OverlayNumber : 12;
+    u32 FunctionOffset : 20;
+} RomTableEntry; /* 0x4 bytes */
 
 typedef struct OverlayHeader {
     /* 0x00 */ void *VramBase; // (0 if not loaded, set after alloc)
     /* 0x04 */ u32 RomAddress;
     /* 0x08 */ u32 TextSize;
-    /* 0x0C */ u32 DataSize;
-    /* 0x10 */ u32 RodataSize;
+    /* 0x0C */ u32 DataSize; // Includes both data and rodata
+    /* 0x10 */ u32 BssSize;
     /* 0x14 */ u16 RelocationTableSize; // This relocation stays in memory after the overlay is loaded, so that other
                                         // overlays can reference it
     /* 0x16 */ u16 SecondaryRelocationTableSize; // This relocation is freed after the overlay is loaded
     /* 0x18 */ s32 InitFunction;                 // -1 if none, offset from VramBase
     /* 0x1C */ s32 ResumeFunction;               // -1 if none, offset from VramBase
 } OverlayHeader; /* 0x20 bytes */
+
+// Names for the bases in RelocContext when indexed as an array
+typedef enum {
+    RELOC_BASE_UNUSED = 0,
+    RELOC_BASE_TEXT = 1,
+    RELOC_BASE_DATA = 2,
+    RELOC_BASE_BSS = 3,
+    RELOC_BASE_RELOC = 4
+} RelocContextBase;
 
 typedef struct RelocContext {
     union {
@@ -90,7 +82,7 @@ typedef struct RelocContext {
             u8 *textBase;  // 0x04 - .text
             u8 *dataBase;  // 0x08 - .data
             u8 *bssBase;   // 0x0C - .bss
-            u8 *relocBase; // 0x10 - relocation table
+            RelocationEntry *relocBase; // 0x10 - relocation table
         };
     };
 } RelocContext; /* 0x14 bytes */
@@ -98,7 +90,7 @@ typedef struct RelocContext {
 typedef struct PendingOverlayLoad {
     /* 0x00 */ void *VramBase;   // Address in VRAM where the overlay will be loaded
     /* 0x04 */ s32 overlayIndex; // overlay number being loaded
-} PendingOverlayLoad; // 8 bytes
+} PendingOverlayLoad; // 0x8 bytes
 
 /**
  * Timer/state entry for overlay self-destruct system.
@@ -171,14 +163,6 @@ extern u8 overlayData_ROM_END[];
 #else
 #define CODE_SECTION_VRAM_START 0x80000450
 #endif
-
-typedef enum {
-    RELOC_BASE_UNUSED = 0,
-    RELOC_BASE_TEXT = 1,
-    RELOC_BASE_DATA = 2,
-    RELOC_BASE_BSS = 3,
-    RELOC_BASE_RELOC = 4
-} RelocContextBase;
 
 /**
  * Complete Analysis: How rcpWaitDP Uses TrapDanglingJump
