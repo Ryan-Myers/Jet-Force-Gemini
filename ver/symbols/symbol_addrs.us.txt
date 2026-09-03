@@ -1798,7 +1798,7 @@ D_800A38E4_A44E4 = 0x800A38E4;
 
 gStopCallResumeFunction = 0x800A38F0;
 gRunlinkNeedsInit = 0x800A38F4;
-gNumberOfSymbols = 0x800A38F8;
+gSymbolTableOffsetSize = 0x800A38F8;
 AllowSelfDestructing = 0x800A38FC;
 
 videoBufferAllocs = 0x800a3900;

@@ -8,7 +8,7 @@
 // .data
 s32 gStopCallResumeFunction = FALSE;
 s32 gRunlinkNeedsInit = TRUE; // Set to FALSE once the init function has completed.
-s32 gNumberOfSymbols = 0;
+s32 gSymbolTableOffsetSize = 0;
 s32 AllowSelfDestructing = TRUE;
 
 // .bss
@@ -724,7 +724,7 @@ void runlinkInitialise(void) {
     s32 i;
 
     // This is the number of of symbols stored in the ROM
-    gNumberOfSymbols = SYMBOLS_TABLE_OFFSETS_SIZE;
+    gSymbolTableOffsetSize = SYMBOLS_TABLE_OFFSETS_SIZE;
 
     // Allocate and copy overlayTable from ROM
     // Extra 0x20 bytes at start for main module header (overlay 0)
@@ -870,7 +870,7 @@ void runlinkResumeCode(s32 overlayIndex) {
             return;
         }
 
-        if (overlay->secondaryRelocationTableSize) {
+        if (overlay->secondaryRelocationTableSize != 0) {
             relocTable = (RelocationEntry *) mmAlloc(overlay->secondaryRelocationTableSize, COLOUR_TAG_GREY);
             if (relocTable == NULL) {
                 mmFree(overlay->vramBase);
@@ -1063,9 +1063,10 @@ s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char *
     }
 
     if (symbolName != NULL) {
-        count = gNumberOfSymbols;
+        count = gSymbolTableOffsetSize; // Note, this is the number of bytes, not the number of symbols.
 
         // Iterate through every symbol entry looking for the best candidate
+        //!@bug This loops 4 times for every symbol because it counts bytes instead of symbols.
         while (count--) {
             overlayTable = gOverlayTable; // Assign the global to a local first for some reason
 
@@ -1076,6 +1077,7 @@ s32 runlinkGetAddressInfo(u32 address, s32 *moduleId, s32 *moduleAddress, char *
                 symbolAddress = overlayVram + symbolOffset;
 
                 // Check if this symbol is within the text section and is the best match so far.
+                // This means data/bss symbols will never get returned. Just function names.
                 if (symbolOffset <= overlay->textSize && symbolAddress <= address && symbolAddress > bestAddress) {
                     bestAddress = symbolAddress;
                     symbolIndex = (u32) (romEntry - gOverlayRomTable); // Pointer math trick to get the index

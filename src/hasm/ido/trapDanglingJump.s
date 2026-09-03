@@ -37,8 +37,8 @@
  * Overlay header structure (32 bytes):
  *   0x00: VRAM base address (0 if not loaded)
  *   0x08: .text section size
- *   0x0C: .data section size  
- *   0x10: .rodata section size
+ *   0x0C: .data/.rodata section size  
+ *   0x10: .bss section size
  *   0x14: relocation count (encoded, divide by 8)
  *
  * Relocation entry structure (8 bytes):
@@ -81,14 +81,14 @@ search_next_overlay:
     beqz       t2, advance_to_next_overlay
     
     /* Calculate address of overlay`s relocation table */
-    /* relocTable = vramBase + textSize + dataSize + rodataSize */
+    /* relocTable = vramBase + textSize + dataSize + bssSize */
     lw         v0, 0x8(t1)                /* .text size */
     addu       t3, t2, v0
-    lw         v0, 0xC(t1)                /* .data size */
+    lw         v0, 0xC(t1)                /* .data/.rodata size */
     addu       t3, t3, v0
     lh         t4, 0x14(t1)               /* relocation count (encoded) */
     sra        t4, t4, 3                  /* t4 = actual relocation count */
-    lw         v0, 0x10(t1)               /* .rodata size */
+    lw         v0, 0x10(t1)               /* .bss size */
     addu       t3, t3, v0                 /* t3 = relocation table address */
     b          search_relocation_table
 

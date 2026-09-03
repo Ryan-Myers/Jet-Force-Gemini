@@ -42,7 +42,7 @@ OVERLAY_DATA_ROM = 0x1ED3B20  # D_1ED3B20 - start of overlay binary data
 # - BSS is zeroed at load time, not stored in ROM
 # - Rodata is merged into the data section (no separate .rodata)
 # - Overlays can OVERLAP in ROM (mutually exclusive overlays share space)
-# - RelocationTableSize is number of 8-byte entries
+# - RelocationTableSize is the size in bytes of the relocation table
 
 OVERLAY_HEADER_SIZE = 0x20  # 32 bytes
 OVERLAY_HEADER_FORMAT = ">iiiiihhi i"  # Big-endian: 5 ints, 2 shorts, 2 ints
@@ -70,12 +70,12 @@ class OverlayHeader:
     @property
     def rom_size(self) -> int:
         """Size of the overlay in ROM (text + data + reloc, NO bss)"""
-        return self.text_size + self.data_size + (self.reloc_table_size * 8)
+        return self.text_size + self.data_size + self.reloc_table_size
 
     @property
     def vram_size(self) -> int:
         """Size of the overlay in VRAM (text + data + bss + reloc)"""
-        return self.text_size + self.data_size + self.bss_size + (self.reloc_table_size * 8)
+        return self.text_size + self.data_size + self.bss_size + self.reloc_table_size
 
     @property
     def is_valid(self) -> bool:
@@ -214,6 +214,8 @@ def print_overlay_summary(overlays: list[OverlayHeader]):
     total_data = 0
     total_bss = 0
     total_rom = 0
+    total_reloc = 0
+    total_secondary_reloc = 0
     valid_count = 0
     
     for ov in overlays:
@@ -224,6 +226,9 @@ def print_overlay_summary(overlays: list[OverlayHeader]):
         total_text += ov.text_size
         total_data += ov.data_size
         total_bss += ov.bss_size
+        total_reloc += ov.reloc_table_size
+        total_secondary_reloc += ov.secondary_reloc_size
+
         total_rom += ov.rom_size
         
         rom_start = ov.absolute_rom
@@ -239,7 +244,8 @@ def print_overlay_summary(overlays: list[OverlayHeader]):
             f"0x{ov.text_size:06X}   "
             f"0x{ov.data_size:06X}   "
             f"0x{ov.bss_size:06X}   "
-            f"{ov.reloc_table_size:6}   "
+            f"0x{ov.reloc_table_size:06X}   "
+            f"0x{ov.secondary_reloc_size:06X}   "
             f"0x{ov.rom_size:06X}   "
             f"0x{ov.vram_size:06X}   "
             f"{init_str:>10}   "
@@ -251,6 +257,8 @@ def print_overlay_summary(overlays: list[OverlayHeader]):
     print(f"Total text: 0x{total_text:X} ({total_text:,} bytes)")
     print(f"Total data: 0x{total_data:X} ({total_data:,} bytes)")
     print(f"Total BSS: 0x{total_bss:X} ({total_bss:,} bytes)")
+    print(f"Total relocation table size: 0x{total_reloc:06X} ({total_reloc:,} bytes)")
+    print(f"Total secondary relocation table size: 0x{total_secondary_reloc:06X} ({total_secondary_reloc:,} bytes)")
     print(f"Total ROM size: 0x{total_rom:X} ({total_rom:,} bytes)")
 
 

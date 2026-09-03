@@ -491,6 +491,7 @@ segments:
     type: bin
     start: 0xB1880
 
+  # First 4 bytes is a count of the number of entries. Then it's an array of 8 byte values.
   # 8 bytes to contain the address that tried to load an overlay, and the index into it's overlayRomTable entry
   - name: mainRelocTable
     type: bin

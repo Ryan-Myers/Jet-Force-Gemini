@@ -140,11 +140,11 @@ class OverlayRelocTool:
         header_offset = self.offsets['overlay_table'] + (overlay_num - 1) * 0x20
         
         return OverlayHeader(
-            vram_base=read_s32(self.rom, header_offset + 0x00),
-            rom_offset=read_s32(self.rom, header_offset + 0x04),
-            text_size=read_s32(self.rom, header_offset + 0x08),
-            data_size=read_s32(self.rom, header_offset + 0x0C),
-            bss_size=read_s32(self.rom, header_offset + 0x10),
+            vram_base=read_u32(self.rom, header_offset + 0x00),
+            rom_offset=read_u32(self.rom, header_offset + 0x04),
+            text_size=read_u32(self.rom, header_offset + 0x08),
+            data_size=read_u32(self.rom, header_offset + 0x0C),
+            bss_size=read_u32(self.rom, header_offset + 0x10),
             reloc_table_size=read_u16(self.rom, header_offset + 0x14),
             secondary_reloc_size=read_u16(self.rom, header_offset + 0x16),
             init_function=read_s32(self.rom, header_offset + 0x18),
@@ -152,11 +152,11 @@ class OverlayRelocTool:
         )
     
     def resolve_ort_entry(self, ort_index: int) -> Tuple[int, int]:
-        """Resolve overlayRomTable entry to (overlay_num, func_offset)"""
+        """Resolve overlayRomTable entry to (overlay_num, symbol_offset)"""
         entry = read_u32(self.rom, self.offsets['overlay_rom_table'] + ort_index * 4)
         overlay_num = (entry >> 20) & 0xFFF
-        func_offset = entry & 0xFFFFF
-        return overlay_num, func_offset
+        symbol_offset = entry & 0xFFFFF
+        return overlay_num, symbol_offset
     
     def find_symbol_by_address(self, overlay_num: int, offset: int) -> Optional[str]:
         """Find symbol name for a given overlay + offset"""
